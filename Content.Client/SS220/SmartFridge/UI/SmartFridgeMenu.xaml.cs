@@ -9,6 +9,7 @@ using Robust.Client.UserInterface.CustomControls;
 using Robust.Client.UserInterface.XAML;
 using Robust.Shared.Prototypes;
 using Content.Shared.VendingMachines;
+using System.Linq;
 
 namespace Content.Client.SS220.SmartFridge.UI
 {
@@ -98,6 +99,68 @@ namespace Content.Client.SS220.SmartFridge.UI
                 smartFridgeItem.Text = $"{itemName} [{entry.Amount}]";
                 smartFridgeItem.Icon = icon;
                 filteredInventory.Add(i);
+            }
+
+            SetSizeAfterUpdate(longestEntry.Length, inventory.Count);
+        }
+
+        public void Populate2(SortedDictionary<string, List<EntityUid>> inventory, out SortedDictionary<string, List<EntityUid>> filteredInventory, string? filter = null)
+        {
+            filteredInventory = new();
+
+            if (inventory.Count == 0)
+            {
+                SmartFridgeContents.Clear();
+                var outOfStockText = Loc.GetString("vending-machine-component-try-eject-out-of-stock");
+                SmartFridgeContents.AddItem(outOfStockText);
+                SetSizeAfterUpdate(outOfStockText.Length, SmartFridgeContents.Count);
+                return;
+            }
+
+            while (inventory.Count != SmartFridgeContents.Count)
+            {
+                if (inventory.Count > SmartFridgeContents.Count)
+                    SmartFridgeContents.AddItem(string.Empty);
+                else
+                    SmartFridgeContents.RemoveAt(SmartFridgeContents.Count - 1);
+            }
+
+            var longestEntry = string.Empty;
+            var spriteSystem = IoCManager.Resolve<IEntitySystemManager>().GetEntitySystem<SpriteSystem>();
+
+            var filterCount = 0;
+            var itemCount = 0;
+            foreach(var entry in inventory)
+            {
+                //var entry = inventory[i];
+                var smartFridgeItem = SmartFridgeContents[itemCount - filterCount];
+                itemCount++;
+                smartFridgeItem.Text = string.Empty;
+                smartFridgeItem.Icon = null;
+
+                var itemName = entry.Key;
+                Texture? icon = null;
+                if (_prototypeManager.TryIndex<EntityPrototype>(entry.Value.First().Id.ToString(), out var prototype))//переписать
+                {
+                    itemName = prototype.Name;
+                    icon = spriteSystem.GetPrototypeIcon(prototype).Default;
+                }
+
+                // search filter
+                if (!string.IsNullOrEmpty(filter) &&
+                    !itemName.ToLowerInvariant().Contains(filter.Trim().ToLowerInvariant()))
+                {
+                    SmartFridgeContents.Remove(smartFridgeItem);
+                    filterCount++;
+                    continue;
+                }
+
+                if (itemName.Length > longestEntry.Length)
+                    longestEntry = itemName;
+
+                smartFridgeItem.Text = $"{itemName} [{entry.Value.Count}]";
+                smartFridgeItem.Icon = icon;
+                filteredInventory.Add(entry.Key, entry.Value);
             }
 
             SetSizeAfterUpdate(longestEntry.Length, inventory.Count);

@@ -19,6 +19,10 @@ namespace Content.Client.SS220.SmartFridge
         [ViewVariables]
         private List<int> _cachedFilteredIndex = new();
 
+        [ViewVariables]
+        private SortedDictionary<string, List<EntityUid>> _Inventory=new();
+
+
         public SmartFridgeBoundUserInterface(EntityUid owner, Enum uiKey) : base(owner, uiKey)
         {
         }
@@ -50,6 +54,12 @@ namespace Content.Client.SS220.SmartFridge
                 return;
 
             SendPredictedMessage(new SmartFridgeInteractWithItemEvent(selectedItem.EntityUids[0]));
+
+             if (_Inventory.Count == 0)
+                return;
+            if (!_Inventory.TryGetValue(_cachedFilteredIndex.ElementAtOrDefault(args.ItemIndex), out var selectedItem))
+                return;
+
 
             UpdateUI();
         }
