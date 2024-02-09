@@ -1,26 +1,34 @@
-﻿<controls:FancyWindow xmlns="https://spacestation14.io"
+<controls:FancyWindow xmlns="https://spacestation14.io"
                            xmlns:gfx="clr-namespace:Robust.Client.Graphics;assembly=Robust.Client"
                            xmlns:controls="clr-namespace:Content.Client.UserInterface.Controls"
                            SetSize="600 600"
                            MinSize="600 600">
     <BoxContainer Orientation="Vertical" Margin="5 0 5 0">
         <BoxContainer Orientation="Horizontal">
-            <Label Text="{Loc 'cargo-console-menu-account-name-label'}"
-                   StyleClasses="LabelKeyText" />
-            <Label Name="AccountNameLabel"
-                   Text="{Loc 'cargo-console-menu-account-name-none-text'}" />
-        </BoxContainer>
-        <BoxContainer Orientation="Horizontal">
-            <Label Text="{Loc 'cargo-console-menu-points-label'}"
-                   StyleClasses="LabelKeyText" />
-            <Label Name="PointsLabel"
-                   Text="$0" />
-        </BoxContainer>
-        <BoxContainer Orientation="Horizontal">
-            <Label Text="{Loc 'cargo-console-menu-order-capacity-label'}"
-                   StyleClasses="LabelKeyText" />
-            <Label Name="ShuttleCapacityLabel"
-                   Text="0/20" />
+            <BoxContainer Orientation="Vertical" >
+                <BoxContainer Orientation="Horizontal">
+                    <Label Text="{Loc 'cargo-console-menu-account-name-label'}" StyleClasses="LabelKeyText" />
+                    <Label Name="AccountNameLabel" Text="{Loc 'cargo-console-menu-account-name-none-text'}" />
+                </BoxContainer>
+                <BoxContainer Orientation="Horizontal">
+                    <Label Text="{Loc 'cargo-console-menu-points-label'}" StyleClasses="LabelKeyText" />
+                    <Label Name="PointsLabel" Text="$0" />
+                </BoxContainer>
+                <BoxContainer Orientation="Horizontal">
+                    <Label Text="{Loc 'cargo-console-menu-order-capacity-label'}" StyleClasses="LabelKeyText" />
+                    <Label Name="ShuttleCapacityLabel" Text="0/20" />
+                </BoxContainer>
+            </BoxContainer>
+            <BoxContainer Orientation="Vertical" HorizontalExpand="True" VerticalAlignment="Center" HorizontalAlignment="Right">
+                <BoxContainer Orientation="Horizontal">
+                    <LineEdit Name="AmountOfCashOut" MinWidth="64"/>
+                    <Label Text="$"/>
+                    <Button Name="CashOut" Access="Public" Text="⏏" StyleClasses="OpenLeft"/>
+                </BoxContainer>
+                <BoxContainer Orientation="Horizontal">
+                    <Button Name="CashOutAll" Access="Public" Text="Снять всё" StyleClasses="OpenLeft"/>
+                </BoxContainer>
+            </BoxContainer>
         </BoxContainer>
         <BoxContainer Orientation="Horizontal">
             <OptionButton Name="Categories"

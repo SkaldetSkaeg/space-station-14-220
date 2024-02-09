@@ -11,7 +11,7 @@ using Robust.Shared.Prototypes;
 using Content.Client.Cargo.UI;
 using static Robust.Client.UserInterface.Controls.BaseButton;
 
-namespace Content.SS220.Client.Cargo.UI
+namespace Content.Client.SS220.Cargo.UI
 {
     [GenerateTypedNameReferences]
     public sealed partial class UpdatedCargoConsoleMenu : FancyWindow
@@ -24,6 +24,8 @@ namespace Content.SS220.Client.Cargo.UI
         public event Action<ButtonEventArgs>? OnItemSelected;
         public event Action<ButtonEventArgs>? OnOrderApproved;
         public event Action<ButtonEventArgs>? OnOrderCanceled;
+
+        public event Action<string>? OnAmountOfCashOutChanged;
 
         private readonly List<string> _categoryStrings = new();
         private string? _category;
@@ -40,6 +42,52 @@ namespace Content.SS220.Client.Cargo.UI
 
             SearchBar.OnTextChanged += OnSearchBarTextChanged;
             Categories.OnItemSelected += OnCategoryItemSelected;
+            AmountOfCashOut.OnTextChanged += e => OnAmountOfCashOutChange(e.Text);
+        }
+
+        public void OnAmountOfCashOutChange(string text)
+        {
+            AdjustTextForNumber(AmountOfCashOut, text);
+            OnAmountOfCashOutChanged?.Invoke(AmountOfCashOut.Text);
+        }
+
+        public bool AdjustTextForNumber(LineEdit line, string text)
+        {
+            List<char> toRemove = new();
+
+            foreach (var a in text)
+            {
+                if (!char.IsDigit(a))
+                    toRemove.Add(a);
+            }
+
+            foreach (var a in toRemove)
+            {
+                line.Text = text.Replace(a.ToString(), "");
+            }
+
+            if (line.Text == "")
+                return false;
+
+            if (!int.TryParse(line.Text, out var timeInt))
+                return false;
+
+            while (line.Text[0] == '0' && line.Text.Length > 2)
+            {
+                line.Text = line.Text.Remove(0, 1);
+            }
+
+            if (line.Text.Length > 6)
+            {
+                line.Text = line.Text.Remove(6);
+            }
+
+            return true;
+        }
+
+        private void CasfOut()
+        {
+
         }
 
         private void OnCategoryItemSelected(OptionButton.ItemSelectedEventArgs args)
