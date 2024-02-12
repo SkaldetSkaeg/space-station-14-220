@@ -47,8 +47,8 @@ namespace Content.Client.SS220.Cargo.UI
             Categories.OnItemSelected += OnCategoryItemSelected;
 
             AmountOfCashOut.OnTextChanged += e => OnAmountOfCashOutChange(e.Text);
-            //CashOutButton.OnPressed += CashOutButtonPressed;
-            //CashOutAllButton.OnPressed += CashOutAllButtonPressed;
+            CashOutButton.OnPressed += (args) => CashOutButtonPressed?.Invoke(args);
+            CashOutAllButton.OnPressed += (args) => CashOutAllButtonPressed?.Invoke(args);
         }
         public string GetAmountOfCashOut()
         {
