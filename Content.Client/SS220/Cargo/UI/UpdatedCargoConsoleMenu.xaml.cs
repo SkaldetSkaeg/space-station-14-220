@@ -10,6 +10,7 @@ using Robust.Client.UserInterface.XAML;
 using Robust.Shared.Prototypes;
 using Content.Client.Cargo.UI;
 using static Robust.Client.UserInterface.Controls.BaseButton;
+using System.ComponentModel.Design;
 
 namespace Content.Client.SS220.Cargo.UI
 {
@@ -26,6 +27,8 @@ namespace Content.Client.SS220.Cargo.UI
         public event Action<ButtonEventArgs>? OnOrderCanceled;
 
         public event Action<string>? OnAmountOfCashOutChanged;
+        public event Action<ButtonEventArgs>? CashOutButtonPressed;
+        public event Action<ButtonEventArgs>? CashOutAllButtonPressed;
 
         private readonly List<string> _categoryStrings = new();
         private string? _category;
@@ -42,7 +45,14 @@ namespace Content.Client.SS220.Cargo.UI
 
             SearchBar.OnTextChanged += OnSearchBarTextChanged;
             Categories.OnItemSelected += OnCategoryItemSelected;
+
             AmountOfCashOut.OnTextChanged += e => OnAmountOfCashOutChange(e.Text);
+            //CashOutButton.OnPressed += CashOutButtonPressed;
+            //CashOutAllButton.OnPressed += CashOutAllButtonPressed;
+        }
+        public string GetAmountOfCashOut()
+        {
+            return AmountOfCashOut.Text;
         }
 
         public void OnAmountOfCashOutChange(string text)
@@ -83,11 +93,6 @@ namespace Content.Client.SS220.Cargo.UI
             }
 
             return true;
-        }
-
-        private void CasfOut()
-        {
-
         }
 
         private void OnCategoryItemSelected(OptionButton.ItemSelectedEventArgs args)

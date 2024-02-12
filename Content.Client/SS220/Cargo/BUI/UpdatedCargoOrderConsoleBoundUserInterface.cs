@@ -10,6 +10,7 @@ using Robust.Client.Player;
 using Robust.Shared.Utility;
 using Robust.Shared.Prototypes;
 using static Robust.Client.UserInterface.Controls.BaseButton;
+using Content.Shared.SS220.Cargo.Events;
 
 namespace Content.Client.SS220.Cargo.BUI
 {
@@ -89,6 +90,10 @@ namespace Content.Client.SS220.Cargo.BUI
             };
             _menu.OnOrderApproved += ApproveOrder;
             _menu.OnOrderCanceled += RemoveOrder;
+
+            _menu.CashOutButtonPressed += CashOut;
+            _menu.CashOutAllButtonPressed += CashOutAll;
+
             _orderMenu.SubmitButton.OnPressed += (_) =>
             {
                 if (AddOrder())
@@ -173,6 +178,17 @@ namespace Content.Client.SS220.Cargo.BUI
             SendMessage(new CargoConsoleApproveOrderMessage(row.Order.OrderId));
             // Most of the UI isn't predicted anyway so.
             // _menu?.UpdateCargoCapacity(OrderCount + row.Order.Amount, OrderCapacity);
+        }
+        private void CashOut(ButtonEventArgs args)
+        {
+            if (!int.TryParse(_menu?.GetAmountOfCashOut(), out var cashOut))
+                return;
+
+            SendMessage(new CargoConsoleCashOutMessage(cashOut));
+        }
+        private void CashOutAll(ButtonEventArgs args)
+        {
+            SendMessage(new CargoConsoleCashOutMessage(BankBalance));
         }
     }
 }
