@@ -185,6 +185,7 @@ namespace Content.Client.SS220.Cargo.BUI
                 return;
 
             SendMessage(new CargoConsoleCashOutMessage(cashOut));
+            _menu?.ClearAmountOfCashOutLineEdit();
         }
         private void CashOutAll(ButtonEventArgs args)
         {

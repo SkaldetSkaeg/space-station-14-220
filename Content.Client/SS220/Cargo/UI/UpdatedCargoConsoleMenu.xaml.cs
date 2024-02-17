@@ -55,6 +55,11 @@ namespace Content.Client.SS220.Cargo.UI
             return AmountOfCashOut.Text;
         }
 
+        public void ClearAmountOfCashOutLineEdit()
+        {
+            AmountOfCashOut.Text = "";
+        }
+
         public void OnAmountOfCashOutChange(string text)
         {
             AdjustTextForNumber(AmountOfCashOut, text);
