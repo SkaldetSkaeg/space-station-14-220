@@ -4,6 +4,7 @@ using Robust.Client.UserInterface.CustomControls;
 using Robust.Client.UserInterface.XAML;
 using Content.Shared.PDA;
 using Robust.Client.UserInterface.Controls;
+using JetBrains.Annotations;
 
 namespace Content.Client.PDA.Ringer
 {
@@ -12,38 +13,65 @@ namespace Content.Client.PDA.Ringer
     {
         public string[] PreviousNoteInputs = new[] { "A", "A", "A", "A", "A", "A" };
         public LineEdit[] RingerNoteInputs = default!;
+        private int _ringLen;
 
         public RingtoneMenu()
         {
             RobustXamlLoader.Load(this);
 
             RingerNoteInputs = new[] { RingerNote1Input, RingerNote2Input, RingerNote3Input, RingerNote4Input, RingerNote5Input, RingerNote6Input };
+            _ringLen = RingerNoteInputs.Length;
 
             foreach(LineEdit input in RingerNoteInputs)
             {
                 input.OnTextChanged += e => AdjustText(input, e.Text);
+                input.OnTextEntered += _ => MoveToNext(input);
+                input.OnFocusExit += _ => FocusExit(input);
             }
+        }
+
+        public void FocusExit(LineEdit line)
+        {
+            line.Background
+            //line.SetMarkup();
+        }
+
+        public void MoveToNext(LineEdit line)
+        {
+            int i = Array.IndexOf(RingerNoteInputs, line);
+            LineEdit ringerNoteInput = RingerNoteInputs[(i + 1) % _ringLen];
+            ringerNoteInput.GrabKeyboardFocus();
+            ringerNoteInput.CursorPosition = 0;
         }
 
         public void AdjustText(LineEdit line, string text)
         {
 
-            if (line.Text == "")
+            if (text == "")
                 return;
 
-            foreach (var a in text)
+            string result = "";
+            foreach (var c in text)
             {
-                if (!char.IsLetter(a))
-                    text = text.Replace(a.ToString(), "");
+                if (char.IsLetter(c) || c == '#' || c == ' ')
+                    result += c;
             }
 
-            text = text.ToUpper();
+            result = result.ToUpper();
 
-            if (line.CursorPosition == line.Text.Length)
-                text = text.Remove(0, text.Length - 1);
-            else text = text.Remove(1, 1);
+            if (result.Length <= 2)
+            {
+                line.Text = result;
+                return;
+            }
 
-            line.Text = text;
+            if (line.CursorPosition == text.Length)
+            {
+                result = result.Remove(0, 1);
+            }
+            else result = result.Remove(2, 1);
+            line.Text = result;
+            MoveToNext(line);
         }
 
         protected override DragMode GetDragModeFor(Vector2 relativeMousePos)
