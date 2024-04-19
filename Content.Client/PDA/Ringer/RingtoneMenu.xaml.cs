@@ -17,42 +17,33 @@ namespace Content.Client.PDA.Ringer
         {
             RobustXamlLoader.Load(this);
 
-            RingerNoteInputs = new[] { RingerNoteOneInput, RingerNoteTwoInput, RingerNoteThreeInput, RingerNoteFourInput, RingerNoteFiveInput, RingerNoteSixInput };
+            RingerNoteInputs = new[] { RingerNote1Input, RingerNote2Input, RingerNote3Input, RingerNote4Input, RingerNote5Input, RingerNote6Input };
 
-            for (var i = 0; i < RingerNoteInputs.Length; ++i)
+            foreach(LineEdit input in RingerNoteInputs)
             {
-                var input = RingerNoteInputs[i];
-                var index = i;
-                var foo = () => // Prevents unauthorized characters from being entered into the LineEdit
-                {
-                    input.Text = input.Text.ToUpper();
-
-                    if (!IsNote(input.Text))
-                    {
-                        input.Text = PreviousNoteInputs[index];
-                    }
-                    else
-                        PreviousNoteInputs[index] = input.Text;
-
-                    input.RemoveStyleClass("Caution");
-                };
-
-                input.OnFocusExit += _ => foo();
-                input.OnTextEntered += _ =>
-                {
-                    foo();
-                    input.CursorPosition = input.Text.Length; // Resets caret position to the end of the typed input
-                };
-                input.OnTextChanged += _ =>
-                {
-                    input.Text = input.Text.ToUpper();
-
-                    if (!IsNote(input.Text))
-                        input.AddStyleClass("Caution");
-                    else
-                        input.RemoveStyleClass("Caution");
-                };
+                input.OnTextChanged += e => AdjustText(input, e.Text);
             }
+        }
+
+        public void AdjustText(LineEdit line, string text)
+        {
+
+            if (line.Text == "")
+                return;
+
+            foreach (var a in text)
+            {
+                if (!char.IsLetter(a))
+                    text = text.Replace(a.ToString(), "");
+            }
+
+            text = text.ToUpper();
+
+            if (line.CursorPosition == line.Text.Length)
+                text = text.Remove(0, text.Length - 1);
+            else text = text.Remove(1, 1);
+
+            line.Text = text;
         }
 
         protected override DragMode GetDragModeFor(Vector2 relativeMousePos)
