@@ -24,7 +24,7 @@ namespace Content.Client.PDA.Ringer
 
             foreach (LineEdit input in RingerNoteInputs)
             {
-                input.OnTextChanged += e => AdjustText(input, e.Text);
+                input.OnTextChanged += e => TextChanged(input, e.Text);
                 input.OnTextEntered += _ => MoveToNext(input);
                 input.OnFocusExit += _ => FocusExit(input);
                 //input.OnKeyBindDown += OnArrows();
@@ -70,7 +70,7 @@ namespace Content.Client.PDA.Ringer
             ringerNoteInput.CursorPosition = 0;
         }
 
-        public void AdjustText(LineEdit line, string text)
+        public void TextChanged(LineEdit line, string text)
         {
             int cursor = line.CursorPosition - 1;
 
@@ -87,7 +87,9 @@ namespace Content.Client.PDA.Ringer
             string cursorString = text[cursor].ToString();
 
             if (cursorString == "#")
-               return text[..(cursor + 1)];
+            {
+                return text[..(cursor + 1)];
+            }
 
             return text[cursor].ToString();
         }
