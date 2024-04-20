@@ -22,18 +22,44 @@ namespace Content.Client.PDA.Ringer
             RingerNoteInputs = new[] { RingerNote1Input, RingerNote2Input, RingerNote3Input, RingerNote4Input, RingerNote5Input, RingerNote6Input };
             _ringLen = RingerNoteInputs.Length;
 
-            foreach(LineEdit input in RingerNoteInputs)
+            foreach (LineEdit input in RingerNoteInputs)
             {
                 input.OnTextChanged += e => AdjustText(input, e.Text);
                 input.OnTextEntered += _ => MoveToNext(input);
                 input.OnFocusExit += _ => FocusExit(input);
+                //input.OnKeyBindDown += OnArrows();
             }
+
         }
+        /*
+        private void OnArrows(LineEdit.GUIBoundKeyEventArgs args)
+        {
+
+        }*/
 
         public void FocusExit(LineEdit line)
         {
-            line.Background
-            //line.SetMarkup();
+            string result = "";
+            foreach (var c in line.Text)
+            {
+                if (char.IsLetter(c) || c == '#')
+                    result += c;
+            }
+
+            line.Text = result;
+
+
+            int i = Array.IndexOf(RingerNoteInputs, line);
+
+            if (!IsNote(line.Text))
+            {
+                line.Text = PreviousNoteInputs[i];
+                return;
+            }
+            else
+            {
+                PreviousNoteInputs[i] = line.Text;
+            }
         }
 
         public void MoveToNext(LineEdit line)
@@ -46,32 +72,24 @@ namespace Content.Client.PDA.Ringer
 
         public void AdjustText(LineEdit line, string text)
         {
+            int cursor = line.CursorPosition - 1;
 
-            if (text == "")
+            if (text == "" || cursor < 0)
                 return;
 
-            string result = "";
-            foreach (var c in text)
-            {
-                if (char.IsLetter(c) || c == '#' || c == ' ')
-                    result += c;
-            }
+            text = text.ToUpper();
 
-            result = result.ToUpper();
+            line.Text = CursorCheck(text, cursor);
+        }
 
-            if (result.Length <= 2)
-            {
-                line.Text = result;
-                return;
-            }
+        public string CursorCheck(string text, int cursor)
+        {
+            string cursorString = text[cursor].ToString();
 
-            if (line.CursorPosition == text.Length)
-            {
-                result = result.Remove(0, 1);
-            }
-            else result = result.Remove(2, 1);
-            line.Text = result;
-            MoveToNext(line);
+            if (cursorString == "#")
+               return text[..(cursor + 1)];
+
+            return text[cursor].ToString();
         }
 
         protected override DragMode GetDragModeFor(Vector2 relativeMousePos)
