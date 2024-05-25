@@ -1976,6 +1976,7 @@
     bloodMaxVolume: 50
   - type: TTS # Corvax-TTS
     voice: ziggs
+  #- type: ItemOnDeath
 
 - type: entity
   name: penguin
