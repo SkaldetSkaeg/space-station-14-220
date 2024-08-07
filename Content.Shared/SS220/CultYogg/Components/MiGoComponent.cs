@@ -73,6 +73,9 @@ public sealed partial class MiGoComponent : Component
 
     [ViewVariables, DataField, AutoNetworkedField]
     public float UnMaterialMovementSpeed = 18f;//ToDo check this thing
+
+    [ViewVariables, DataField]
+    public float ErectDoAfterSeconds = 3f;
 }
 
 //Visual
@@ -80,19 +83,4 @@ public sealed partial class MiGoComponent : Component
 public enum MiGoVisual
 {
     Base
-}
-
-//UI for creation foundation of a building
-[NetSerializable, Serializable]
-public enum MiGoErectUiKey : byte
-{
-    Key
-}
-
-[Serializable, NetSerializable]
-public sealed class MiGoErectBuiState : BoundUserInterfaceState
-{
-    public MiGoErectBuiState()
-    {
-    }
 }

@@ -20,7 +20,7 @@
   - type: Material
   - type: PhysicalComposition
     materialComposition:
-      Steel: 100
+      Tokl: 100
   - type: Stack
     stackType: Tokl
     baseLayer: base

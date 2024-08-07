@@ -1,0 +1,40 @@
+# © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
+
+- type: cultYoggBuilding
+  id: Test1
+  order: 0
+  frame: CultYoggBuildingFrame
+  result: ComputerShuttleCargo
+  materials:
+  - stack: Tokl
+    count: 10
+    icon: { sprite: SS220/Interface/Materials/material_icons_16.rsi, state: tokl }
+  - stack: MetalRod
+    count: 10
+    icon: { sprite: SS220/Interface/Materials/material_icons_16.rsi, state: metal_rod }
+ 
+- type: cultYoggBuilding
+  id: Test2
+  order: 1
+  frame: CultYoggBuildingFrame
+  result: ComputerShuttleCargo
+  materials:
+  - stack: Steel
+    count: 10
+    icon: { sprite: SS220/Interface/Materials/material_icons_16.rsi, state: steel }
+  - stack: Tokl
+    count: 5
+    icon: { sprite: SS220/Interface/Materials/material_icons_16.rsi, state: tokl }
+  
+- type: cultYoggBuilding
+  id: Test3
+  order: 2
+  frame: CultYoggBuildingFrame
+  result: ComputerShuttleCargo
+  materials:
+  - stack: Tokl
+    count: 10
+    icon: { sprite: SS220/Interface/Materials/material_icons_16.rsi, state: tokl }
+  - stack: Glass
+    count: 1
+    icon: { sprite: SS220/Interface/Materials/material_icons_16.rsi, state: glass }

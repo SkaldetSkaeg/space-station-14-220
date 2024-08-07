@@ -35,7 +35,6 @@ public abstract class SharedMiGoSystem : EntitySystem
     [Dependency] private readonly SharedPopupSystem _popup = default!;
     [Dependency] private readonly INetManager _net = default!;
     [Dependency] private readonly SharedDoAfterSystem _doAfter = default!;
-    [Dependency] private readonly SharedUserInterfaceSystem _userInterface = default!;
     [Dependency] private readonly SharedPhysicsSystem _physics = default!;
     [Dependency] private readonly TagSystem _tag = default!;
     [Dependency] private readonly MovementSpeedModifierSystem _speedModifier = default!;
@@ -43,7 +42,9 @@ public abstract class SharedMiGoSystem : EntitySystem
     [Dependency] private readonly IEntityManager _entityManager = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly NpcFactionSystem _npcFaction = default!;
+    [Dependency] private readonly SharedMiGoErectSystem _miGoErectSystem = default!;
     [Dependency] private readonly SharedTransformSystem _transform = default!;
+
 
     //[Dependency] private readonly CultYoggRuleSystem _cultYoggRule = default!; //maybe use this for enslavement
 
@@ -60,8 +61,6 @@ public abstract class SharedMiGoSystem : EntitySystem
         SubscribeLocalEvent<MiGoComponent, MiGoErectEvent>(MiGoErect);
         SubscribeLocalEvent<MiGoComponent, MiGoSacrificeEvent>(MiGoSacrifice);
 
-
-        SubscribeLocalEvent<MiGoComponent, BoundUIOpenedEvent>(OnBoundUIOpened);
 
         SubscribeLocalEvent<MiGoComponent, AfterMaterialize>(OnAfterMaterialize);
         SubscribeLocalEvent<MiGoComponent, AfterDeMaterialize>(OnAfterDeMaterialize);
@@ -332,26 +331,14 @@ public abstract class SharedMiGoSystem : EntitySystem
     #endregion
 
     #region Erect
-    private void MiGoErect(EntityUid uid, MiGoComponent comp, MiGoErectEvent args)
+    private void MiGoErect(Entity<MiGoComponent> entity, ref MiGoErectEvent args)
     {
-        //(Entity<MiGoComponent> uid, ref MiGoErectEvent args)
         //will wait when sw will update ui parts to copy paste, cause rn it has an errors
-        if (args.Handled || !TryComp<ActorComponent>(uid, out var actor))
+        if (args.Handled || !TryComp<ActorComponent>(entity, out var actor))
             return;
-        args.Handled = true;
+        //args.Handled = true; // No cooldown for UI
 
-        _userInterface.TryToggleUi(uid, MiGoErectUiKey.Key, actor.PlayerSession);
-    }
-    private void OnBoundUIOpened(EntityUid uid, MiGoComponent component, BoundUIOpenedEvent args)
-    {
-        //(Entity<MiGoComponent> uid, ref BoundUIOpenedEvent args)
-        /*
-        _entityManager.TryGetComponent<IntrinsicRadioTransmitterComponent>(uid, out var intrinsicRadio);
-        var radioChannels = intrinsicRadio?.Channels;
-
-        var state = new SiliconLawBuiState(GetLaws(uid).Laws, radioChannels);
-        _userInterface.SetUiState(args.Entity, SiliconLawsUiKey.Key, state);
-        */
+        _miGoErectSystem.OpenUI(entity, actor);
     }
     #endregion
 
