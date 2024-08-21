@@ -1,0 +1,55 @@
+- type: entity
+  name: Carbon paste
+  #parent: FoodSnackBase
+  id: FoodCarbonPaste
+  description: A terrible tasting mass that can be digested by any organism.
+  components:
+  - type: Tag
+    tags:
+      - FoodSnack
+  - type: Sprite
+    sprite: SS220/Objects/Consumable/Food/carbon_paste.rsi
+    state: paste
+  - type: SolutionContainerManager
+    solutions:
+      food:
+        maxVol: 30 # Room for extra condiments
+        reagents:
+        - ReagentId: Nutriment
+          Quantity: 10
+  - type: Item
+    sprite: SS220/Objects/Consumable/Food/carbon_paste.rsi
+    heldPrefix: packet
+    size: Tiny
+  - type: FlavorProfile
+    flavors:
+      - chocolate
+  - type: Food
+    trash: FoodPacketCnDsTrash
+
+- type: entity
+#  categories: [ HideSpawnMenu ] #SS220-Maints-Update
+  #parent: FoodPacketTrash
+  id: FoodPacketCarbonPasteTrash
+  name: Carbon bag
+  components:
+  description: This is rubbish.
+  suffix: Мусор #SS220-Maints-Update
+  abstract: true
+  components:
+  - type: Sprite
+    sprite: SS220/Objects/Consumable/Food/carbon_paste.rsi
+    state: carbon-trash
+  - type: Item
+    sprite: SS220/Objects/Consumable/Food/carbon_paste.rsi
+    heldPrefix: packet
+    size: Tiny
+  - type: Tag
+    tags:
+    - Trash
+  - type: PhysicalComposition
+    materialComposition:
+      Steel: 100
+  - type: SpaceGarbage
+  - type: StaticPrice
+    price: 0

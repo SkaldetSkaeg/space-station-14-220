@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "license": "CC-BY-SA-3.0",
+  "copyright": "Added by SkaldetSkaeg. Sprite taken from quasimorph and modified by okroshka59 for SS220",
+  "size": {
+    "x": 32,
+    "y": 32
+  },
+  "states": [
+    {
+      "name": "paste"
+    },
+    {
+      "name": "paste-trash"
+    }
+  ]
+}
