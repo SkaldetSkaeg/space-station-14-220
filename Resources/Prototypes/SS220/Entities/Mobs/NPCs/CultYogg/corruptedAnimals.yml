@@ -7,8 +7,12 @@
   description: Unspeakable evil
   abstract: true
   components:
+    - type: Damageable
+      damageContainer: Biological
+      damageModifierSet: CorruptedAnimal
     - type: InputMover
     - type: MobMover
+    - type: NoSlip
     - type: HTN
       rootTask:
         task: SimpleHostileCompound #what is this? should it be cult?
@@ -20,17 +24,6 @@
         - CultYogg
     - type: CombatMode
     - type: Physics
-    - type: Fixtures
-      fixtures:
-        fix1:
-          shape:
-            !type:PhysShapeCircle
-            radius: 0.40
-          density: 80
-          mask:
-            - MobMask
-          layer:
-            - MobLayer
     - type: MobState
     - type: MobThresholds
       thresholds:
@@ -41,6 +34,8 @@
     - type: Butcherable
       spawned:
         - id: FoodMeatFish #Should be shrooms
+          amount: 2
+        - id: FoodMeatRotten
           amount: 2
     - type: MeleeWeapon
       altDisarm: false
@@ -57,6 +52,7 @@
     - type: Tag
       tags: #should we add our own tag?
         - DoorBumpOpener
+        - CannotSuicide
     - type: ReplacementAccent
       accent: genericAggressive
     - type: Speech
@@ -72,7 +68,7 @@
     - type: ShowCultYoggIcons
 
 - type: entity
-  parent: [BaseMobCorrupted , MobCow]
+  parent: [BaseMobCorrupted, MobCow]
   id: CultCowCorrupted
   components:
   - type: Sprite
@@ -106,3 +102,205 @@
     interactSuccessSpawn: EffectHearts
     interactSuccessSound:
       path: /Audio/Animals/cow_moo.ogg
+
+- type: entity
+  parent: [BaseMobCorrupted, MobMonkey]
+  id: CultMonkeyCorrupted
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: monkey
+      sprite: SS220/Mobs/CultYogg/monkey_corrupted.rsi
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: monkey
+      Dead:
+        Base: dead
+  - type: MeleeWeapon
+    soundHit:
+      path: /Audio/Effects/bite.ogg
+    angle: 30
+    animation: WeaponArcBite
+    damage:
+      types:
+        Piercing: 10
+        Slash: 5
+  
+- type: entity
+  parent: [BaseMobCorrupted, MobPig]
+  id: CultPigCorrupted
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: pig
+      sprite: SS220/Mobs/CultYogg/pig_corrupted.rsi
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: pig
+      Dead:
+        Base: dead
+  - type: Butcherable
+    spawned:
+    - id: FoodMeatFish #Should be shrooms
+      amount: 2
+    - id: FoodMeatRotten
+      amount: 6
+  - type: MeleeWeapon
+    soundHit:
+      path: /Audio/Effects/bite.ogg
+    angle: 30
+    animation: WeaponArcBite
+    damage:
+      types:
+        Piercing: 10
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      75: Dead
+
+- type: entity
+  parent: [BaseMobCorrupted, MobChicken]
+  id: CultChickenCorrupted
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: chicken
+      sprite: SS220/Mobs/CultYogg/chicken_corrupted.rsi
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: chicken
+      Dead:
+        Base: dead
+  - type: MovementSpeedModifier
+    baseWalkSpeed : 4
+    baseSprintSpeed : 6.5
+  - type: MeleeWeapon
+    soundHit:
+      path: /Audio/Effects/bite.ogg
+    angle: 30
+    animation: WeaponArcBite
+    damage:
+      types:
+        Piercing: 8
+
+- type: entity
+  id: CultBearCorrupted
+  parent: [BaseMobCorrupted, MobBearSpace]
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    sprite: SS220/Mobs/CultYogg/bear_corrupted.rsi
+    layers:
+    - map: [ "enum.DamageStateVisualLayers.Base" ]
+      state: bear
+    - map: [ "enum.DamageStateVisualLayers.BaseUnshaded" ]
+      state: glow
+      shader: unshaded
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      100: Dead
+  - type: Stamina
+    critThreshold: 150
+  - type: MeleeWeapon
+    soundHit:
+        path: /Audio/Weapons/Xeno/alien_claw_flesh3.ogg
+    angle: 50
+    animation: WeaponArcClaw
+    damage:
+      types:
+        Blunt: 7
+        Slash: 10
+      
+- type: entity
+  parent: [BaseMobCorrupted, MobBat]
+  id: CultBatCorrupted
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: bat
+      sprite: SS220/Mobs/CultYogg/bat_corrupted.rsi
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: bat
+      Dead:
+        Base: dead
+  - type: MeleeWeapon
+    soundHit:
+      path: /Audio/Effects/bite.ogg
+    angle: 30
+    animation: WeaponArcBite
+    damage:
+      types:
+        Piercing: 7
+        Slash: 3
+  - type: MovementSpeedModifier
+    baseWalkSpeed : 4
+    baseSprintSpeed : 6.5
+
+- type: entity
+  parent: [BaseMobCorrupted, MobGiantSpider]
+  id: CultSpiderCorrupted
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: tarantula
+      sprite: SS220/Mobs/CultYogg/spider.rsi
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      75: Dead
+
+- type: entity
+  parent: [BaseMobCorrupted, MobClownSpider]
+  id: CultClownSpiderCorrupted
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: clown
+      sprite: SS220/Mobs/CultYogg/clownspider_corrupted.rsi
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      75: Dead
+
+
+- type: entity
+  parent: [BaseMobCorrupted, MobCrab]
+  id: CultCrabCorrupted
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: crab
+      sprite: SS220/Mobs/CultYogg/crab_corrupted.rsi
+  - type: MeleeWeapon
+    altDisarm: false
+    angle: 0
+    animation: WeaponArcBite
+    soundHit:
+      path: /Audio/Effects/bite.ogg #maybe different sound
+    damage:
+      types:
+        Piercing: 13
+        Slash: 4
+  - type: MovementSpeedModifier
+    baseWalkSpeed : 3
+    baseSprintSpeed : 3.5

@@ -9,64 +9,94 @@
 - type: corruptedAnimals
   id: MobMonkey
   corruptedAnimal: MobMonkey
-  result: CultCowCorrupted
+  result: CultMonkeyCorrupted
 
 - type: corruptedAnimals
   id: MobMouse
   corruptedAnimal: MobMouse
-  result: CultCowCorrupted
+  result: CultBatCorrupted
 
 - type: corruptedAnimals
   id: MobMouse1
   corruptedAnimal: MobMouse1
-  result: CultCowCorrupted
+  result: CultBatCorrupted
 
 - type: corruptedAnimals
   id: MobMouse2
   corruptedAnimal: MobMouse2
-  result: CultCowCorrupted
+  result: CultBatCorrupted
 
 - type: corruptedAnimals
   id: MobBat
   corruptedAnimal: MobBat
-  result: CultCowCorrupted
+  result: CultBatCorrupted
 
 - type: corruptedAnimals
   id: MobBatRemilia
   corruptedAnimal: MobBatRemilia
-  result: CultCowCorrupted
+  result: CultBatCorrupted
 
 - type: corruptedAnimals
   id: MobBearSpace
   corruptedAnimal: MobBearSpace
-  result: CultCowCorrupted
+  result: CultBearCorrupted
 
 - type: corruptedAnimals
   id: MobBearSpaceSalvage
   corruptedAnimal: MobBearSpaceSalvage
-  result: CultCowCorrupted
+  result: CultBearCorrupted
 
 - type: corruptedAnimals
   id: MobChicken
   corruptedAnimal: MobChicken
-  result: CultCowCorrupted
+  result: CultChickenCorrupted
 
 - type: corruptedAnimals
   id: MobChicken1
   corruptedAnimal: MobChicken1
-  result: CultCowCorrupted
+  result: CultChickenCorrupted
 
 - type: corruptedAnimals
   id: MobChicken2
   corruptedAnimal: MobChicken2
-  result: CultCowCorrupted
+  result: CultChickenCorrupted
 
 - type: corruptedAnimals
   id: MobPig
   corruptedAnimal: MobPig
-  result: CultCowCorrupted
+  result: CultPigCorrupted
 
 - type: corruptedAnimals
   id: MobAlexander
   corruptedAnimal: MobAlexander
-  result: CultCowCorrupted
+  result: CultPigCorrupted
+
+- type: corruptedAnimals
+  id: MobClownSpider
+  corruptedAnimal: MobClownSpider
+  result: CultClownSpiderCorrupted
+
+- type: corruptedAnimals
+  id: MobGiantSpider
+  corruptedAnimal: MobGiantSpider
+  result: CultSpiderCorrupted
+
+- type: corruptedAnimals
+  id: MobGiantSpiderAngry
+  corruptedAnimal: MobGiantSpiderAngry
+  result: CultSpiderCorrupted
+
+- type: corruptedAnimals
+  id: MobGiantSpiderWizard
+  corruptedAnimal: MobGiantSpiderWizard
+  result: CultSpiderCorrupted
+
+- type: corruptedAnimals
+  id: MobSpiderSpace
+  corruptedAnimal: MobSpiderSpace
+  result: CultSpiderCorrupted
+
+- type: corruptedAnimals
+  id: MobCrab
+  corruptedAnimal: MobCrab
+  result: CultCrabCorrupted
