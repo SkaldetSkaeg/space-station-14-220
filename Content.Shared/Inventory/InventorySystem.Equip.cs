@@ -57,13 +57,6 @@ public abstract partial class InventorySystem
 
         var gotUnequippedEvent = new GotUnequippedEvent(uid, args.Entity, slotDef);
         RaiseLocalEvent(args.Entity, gotUnequippedEvent, true);
-
-        // SS220 Chat-Special-Emote begin
-        if (_entManager.TryGetComponent<SpecialSoundsComponent>(args.Entity, out var soundcomp) && (soundcomp.Mode == SpecialSoundMode.SpecialSoundOn))
-        {
-            RaiseLocalEvent(uid, new UnloadSpecialSoundsEvent(args.Entity));
-        }
-        // SS220 Chat-Special-Emote end
     }
 
     private void OnEntInserted(EntityUid uid, InventoryComponent component, EntInsertedIntoContainerMessage args)
@@ -76,13 +69,6 @@ public abstract partial class InventorySystem
 
         var gotEquippedEvent = new GotEquippedEvent(uid, args.Entity, slotDef);
         RaiseLocalEvent(args.Entity, gotEquippedEvent, true);
-
-        // SS220 Chat-Special-Emote begin
-        if (_entManager.TryGetComponent<SpecialSoundsComponent>(args.Entity, out var soundcomp) && (soundcomp.Mode == SpecialSoundMode.SpecialSoundOn))
-        {
-            RaiseLocalEvent(uid, new InitSpecialSoundsEvent(args.Entity));
-        }
-        // SS220 Chat-Special-Emote end
     }
 
     /// <summary>

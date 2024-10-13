@@ -9,7 +9,7 @@ using Robust.Shared.Utility;
 
 namespace Content.Server.SS220.Speech.EntitySystems;
 
-public sealed partial class ClothingSpecialEmotesSystem : EntitySystem
+public sealed class ClothingSpecialEmotesSystem : EntitySystem
 {
     [Dependency] private readonly InventorySystem _inventory = default!;
 
