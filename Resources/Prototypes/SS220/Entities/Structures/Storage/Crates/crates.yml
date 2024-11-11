@@ -66,3 +66,49 @@
     node: cratewood
     containers:
     - entity_storage
+
+- type: entity
+  parent: CrateGenericSteel
+  id: CrateMimic
+  name: mimic chest
+  description: A space pirate chest, not for station lubbers.
+  components:
+    - type: Sprite
+      offset: 0, 0
+      sprite: SS220/Structures/Storage/Crates/wood_crate.rsi
+      layers:
+        - state: base
+        - state: closed
+          map: [ "enum.StorageVisualLayers.Door" ]
+        - state: paper
+          sprite: Structures/Storage/Crates/labels.rsi
+          map: [ "enum.PaperLabelVisuals.Layer" ]
+          offset: "-0.03125,0.28125"
+    - type: Icon
+      sprite: SS220/Structures/Storage/Crates/wood_crate.rsi
+      state: base
+    - type: Damageable
+      damageModifierSet: Wood
+      damageContainer: Inorganic
+    - type: Destructible
+      thresholds:
+        - trigger:
+            !type:DamageTrigger
+            damage: 15
+          behaviors:
+            - !type:PlaySoundBehavior
+              sound:
+                collection: WoodDestroy
+            - !type:SpawnEntitiesBehavior
+              spawn:
+                MaterialWoodPlank1:
+                  min: 1
+                  max: 4
+            - !type:DoActsBehavior
+              acts: [ "Destruction" ]
+    - type: Construction
+      graph: CrateWood
+      node: cratewood
+      containers:
+        - entity_storage
+    - type: MimicChest
