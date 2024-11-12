@@ -1,3 +1,4 @@
+using Content.Shared.Damage;
 using Robust.Shared.GameStates;
 
 namespace Content.Shared.SS220.MimicChest;
@@ -9,7 +10,7 @@ public sealed partial class MimicChestComponent : Component
     public bool IsBusy;
 
     [ViewVariables, DataField, AutoNetworkedField]
-    public float TimeStay;
+    public TimeSpan TimeStay;
 
     [AutoNetworkedField]
     [ViewVariables, DataField]
@@ -20,5 +21,8 @@ public sealed partial class MimicChestComponent : Component
 
     [ViewVariables, DataField, AutoNetworkedField]
     public TimeSpan LastPulseTime;
+
+    [DataField("damage", required: true)]
+    public DamageSpecifier Damage = default!;
 
 }
