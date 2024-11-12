@@ -1,10 +1,8 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 using Content.Shared.Humanoid.Markings;
 using Content.Shared.Nutrition.Components;
-using Content.Shared.Roles;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
-using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype;
 
 namespace Content.Shared.SS220.CultYogg.Cultists;
 
@@ -12,7 +10,7 @@ namespace Content.Shared.SS220.CultYogg.Cultists;
 [Access(typeof(SharedCultYoggSystem), Friend = AccessPermissions.ReadWriteExecute, Other = AccessPermissions.Read)]
 public sealed partial class CultYoggComponent : Component
 {
-    /// ABILITIES ///
+    #region abilities
     [DataField]
     public EntProtoId PukeShroomAction = "ActionCultYoggPukeShroom";
 
@@ -42,10 +40,18 @@ public sealed partial class CultYoggComponent : Component
 
     [DataField, AutoNetworkedField]
     public EntityUid? AscendingActionEntity;
+    #endregion
 
-    [ViewVariables(VVAccess.ReadWrite)]
-    [DataField, AutoNetworkedField]
-    public int CurrentStage = 0;
+    #region puke
+    /// <summary>
+    /// This will subtract (not add, don't get this mixed up) from the current hunger of the mob doing micoz
+    /// </summary>
+
+    [ViewVariables, DataField, AutoNetworkedField]
+    public float HungerCost = 50f;
+
+    [ViewVariables, DataField, AutoNetworkedField]
+    public float ThirstCost = 100f;
 
     [ViewVariables, DataField, AutoNetworkedField]
     public string PukedEntity = "FoodMiGomyceteCult"; //what will be puked out
@@ -61,30 +67,30 @@ public sealed partial class CultYoggComponent : Component
     /// </summary>
     [DataField("minThirstThreshold"), ViewVariables(VVAccess.ReadWrite), AutoNetworkedField]
     public ThirstThreshold MinThirstThreshold = ThirstThreshold.Parched;
+    #endregion
 
+    #region acsencion
     /// <summary>
     /// Entity the cultist will ascend into
     /// </summary>
+    [ViewVariables]
     public string AscendedEntity = "MiGoCultYogg";
 
-    public int AmountShroomsToAscend = 3; //to check what amount should be for ascencion
-
+    [ViewVariables]
+    public int AmountShroomsToAscend = 12;//3 multiplyied on amount of reagent in a shroom
+    [ViewVariables]
     public int ConsumedShrooms = 0; //buffer
+    #endregion
 
-    /// <summary>
-    /// This will subtract (not add, don't get this mixed up) from the current hunger of the mob doing micoz
-    /// </summary>
-
-    [ViewVariables, DataField, AutoNetworkedField]
-    public float HungerCost = 50f;
-
-    [ViewVariables, DataField, AutoNetworkedField]
-    public float ThirstCost = 100f;
-
+    #region stages
     [DataField]
     public Color? PreviousEyeColor;
 
-
     [DataField]
     public Marking? PreviousTail;
+
+    [ViewVariables(VVAccess.ReadWrite)]
+    [DataField, AutoNetworkedField]
+    public int CurrentStage = 0;
+    #endregion
 }

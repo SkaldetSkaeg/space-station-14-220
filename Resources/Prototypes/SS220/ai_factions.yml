@@ -57,6 +57,21 @@
 
 # ss220 spider queen end
 
+# Death Squad
+- type: npcFaction
+  id: DeathSquad
+  hostile:
+  - NanoTrasen
+  - Syndicate
+  - Xeno
+  - Passive
+  - PetsNT
+  - Mouse
+  - Zombie
+  - Revolutionary
+  - SpiderQueen
+  - SimpleHostile
+
 #SS220 CultYogg
 - type: npcFaction
   id: CultYogg

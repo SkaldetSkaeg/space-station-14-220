@@ -9,7 +9,6 @@ using Content.Shared.Popups;
 using Content.Shared.SS220.CultYogg.Corruption;
 using Robust.Shared.Timing;
 
-
 namespace Content.Shared.SS220.CultYogg.Cultists;
 
 public abstract class SharedCultYoggSystem : EntitySystem

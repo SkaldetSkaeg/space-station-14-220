@@ -212,7 +212,6 @@ public sealed class CultYoggSystem : SharedCultYoggSystem
     }
     private void ForcedAcsending(Entity<CultYoggComponent> uid, ref CultYoggForceAscendingEvent args)
     {
-
         if (TerminatingOrDeleted(uid))
             return;
 
@@ -248,6 +247,7 @@ public sealed class CultYoggSystem : SharedCultYoggSystem
         //Maybe in later version we will detiriorate the body and add some kind of effects
 
         //IDK how to check if he already has this action, so i did this markup
+        _popup.PopupEntity(Loc.GetString("cult-yogg-acsending-started"), uid, uid);
         EnsureComp<AcsendingComponent>(uid);
     }
 

@@ -12,10 +12,10 @@
   - type: SolutionContainerManager
     solutions:
       food:
-        maxVol: 0.5
+        maxVol: 2.0
         reagents:
         - ReagentId: TheBloodOfYogg
-          Quantity: 0.5
+          Quantity: 2.0
   - type: Sprite
     sprite: SS220/Objects/CultYogg/migomycete.rsi
     state: produce
