@@ -26,8 +26,6 @@ public sealed class MimicChestSystem : EntitySystem
     [Dependency] private readonly EntityStorageSystem _entityStorageSystem = default!;
     [Dependency] private readonly MobStateSystem _mobStateSystem = default!;
 
-    private const float PullDuration = 3f; // time for pulling to mimic
-
     public override void Initialize()
     {
         base.Initialize();
@@ -100,10 +98,10 @@ public sealed class MimicChestSystem : EntitySystem
 
             var elapsedTime = (curTime - chestComponent.CaptureStartTime).TotalSeconds;
 
-            if (distance > 0.01f && elapsedTime < PullDuration)
+            if (distance > 0.01f && elapsedTime < chestComponent.PullDuration)
             {
                 // the speed for entity should be in chest
-                var speed = distance / (float)(PullDuration - elapsedTime);
+                var speed = distance / (float)(chestComponent.PullDuration - elapsedTime);
                 var direction = (chestWorld - targetWorld).Normalized();
                 var newPosition = targetWorld + direction * speed * frameTime;
                 _transform.SetWorldPosition(targetTransform.Owner, newPosition);

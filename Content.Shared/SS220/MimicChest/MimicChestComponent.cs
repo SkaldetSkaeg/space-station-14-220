@@ -6,23 +6,26 @@ namespace Content.Shared.SS220.MimicChest;
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class MimicChestComponent : Component
 {
-    [ViewVariables, DataField, AutoNetworkedField]
+    [DataField, AutoNetworkedField]
     public bool IsBusy;
 
-    [ViewVariables, DataField, AutoNetworkedField]
+    [DataField, AutoNetworkedField]
     public TimeSpan TimeStay;
 
     [AutoNetworkedField]
-    [ViewVariables, DataField]
+    [DataField]
     public EntityUid? CapturedTarget;
 
-    [ViewVariables, DataField, AutoNetworkedField]
+    [DataField, AutoNetworkedField]
     public TimeSpan CaptureStartTime;
 
-    [ViewVariables, DataField, AutoNetworkedField]
+    [DataField, AutoNetworkedField]
     public TimeSpan LastPulseTime;
 
     [DataField("damage", required: true)]
     public DamageSpecifier Damage = default!;
+
+    [DataField]
+    public float PullDuration = 3f; // time for pulling to mimic
 
 }
