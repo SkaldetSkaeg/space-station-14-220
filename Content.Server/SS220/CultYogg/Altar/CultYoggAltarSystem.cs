@@ -48,7 +48,7 @@ public sealed partial class CultYoggAltarSystem : SharedCultYoggAltarSystem
             stage = ++cultRule.AmountOfSacrifices;
 
             if (cultRule.AmountOfSacrifices == cultRule.ReqAmountOfSacrifices)
-                Spawn("Nyarlathotep", Transform(ent).Coordinates);
+                Spawn(ent.Comp.GodEnt, Transform(ent).Coordinates);
         }
 
         //sending all cultists updating stage event
@@ -56,7 +56,7 @@ public sealed partial class CultYoggAltarSystem : SharedCultYoggAltarSystem
         while (queryCultists.MoveNext(out var uid, out _))
         {
             var ev = new ChangeCultYoggStageEvent(stage);
-            RaiseLocalEvent(uid, ev, true);
+            RaiseLocalEvent(uid, ref ev, true);
         }
 
         //send cooldown to a MiGo sacrifice action

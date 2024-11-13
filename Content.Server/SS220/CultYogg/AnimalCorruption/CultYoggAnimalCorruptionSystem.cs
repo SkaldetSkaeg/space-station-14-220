@@ -48,6 +48,25 @@ public sealed class CultYoggAnimalCorruptionSystem : EntitySystem
                 return true;
             }
         }
+
+        var parents = MetaData(uid).EntityPrototype?.Parents;
+        if (parents == null)
+        {
+            corruption = null;
+            return false;
+        }
+        foreach (var parentId in parents)
+        {
+            foreach (var entProto in _prototypeManager.EnumeratePrototypes<CultYoggCorruptedAnimalsPrototype>())//idk if it isn't shitcode
+            {
+                if (parentId == entProto.ID)
+                {
+                    corruption = entProto;
+                    return true;
+                }
+            }
+        }
+
         corruption = null;
         return false;
     }
