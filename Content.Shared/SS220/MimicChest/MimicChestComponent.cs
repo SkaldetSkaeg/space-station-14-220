@@ -1,4 +1,5 @@
 using Content.Shared.Damage;
+using Content.Shared.Whitelist;
 using Robust.Shared.GameStates;
 
 namespace Content.Shared.SS220.MimicChest;
@@ -27,5 +28,8 @@ public sealed partial class MimicChestComponent : Component
 
     [DataField]
     public float PullDuration = 3f; // time for pulling to mimic
+
+    [DataField(required: true)]
+    public EntityWhitelist? Whitelist;
 
 }

@@ -3,15 +3,15 @@ using System.Numerics;
 using Content.Server.Storage.Components;
 using Content.Server.Storage.EntitySystems;
 using Content.Shared.Damage;
+using Content.Shared.Hands.Components;
 using Content.Shared.Interaction;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Movement.Components;
 using Content.Shared.Movement.Pulling.Components;
 using Content.Shared.Movement.Pulling.Systems;
 using Content.Shared.Physics;
-using Content.Shared.SS220.CultYogg.Cultists;
-using Content.Shared.SS220.CultYogg.MiGo;
 using Content.Shared.SS220.MimicChest;
+using Content.Shared.Whitelist;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
 
@@ -25,6 +25,7 @@ public sealed class MimicChestSystem : EntitySystem
     [Dependency] private readonly DamageableSystem _damageableSystem = default!;
     [Dependency] private readonly EntityStorageSystem _entityStorageSystem = default!;
     [Dependency] private readonly MobStateSystem _mobStateSystem = default!;
+    [Dependency] private readonly EntityWhitelistSystem _whitelistSystem = default!;
 
     public override void Initialize()
     {
@@ -35,7 +36,7 @@ public sealed class MimicChestSystem : EntitySystem
     private void OnDeactivateMimic(EntityUid uid, MimicChestComponent chestComponent)
     {
         if(chestComponent.CapturedTarget != null)
-            OnMoveEntity(chestComponent.CapturedTarget.Value, true);
+            MoveEntity(chestComponent.CapturedTarget.Value, true);
 
         RemComp<JointVisualsComponent>(uid);
 
@@ -49,7 +50,7 @@ public sealed class MimicChestSystem : EntitySystem
         chestComponent.CapturedTarget = null;
     }
 
-    private void OnMoveEntity(EntityUid uid, bool canMove)
+    private void MoveEntity(EntityUid uid, bool canMove)
     {
         var moverComponent = EnsureComp<InputMoverComponent>(uid);
 
@@ -62,7 +63,7 @@ public sealed class MimicChestSystem : EntitySystem
         moverComponent.CanMove = false;
     }
 
-    private void OnJointEntity(EntityUid user, EntityUid target)
+    private void JointEntity(EntityUid user, EntityUid target)
     {
         var visuals = EnsureComp<JointVisualsComponent>(user);
         visuals.Sprite =
@@ -81,7 +82,6 @@ public sealed class MimicChestSystem : EntitySystem
             return;
 
         var query = EntityQueryEnumerator<MimicChestComponent, TransformComponent>();
-        var curTime = _timing.CurTime;
 
         while (query.MoveNext(out var uid, out var chestComponent, out var xform))
         {
@@ -96,7 +96,7 @@ public sealed class MimicChestSystem : EntitySystem
             var targetWorld = _transform.GetWorldPosition(chestComponent.CapturedTarget.Value);
             var distance = (chestWorld - targetWorld).Length();
 
-            var elapsedTime = (curTime - chestComponent.CaptureStartTime).TotalSeconds;
+            var elapsedTime = (_timing.CurTime - chestComponent.CaptureStartTime).TotalSeconds;
 
             if (distance > 0.01f && elapsedTime < chestComponent.PullDuration)
             {
@@ -104,7 +104,7 @@ public sealed class MimicChestSystem : EntitySystem
                 var speed = distance / (float)(chestComponent.PullDuration - elapsedTime);
                 var direction = (chestWorld - targetWorld).Normalized();
                 var newPosition = targetWorld + direction * speed * frameTime;
-                _transform.SetWorldPosition(targetTransform.Owner, newPosition);
+                _transform.SetWorldPosition(chestComponent.CapturedTarget.Value, newPosition);
             }
             else
             {
@@ -148,10 +148,10 @@ public sealed class MimicChestSystem : EntitySystem
         if (TryComp<EntityStorageComponent>(ent.Owner, out var storageComponent) && storageComponent.Open)
             return;
 
-        if (HasComp<CultYoggComponent>(args.User))
+        if (!HasComp<HandsComponent>(args.User))
             return;
 
-        if (HasComp<MiGoComponent>(args.User))
+        if (_whitelistSystem.IsWhitelistPass(ent.Comp.Whitelist, args.User))
             return;
 
         var puller = EnsureComp<PullerComponent>(args.Target);
@@ -162,8 +162,8 @@ public sealed class MimicChestSystem : EntitySystem
         if (!_pulling.TryStartPull(args.Target, args.User, puller, pullable))
             return;
 
-        OnMoveEntity(args.User, false);
-        OnJointEntity(args.Target, args.User);
+        MoveEntity(args.User, false);
+        JointEntity(args.Target, args.User);
 
         ent.Comp.IsBusy = true;
         ent.Comp.CaptureStartTime = _timing.CurTime;
