@@ -454,6 +454,10 @@ public sealed class InventoryUIController : UIController, IOnStateEntered<Gamepl
             button.SetEntity(entity);
             button.StuckOnEquip = true;
         }
+        else if (button.StuckOnEquip)
+        {
+            button.StuckOnEquip = false;
+        }
         //ss220 StuckOnEquip end
     }
 
