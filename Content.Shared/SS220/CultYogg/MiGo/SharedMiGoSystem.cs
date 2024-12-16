@@ -56,7 +56,6 @@ public abstract class SharedMiGoSystem : EntitySystem
     [Dependency] private readonly SharedUserInterfaceSystem _userInterfaceSystem = default!;
     [Dependency] private readonly IPrototypeManager _proto = default!;
     [Dependency] private readonly SharedMindSystem _mind = default!;
-    [Dependency] private readonly ActorSystem _actor = default!;
 
 
     //[Dependency] private readonly CultYoggRuleSystem _cultYoggRule = default!; //maybe use this for enslavement
@@ -503,7 +502,7 @@ public abstract class SharedMiGoSystem : EntitySystem
         }
         else
         {
-            if (_net.IsServer)
+            if (_net.IsServer) // ToDo delete this check after MindContainer fixes
                 reason = Loc.GetString("cult-yogg-no-mind");
             return false;
         }
