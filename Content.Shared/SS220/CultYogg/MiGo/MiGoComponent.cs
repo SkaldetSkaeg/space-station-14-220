@@ -2,6 +2,7 @@
 
 using Content.Shared.Alert;
 using Content.Shared.FixedPoint;
+using Content.Shared.Roles;
 using Content.Shared.Whitelist;
 using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
@@ -56,6 +57,12 @@ public sealed partial class MiGoComponent : Component
 
     [DataField]
     public SoundSpecifier? EnslavingSound = new SoundPathSpecifier("/Audio/SS220/CultYogg/migo_slave.ogg");
+
+    /// <summary>
+    /// The time it takes to enslave the target
+    /// </summary>
+    [DataField]
+    public TimeSpan EnslaveTime = TimeSpan.FromSeconds(3);
 
     /// <summary>
     ///Erect variables

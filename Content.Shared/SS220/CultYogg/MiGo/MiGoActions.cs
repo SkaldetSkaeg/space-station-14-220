@@ -2,7 +2,7 @@
 using Content.Shared.Actions;
 
 namespace Content.Shared.SS220.CultYogg.MiGo;
-public sealed partial class MiGoEnslavementEvent : EntityTargetActionEvent
+public sealed partial class MiGoEnslavementActionEvent : EntityTargetActionEvent
 {
 }
 

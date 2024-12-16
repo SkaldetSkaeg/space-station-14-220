@@ -2,10 +2,12 @@ cult-yogg-corrupt-no-proto = Предмет не имеет истинной ф�
 cult-yogg-corrupt-already-corrupted = Предмет уже обрел истинную форму
 
 cult-yogg-no-mind = Оболочка не имеет разума
+cult-yogg-enslave-verb = [italic]Поработить[/italic]
 cult-yogg-enslave-must-be-human = Только гуманоиды могут превознестись
 cult-yogg-enslave-must-be-alive = Оболочка кандидата нарушена
 cult-yogg-enslave-another-fraction = Разум кандидата затуманен
 cult-yogg-enslave-should-eat-shroom = Кандидат не имеет спор внутри
+cult-yogg-enslave-cant-be-a-chaplain = Кандидат слишком свят
 cult-yogg-enslave-is-sacraficial = Существо ценно, как жертва
 
 cult-yogg-heal-only-cultists = Оболочка не принадлежит культу

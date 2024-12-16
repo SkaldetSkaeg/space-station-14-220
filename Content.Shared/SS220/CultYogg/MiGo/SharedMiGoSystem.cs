@@ -24,6 +24,14 @@ using Content.Shared.Item;
 using Content.Shared.Hands;
 using Content.Shared.SS220.CultYogg.Buildings;
 using Robust.Shared.Prototypes;
+using Content.Shared.Mindshield.Components;
+using Content.Shared.Zombies;
+using Content.Shared.Revolutionary.Components;
+using Content.Shared.Humanoid;
+using Content.Shared.Mind;
+using Content.Shared.Roles;
+using Content.Shared.Verbs;
+using Robust.Shared.Utility;
 
 
 namespace Content.Shared.SS220.CultYogg.MiGo;
@@ -47,6 +55,8 @@ public abstract class SharedMiGoSystem : EntitySystem
     [Dependency] private readonly SharedEyeSystem _eye = default!;
     [Dependency] private readonly SharedUserInterfaceSystem _userInterfaceSystem = default!;
     [Dependency] private readonly IPrototypeManager _proto = default!;
+    [Dependency] private readonly SharedMindSystem _mind = default!;
+    [Dependency] private readonly ActorSystem _actor = default!;
 
 
     //[Dependency] private readonly CultYoggRuleSystem _cultYoggRule = default!; //maybe use this for enslavement
@@ -74,6 +84,10 @@ public abstract class SharedMiGoSystem : EntitySystem
         SubscribeLocalEvent<MiGoComponent, GettingPickedUpAttemptEvent>(OnGettingPickedUpAttempt);
 
         SubscribeLocalEvent<MiGoComponent, BoundUIOpenedEvent>(OnBoundUIOpened);
+
+        SubscribeLocalEvent<MiGoComponent, MiGoEnslavementActionEvent>(OnMiGoEnslaveAction);
+
+        SubscribeLocalEvent<GetVerbsEvent<Verb>>(OnGetVerb);
     }
 
     protected virtual void OnCompInit(Entity<MiGoComponent> uid, ref ComponentStartup args)
@@ -103,6 +117,31 @@ public abstract class SharedMiGoSystem : EntitySystem
                 Seeds = _proto.GetInstances<CultYoggSeedsPrototype>().Values.ToList(),
             });
             return;
+        }
+    }
+
+    private void OnGetVerb(GetVerbsEvent<Verb> args)
+    {
+        // Enslave verb
+        if (TryComp<MiGoComponent>(args.User, out var miGoComp) && miGoComp.IsPhysicalForm)
+        {
+            var enslaveVerb = new Verb
+            {
+                Text = Loc.GetString("cult-yogg-enslave-verb"),
+                Icon = new SpriteSpecifier.Rsi(new ResPath("SS220/Interface/Actions/cult_yogg.rsi"), "enslavement"),
+                Act = () =>
+                {
+                    if (!CanEnslaveTarget((args.User, miGoComp), args.Target, out var reason))
+                    {
+                        _popup.PopupPredicted(reason, args.Target, args.User);
+                        return;
+                    }
+
+                    StartEnslaveDoAfter((args.User, miGoComp), args.Target);
+                }
+            };
+
+            args.Verbs.Add(enslaveVerb);
         }
     }
 
@@ -187,7 +226,7 @@ public abstract class SharedMiGoSystem : EntitySystem
             if (miGoComponent == null)
                 continue;
 
-            if (_transform.InRange(Transform(migoUid).Coordinates, Transform(altarUid).Coordinates,  altarComp.RitualStartRange))
+            if (_transform.InRange(Transform(migoUid).Coordinates, Transform(altarUid).Coordinates, altarComp.RitualStartRange))
                 currentMiGoAmount++;
         }
 
@@ -371,6 +410,105 @@ public abstract class SharedMiGoSystem : EntitySystem
     {
         if (!uid.Comp.IsPhysicalForm)
             args.Cancel();
+    }
+    #endregion
+
+    #region Enslave
+    private void OnMiGoEnslaveAction(Entity<MiGoComponent> entity, ref MiGoEnslavementActionEvent args)
+    {
+        if (args.Handled)
+            return;
+
+        var (uid, comp) = entity;
+        if (!comp.IsPhysicalForm)
+            return;
+
+        var target = args.Target;
+        if (!CanEnslaveTarget(entity, target, out var reason))
+        {
+            _popup.PopupPredicted(reason, target, uid);
+            return;
+        }
+
+        StartEnslaveDoAfter(entity, target);
+        args.Handled = true;
+    }
+
+    protected void StartEnslaveDoAfter(Entity<MiGoComponent> entity, EntityUid target)
+    {
+        var (uid, comp) = entity;
+
+        var doafterArgs = new DoAfterArgs(EntityManager, uid, comp.EnslaveTime, new MiGoEnslaveDoAfterEvent(), uid, target)//ToDo estimate time for Enslave
+        {
+            Broadcast = false,
+            BreakOnDamage = true,
+            BreakOnMove = false,
+            NeedHand = false,
+            BlockDuplicate = true,
+            CancelDuplicate = true,
+            DuplicateCondition = DuplicateConditions.SameEvent
+        };
+
+        _doAfter.TryStartDoAfter(doafterArgs);
+        _audio.PlayPredicted(comp.EnslavingSound, target, target);
+    }
+
+    protected bool CanEnslaveTarget(Entity<MiGoComponent> entity, EntityUid target, out string? reason)
+    {
+        var (uid, comp) = entity;
+
+        if (!HasComp<HumanoidAppearanceComponent>(target))
+        {
+            reason = Loc.GetString("cult-yogg-enslave-must-be-human");
+            return false;
+        }
+
+        if (!_mobState.IsAlive(target))
+        {
+            reason = Loc.GetString("cult-yogg-enslave-must-be-alive");
+            return false;
+        }
+
+        if (HasComp<RevolutionaryComponent>(target) || HasComp<MindShieldComponent>(target) || HasComp<ZombieComponent>(target))
+        {
+            reason = Loc.GetString("cult-yogg-enslave-another-fraction");
+            return false;
+        }
+
+        if (!_statusEffectsSystem.HasStatusEffect(target, comp.RequiedEffect))
+        {
+            reason = Loc.GetString("cult-yogg-enslave-should-eat-shroom");
+            return false;
+        }
+
+        if (HasComp<CultYoggSacrificialComponent>(target))
+        {
+            reason = Loc.GetString("cult-yogg-enslave-is-sacraficial");
+            return false;
+        }
+
+        var targetSession = _actor.GetSession(target);
+        if (targetSession != null &&
+            _mind.TryGetMind(targetSession.UserId, out var mind))
+        {
+            if (TryComp<MindRoleComponent>(mind, out var role) &&
+                role.JobPrototype is { } job && job == "Chaplain")
+            {
+                reason = "cult-yogg-enslave-cant-be-a-chaplain";
+                return false;
+            }
+        }
+        else
+        {
+            if (_net.IsServer)
+                reason = Loc.GetString("cult-yogg-no-mind");
+            else
+                reason = null; // Mind doesn`t exist on the client side
+            return false;
+        }
+
+        reason = null;
+        return true;
     }
     #endregion
 }
