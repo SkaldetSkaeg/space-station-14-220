@@ -2,7 +2,6 @@
 
 using Content.Shared.Alert;
 using Content.Shared.FixedPoint;
-using Content.Shared.Roles;
 using Content.Shared.Whitelist;
 using Robust.Shared.Audio;
 using Robust.Shared.GameStates;

@@ -122,6 +122,10 @@ public abstract class SharedMiGoSystem : EntitySystem
 
     private void OnGetVerb(GetVerbsEvent<Verb> args)
     {
+        if (!args.CanAccess ||
+            args.User == args.Target)
+            return;
+
         // Enslave verb
         if (TryComp<MiGoComponent>(args.User, out var miGoComp) && miGoComp.IsPhysicalForm)
         {
