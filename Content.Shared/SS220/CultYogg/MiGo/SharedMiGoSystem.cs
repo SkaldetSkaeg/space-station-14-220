@@ -460,6 +460,7 @@ public abstract class SharedMiGoSystem : EntitySystem
     protected bool CanEnslaveTarget(Entity<MiGoComponent> entity, EntityUid target, out string? reason)
     {
         var (uid, comp) = entity;
+        reason = null;
 
         if (!HasComp<HumanoidAppearanceComponent>(target))
         {
@@ -491,11 +492,9 @@ public abstract class SharedMiGoSystem : EntitySystem
             return false;
         }
 
-        var targetSession = _actor.GetSession(target);
-        if (targetSession != null &&
-            _mind.TryGetMind(targetSession.UserId, out var mind))
+        if (_mind.TryGetMind(target, out var mindId, out _))
         {
-            if (TryComp<MindRoleComponent>(mind, out var role) &&
+            if (TryComp<MindRoleComponent>(mindId, out var role) &&
                 role.JobPrototype is { } job && job == "Chaplain")
             {
                 reason = "cult-yogg-enslave-cant-be-a-chaplain";
@@ -506,12 +505,9 @@ public abstract class SharedMiGoSystem : EntitySystem
         {
             if (_net.IsServer)
                 reason = Loc.GetString("cult-yogg-no-mind");
-            else
-                reason = null; // Mind doesn`t exist on the client side
             return false;
         }
 
-        reason = null;
         return true;
     }
     #endregion
