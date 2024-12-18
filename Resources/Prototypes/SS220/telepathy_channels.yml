@@ -1,9 +1,8 @@
 - type: telepathyChannel
   id: TelepathyChannelYoggSothothCult
-  name: chat-telepathy-yogg-sothoth-cult
   channelParameters:
     name: chat-telepathy-yogg-sothoth-cult
-    color: Brown
+    color: "#20B2AA"
 
 - type: telepathyChannel
   id: TelepathyChannelSpaceDragon
