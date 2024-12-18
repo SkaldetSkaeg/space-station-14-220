@@ -6,14 +6,16 @@ namespace Content.Client.SS220.TextureFade;
 
 /// <summary>
 /// Component for automatic texture fade processing, you can still use <see cref="TextureFadeOverlay"/> directly.
-/// You can use all this data fiels directly in code to enable/disable, set progress, etc.
+/// You can use all this data fields directly in code to enable/disable, set progress, etc.
 /// </summary>
 [RegisterComponent]
 public sealed partial class TextureFadeOverlayComponent : SharedTextureFadeOverlayComponent
 {
-    [DataField, ViewVariables(VVAccess.ReadWrite)]
+    [DataField]
     public bool IsEnabled = false;
-    [DataField, ViewVariables(VVAccess.ReadWrite)]
+    [DataField]
+    public bool DeleteAfterFadedOut;
+    [DataField]
     public List<TextureFadeOverlayLayer> Layers = new();
 
     [Access(typeof(TextureFadeOverlaySystem))]

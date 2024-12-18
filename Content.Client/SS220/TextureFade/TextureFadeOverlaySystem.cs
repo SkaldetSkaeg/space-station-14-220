@@ -16,10 +16,10 @@ public sealed class TextureFadeOverlaySystem : EntitySystem
     public override void FrameUpdate(float frameTime)
     {
         var componentsQuery = EntityQueryEnumerator<TextureFadeOverlayComponent>();
-        while (componentsQuery.MoveNext(out var comp))
+        while (componentsQuery.MoveNext(out var entity, out var comp))
         {
             HandleOverlayActivityUpdate(comp);
-            HandleOverlayProgressUpdate(comp, frameTime);
+            HandleOverlayProgressUpdate((entity, comp), frameTime);
         }
     }
 
@@ -42,10 +42,12 @@ public sealed class TextureFadeOverlaySystem : EntitySystem
         }
     }
 
-    private void HandleOverlayProgressUpdate(TextureFadeOverlayComponent component, float frameTime)
+    private void HandleOverlayProgressUpdate(Entity<TextureFadeOverlayComponent> entity, float frameTime)
     {
+        var component = entity.Comp;
         if (!component.IsOverlayInitialized)
             return;
+        var fadedOutCount = 0;
         for (var i = 0; i < component.Layers.Count; i++)
         {
             var layer = component.Layers[i];
@@ -56,6 +58,12 @@ public sealed class TextureFadeOverlaySystem : EntitySystem
                 layer.FadeProgress += layer.ProgressSpeed * frameTime;
                 layer.FadeProgress = Math.Clamp(layer.FadeProgress, layer.MinProgress, layer.MaxProgress);
                 component.Layers[i] = layer;
+                if (component.DeleteAfterFadedOut
+                    && layer.ProgressSpeed > 0
+                    && MathHelper.CloseTo(layer.FadeProgress, layer.MaxProgress, 0.01f))
+                {
+                    fadedOutCount++;
+                }
             }
             var fadeProgressMod = layer.FadeProgress;
             fadeProgressMod += (float)Math.Sin(Math.PI * layer.Overlay.Time.TotalSeconds * layer.PulseRate) * layer.PulseMagnitude;
@@ -63,6 +71,10 @@ public sealed class TextureFadeOverlaySystem : EntitySystem
             layer.Overlay.FadeProgress = fadeProgressMod;
             layer.Overlay.Modulate = layer.Modulate;
             layer.Overlay.ZIndex = layer.ZIndex;
+            if (component.DeleteAfterFadedOut && fadedOutCount == component.Layers.Count)
+            {
+                Del(entity);
+            }
         }
     }
 

@@ -25,34 +25,33 @@ public sealed class RaveSystem : SharedRaveSystem
         SubscribeLocalEvent<RaveComponent, LocalPlayerDetachedEvent>(OnPlayerDetached);
         SubscribeLocalEvent<RaveComponent, OnChemRemoveHallucinationsEvent>(OnVisionCleansed);
     }
+
     private void OnAdded(Entity<RaveComponent> entity, ref ComponentAdd args)
     {
-        if (entity.Owner != _playerManager.LocalEntity)
-            return;
-
-        var effectEntity = Spawn(_effectPrototype);
-        entity.Comp.EffectEntity = effectEntity;
-
-        if (!TryComp<TextureFadeOverlayComponent>(effectEntity, out var overlay))
-            return;
-
-        overlay.IsEnabled = true;
+        EnsureEffect(entity);
     }
+
     private void OnVisionCleansed(Entity<RaveComponent> entity, ref OnChemRemoveHallucinationsEvent args)
     {
-        if (entity.Comp.EffectEntity is not { } effectEntity)
-            return;
-
-        Del(effectEntity);
+        RemoveEffect(entity);
     }
+
     private void OnRemoved(Entity<RaveComponent> entity, ref ComponentRemove args)
     {
-        if (entity.Comp.EffectEntity is not { } effectEntity)
-            return;
-
-        Del(effectEntity);
+        RemoveEffect(entity);
     }
+
     private void OnPlayerAttached(Entity<RaveComponent> entity, ref LocalPlayerAttachedEvent args)
+    {
+        EnsureEffect(entity);
+    }
+
+    private void OnPlayerDetached(Entity<RaveComponent> entity, ref LocalPlayerDetachedEvent args)
+    {
+        RemoveEffect(entity);
+    }
+
+    private void EnsureEffect(Entity<RaveComponent> entity)
     {
         if (entity.Owner != _playerManager.LocalEntity)
             return;
@@ -65,11 +64,14 @@ public sealed class RaveSystem : SharedRaveSystem
 
         overlay.IsEnabled = true;
     }
-    private void OnPlayerDetached(Entity<RaveComponent> entity, ref LocalPlayerDetachedEvent args)
+
+    private void RemoveEffect(Entity<RaveComponent> entity)
     {
-        if (entity.Comp.EffectEntity is not { } effectEntity)
+        if (entity.Comp.EffectEntity is not { } effectEntity
+            || !TryComp<TextureFadeOverlayComponent>(effectEntity, out var overlay))
             return;
 
-        Del(effectEntity);
+        overlay.SetUniformProgressionSpeed(0.01f);
+        overlay.DeleteAfterFadedOut = true;
     }
 }
