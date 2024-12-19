@@ -77,9 +77,9 @@ public sealed partial class CultYoggComponent : Component
     public string AscendedEntity = "MiGo";
 
     [ViewVariables]
-    public int AmountShroomsToAscend = 3;//3 multiplyied on amount of reagent in a shroom
-    [ViewVariables]
-    public int ConsumedShrooms = 0; //buffer
+    public float AmountAscensionReagentAscend = 6f; // This is equal to 3 shrooms
+    [ViewVariables, Access(Other = AccessPermissions.ReadWrite)]
+    public float ConsumedAscensionReagent = 0; //buffer
     #endregion
 
     #region stages
