@@ -13,6 +13,10 @@
       effects:
       - !type:ChemMiGomicelium
         time: 150 #ToDo set timer
+      conditions:
+      - !type:ReagentThreshold
+          reagent: TheBloodOfYogg
+          min: 2
 
 - type: reagent
   id: ElixirOfLiberation

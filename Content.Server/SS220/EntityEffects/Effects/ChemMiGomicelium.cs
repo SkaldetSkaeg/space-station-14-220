@@ -17,30 +17,23 @@ namespace Content.Server.SS220.EntityEffects.Effects
     [UsedImplicitly]
     public sealed partial class ChemMiGomicelium : EntityEffect
     {
-        /// <summary>
-        /// Minimum quantity of reagent required to trigger this effect.
-        /// </summary>
-        [DataField]
-        public float AmountThreshold = 2.0f;
-
         [DataField]
         public float Time = 2.0f;
 
         public override void Effect(EntityEffectBaseArgs args)
         {
             var time = Time;
+            var entityManager = args.EntityManager;
 
             if (args is EntityEffectReagentArgs reagentArgs)
             {
                 time *= reagentArgs.Scale.Float();
-            }
-
-            var entityManager = args.EntityManager;
-
-            if (entityManager.TryGetComponent<CultYoggComponent>(args.TargetEntity, out var comp))
-            {
-                entityManager.System<CultYoggSystem>().ModifyEatenShrooms(args.TargetEntity, comp);
-                return;
+                if (entityManager.TryGetComponent<CultYoggComponent>(args.TargetEntity, out var comp))
+                {
+                    comp.ConsumedAscensionReagent += reagentArgs.Quantity.Float();
+                    entityManager.System<CultYoggSystem>().TryStartAscensionByReagent(args.TargetEntity, comp);
+                    return;
+                }
             }
 
             if (!entityManager.HasComponent<HumanoidAppearanceComponent>(args.TargetEntity)) //if its an animal -- corrupt it
