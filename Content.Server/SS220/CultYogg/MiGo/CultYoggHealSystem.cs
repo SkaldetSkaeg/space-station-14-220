@@ -63,6 +63,7 @@ public sealed class CultYoggHealSystem : SharedCultYoggHealSystem
         _damageable.TryChangeDamage(uid, component.Heal, true, interruptsDoAfters: false, damageableComp);
 
         _bloodstreamSystem.TryModifyBleedAmount(uid, component.BloodlossModifier);
+        _bloodstreamSystem.TryModifyBloodLevel(uid, component.ModifyBloodLevel);
 
         if (!_mobState.IsDead(uid, mobComp))
             return;
