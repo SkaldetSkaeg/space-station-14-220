@@ -1,6 +1,12 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
+using Content.Server.Body.Components;
+using Content.Server.Body.Systems;
+using Content.Server.Chemistry.Containers.EntitySystems;
 using Content.Shared.Alert;
+using Content.Shared.Chemistry.EntitySystems;
+using Content.Shared.Chemistry.Reagent;
 using Content.Shared.Eye;
+using Content.Shared.FixedPoint;
 using Content.Shared.Movement.Components;
 using Content.Shared.Movement.Systems;
 using Content.Shared.NPC.Components;
@@ -22,6 +28,12 @@ public sealed partial class MiGoSystem : SharedMiGoSystem
     [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
     [Dependency] private readonly NpcFactionSystem _npcFaction = default!;
     [Dependency] private readonly AlertsSystem _alerts = default!;
+    [Dependency] private readonly StomachSystem _stomach = default!;
+    [Dependency] private readonly BodySystem _body = default!;
+    [Dependency] private readonly SharedSolutionContainerSystem _solutionContainer = default!;
+
+    private const string AscensionReagent = "TheBloodOfYogg";
+
     public override void Initialize()
     {
         base.Initialize();
@@ -118,6 +130,26 @@ public sealed partial class MiGoSystem : SharedMiGoSystem
         RaiseLocalEvent(uid, ref ev, true);
 
         _statusEffectsSystem.TryRemoveStatusEffect(args.Target.Value, uid.Comp.RequiedEffect); //Remove Rave cause he already cultist
+
+        // Remove ascension reagent
+        if (_body.TryGetBodyOrganEntityComps<StomachComponent>(args.Target.Value, out var stomachs))
+        {
+            foreach (var stomach in stomachs)
+            {
+                if (stomach.Comp2.Body is not { } body)
+                    continue;
+
+                var reagentRoRemove = new ReagentQuantity(AscensionReagent, FixedPoint2.MaxValue);
+                _stomach.TryRemoveReagent(stomach, reagentRoRemove); // Removes from stomach
+
+                if (_solutionContainer.TryGetSolution(body, stomach.Comp1.BodySolutionName, out var bodySolutionEnt, out var bodySolution) &&
+                    bodySolution != null)
+                {
+                    bodySolution.RemoveReagent(reagentRoRemove); // Removes from body
+                    _solutionContainer.UpdateChemicals(bodySolutionEnt.Value);
+                }
+            }
+        }
 
         args.Handled = true;
     }
