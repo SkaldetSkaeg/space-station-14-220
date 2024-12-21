@@ -164,7 +164,15 @@ public abstract class SharedMiGoSystem : EntitySystem
             return;
         }
 
-        _heal.TryApplyMiGoHeal(args.Target, uid.Comp.HealingEffectTime);
+        _heal.ApplyMiGoHeal(args.Target, uid.Comp.HealingEffectTime);
+
+        var healComponent = EnsureComp<CultYoggHealComponent>(args.Target);
+        healComponent.Heal = args.Heal;
+        healComponent.BloodlossModifier = args.BloodlossModifier;
+        healComponent.ModifyBloodLevel = args.ModifyBloodLevel;
+        healComponent.TimeBetweenIncidents = args.TimeBetweenIncidents;
+        healComponent.Sprite = args.EffectSprite;
+        Dirty(args.Target, healComponent);
 
         args.Handled = true;
     }

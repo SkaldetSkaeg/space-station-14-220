@@ -14,7 +14,8 @@ public abstract class SharedCultYoggHealSystem : EntitySystem
     {
         base.Initialize();
     }
-    public void TryApplyMiGoHeal(EntityUid uid, TimeSpan time, StatusEffectsComponent? statusComp = null)
+
+    public void ApplyMiGoHeal(EntityUid uid, TimeSpan time, StatusEffectsComponent? statusComp = null)
     {
         if (!Resolve(uid, ref statusComp, false))
             return;
@@ -29,11 +30,12 @@ public abstract class SharedCultYoggHealSystem : EntitySystem
         }
     }
 
-    public void TryRemoveMiGoHeal(EntityUid uid)
+    public void RemoveMiGoHeal(EntityUid uid)
     {
         _statusEffectsSystem.TryRemoveStatusEffect(uid, EffectkKey);
     }
-    public void TryRemoveMiGoHealTime(EntityUid uid, double timeRemoved)
+
+    public void RemoveMiGoHealTime(EntityUid uid, double timeRemoved)
     {
         _statusEffectsSystem.TryRemoveTime(uid, EffectkKey, TimeSpan.FromSeconds(timeRemoved));
     }
