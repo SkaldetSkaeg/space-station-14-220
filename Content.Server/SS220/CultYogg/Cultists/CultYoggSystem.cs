@@ -240,7 +240,6 @@ public sealed class CultYoggSystem : SharedCultYoggSystem
 
     public void StartAscension(EntityUid uid, CultYoggComponent comp)//idk if it is canser or no, will be like that for a time
     {
-        RemComp<CultYoggCleansedComponent>(uid);
         if (HasComp<AcsendingComponent>(uid))
             return;
 
