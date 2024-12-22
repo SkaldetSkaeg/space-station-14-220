@@ -160,7 +160,7 @@ public abstract class SharedMiGoSystem : EntitySystem
         //check if effect is already applyed
         if (_statusEffectsSystem.HasStatusEffect(args.Target, uid.Comp.RequiedEffect))
         {
-            _popup.PopupEntity(Loc.GetString("cult-yogg-heal-already-have-effect"), args.Target, uid);
+            _popup.PopupClient(Loc.GetString("cult-yogg-heal-already-have-effect"), args.Target, uid);
             return;
         }
 
@@ -197,8 +197,7 @@ public abstract class SharedMiGoSystem : EntitySystem
     {
         if (!uid.Comp.IsPhysicalForm)
         {
-            if (_net.IsServer)
-                _popup.PopupClient(Loc.GetString("cult-yogg-cant-sacrafice-in-astral"), uid);
+            _popup.PopupClient(Loc.GetString("cult-yogg-cant-sacrafice-in-astral"), uid);
             return;
         }
         var altarQuery = EntityQueryEnumerator<CultYoggAltarComponent, TransformComponent>();
@@ -243,8 +242,7 @@ public abstract class SharedMiGoSystem : EntitySystem
 
         if (currentMiGoAmount < altarComp.RequiredAmountMiGo)
         {
-            if (_net.IsServer)
-                _popup.PopupEntity(Loc.GetString("cult-yogg-altar-not-enough-migo"), user, user);
+            _popup.PopupClient(Loc.GetString("cult-yogg-altar-not-enough-migo"), user, user);
 
             return false;
         }
@@ -262,9 +260,8 @@ public abstract class SharedMiGoSystem : EntitySystem
 
         if (started)
         {
-            if (_net.IsServer)
-                _popup.PopupEntity(Loc.GetString("cult-yogg-sacrifice-started", ("user", user), ("target", targetUid)),
-                 altarUid, PopupType.MediumCaution);
+            _popup.PopupPredicted(Loc.GetString("cult-yogg-sacrifice-started", ("user", user), ("target", targetUid)),
+                altarUid, null, PopupType.MediumCaution);
         }
 
         return started;
@@ -437,7 +434,7 @@ public abstract class SharedMiGoSystem : EntitySystem
         var target = args.Target;
         if (!CanEnslaveTarget(entity, target, out var reason))
         {
-            _popup.PopupPredicted(reason, target, uid);
+            _popup.PopupClient(reason, target, uid);
             return;
         }
 

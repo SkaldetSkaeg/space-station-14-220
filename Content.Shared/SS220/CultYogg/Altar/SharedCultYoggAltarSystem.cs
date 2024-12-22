@@ -5,7 +5,6 @@ using Content.Shared.Construction.Components;
 using Content.Shared.Examine;
 using Content.Shared.Popups;
 using Content.Shared.SS220.CultYogg.Sacraficials;
-using Robust.Shared.Network;
 
 namespace Content.Shared.SS220.CultYogg.Altar;
 
@@ -13,7 +12,6 @@ public abstract partial class SharedCultYoggAltarSystem : EntitySystem
 {
     [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly INetManager _net = default!;
     public override void Initialize()
     {
         base.Initialize();
@@ -47,9 +45,7 @@ public abstract partial class SharedCultYoggAltarSystem : EntitySystem
         if (!HasComp<CultYoggSacrificialComponent>(args.Buckle))
         {
             args.Cancelled = true;
-
-            if (_net.IsServer)
-                _popup.PopupEntity(Loc.GetString("cult-yogg-buckle-attempt", ("user", args.Buckle)),
+            _popup.PopupClient (Loc.GetString("cult-yogg-buckle-attempt", ("user", args.Buckle)),
                  args.Buckle, args.User.Value, PopupType.SmallCaution);
         }
 

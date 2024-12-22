@@ -6,13 +6,11 @@ using Content.Shared.Mobs.Components;
 using Content.Shared.Popups;
 using Content.Shared.SS220.CultYogg.Cultists;
 using Robust.Shared.Containers;
-using Robust.Shared.Network;
 
 namespace Content.Shared.SS220.CultYogg.Pod;
 
 public abstract class SharedCultYoggPodSystem : EntitySystem
 {
-    [Dependency] private readonly INetManager _net = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
     [Dependency] private readonly SharedContainerSystem _container = default!;
     public override void Initialize()
@@ -47,8 +45,7 @@ public abstract class SharedCultYoggPodSystem : EntitySystem
 
         if (!HasComp<CultYoggComponent>(entToEnsert))
         {
-            if (_net.IsServer)
-                _popup.PopupEntity(Loc.GetString("cult-yogg-heal-only-cultists"), entToEnsert, entToEnsert);
+            _popup.PopupClient(Loc.GetString("cult-yogg-heal-only-cultists"), entToEnsert, entToEnsert);
 
             return false;
         }
