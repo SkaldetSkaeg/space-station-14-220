@@ -67,3 +67,8 @@
   - stack: Tokl
     count: 25
     icon: { sprite: SS220/Interface/Materials/material_icons_16.rsi, state: tokl}
+
+- type: cultYoggBuilding
+  id: CultYoggBedBuilding
+  order: 6
+  result: CultYoggBed

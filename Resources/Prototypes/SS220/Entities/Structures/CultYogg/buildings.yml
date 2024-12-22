@@ -114,3 +114,17 @@
         acts: ["Destruction"]
   - type: CultYoggBuilding
     eraseTime: 3
+
+- type: entity
+  parent: Bed
+  id: CultYoggBed
+  suffix: CultYogg
+  components:
+  - type: Strap
+    hasSeatbelt: true
+    position: Down
+    rotation: -90
+    drawDepth: Items #SS220 Change DrawDepth on buckle
+    uncuffTimeModifier: 2.0
+  - type: CultYoggBuilding
+    eraseTime: 3
