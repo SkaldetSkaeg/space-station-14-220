@@ -1,0 +1,14 @@
+- files: ["venomancer_reload.ogg", "venomancer_shot.ogg"]
+  license: "CC-BY-3.0"
+  copyright: "Made by MIXnikita for SS220. Licensed under EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt"
+  source: "https://github.com/SerbiaStrong-220/space-station-14"
+
+- files: ["spikegun_shot.ogg"]
+  license: "CC-BY-3.0"
+  copyright: "Made by MIXnikita for SS220. Licensed under EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt"
+  source: "https://github.com/SerbiaStrong-220/space-station-14"
+
+- files: ["buble_fly1.ogg", "buble_fly2.ogg", "buble_fly3.ogg", "buble_exp.ogg"]
+  license: "CC-BY-3.0"
+  copyright: "Made by MIXnikita for SS220. Licensed under EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt"
+  source: "https://github.com/SerbiaStrong-220/space-station-14"

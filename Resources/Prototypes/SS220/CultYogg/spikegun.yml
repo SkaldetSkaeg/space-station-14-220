@@ -8,7 +8,7 @@
       item: CultYoggCocoonSpikegun
     - type: AmmoCounter
     - type: Gun
-      soundGunshot: /Audio/Weapons/Guns/Gunshots/harpoon.ogg
+      soundGunshot: /Audio/SS220/Weapons/Guns/CultYogg/spikegun_shot.ogg
       soundEmpty: null
       fireRate: 20
       selectedMode: SemiAuto

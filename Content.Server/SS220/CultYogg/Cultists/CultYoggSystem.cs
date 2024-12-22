@@ -164,7 +164,7 @@ public sealed class CultYoggSystem : SharedCultYoggSystem
         if (!TryComp<ThirstComponent>(uid, out var thirstComp))
             return;
 
-        if (hungerComp.CurrentHunger <= uid.Comp.HungerCost || hungerComp.CurrentThreshold == uid.Comp.MinHungerThreshold)
+        if (/*hungerComp.CurrentHunger <= uid.Comp.HungerCost ||*/ hungerComp.CurrentThreshold == uid.Comp.MinHungerThreshold)//ToDo Fix this one
         {
             _popup.PopupEntity(Loc.GetString("cult-yogg-digest-no-nutritions"), uid);
             //_popup.PopupClient(Loc.GetString("cult-yogg-digest-no-nutritions"), uid, uid);//idk if it isn't working, but OnSericultureStart is an ok

@@ -1,12 +1,13 @@
 - type: entity
-  name: spitballer
+  name: venomancer
   parent: BaseItem
   suffix: CultYogg
-  id: Spitballer
+  id: Venomancer
   components:
     - type: CultYoggWeapon
-      item: CultYoggCocoonSpitballer
+      item: CultYoggCocoonVenomancer
     - type: Gun
+      soundGunshot: /Audio/SS220/Weapons/Guns/CultYogg/venomancer_shot.ogg
       cameraRecoilScalar: 1
       fireRate: 11
       soundEmpty: null
@@ -30,7 +31,7 @@
           - ReagentId: PolytrinicAcid
             Quantity: 6
     - type: Sprite
-      sprite: SS220/Objects/Weapons/Guns/cult_yogg_spitballer.rsi
+      sprite: SS220/Objects/Weapons/Guns/cult_yogg_venomancer.rsi
       layers:
         - state: icon
           map: ["sprite"]
@@ -56,7 +57,6 @@
       inHandItem: true
     - type: RestrictedItem
       whitelist:
-        requireAll: true
         components:
         - CultYogg
 

@@ -1,21 +1,21 @@
 - type: entity
-  name: horn cult yogg
+  name: ыpitballer cult yogg
   parent: BaseItem
-  id: HornCultYogg
+  id: Spitballer
   suffix: CultYogg
   components:
     - type: CultYoggWeapon
-      item: CultYoggCocoonHorn
+      item: CultYoggCocoonSpitballer
     - type: Gun
       soundGunshot: /Audio/Weapons/Guns/Gunshots/harpoon.ogg
       soundEmpty: null
       fireRate: 20
       projectileSpeed: 5
     - type: BasicEntityAmmoProvider
-      proto: HornGunBullet
+      proto: SpitballerGunBullet
       capacity: 1
     - type: Sprite
-      sprite: SS220/Objects/Weapons/Guns/cult_yogg_horn.rsi
+      sprite: SS220/Objects/Weapons/Guns/cult_yogg_spitballer.rsi
       layers:
         - state: icon
     - type: Appearance
@@ -53,8 +53,8 @@
 
 
 - type: entity
-  name: tesla gun lightning
-  id: HornGunBullet
+  name: explosive bubbles bullets
+  id: SpitballerGunBullet
   parent: BaseBullet
   categories: [ HideSpawnMenu ]
   components:

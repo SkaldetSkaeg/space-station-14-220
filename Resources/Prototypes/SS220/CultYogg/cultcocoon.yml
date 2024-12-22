@@ -27,6 +27,16 @@
       path: /Audio/Effects/unwrap.ogg
 
 - type: entity
+  id: CultYoggCocoonVenomancer
+  parent: [CultYoggCocoonBase, BaseItem]
+  suffix: Venomancer
+  components:
+  - type: CultYoggCocoon
+    item: Venomancer
+    sound:
+      path: /Audio/Effects/unwrap.ogg
+
+- type: entity
   id: CultYoggCocoonSpitballer
   parent: [CultYoggCocoonBase, BaseItem]
   suffix: Spitballer
