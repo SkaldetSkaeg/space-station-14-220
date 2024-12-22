@@ -15,7 +15,6 @@
       components:
       - CultYogg
 
-
 - type: entity
   id: CultYoggCocoonSpikegun
   parent: [CultYoggCocoonBase, BaseItem]
@@ -52,7 +51,7 @@
   suffix: Horn
   components:
   - type: CultYoggCocoon
-    item: HornCultYogg
+    item: Spitballer
     sound:
       path: /Audio/Effects/unwrap.ogg
 
@@ -76,3 +75,12 @@
     sound:
       path: /Audio/Effects/unwrap.ogg
 
+- type: entity
+  id: CultYoggCocoonSedativeSting
+  parent: [CultYoggCocoonBase, BaseItem]
+  suffix: Beach
+  components:
+  - type: CultYoggCocoon
+    item: SedativeStingCultYogg
+    sound:
+      path: /Audio/Effects/unwrap.ogg

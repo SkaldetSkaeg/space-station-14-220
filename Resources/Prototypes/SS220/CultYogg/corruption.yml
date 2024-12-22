@@ -211,49 +211,49 @@
   id: PenSedativestingCultYogg
   from:
     tag: Pen
-  result: SedativestingCultYogg
+  result: CultYoggCocoonSedativeSting
   corruptionReverseEffect: ExorcismUncorruptEffect
 
 - type: corrupted
   id: SyringeSedativestingCultYogg
   from:
     parentPrototypeId: BaseSyringe
-  result: SedativestingCultYogg
+  result: CultYoggCocoonSedativeSting
   corruptionReverseEffect: ExorcismUncorruptEffect
 
 - type: corrupted
   id: ScrewdriverSedativestingCultYogg
   from:
     prototypeId: Screwdriver
-  result: SedativestingCultYogg
+  result: CultYoggCocoonSedativeSting
   corruptionReverseEffect: ExorcismUncorruptEffect
 
 - type: corrupted
   id: ForkPlasticSedativestingCultYogg
   from:
     prototypeId: ForkPlastic
-  result: SedativestingCultYogg
+  result: CultYoggCocoonSedativeSting
   corruptionReverseEffect: ExorcismUncorruptEffect
 
 - type: corrupted
   id: ForkSedativestingCultYogg
   from:
     prototypeId: Fork
-  result: SedativestingCultYogg
+  result: CultYoggCocoonSedativeSting
   corruptionReverseEffect: ExorcismUncorruptEffect
 
 - type: corrupted
   id: KnifePlasticSedativestingCultYogg
   from:
     prototypeId: KnifePlastic
-  result: SedativestingCultYogg
+  result: CultYoggCocoonSedativeSting
   corruptionReverseEffect: ExorcismUncorruptEffect
 
 - type: corrupted
   id: KnifeSedativestingCultYogg
   from:
     parentPrototypeId: BaseKnife
-  result: SedativestingCultYogg
+  result: CultYoggCocoonSedativeSting
   corruptionReverseEffect: ExorcismUncorruptEffect
 #SedativeSting end
 
