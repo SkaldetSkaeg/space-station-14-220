@@ -128,3 +128,8 @@
     uncuffTimeModifier: 2.0
   - type: CultYoggBuilding
     eraseTime: 3
+    spawnOnErase:
+      - id: CableApcStack1Live
+        stackAmount: 3
+      - id: SheetTokl1
+        stackAmount: 5
