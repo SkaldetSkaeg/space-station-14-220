@@ -23,10 +23,11 @@ public sealed partial class CultYoggPodComponent : Component
             { "Slash", -6 },
             { "Blunt", -6 },
             { "Piercing", -6},
-            {"Heat", -4},
-            {"Cold", -4},
-            {"Shock", -4},
-            {"Airloss", -5},
+            { "Heat", -4},
+            { "Cold", -4},
+            { "Shock", -4},
+            { "Asphyxiation", -2.5},
+            { "Bloodloss", -2.5 },
             { "Radiation", -1 },
             { "Stamina", -5 }
         }
@@ -34,6 +35,13 @@ public sealed partial class CultYoggPodComponent : Component
 
     [DataField]
     public float BloodlossModifier = -4;
+
+    /// <summary>
+    /// Restore missing blood.
+    /// </summary>
+    [DataField]
+    public float ModifyBloodLevel = 2;
+
     public ContainerSlot MobContainer = default!;
 
     [Serializable, NetSerializable]

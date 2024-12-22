@@ -1,51 +1,44 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
-using Content.Server.Bible.Components;
+using Content.Server.Body.Components;
+using Content.Server.Body.Systems;
+using Content.Server.Chemistry.Containers.EntitySystems;
 using Content.Shared.Alert;
-using Content.Shared.DoAfter;
+using Content.Shared.Chemistry.EntitySystems;
+using Content.Shared.Chemistry.Reagent;
 using Content.Shared.Eye;
-using Content.Shared.Humanoid;
-using Content.Shared.Mind;
-using Content.Shared.Mindshield.Components;
-using Content.Shared.Mobs.Systems;
+using Content.Shared.FixedPoint;
 using Content.Shared.Movement.Components;
 using Content.Shared.Movement.Systems;
 using Content.Shared.NPC.Components;
 using Content.Shared.NPC.Systems;
-using Content.Shared.Popups;
-using Content.Shared.Revolutionary.Components;
 using Content.Shared.SS220.CultYogg.MiGo;
-using Content.Shared.SS220.CultYogg.Sacraficials;
 using Content.Shared.StatusEffect;
 using Content.Shared.Tag;
-using Content.Shared.Zombies;
 using Robust.Server.GameObjects;
-using Robust.Shared.Audio.Systems;
 
 
 namespace Content.Server.SS220.CultYogg.MiGo;
 
 public sealed partial class MiGoSystem : SharedMiGoSystem
 {
-
-    [Dependency] private readonly SharedMindSystem _mind = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly MobStateSystem _mobState = default!;
-    [Dependency] private readonly SharedDoAfterSystem _doAfter = default!;
     [Dependency] private readonly StatusEffectsSystem _statusEffectsSystem = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
     [Dependency] private readonly MovementSpeedModifierSystem _speedModifier = default!;
     [Dependency] private readonly VisibilitySystem _visibility = default!;
     [Dependency] private readonly TagSystem _tag = default!;
     [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
     [Dependency] private readonly NpcFactionSystem _npcFaction = default!;
     [Dependency] private readonly AlertsSystem _alerts = default!;
+    [Dependency] private readonly StomachSystem _stomach = default!;
+    [Dependency] private readonly BodySystem _body = default!;
+    [Dependency] private readonly SharedSolutionContainerSystem _solutionContainer = default!;
+
+    private const string AscensionReagent = "TheBloodOfYogg";
+
     public override void Initialize()
     {
         base.Initialize();
 
         //actions
-        SubscribeLocalEvent<MiGoComponent, MiGoEnslavementEvent>(MiGoEnslave);
-
         SubscribeLocalEvent<MiGoComponent, MiGoEnslaveDoAfterEvent>(MiGoEnslaveOnDoAfter);
     }
 
@@ -128,73 +121,6 @@ public sealed partial class MiGoSystem : SharedMiGoSystem
     #endregion
 
     #region Enslave
-    private void MiGoEnslave(Entity<MiGoComponent> uid, ref MiGoEnslavementEvent args)
-    {
-        if (args.Handled)
-            return;
-
-        if (!uid.Comp.IsPhysicalForm)
-            return;
-
-        if (!HasComp<HumanoidAppearanceComponent>(args.Target))
-        {
-            _popup.PopupEntity(Loc.GetString("cult-yogg-enslave-must-be-human"), args.Target, uid);
-            return;
-        }
-
-        if (!_mobState.IsAlive(args.Target))
-        {
-            _popup.PopupEntity(Loc.GetString("cult-yogg-enslave-must-be-alive"), args.Target, uid);
-            return;
-        }
-
-        if (HasComp<RevolutionaryComponent>(args.Target) || HasComp<MindShieldComponent>(args.Target) || HasComp<ZombieComponent>(args.Target))
-        {
-            _popup.PopupEntity(Loc.GetString("cult-yogg-enslave-another-fraction"), args.Target, uid);
-            return;
-        }
-
-        if (!_statusEffectsSystem.HasStatusEffect(args.Target, uid.Comp.RequiedEffect))
-        {
-            _popup.PopupEntity(Loc.GetString("cult-yogg-enslave-should-eat-shroom"), args.Target, uid);
-            return;
-        }
-
-        if (HasComp<BibleUserComponent>(uid))
-        {
-            _popup.PopupEntity(Loc.GetString("cult-yogg-enslave-cant-be-a-priest"), args.Target, uid);
-            return;
-        }
-
-        if (HasComp<CultYoggSacrificialComponent>(uid))
-        {
-            _popup.PopupEntity(Loc.GetString("cult-yogg-enslave-is-sacraficial"), args.Target, uid);
-            return;
-        }
-
-        if (!_mind.TryGetMind(args.Target, out var mindId, out var mind))
-        {
-            _popup.PopupEntity(Loc.GetString("cult-yogg-no-mind"), args.Target, uid); // commenting cause its spamming sevral times
-            return;
-        }
-
-        var doafterArgs = new DoAfterArgs(EntityManager, uid, TimeSpan.FromSeconds(3), new MiGoEnslaveDoAfterEvent(), uid, args.Target)//ToDo estimate time for Enslave
-        {
-            Broadcast = false,
-            BreakOnDamage = true,
-            BreakOnMove = false,
-            NeedHand = false,
-            BlockDuplicate = true,
-            CancelDuplicate = true,
-            DuplicateCondition = DuplicateConditions.SameEvent
-        };
-
-        _doAfter.TryStartDoAfter(doafterArgs);
-
-        _audio.PlayPredicted(uid.Comp.EnslavingSound, args.Target, args.Target);
-
-        args.Handled = true;
-    }
     private void MiGoEnslaveOnDoAfter(Entity<MiGoComponent> uid, ref MiGoEnslaveDoAfterEvent args)
     {
         if (args.Handled || args.Cancelled || args.Target == null)
@@ -204,6 +130,26 @@ public sealed partial class MiGoSystem : SharedMiGoSystem
         RaiseLocalEvent(uid, ref ev, true);
 
         _statusEffectsSystem.TryRemoveStatusEffect(args.Target.Value, uid.Comp.RequiedEffect); //Remove Rave cause he already cultist
+
+        // Remove ascension reagent
+        if (_body.TryGetBodyOrganEntityComps<StomachComponent>(args.Target.Value, out var stomachs))
+        {
+            foreach (var stomach in stomachs)
+            {
+                if (stomach.Comp2.Body is not { } body)
+                    continue;
+
+                var reagentRoRemove = new ReagentQuantity(AscensionReagent, FixedPoint2.MaxValue);
+                _stomach.TryRemoveReagent(stomach, reagentRoRemove); // Removes from stomach
+
+                if (_solutionContainer.TryGetSolution(body, stomach.Comp1.BodySolutionName, out var bodySolutionEnt, out var bodySolution) &&
+                    bodySolution != null)
+                {
+                    bodySolution.RemoveReagent(reagentRoRemove); // Removes from body
+                    _solutionContainer.UpdateChemicals(bodySolutionEnt.Value);
+                }
+            }
+        }
 
         args.Handled = true;
     }

@@ -144,6 +144,14 @@ public sealed class HandsUIController : UIController, IOnStateEntered<GameplaySt
                 handButton.SetEntity(hand.HeldEntity);
                 handButton.Blocked = false;
             }
+
+            //ss220 StuckOnEquip begin
+            if (_entities.HasComponent<StuckOnEquipComponent>(hand.HeldEntity))
+            {
+                handButton.SetEntity(hand.HeldEntity);
+                handButton.StuckOnEquip = true;
+            }
+            //ss220 StuckOnEquip end
         }
 
         var activeHand = handsComp.ActiveHand;
@@ -212,6 +220,11 @@ public sealed class HandsUIController : UIController, IOnStateEntered<GameplaySt
         var hand = GetHand(name);
         if (hand == null)
             return;
+
+        //ss220 StuckOnEquip begin
+        if (hand.StuckOnEquip)
+            hand.StuckOnEquip = false;
+        //ss220 StuckOnEquip end
 
         hand.SetEntity(null);
         UpdateHandStatus(hand, null);

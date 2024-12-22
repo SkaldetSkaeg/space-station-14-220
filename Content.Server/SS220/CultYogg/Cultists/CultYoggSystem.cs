@@ -228,18 +228,19 @@ public sealed class CultYoggSystem : SharedCultYoggSystem
         if (TryComp<BodyComponent>(uid, out var body))
             _body.GibBody(uid, body: body);
     }
-    public void ModifyEatenShrooms(EntityUid uid, CultYoggComponent comp)//idk if it is canser or no, will be like that for a time
+
+    public bool TryStartAscensionByReagent(EntityUid uid, CultYoggComponent comp)
     {
-        RemComp<CultYoggCleansedComponent>(uid);
+        if (comp.ConsumedAscensionReagent < comp.AmountAscensionReagentAscend)
+            return false;
+
+        StartAscension(uid, comp);
+        return true;
+    }
+
+    public void StartAscension(EntityUid uid, CultYoggComponent comp)//idk if it is canser or no, will be like that for a time
+    {
         if (HasComp<AcsendingComponent>(uid))
-            return;
-
-        comp.ConsumedShrooms++; //Add shroom to buffer
-
-        if (comp.ConsumedShrooms % 4 != 0) //ToDo add this onto init amd move ito component so it would be 3
-            return;
-
-        if (comp.ConsumedShrooms <= comp.AmountShroomsToAscend) // if its not enough to ascend
             return;
 
         if (!AcsendingCultistCheck())//to prevent becaming MiGo at the same time
@@ -260,11 +261,12 @@ public sealed class CultYoggSystem : SharedCultYoggSystem
         _popup.PopupEntity(Loc.GetString("cult-yogg-acsending-started"), uid, uid);
         EnsureComp<AcsendingComponent>(uid);
     }
+
     public void NullifyShroomEffect(EntityUid uid, CultYoggComponent comp)//idk if it is canser or no, will be like that for a time
     {
         RemComp<AcsendingComponent>(uid);
 
-        comp.ConsumedShrooms = 0;
+        comp.ConsumedAscensionReagent = 0;
 
         //Remove all corrupted items
         var ev = new DropAllStuckOnEquipEvent(uid);

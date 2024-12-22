@@ -58,6 +58,12 @@ public sealed partial class MiGoComponent : Component
     public SoundSpecifier? EnslavingSound = new SoundPathSpecifier("/Audio/SS220/CultYogg/migo_slave.ogg");
 
     /// <summary>
+    /// The time it takes to enslave the target
+    /// </summary>
+    [DataField]
+    public TimeSpan EnslaveTime = TimeSpan.FromSeconds(3);
+
+    /// <summary>
     ///Erect variables
     /// <summary>
     public TimeSpan HealingEffectTime = TimeSpan.FromSeconds(15);//How long heal effect will occure

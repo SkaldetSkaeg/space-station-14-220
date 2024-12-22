@@ -3,7 +3,6 @@
 using Content.Shared.EntityEffects;
 using JetBrains.Annotations;
 using Robust.Shared.Prototypes;
-using Content.Server.SS220.CultYogg.Rave;
 using Content.Server.SS220.CultYogg.Cultists;
 using Content.Shared.SS220.CultYogg.Cultists;
 using Content.Server.SS220.CultYogg;
@@ -17,40 +16,25 @@ namespace Content.Server.SS220.EntityEffects.Effects
     [UsedImplicitly]
     public sealed partial class ChemMiGomicelium : EntityEffect
     {
-        /// <summary>
-        /// Minimum quantity of reagent required to trigger this effect.
-        /// </summary>
-        [DataField]
-        public float AmountThreshold = 2.0f;
-
-        [DataField]
-        public float Time = 2.0f;
-
         public override void Effect(EntityEffectBaseArgs args)
         {
-            var time = Time;
+            var entityManager = args.EntityManager;
 
             if (args is EntityEffectReagentArgs reagentArgs)
             {
-                time *= reagentArgs.Scale.Float();
-            }
+                if (entityManager.TryGetComponent<CultYoggComponent>(args.TargetEntity, out var comp))
+                {
+                    entityManager.RemoveComponent<CultYoggCleansedComponent>(args.TargetEntity);
 
-            var entityManager = args.EntityManager;
-
-            if (entityManager.TryGetComponent<CultYoggComponent>(args.TargetEntity, out var comp))
-            {
-                entityManager.System<CultYoggSystem>().ModifyEatenShrooms(args.TargetEntity, comp);
-                return;
+                    comp.ConsumedAscensionReagent += reagentArgs.Quantity.Float();
+                    entityManager.System<CultYoggSystem>().TryStartAscensionByReagent(args.TargetEntity, comp);
+                    return;
+                }
             }
 
             if (!entityManager.HasComponent<HumanoidAppearanceComponent>(args.TargetEntity)) //if its an animal -- corrupt it
             {
                 entityManager.System<CultYoggAnimalCorruptionSystem>().AnimalCorruption(args.TargetEntity);
-            }
-
-            if (entityManager.HasComponent<HumanoidAppearanceComponent>(args.TargetEntity))
-            {
-                entityManager.System<RaveSystem>().TryApplyRavenness(args.TargetEntity, TimeSpan.FromSeconds(time));
             }
         }
         //ToDo check the guidebook

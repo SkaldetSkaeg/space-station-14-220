@@ -72,7 +72,7 @@
   components:
   - type: EntityTargetAction
     useDelay: 15
-    event: !type:MiGoEnslavementEvent
+    event: !type:MiGoEnslavementActionEvent
     itemIconStyle: NoItem
     icon: { sprite: SS220/Interface/Actions/cult_yogg.rsi, state: enslavement }
 
@@ -85,6 +85,20 @@
   - type: EntityTargetAction
     useDelay: 15
     event: !type:MiGoHealEvent
+      heal:
+        types:
+          Slash: -6
+          Blunt: -6
+          Piercing: -6
+          Heat: -4
+          Cold: -4
+          Shock: -4
+          Radiation: -1
+          Stamina: -5
+        groups:
+          Airloss: -5
+      bloodlossModifier: -1
+      modifyBloodLevel: 2
     itemIconStyle: NoItem
     icon: { sprite: SS220/Interface/Actions/cult_yogg.rsi, state: heal}
 

@@ -12,7 +12,16 @@
     Poison:
       effects:
       - !type:ChemMiGomicelium
-        time: 150 #ToDo set timer
+      - !type:GenericStatusEffect
+        key: Rave
+        component: Rave
+        type: Add
+        time: 150
+        refresh: false
+        conditions:
+        - !type:ReagentThreshold
+            reagent: TheBloodOfYogg
+            min: 2
 
 - type: reagent
   id: ElixirOfLiberation
