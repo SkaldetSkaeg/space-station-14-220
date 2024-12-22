@@ -64,7 +64,7 @@ public abstract partial class SharedBuckleSystem
             BuckleDoafterEarly((uid, comp), ev.Event, ev);
         });
 
-        SubscribeLocalEvent<BuckleComponent, ModifyUncuffDurationEvent>(OnBuckleModifyUncuffDuration);
+        SubscribeLocalEvent<BuckleComponent, ModifyUncuffDurationEvent>(OnBuckleModifyUncuffDuration); // SS220 Add uncuff time modifier when buckled
     }
 
     private void OnBuckleComponentShutdown(Entity<BuckleComponent> ent, ref ComponentShutdown args)
