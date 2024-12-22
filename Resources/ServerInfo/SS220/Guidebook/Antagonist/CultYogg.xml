@@ -131,8 +131,8 @@
     </ColorBox>
     <ColorBox Color="#a69b38">
       <Box HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2">
-        <GuideEntityEmbed Entity="CultYoggCocoonSpitballer" Caption="Кокон плевателя"/>
-        <GuideEntityEmbed Entity="Spitballer" Caption="Плеватель"/>
+        <GuideEntityEmbed Entity="CultYoggCocoonvenomancer" Caption="Кокон плевателя"/>
+        <GuideEntityEmbed Entity="Venomancer" Caption="Плеватель"/>
       </Box>
     </ColorBox>
     <ColorBox Color="#b0653a">
@@ -149,8 +149,8 @@
     </ColorBox>
     <ColorBox Color="#a69b38">
       <Box HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2">
-        <GuideEntityEmbed Entity="CultYoggCocoonHorn" Caption="Кокон горна"/>
-        <GuideEntityEmbed Entity="HornCultYogg" Caption="Горн"/>
+        <GuideEntityEmbed Entity="CultYoggCocoonSpitballer" Caption="Кокон плевателя"/>
+        <GuideEntityEmbed Entity="Spitballer" Caption="Плеватель"/>
       </Box>
     </ColorBox>
     <ColorBox Color="#b0653a">

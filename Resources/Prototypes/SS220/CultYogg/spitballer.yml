@@ -1,42 +1,34 @@
 - type: entity
-  name: spitballer
+  name: ыpitballer cult yogg
   parent: BaseItem
-  suffix: CultYogg
   id: Spitballer
+  suffix: CultYogg
   components:
     - type: CultYoggWeapon
       item: CultYoggCocoonSpitballer
     - type: Gun
-      cameraRecoilScalar: 1
-      fireRate: 11
+      soundGunshot: /Audio/SS220/Weapons/Guns/CultYogg/spitballer_shot.ogg
       soundEmpty: null
-      projectileSpeed: 15
-    - type: SolutionAmmoProvider
-      solutionId: acid
-      proto: AcidSpit
-      fireCost: 6
-    - type: SolutionContainerManager
-      solutions:
-        acid:
-          maxVol: 6
-          reagents:
-          - ReagentId: PolytrinicAcid
-            Quantity: 6
-    - type: SolutionRegeneration
-      solution: acid
-      duration: 3
-      generated:
-        reagents:
-          - ReagentId: PolytrinicAcid
-            Quantity: 6
+      fireRate: 20
+      projectileSpeed: 5
+    - type: BasicEntityAmmoProvider
+      proto: SpitballerGunBullet
+      capacity: 1
     - type: Sprite
       sprite: SS220/Objects/Weapons/Guns/cult_yogg_spitballer.rsi
       layers:
         - state: icon
-          map: ["sprite"]
+    - type: Appearance
+    - type: RechargeBasicEntityAmmo
+      rechargeCooldown: 10
+      rechargeSound: /Audio/SS220/Weapons/Guns/CultYogg/spitballer_reload.ogg
     - type: Item
       size: Ginormous
-    - type: Appearance
+    - type: IncreaseDamageOnWield
+      damage:
+       types:
+          Brute: 30
+          Stamina: 80
     - type: GenericVisualizer
       visuals:
         enum.AmmoVisuals.HasAmmo:
@@ -56,45 +48,86 @@
       inHandItem: true
     - type: RestrictedItem
       whitelist:
-        requireAll: true
         components:
         - CultYogg
 
+
 - type: entity
-  id: AcidSpit
-  suffix: CultYogg
-  name: acid spit
+  name: explosive bubbles bullets
+  id: SpitballerGunBullet
+  parent: BaseBullet
   categories: [ HideSpawnMenu ]
   components:
-  - type: Clickable
-  - type: Physics
-    bodyType: Dynamic
-    linearDamping: 1
-    angularDamping: 2.5
   - type: TimedDespawn
-    lifetime: 2
-  - type: Projectile
-    damage:
-      types:
-        Caustic: 2
+    lifetime: 3
   - type: Sprite
-    sprite: Objects/Weapons/Guns/Projectiles/xeno_toxic.rsi
+    sprite: SS220/Objects/Weapons/Guns/Ammunition/CultYogg/explosive_bubble.rsi
     layers:
-      - state: xeno_toxic
-  - type: Ammo
-    muzzleFlash: null
-  - type: SolutionContainerManager
-    solutions:
-      vapor:
-        maxVol: 50
-  - type: Fixtures
-    fixtures:
-      projectile:
-        shape:
-          !type:PhysShapeAabb
-          bounds: "-0.10,-0.30,0.10,0.15"
-        hard: false
-        mask:
-        - Impassable
-        - BulletImpassable
-  - type: Vapor
+    - state: bubble
+      shader: unshaded
+  - type: EmbeddableProjectile
+  - type: Projectile
+    deleteOnCollide: false
+    soundHit:
+      path: /Audio/Weapons/Guns/Hits/bullet_hit.ogg
+  - type: SpawnOnDespawn
+    prototype: SpitballerExplotionPart
+
+- type: entity
+  parent: CollideRune
+  id: SpitballerExplotionPart
+  name: SpitballerExplotionPart
+  categories: [ HideSpawnMenu ]
+  components:
+    - type: Explosive
+      explosionType: Default
+      maxIntensity: 3.4
+      intensitySlope: 3
+      totalIntensity: 20
+      canCreateVacuum: false
+    - type: SpamEmitSound
+      minInterval: 1
+      maxInterval: 1.5
+      sound:
+        collection: CultYoggExplosiveBubbleSounds
+        params:
+          maxDistance: 10
+          volume: -3
+    - type: TriggerOnSpawn
+    - type: FlashOnTrigger
+      range: 7
+    - type: Sprite
+      sprite: Structures/Magic/Cult/trap.rsi
+      layers:
+        - state: trap
+          color: '#FF770055'
+    - type: TwoStageTrigger
+      triggerDelay: 0.5
+      components:
+        - type: AmbientSound
+          enabled: true
+          volume: -5
+          range: 14
+          sound:
+            path: /Audio/Effects/Grenades/Supermatter/whitehole_loop.ogg
+        - type: GravityWell
+          maxRange: 7
+          baseRadialAcceleration: -10
+          baseTangentialAcceleration: -5
+          gravPulsePeriod: 0.1
+        - type: SingularityDistortion
+          intensity: -10
+          falloffPower: 1.5
+        - type: PointLight
+          enabled: true
+          color: "#ffffff"
+          energy: 8
+          radius: 6
+          softness: 1
+          offset: "0, 0"
+        - type: ExplodeOnTrigger
+        - type: SoundOnTrigger
+          sound:
+            path: /Audio/Effects/Grenades/Supermatter/supermatter_end.ogg
+            params:
+              volume: 15

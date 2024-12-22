@@ -1,9 +1,11 @@
 - type: entity
   name: sedative sting
   parent: BaseItem
-  id: SedativestingCultYogg
+  id: SedativeStingCultYogg
   suffix: CultYogg
   components:
+  - type: CultYoggWeapon
+    item: CultYoggCocoonSedativeSting
   - type: Sprite
     sprite: SS220/Objects/Weapons/Melee/cult_yogg_sedativesting.rsi
     state: icon
@@ -17,8 +19,9 @@
     delay: 2
   - type: SedativeSting
     transferAmount: 10
+  - type: StuckOnEquip
+    inHandItem: true
   - type: RestrictedItem
     whitelist:
-      requireAll: true
       components:
       - CultYogg
