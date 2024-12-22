@@ -20,7 +20,6 @@ using Robust.Shared.Timing;
 using Robust.Shared.Prototypes;
 using System.Linq;
 using Robust.Shared.Audio.Systems;
-using Content.Shared.Weapons.Melee;
 
 namespace Content.Server.SS220.CultYogg.Cultists;
 
