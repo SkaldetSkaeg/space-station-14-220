@@ -28,56 +28,56 @@
   id: BaseWeaponShotgun
   from:
     parentPrototypeId: BaseWeaponShotgun
-  result: CultYoggCocoonSpitballer
+  result: CultYoggCocoonVenomancer
   corruptionReverseEffect: ExorcismUncorruptEffect
 
 - type: corrupted
   id: WeaponShotgunBulldog
   from:
     prototypeId: WeaponShotgunBulldog
-  result: CultYoggCocoonSpitballer
+  result: CultYoggCocoonVenomancer
   corruptionReverseEffect: ExorcismUncorruptEffect
 
 - type: corrupted
   id: WeaponSprayNozzle
   from:
     prototypeId: WeaponSprayNozzle
-  result: CultYoggCocoonSpitballer
+  result: CultYoggCocoonVenomancer
   corruptionReverseEffect: ExorcismUncorruptEffect
 
 - type: corrupted
   id: WeaponImprovisedPneumaticCannonParent
   from:
     parentPrototypeId: WeaponImprovisedPneumaticCannon
-  result: CultYoggCocoonHorn
+  result: CultYoggCocoonSpitballer
   corruptionReverseEffect: ExorcismUncorruptEffect
 
 - type: corrupted
   id: WeaponImprovisedPneumaticCannon
   from:
     prototypeId: WeaponImprovisedPneumaticCannon
-  result: CultYoggCocoonHorn
+  result: CultYoggCocoonSpitballer
   corruptionReverseEffect: ExorcismUncorruptEffect
 
 - type: corrupted
   id: BaseWeaponBattery
   from:
     parentPrototypeId: BaseWeaponBattery
-  result: CultYoggCocoonHorn
+  result: CultYoggCocoonSpitballer
   corruptionReverseEffect: ExorcismUncorruptEffect
 
 - type: corrupted
   id: BaseWeaponBatterySmall
   from:
     parentPrototypeId: BaseWeaponBatterySmall
-  result: CultYoggCocoonHorn
+  result: CultYoggCocoonSpitballer
   corruptionReverseEffect: ExorcismUncorruptEffect
 
 - type: corrupted
   id: WeaponLaserCarbine
   from:
     prototypeId: WeaponLaserCarbine
-  result: CultYoggCocoonHorn
+  result: CultYoggCocoonSpitballer
   corruptionReverseEffect: ExorcismUncorruptEffect
 
 #Range Weaponds end
@@ -211,49 +211,49 @@
   id: PenSedativestingCultYogg
   from:
     tag: Pen
-  result: SedativestingCultYogg
+  result: CultYoggCocoonSedativeSting
   corruptionReverseEffect: ExorcismUncorruptEffect
 
 - type: corrupted
   id: SyringeSedativestingCultYogg
   from:
     parentPrototypeId: BaseSyringe
-  result: SedativestingCultYogg
+  result: CultYoggCocoonSedativeSting
   corruptionReverseEffect: ExorcismUncorruptEffect
 
 - type: corrupted
   id: ScrewdriverSedativestingCultYogg
   from:
     prototypeId: Screwdriver
-  result: SedativestingCultYogg
+  result: CultYoggCocoonSedativeSting
   corruptionReverseEffect: ExorcismUncorruptEffect
 
 - type: corrupted
   id: ForkPlasticSedativestingCultYogg
   from:
     prototypeId: ForkPlastic
-  result: SedativestingCultYogg
+  result: CultYoggCocoonSedativeSting
   corruptionReverseEffect: ExorcismUncorruptEffect
 
 - type: corrupted
   id: ForkSedativestingCultYogg
   from:
     prototypeId: Fork
-  result: SedativestingCultYogg
+  result: CultYoggCocoonSedativeSting
   corruptionReverseEffect: ExorcismUncorruptEffect
 
 - type: corrupted
   id: KnifePlasticSedativestingCultYogg
   from:
     prototypeId: KnifePlastic
-  result: SedativestingCultYogg
+  result: CultYoggCocoonSedativeSting
   corruptionReverseEffect: ExorcismUncorruptEffect
 
 - type: corrupted
   id: KnifeSedativestingCultYogg
   from:
     parentPrototypeId: BaseKnife
-  result: SedativestingCultYogg
+  result: CultYoggCocoonSedativeSting
   corruptionReverseEffect: ExorcismUncorruptEffect
 #SedativeSting end
 

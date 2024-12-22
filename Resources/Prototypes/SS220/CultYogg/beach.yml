@@ -29,6 +29,8 @@
       components:
       - CultYogg
   - type: MeleeWeapon
+    soundHit: /Audio/SS220/Weapons/Melee/CultYogg/beach_hit.ogg
+    soundSwing: /Audio/SS220/Weapons/Melee/CultYogg/beach_swing.ogg
     wideAnimationRotation: -135
     attackRate: 1.5
     range: 2
