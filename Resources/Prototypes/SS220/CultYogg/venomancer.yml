@@ -7,7 +7,7 @@
     - type: CultYoggWeapon
       item: CultYoggCocoonVenomancer
     - type: Gun
-      soundGunshot: /Audio/SS220/Weapons/Guns/CultYogg/venomancer_shot.ogg
+      soundGunshot: /Audio/Weapons/Xeno/alien_spitacid.ogg
       cameraRecoilScalar: 1
       fireRate: 11
       soundEmpty: null

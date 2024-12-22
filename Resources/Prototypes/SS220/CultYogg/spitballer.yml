@@ -7,7 +7,7 @@
     - type: CultYoggWeapon
       item: CultYoggCocoonSpitballer
     - type: Gun
-      soundGunshot: /Audio/Weapons/Guns/Gunshots/harpoon.ogg
+      soundGunshot: /Audio/SS220/Weapons/Guns/CultYogg/spitballer_shot.ogg
       soundEmpty: null
       fireRate: 20
       projectileSpeed: 5
@@ -21,7 +21,7 @@
     - type: Appearance
     - type: RechargeBasicEntityAmmo
       rechargeCooldown: 10
-      rechargeSound: /Audio/Weapons/Guns/MagIn/shotgun_insert.ogg
+      rechargeSound: /Audio/SS220/Weapons/Guns/CultYogg/spitballer_reload.ogg
     - type: Item
       size: Ginormous
     - type: IncreaseDamageOnWield
@@ -59,11 +59,11 @@
   categories: [ HideSpawnMenu ]
   components:
   - type: TimedDespawn
-    lifetime: 2
+    lifetime: 3
   - type: Sprite
-    sprite: Structures/Power/Generation/Tesla/energy_miniball.rsi
+    sprite: SS220/Objects/Weapons/Guns/Ammunition/CultYogg/explosive_bubble.rsi
     layers:
-    - state: tesla_projectile
+    - state: bubble
       shader: unshaded
   - type: EmbeddableProjectile
   - type: Projectile
@@ -71,12 +71,12 @@
     soundHit:
       path: /Audio/Weapons/Guns/Hits/bullet_hit.ogg
   - type: SpawnOnDespawn
-    prototype: HornExplotionPart
+    prototype: SpitballerExplotionPart
 
 - type: entity
   parent: CollideRune
-  id: HornExplotionPart
-  name: HornExplotionPart
+  id: SpitballerExplotionPart
+  name: SpitballerExplotionPart
   categories: [ HideSpawnMenu ]
   components:
     - type: Explosive
@@ -85,6 +85,14 @@
       intensitySlope: 3
       totalIntensity: 20
       canCreateVacuum: false
+    - type: SpamEmitSound
+      minInterval: 1
+      maxInterval: 1.5
+      sound:
+        collection: CultYoggExplosiveBubbleSounds
+        params:
+          maxDistance: 10
+          volume: -3
     - type: TriggerOnSpawn
     - type: FlashOnTrigger
       range: 7
