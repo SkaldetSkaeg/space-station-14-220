@@ -25,5 +25,5 @@ public sealed partial class RestrictedItemComponent : Component
     public DamageSpecifier DamageOnFail = new DamageSpecifier();
 
     [DataField]
-    public bool CanBePooled = true;
+    public bool CanBePulled = true;
 }
