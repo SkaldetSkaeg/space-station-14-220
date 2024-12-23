@@ -21,10 +21,10 @@ public sealed partial class HasComponentsCondition : EntityEffectCondition
 
     public override bool Condition(EntityEffectBaseArgs args)
     {
-        var condition = true;
         if (Components.Length == 0)
-            return condition;
+            return true;
 
+        var condition = RequireAll;
         var factory = IoCManager.Resolve<IComponentFactory>();
         foreach (var component in Components)
         {
