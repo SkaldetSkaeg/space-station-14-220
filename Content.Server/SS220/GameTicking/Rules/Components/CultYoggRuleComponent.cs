@@ -59,6 +59,9 @@ public sealed partial class CultYoggRuleComponent : Component
     [DataField]
     public List<string> ListofObjectives = ["CultYoggSacraficeObjective"];
 
+    [ValidatePrototypeId<EntityPrototype>]
+    public string MindCultYoggAntagId = "MindRoleCultYogg";
+
     //telephaty channel
     [DataField]
     public string TelepathyChannel = "TelepathyChannelYoggSothothCult";

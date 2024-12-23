@@ -23,4 +23,7 @@ public sealed partial class RestrictedItemComponent : Component
     public SoundSpecifier? SoundOnFail;
     [DataField]
     public DamageSpecifier DamageOnFail = new DamageSpecifier();
+
+    [DataField]
+    public bool CanBePooled = true;
 }

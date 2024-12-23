@@ -39,6 +39,9 @@ public abstract class SharedRestrictedItemSystem : EntitySystem
 
     private void OnPullAttempt(Entity<RestrictedItemComponent> ent, ref BeingPulledAttemptEvent args)
     {
+        if(ent.Comp.CanBePooled)
+            return;
+
         if (!ItemCheck(args.Puller, ent))
             args.Cancel();
     }
