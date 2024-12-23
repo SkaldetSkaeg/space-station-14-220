@@ -22,6 +22,10 @@
         - !type:ReagentThreshold
             reagent: TheBloodOfYogg
             min: 2
+        - !type:HasComponentsCondition
+            inverted: true
+            components:
+              - CultYogg
 
 - type: reagent
   id: ElixirOfLiberation
