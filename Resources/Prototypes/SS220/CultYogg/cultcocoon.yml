@@ -1,6 +1,8 @@
-# EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
+# © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
+
 - type: entity
   name: cult cocoon
+  parent: CultYoggRestrictedItem
   id: CultYoggCocoonBase
   suffix: CultYogg
   abstract: true
@@ -9,11 +11,6 @@
     sprite: SS220/Objects/CultYogg/cocoon.rsi
     layers:
       - state: icon
-  - type: RestrictedItem
-    whitelist:
-      requireAll: true
-      components:
-      - CultYogg
 
 - type: entity
   id: CultYoggCocoonSpikegun

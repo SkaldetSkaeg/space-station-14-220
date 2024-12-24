@@ -1,6 +1,8 @@
+# © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
+
 - type: entity
   name: spikegun cult yogg
-  parent: BaseItem
+  parent: [BaseItem, CultYoggRestrictedItem]
   id: SpikegunCultYogg
   suffix: CultYogg
   components:
@@ -45,11 +47,6 @@
           shader: unshaded
     - type: StuckOnEquip
       inHandItem: true
-    - type: RestrictedItem
-      whitelist:
-        requireAll: true
-        components:
-        - CultYogg
 
 
 

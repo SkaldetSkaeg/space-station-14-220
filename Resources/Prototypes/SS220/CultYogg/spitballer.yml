@@ -1,6 +1,8 @@
+# © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
+
 - type: entity
-  name: ыpitballer cult yogg
-  parent: BaseItem
+  name: spitballer cult yogg
+  parent: [BaseItem, CultYoggRestrictedItem]
   id: Spitballer
   suffix: CultYogg
   components:
@@ -46,11 +48,6 @@
           shader: unshaded
     - type: StuckOnEquip
       inHandItem: true
-    - type: RestrictedItem
-      whitelist:
-        components:
-        - CultYogg
-
 
 - type: entity
   name: explosive bubbles bullets

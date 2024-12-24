@@ -33,7 +33,6 @@ using Content.Shared.Database;
 using Content.Server.Administration.Logs;
 using Content.Server.SS220.Objectives.Systems;
 using Content.Server.SS220.Objectives.Components;
-using Content.Server.Roles;
 
 namespace Content.Server.SS220.GameTicking.Rules;
 

@@ -1,6 +1,8 @@
+# © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
+
 - type: entity
   name: venomancer
-  parent: BaseItem
+  parent: [BaseItem, CultYoggRestrictedItem]
   suffix: CultYogg
   id: Venomancer
   components:
@@ -55,10 +57,6 @@
           shader: unshaded
     - type: StuckOnEquip
       inHandItem: true
-    - type: RestrictedItem
-      whitelist:
-        components:
-        - CultYogg
 
 - type: entity
   id: AcidSpit
