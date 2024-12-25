@@ -34,6 +34,7 @@
   - type: Sprite
     sprite: SS220/Structures/CultYogg/yoggpond.rsi
     state: pond
+    noRot: true
   - type: InteractionOutline
   - type: Transform
     noRot: true
