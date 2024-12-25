@@ -4,8 +4,6 @@ using Content.Shared.Damage;
 using Content.Shared.DragDrop;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Popups;
-using Content.Shared.SS220.CultYogg.Cultists;
-using Content.Shared.SS220.CultYogg.MiGo;
 using Content.Shared.Verbs;
 using Content.Shared.Whitelist;
 using Robust.Shared.Containers;
