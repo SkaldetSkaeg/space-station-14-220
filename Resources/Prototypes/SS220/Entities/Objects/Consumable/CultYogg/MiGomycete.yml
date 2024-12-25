@@ -42,8 +42,7 @@
 
 - type: seed
   id: MiGoSpores
-  name: семяна ми-гомицелия
-  #name: seeds-migo-name
+  name: seeds-migo-name
   noun: seeds-noun-spores
   displayName: seeds-migo-display-name
   plantRsi: SS220/Objects/CultYogg/migomycete.rsi

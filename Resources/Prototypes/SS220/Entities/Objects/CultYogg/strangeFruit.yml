@@ -106,8 +106,7 @@
 
 - type: seed
   id: StrangeFruit
-  name: семяна странного фрукта
-  #name: seeds-strange-fruit-name
+  name: seeds-strange-fruit-name
   noun: seeds-noun-spores
   displayName: seeds-strange-fruit-display-name
   plantRsi: SS220/Objects/CultYogg/strangefruit.rsi

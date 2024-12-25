@@ -323,7 +323,6 @@ public abstract class SharedMiGoSystem : EntitySystem
             if (started)
             {
                 _physics.SetBodyType(uid, BodyType.Static);
-                _audio.PlayPredicted(uid.Comp.SoundMaterialize, uid, uid);
             }
         }
         else
@@ -349,6 +348,7 @@ public abstract class SharedMiGoSystem : EntitySystem
         args.Handled = true;
 
         _physics.SetBodyType(uid, BodyType.KinematicController);
+        _audio.PlayPredicted(uid.Comp.SoundMaterialize, uid, uid);
 
         if (!args.Cancelled)
         {

@@ -42,7 +42,6 @@
 
 - type: seed
   id: NullificationShroomSpores
-  name: семяна нулевого гриба
   name: seeds-null-shroom-name
   noun: seeds-noun-spores
   displayName: seeds-null-shroom-display-name
