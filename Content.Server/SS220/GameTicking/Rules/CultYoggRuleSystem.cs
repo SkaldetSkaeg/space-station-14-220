@@ -314,34 +314,40 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         MakeCultist(args.EntityUid, ent);
     }
 
-    public void MakeCultist(EntityUid uid, CultYoggRuleComponent component, bool initial = true)
+    public void MakeCultist(EntityUid uid, CultYoggRuleComponent comp, bool initial = true)
     {
         //Grab the mind if it wasnt provided
-        if (!_mind.TryGetMind(uid, out var mindId, out var mind))
+        if (!_mind.TryGetMind(uid, out var mindId, out var mindComp))
             return;
 
-        _antag.SendBriefing(uid, Loc.GetString("cult-yogg-role-greeting"), null, component.GreetSoundNotification);
+        _antag.SendBriefing(uid, Loc.GetString("cult-yogg-role-greeting"), null, comp.GreetSoundNotification);
 
         if (initial)
-            component.InitialCultistMinds.Add(mindId);
+            comp.InitialCultistMinds.Add(mindId);
 
         // Change the faction
-        _npcFaction.RemoveFaction(uid, component.NanoTrasenFaction, false);
-        _npcFaction.AddFaction(uid, component.CultYoggFaction);
+        _npcFaction.RemoveFaction(uid, comp.NanoTrasenFaction, false);
+        _npcFaction.AddFaction(uid, comp.CultYoggFaction);
 
         EnsureComp<CultYoggComponent>(uid);
 
         //update stage cause it might be midstage
-        var ev = new ChangeCultYoggStageEvent(component.AmountOfSacrifices);
+        var ev = new ChangeCultYoggStageEvent(comp.AmountOfSacrifices);
         RaiseLocalEvent(uid, ref ev);
 
         //Add telepathy
         var telepathy = EnsureComp<TelepathyComponent>(uid);
         telepathy.CanSend = true;//we are allowing it cause testing
-        telepathy.TelepathyChannelPrototype = component.TelepathyChannel;
+        telepathy.TelepathyChannelPrototype = comp.TelepathyChannel;
 
         EnsureComp<ShowCultYoggIconsComponent>(uid);//icons of cultists and sacraficials
         EnsureComp<ZombieImmuneComponent>(uid);//they are practically mushrooms
+
+        foreach (var obj in comp.ListofObjectives)
+        {
+            _role.MindAddRole(mindId, comp.MindCultYoggAntagId, mindComp, true);
+            var objective = _mind.TryAddObjective(mindId, mindComp, obj);
+        }
     }
     #endregion
 
@@ -358,8 +364,13 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
     }
     public void DeMakeCultist(EntityUid uid, CultYoggRuleComponent component)
     {
-        if (!_mind.TryGetMind(uid, out var mindId, out var mind))
+        if (!_mind.TryGetMind(uid, out var mindId, out var mindComp))
             return;
+
+        if (!_role.MindHasRole<CultYoggRoleComponent>(mindId, out var mindSlave))
+            return;
+
+        // _mind.TryRemoveObjective(mindId, mindComp, objective.Value);
 
         _role.MindRemoveRole<CultYoggRoleComponent>(mindId);
 

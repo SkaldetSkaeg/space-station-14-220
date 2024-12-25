@@ -20,6 +20,8 @@ cult-yogg-altar-not-enough-migo = Недостаточно Ми-Го рядом 
 cult-yogg-sacrifice-started = {$user} начинает жертвоприношение, тело {$target} медленно поднимается в воздух
 cult-yogg-buckle-attempt = {$user} не является целью жертвоприношения
 
+cult-yogg-cultist-acsending = Ми-гомицелий проростает, скоро этот кандидат возвысится.
+
 cult-yogg-shroom-markup = В этом человеке пытаются прорасти споры.
 
 cult-yogg-stage-eyes-markups = Глаза горят неестественно зелёным пламенем

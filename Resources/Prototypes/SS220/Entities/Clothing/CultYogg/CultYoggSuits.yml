@@ -1,7 +1,7 @@
 # © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
 - type: entity
-  parent: ClothingOuterHardsuitBase
+  parent: [ClothingOuterHardsuitBase, CultYoggRestrictedItem]
   id: ClothingOuterHardsuitCultYogg
   suffix: CultYogg
   name: Hardsuit corrupted by a Cult
@@ -33,12 +33,6 @@
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHelmetHardsuitCultYogg
   - type: StuckOnEquip
-  - type: RestrictedItem
-    whitelist:
-      requireAll: true
-      components:
-      - CultYogg
-
 
 - type: entity
   parent: ClothingHeadHardsuitWithLightBase

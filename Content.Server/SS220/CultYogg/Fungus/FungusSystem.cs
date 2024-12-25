@@ -223,8 +223,8 @@ public sealed class FungusSystem : EntitySystem
                     return;
 
                 _popup.PopupEntity(Loc.GetString("plant-holder-component-plant-success-message",
-                        ("seedName", seed.Name),
-                        ("seedNoun", seed.Noun)),
+                        ("seedName",  Loc.GetString(seed.Name)),
+                        ("seedNoun", Loc.GetString(seed.Noun))),
                         uid,
                         PopupType.Medium);
                 fungusComponent.Seed = seed;

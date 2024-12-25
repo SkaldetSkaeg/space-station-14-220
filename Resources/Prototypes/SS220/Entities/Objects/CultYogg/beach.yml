@@ -2,7 +2,7 @@
 
 - type: entity
   name: beach
-  parent: BaseItem
+  parent: [BaseItem, CultYoggRestrictedItem]
   id: BeachCultYogg
   suffix: CultYogg
   description: description
@@ -23,11 +23,6 @@
 #      - state: inhand-right-vox
   - type: StuckOnEquip
     inHandItem: true
-  - type: RestrictedItem
-    whitelist:
-      requireAll: true
-      components:
-      - CultYogg
   - type: MeleeWeapon
     soundHit: /Audio/SS220/Weapons/Melee/CultYogg/beach_hit.ogg
     soundSwing: /Audio/SS220/Weapons/Melee/CultYogg/beach_swing.ogg

@@ -1,6 +1,8 @@
+# © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
+
 - type: entity
   name: cult lantern
-  parent: BaseItem
+  parent: [BaseItem, CultYoggRestrictedItem]
   id: LanternFlashCultYogg
   suffix: CultYogg
   description: description
@@ -29,9 +31,4 @@
   - type: MeleeWeapon
     damage:
       types:
-        Blunt: 0 # melee weapon to allow flashing individual targets
-  - type: RestrictedItem
-    whitelist:
-      requireAll: true
-      components:
-      - CultYogg
+        Blunt: 0 # melee weapon to allow flashing individual targetss

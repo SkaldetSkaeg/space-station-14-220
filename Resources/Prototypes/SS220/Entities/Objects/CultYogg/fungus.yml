@@ -1,3 +1,5 @@
+# © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
+
 - type: entity
   name: fungus hydroponic
   parent: BaseStructure
@@ -50,6 +52,7 @@
     damageContainer: Inorganic
     damageModifierSet: Metallic
   - type: Transform
+    noRot: true
     anchored: true
   - type: PlantHolderVisuals
   - type: Fungus
@@ -76,6 +79,6 @@
 - type: fungusMachineInventory
   id: CondimenttInventory
   startingInventory:
-    MiGoSeedsCult: 0
+    MiGomyceteSeeds: 0
     CultStrangeFruitSeed: 0
-    NullificationShroomSeedsCult: 0
+    NullificationShroomSeeds: 0

@@ -23,9 +23,9 @@ public sealed partial class CultYoggRuleComponent : Component
     /// General requirements
     /// </summary>
 
-    public readonly List<string> FirstTierJobs = new() { "Captain" };
+    public readonly List<string> FirstTierJobs = ["Captain"];
     public readonly string SecondTierDepartament = "Command";
-    public readonly List<string> BannedDepartaents = new() { "GhostRoles" };
+    public readonly List<string> BannedDepartaents = ["GhostRoles"];
 
     public bool SacraficialsWerePicked = false;//buffer to prevent multiple generations
 
@@ -33,14 +33,14 @@ public sealed partial class CultYoggRuleComponent : Component
     /// Storages for an endgame screen title
     /// </summary>
     [DataField]
-    public Dictionary<string, string> InitialCultistsNames = new();//Who was cultist on the gamestart.
+    public Dictionary<string, string> InitialCultistsNames = [];//Who was cultist on the gamestart.
 
-    public readonly List<EntityUid> InitialCultistMinds = new();
+    public readonly List<EntityUid> InitialCultistMinds = [];
 
     /// <summary>
     /// Storage for a sacraficials
     /// </summary>
-    public readonly List<EntityUid> SacraficialsList = new();
+    public readonly List<EntityUid> SacraficialsList = [];
 
     public readonly int[] TierOfSacraficials = [1, 2, 3];//trying to save tier in target, so they might be replaced with the same lvl target
 
@@ -52,6 +52,15 @@ public sealed partial class CultYoggRuleComponent : Component
 
     [DataField]
     public ProtoId<NpcFactionPrototype> CultYoggFaction = "CultYogg";
+
+    /// <summary>
+    /// Variables required to make new cultists
+    /// </summary>
+    [DataField]
+    public List<string> ListofObjectives = ["CultYoggSacraficeObjective"];
+
+    [ValidatePrototypeId<EntityPrototype>]
+    public string MindCultYoggAntagId = "MindRoleCultYogg";
 
     //telephaty channel
     [DataField]

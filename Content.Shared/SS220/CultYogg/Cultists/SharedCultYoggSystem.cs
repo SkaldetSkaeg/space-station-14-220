@@ -7,6 +7,7 @@ using Content.Shared.IdentityManagement.Components;
 using Content.Shared.Inventory;
 using Content.Shared.Popups;
 using Content.Shared.SS220.CultYogg.Corruption;
+using Robust.Shared.GameObjects;
 using Robust.Shared.Timing;
 
 namespace Content.Shared.SS220.CultYogg.Cultists;
@@ -94,6 +95,8 @@ public abstract class SharedCultYoggSystem : EntitySystem
             return;
         }
         args.Handled = true;
+
+        Spawn(uid.Comp.CorruptionEffect, Transform(args.Target).Coordinates);
     }
 
     private void CorruptItemInHandAction(Entity<CultYoggComponent> uid, ref CultYoggCorruptItemInHandEvent args)
