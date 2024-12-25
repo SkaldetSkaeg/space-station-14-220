@@ -1,19 +1,19 @@
 # © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
 # spawn animation, spawns actual nyarlathotep when it ends
-- type: entity
-  id: NyarlathotepSpawn
-  suffix: Spawn
-  components:
-  - type: Sprite
-    layers:
-    - state: spawn
-      shader: unshaded
-  # spawn animation lasts 3.5 seconds
-  - type: TimedDespawn
-    lifetime: 3.5
-  - type: SpawnOnDespawn
-    prototype: Nyarlathotep
+#- type: entity
+#  id: NyarlathotepSpawn
+#  suffix: Spawn
+#  components:
+#  - type: Sprite
+#    layers:
+#    - state: spawn
+#      shader: unshaded
+#  # spawn animation lasts 3.5 seconds
+#  - type: TimedDespawn
+#    lifetime: 3.5
+#  - type: SpawnOnDespawn
+#    prototype: Nyarlathotep
 
 - type: entity
   id: Nyarlathotep

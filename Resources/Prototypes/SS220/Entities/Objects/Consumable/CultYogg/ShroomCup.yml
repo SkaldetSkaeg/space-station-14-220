@@ -42,6 +42,7 @@
 
 - type: seed
   id: NullificationShroomSpores
+  name: семяна нулевого гриба
   name: seeds-null-shroom-name
   noun: seeds-noun-spores
   displayName: seeds-null-shroom-display-name
@@ -54,7 +55,7 @@
   maturation: 12
   production: 3
   yield: 3
-  potency: 10
+  potency: 2
   growthStages: 7
   waterConsumption: 0.60
   nutrientConsumption: 0.50
