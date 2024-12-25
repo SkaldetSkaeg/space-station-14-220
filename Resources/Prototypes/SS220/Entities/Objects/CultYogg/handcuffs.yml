@@ -1,9 +1,11 @@
+# © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
+
 - type: entity
   name: cult handcuffs
   description: Used to detain criminals and other assholes.
   id: CultHandcuffs
   suffix: CultYogg
-  parent: BaseItem
+  parent: [BaseItem, CultYoggRestrictedItem]
   components:
   - type: Item
     size: Small
@@ -31,11 +33,6 @@
   - type: Tag
     tags:
     - Handcuffs
-  - type: RestrictedItem
-    whitelist:
-      requireAll: true
-      components:
-      - CultYogg
   - type: Appearance
   - type: MeleeWeapon
     wideAnimationRotation: 90

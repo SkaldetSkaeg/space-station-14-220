@@ -9,6 +9,8 @@ using Content.Shared.SS220.CultYogg.Altar;
 using Content.Shared.SS220.CultYogg.Cultists;
 using Content.Shared.SS220.CultYogg.MiGo;
 using Content.Shared.Actions;
+using Content.Shared.Mobs.Components;
+using Content.Shared.Mobs;
 
 namespace Content.Server.SS220.CultYogg.Altar;
 
@@ -51,9 +53,12 @@ public sealed partial class CultYoggAltarSystem : SharedCultYoggAltarSystem
         }
 
         //sending all cultists updating stage event
-        var queryCultists = EntityQueryEnumerator<CultYoggComponent>(); //ToDo ask if this code is ok
-        while (queryCultists.MoveNext(out var uid, out _))
+        var queryCultists = EntityQueryEnumerator<CultYoggComponent, MobStateComponent>(); //ToDo ask if this code is ok
+        while (queryCultists.MoveNext(out var uid, out _, out var mobstate))
         {
+            if (mobstate.CurrentState == MobState.Dead) //if he is dead we skip him
+                return;
+
             var ev = new ChangeCultYoggStageEvent(stage);
             RaiseLocalEvent(uid, ref ev, true);
         }

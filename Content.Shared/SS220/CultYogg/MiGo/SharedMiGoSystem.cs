@@ -307,7 +307,7 @@ public abstract class SharedMiGoSystem : EntitySystem
     {
         if (!uid.Comp.IsPhysicalForm)
         {
-            var doafterArgs = new DoAfterArgs(EntityManager, uid, TimeSpan.FromSeconds(1.25), new AfterMaterialize(), uid)
+            var doafterArgs = new DoAfterArgs(EntityManager, uid, uid.Comp.ExitingAstralDoAfter, new AfterMaterialize(), uid)
             {
                 Broadcast = false,
                 BreakOnDamage = false,
@@ -320,12 +320,11 @@ public abstract class SharedMiGoSystem : EntitySystem
             if (started)
             {
                 _physics.SetBodyType(uid, BodyType.Static);
-                _audio.PlayPredicted(uid.Comp.SoundMaterialize, uid, uid);
             }
         }
         else
         {
-            var doafterArgs = new DoAfterArgs(EntityManager, uid, TimeSpan.FromSeconds(1.25), new AfterDeMaterialize(), uid)
+            var doafterArgs = new DoAfterArgs(EntityManager, uid, uid.Comp.EnteringAstralDoAfter, new AfterDeMaterialize(), uid)
             {
                 Broadcast = false,
                 BreakOnDamage = false,
@@ -346,6 +345,7 @@ public abstract class SharedMiGoSystem : EntitySystem
         args.Handled = true;
 
         _physics.SetBodyType(uid, BodyType.KinematicController);
+        _audio.PlayPredicted(uid.Comp.SoundMaterialize, uid, uid);
 
         if (!args.Cancelled)
         {
