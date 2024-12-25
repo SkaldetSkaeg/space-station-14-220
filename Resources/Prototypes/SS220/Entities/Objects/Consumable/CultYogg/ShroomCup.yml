@@ -33,7 +33,7 @@
   parent: SeedBase
   name: packet of fly NullificationShroom spores
   description: "The iconic, extremely deadly mushroom to be used for purely ornamental purposes."
-  id: NullificationShroomSeedsCult
+  id: NullificationShroomSeeds
   components:
     - type: Seed
       seedId: NullificationShroomSpores
@@ -46,7 +46,7 @@
   noun: seeds-noun-spores
   displayName: seeds-null-shroom-display-name
   plantRsi: SS220/Objects/CultYogg/nullification_shroom.rsi
-  packetPrototype: NullificationShroomSeedsCult
+  packetPrototype: NullificationShroomSeeds
   productPrototypes:
     - FoodNullificationShroomCult
   harvestRepeat: Repeat
@@ -60,6 +60,6 @@
   nutrientConsumption: 0.50
   chemicals:
     ElixirOfLiberation:
-      Min: 1
-      Max: 5
-      PotencyDivisor: 4
+      Min: 2
+      Max: 2
+      PotencyDivisor: 1

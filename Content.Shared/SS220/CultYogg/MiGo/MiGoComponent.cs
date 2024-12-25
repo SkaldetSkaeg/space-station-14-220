@@ -108,10 +108,10 @@ public sealed partial class MiGoComponent : Component
     [DataField]
     public SoundSpecifier? SoundDeMaterialize = new SoundPathSpecifier("/Audio/SS220/CultYogg/migo_astral_in.ogg");
 
-    [DataFields]
+    [DataField]
     public TimeSpan EnteringAstralDoAfter = TimeSpan.FromSeconds(3);
 
-    [DataFields]
+    [DataField]
     public TimeSpan ExitingAstralDoAfter = TimeSpan.FromSeconds(3);
 
     public TimeSpan CooldownAfterDematerialize = TimeSpan.FromSeconds(3);

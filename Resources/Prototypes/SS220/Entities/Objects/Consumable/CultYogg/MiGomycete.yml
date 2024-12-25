@@ -33,7 +33,7 @@
   parent: SeedBase
   name: packet of fly MiGo spores
   description: "The iconic, extremely deadly mushroom to be used for purely ornamental purposes."
-  id: MiGoSeedsCult
+  id: MiGomyceteSeeds
   components:
     - type: Seed
       seedId: MiGoSpores
@@ -46,7 +46,7 @@
   noun: seeds-noun-spores
   displayName: seeds-migo-display-name
   plantRsi: SS220/Objects/CultYogg/migomycete.rsi
-  packetPrototype: MiGoSeedsCult
+  packetPrototype: MiGomyceteSeeds
   productPrototypes:
     - FoodMiGomyceteCult
   harvestRepeat: Repeat
@@ -60,10 +60,6 @@
   nutrientConsumption: 0.50
   chemicals:
     TheBloodOfYogg:
-      Min: 3
+      Min: 5
       Max: 5
-      PotencyDivisor: 4
-    Nutriment: ## yumby :)
-      Min: 1
-      Max: 5
-      PotencyDivisor: 20
+      PotencyDivisor: 2

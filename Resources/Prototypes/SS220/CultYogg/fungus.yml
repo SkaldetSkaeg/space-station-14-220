@@ -78,6 +78,6 @@
 - type: fungusMachineInventory
   id: CondimenttInventory
   startingInventory:
-    MiGoSeedsCult: 0
+    MiGomyceteSeeds: 0
     CultStrangeFruitSeed: 0
-    NullificationShroomSeedsCult: 0
+    NullificationShroomSeeds: 0

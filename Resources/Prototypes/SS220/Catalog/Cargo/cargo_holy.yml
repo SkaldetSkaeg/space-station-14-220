@@ -4,6 +4,6 @@
     sprite: SS220/Objects/Consumable/Drinks/holy_water_jug.rsi
     state: icon
   product: CrateHolyWaterKit
-  cost: 2500
+  cost: 15000
   category: cargoproduct-category-name-service
   group: market
