@@ -34,7 +34,7 @@ public sealed class SharedCultYoggCorruptedSystem : EntitySystem
     [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly SharedSoftDeleteSystem _softDeleteSystem = default!;
 
-    private readonly TimeSpan _corruptionDuration = TimeSpan.FromSeconds(3);
+    private readonly TimeSpan _corruptionDuration = TimeSpan.FromSeconds(2);
     private readonly Dictionary<ProtoId<EntityPrototype>, CultYoggCorruptedPrototype> _recipesBySourcePrototypeId = [];
     private readonly Dictionary<ProtoId<StackPrototype>, CultYoggCorruptedPrototype> _recipesBySourceStackType = [];
     private readonly Dictionary<ProtoId<EntityPrototype>, CultYoggCorruptedPrototype> _recipiesByParentPrototypeId = [];

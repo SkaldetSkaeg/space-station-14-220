@@ -52,6 +52,7 @@
     damageContainer: Inorganic
     damageModifierSet: Metallic
   - type: Transform
+    noRot: true
     anchored: true
   - type: PlantHolderVisuals
   - type: Fungus

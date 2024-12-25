@@ -87,11 +87,11 @@ public sealed partial class MiGoComponent : Component
     [DataField]
     public EntityWhitelist? EraseWhitelist = new()
     {
-        Components = new[]
-        {
+        Components =
+        [
             "CultYoggBuilding",
             "CultYoggBuildingFrame"
-        }
+        ]
     };
     #region Astral
     /// <summary>

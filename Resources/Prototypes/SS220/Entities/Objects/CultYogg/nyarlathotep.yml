@@ -16,6 +16,8 @@
     bodyType: Dynamic
     bodyStatus: InAir
     sleepingAllowed: false
+  - type: Transform
+    noRot: true
   - type: PointLight
     enabled: true
     radius: 25
