@@ -1,7 +1,7 @@
 # © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
 - type: entity
-  parent: ClothingOuterHardsuitBase
+  parent: [ClothingOuterHardsuitBase, CultYoggRestrictedItem]
   id: ClothingOuterHardsuitCultYogg
   suffix: CultYogg
   name: Hardsuit corrupted by a Cult
@@ -19,13 +19,13 @@
   - type: Armor
     modifiers:
       coefficients:
-        Blunt: 0.3
-        Slash: 0.3
-        Piercing: 0.3
-        Heat: 0.3
-        Radiation: 0.3
-        Caustic: 0.3
-        Stamina: 0.15
+        Blunt: 0.45
+        Slash: 0.7
+        Piercing: 0.45
+        Heat: 0.4
+        Radiation: 0.4
+        Caustic: 0.1
+        Stamina: 0.35
   - type: ClothingSpeedModifier
     walkModifier: 0.9
     sprintModifier: 0.9
@@ -33,12 +33,6 @@
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHelmetHardsuitCultYogg
   - type: StuckOnEquip
-  - type: RestrictedItem
-    whitelist:
-      requireAll: true
-      components:
-      - CultYogg
-
 
 - type: entity
   parent: ClothingHeadHardsuitWithLightBase

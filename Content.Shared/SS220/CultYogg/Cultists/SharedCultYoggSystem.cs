@@ -7,6 +7,7 @@ using Content.Shared.IdentityManagement.Components;
 using Content.Shared.Inventory;
 using Content.Shared.Popups;
 using Content.Shared.SS220.CultYogg.Corruption;
+using Robust.Shared.GameObjects;
 using Robust.Shared.Timing;
 
 namespace Content.Shared.SS220.CultYogg.Cultists;
@@ -84,16 +85,18 @@ public abstract class SharedCultYoggSystem : EntitySystem
 
         if (_cultYoggCorruptedSystem.IsCorrupted(args.Target))
         {
-            _popup.PopupEntity(Loc.GetString("cult-yogg-corrupt-already-corrupted"), args.Target, uid);
+            _popup.PopupClient(Loc.GetString("cult-yogg-corrupt-already-corrupted"), args.Target, uid);
             return;
         }
 
         if (!_cultYoggCorruptedSystem.TryCorruptContinuously(uid, args.Target, false))
         {
-            _popup.PopupEntity(Loc.GetString("cult-yogg-corrupt-no-proto"), uid);
+            _popup.PopupClient(Loc.GetString("cult-yogg-corrupt-no-proto"), args.Target, uid);
             return;
         }
         args.Handled = true;
+
+        Spawn(uid.Comp.CorruptionEffect, Transform(args.Target).Coordinates);
     }
 
     private void CorruptItemInHandAction(Entity<CultYoggComponent> uid, ref CultYoggCorruptItemInHandEvent args)
@@ -113,13 +116,13 @@ public abstract class SharedCultYoggSystem : EntitySystem
 
         if (_cultYoggCorruptedSystem.IsCorrupted(handItem.Value))
         {
-            _popup.PopupEntity(Loc.GetString("cult-yogg-corrupt-already-corrupted"), handItem.Value, uid);
+            _popup.PopupClient(Loc.GetString("cult-yogg-corrupt-already-corrupted"), handItem.Value, uid);
             return;
         }
 
         if (!_cultYoggCorruptedSystem.TryCorruptContinuously(uid, handItem.Value, true))
         {
-            _popup.PopupEntity(Loc.GetString("cult-yogg-corrupt-no-proto"), uid);
+            _popup.PopupClient(Loc.GetString("cult-yogg-corrupt-no-proto"), handItem.Value, uid);
             return;
         }
         args.Handled = true;

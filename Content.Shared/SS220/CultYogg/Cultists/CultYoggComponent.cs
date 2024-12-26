@@ -3,6 +3,10 @@ using Content.Shared.Humanoid.Markings;
 using Content.Shared.Nutrition.Components;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
+using Content.Shared.Stacks;
+using Content.Shared.Tag;
+using Robust.Shared.Prototypes;
+using Robust.Shared.Serialization;
 
 namespace Content.Shared.SS220.CultYogg.Cultists;
 
@@ -93,4 +97,10 @@ public sealed partial class CultYoggComponent : Component
     [DataField, AutoNetworkedField]
     public int CurrentStage = 0;
     #endregion
+
+    /// <summary>
+    /// Visual effect to spawn when entity corrupted
+    /// </summary>
+    [DataField]
+    public EntProtoId CorruptionEffect = "CorruptingEffect";
 }

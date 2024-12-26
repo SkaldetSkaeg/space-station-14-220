@@ -21,4 +21,4 @@ objective-cult-yogg-sacrafice-start = Призовите темного бога
 objective-cult-yogg-sacrafice-task-job =  в должности
 objective-condition-cult-yogg-sacrafice-person = {$targetName}, в должности {CAPITALIZE($job)}
 
-cult-yogg-shuttle-call = Датчики станции зафиксировали гигантский подвижный объект. Аварийный шаттл был отправлен для эвакуации оставшегося персонала.
+cult-yogg-shuttle-call = Датчики станции зафиксировали { $location } гигантский подвижный объект. Аварийный шаттл был отправлен для эвакуации оставшегося персонала.

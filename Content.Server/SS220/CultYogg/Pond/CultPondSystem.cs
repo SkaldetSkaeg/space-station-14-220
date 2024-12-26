@@ -1,5 +1,4 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
-using System;
 using System.Linq;
 using Content.Shared.Chemistry.Components.SolutionManager;
 using Content.Shared.Chemistry.EntitySystems;
@@ -20,11 +19,25 @@ public sealed class CultPondSystem : EntitySystem
         base.Initialize();
 
         SubscribeLocalEvent<CultPondComponent, MapInitEvent>(OnInit);
+        SubscribeLocalEvent<CultPondComponent, SolutionContainerChangedEvent>(OnSolutionChanged);
     }
 
-    private void OnInit(Entity<CultPondComponent> uid, ref MapInitEvent args)
+    private void OnInit(Entity<CultPondComponent> entity, ref MapInitEvent args)
     {
-        uid.Comp.NextCharge = _timing.CurTime;
+        entity.Comp.NextCharge = _timing.CurTime;
+        UpdateIsFilled(entity);
+    }
+
+    private void OnSolutionChanged(Entity<CultPondComponent> entity, ref SolutionContainerChangedEvent args)
+    {
+        if (entity.Comp.Solution != args.SolutionId)
+            return;
+
+        // if the solution was draw from the pond when it was full, then the refill cooldown starts from that moment
+        if (entity.Comp.IsFilled && args.Solution.AvailableVolume > 0)
+            entity.Comp.NextCharge = _timing.CurTime + TimeSpan.FromSeconds(entity.Comp.RefillCooldown);
+
+        UpdateIsFilled(entity);
     }
 
     public override void Update(float frameTime)
@@ -69,5 +82,15 @@ public sealed class CultPondSystem : EntitySystem
             if (pondComponent.RechargeSound != null)
                 _audio.PlayPvs(pondComponent.RechargeSound, uid);
         }
+    }
+
+    private void UpdateIsFilled(Entity<CultPondComponent> entity)
+    {
+        var (uid, comp) = entity;
+        if (!TryComp<SolutionContainerManagerComponent>(uid, out var solutionContainer) ||
+            !_solutionContainers.TryGetSolution((uid, solutionContainer), comp.Solution, out _, out var soln))
+            return;
+
+        entity.Comp.IsFilled = soln.AvailableVolume <= 0;
     }
 }

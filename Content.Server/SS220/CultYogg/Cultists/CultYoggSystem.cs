@@ -20,6 +20,8 @@ using Robust.Shared.Timing;
 using Robust.Shared.Prototypes;
 using System.Linq;
 using Robust.Shared.Audio.Systems;
+using Content.Shared.Mobs.Components;
+using Content.Shared.Mobs;
 
 namespace Content.Server.SS220.CultYogg.Cultists;
 
@@ -112,9 +114,14 @@ public sealed class CultYoggSystem : SharedCultYoggSystem
                 }
                 break;
             case 3:
-                var ev = new CultYoggForceAscendingEvent();//making cultist MiGo
-                RaiseLocalEvent(entity, ref ev);
+                if (!TryComp<MobStateComponent>(entity, out var mobstate))
+                    return;
 
+                if (mobstate.CurrentState != MobState.Dead) //if he is dead we skip him
+                {
+                    var ev = new CultYoggForceAscendingEvent();//making cultist MiGo
+                    RaiseLocalEvent(entity, ref ev);
+                }
                 break;
             default:
                 Log.Error("Something went wrong with CultYogg stages");
@@ -164,7 +171,8 @@ public sealed class CultYoggSystem : SharedCultYoggSystem
         if (!TryComp<ThirstComponent>(uid, out var thirstComp))
             return;
 
-        if (/*hungerComp.CurrentHunger <= uid.Comp.HungerCost ||*/ hungerComp.CurrentThreshold == uid.Comp.MinHungerThreshold)//ToDo Fix this one
+        var currentHunger = _hungerSystem.GetHunger(hungerComp);
+        if (currentHunger <= uid.Comp.HungerCost || hungerComp.CurrentThreshold == uid.Comp.MinHungerThreshold)
         {
             _popup.PopupEntity(Loc.GetString("cult-yogg-digest-no-nutritions"), uid);
             //_popup.PopupClient(Loc.GetString("cult-yogg-digest-no-nutritions"), uid, uid);//idk if it isn't working, but OnSericultureStart is an ok
@@ -264,14 +272,23 @@ public sealed class CultYoggSystem : SharedCultYoggSystem
 
     public void NullifyShroomEffect(EntityUid uid, CultYoggComponent comp)//idk if it is canser or no, will be like that for a time
     {
-        RemComp<AcsendingComponent>(uid);
+        string? message = null;
+        if (RemComp<AcsendingComponent>(uid) ||
+            comp.ConsumedAscensionReagent > 0)
+            message += Loc.GetString("cult-yogg-acsending-stopped");
 
         comp.ConsumedAscensionReagent = 0;
 
         //Remove all corrupted items
         var ev = new DropAllStuckOnEquipEvent(uid);
         RaiseLocalEvent(uid, ref ev, true);
-        _popup.PopupEntity(Loc.GetString("cult-yogg-acsending-stopped"), uid, uid);
+
+        if (ev.DroppedItems.Count > 0)
+            message += message is null
+                ? Loc.GetString("cult-yogg-dropped-items")
+                : " " + Loc.GetString("cult-yogg-dropped-items-not-first");
+
+        _popup.PopupEntity(message, uid, uid);
     }
 
     //Check for avaliable amoiunt of MiGo or gib MiGo to replace
