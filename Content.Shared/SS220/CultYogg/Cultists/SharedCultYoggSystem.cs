@@ -85,13 +85,13 @@ public abstract class SharedCultYoggSystem : EntitySystem
 
         if (_cultYoggCorruptedSystem.IsCorrupted(args.Target))
         {
-            _popup.PopupEntity(Loc.GetString("cult-yogg-corrupt-already-corrupted"), args.Target, uid);
+            _popup.PopupClient(Loc.GetString("cult-yogg-corrupt-already-corrupted"), args.Target, uid);
             return;
         }
 
         if (!_cultYoggCorruptedSystem.TryCorruptContinuously(uid, args.Target, false))
         {
-            _popup.PopupEntity(Loc.GetString("cult-yogg-corrupt-no-proto"), uid);
+            _popup.PopupClient(Loc.GetString("cult-yogg-corrupt-no-proto"), args.Target, uid);
             return;
         }
         args.Handled = true;
@@ -116,13 +116,13 @@ public abstract class SharedCultYoggSystem : EntitySystem
 
         if (_cultYoggCorruptedSystem.IsCorrupted(handItem.Value))
         {
-            _popup.PopupEntity(Loc.GetString("cult-yogg-corrupt-already-corrupted"), handItem.Value, uid);
+            _popup.PopupClient(Loc.GetString("cult-yogg-corrupt-already-corrupted"), handItem.Value, uid);
             return;
         }
 
         if (!_cultYoggCorruptedSystem.TryCorruptContinuously(uid, handItem.Value, true))
         {
-            _popup.PopupEntity(Loc.GetString("cult-yogg-corrupt-no-proto"), uid);
+            _popup.PopupClient(Loc.GetString("cult-yogg-corrupt-no-proto"), handItem.Value, uid);
             return;
         }
         args.Handled = true;

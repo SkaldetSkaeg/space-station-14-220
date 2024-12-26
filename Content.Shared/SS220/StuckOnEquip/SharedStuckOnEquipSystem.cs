@@ -34,7 +34,8 @@ public sealed partial class SharedStuckOnEquipSystem : EntitySystem
 
     private void OnRemoveAll(ref DropAllStuckOnEquipEvent ev)
     {
-        RemoveItems(ev.Target);
+        var removedItems = RemoveItems(ev.Target);
+        ev.DroppedItems.UnionWith(removedItems);
     }
 
     private void GotPickuped(Entity<StuckOnEquipComponent> entity, ref GotEquippedHandEvent args)
@@ -61,23 +62,27 @@ public sealed partial class SharedStuckOnEquipSystem : EntitySystem
         comp.DeleteOnDrop = false;
     }
 
-    private void RemoveItems(EntityUid target)
+    private HashSet<EntityUid> RemoveItems(EntityUid target)
     {
+        HashSet<EntityUid> removedItems = new();
         if (!_inventory.TryGetSlots(target, out var slots))
-            return;
+            return removedItems;
 
         // trying to unequip all item's with component
-        foreach (var slot in _inventory.GetHandOrInventoryEntities(target))
+        foreach (var item in _inventory.GetHandOrInventoryEntities(target))
         {
-            if (!TryComp<StuckOnEquipComponent>(slot, out var stuckOnEquipComponent))
+            if (!TryComp<StuckOnEquipComponent>(item, out var stuckOnEquipComponent))
                 continue;
 
             if (!stuckOnEquipComponent.ShouldDropOnDeath)
                 continue;
 
-            RemComp<UnremoveableComponent>(slot);
-            _transform.DropNextTo(slot, target);
+            RemComp<UnremoveableComponent>(item);
+            _transform.DropNextTo(item, target);
+            removedItems.Add(item);
         }
+
+        return removedItems;
     }
 }
 
@@ -89,8 +94,11 @@ public sealed class DropAllStuckOnEquipEvent : EntityEventArgs
 {
     public readonly EntityUid Target;
 
-    public DropAllStuckOnEquipEvent(EntityUid target)
+    public HashSet<EntityUid> DroppedItems = new();
+
+    public DropAllStuckOnEquipEvent(EntityUid target, HashSet<EntityUid>? droppedItems = null)
     {
         Target = target;
+        DroppedItems = droppedItems ?? new();
     }
 }

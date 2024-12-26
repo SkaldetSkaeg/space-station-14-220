@@ -265,14 +265,23 @@ public sealed class CultYoggSystem : SharedCultYoggSystem
 
     public void NullifyShroomEffect(EntityUid uid, CultYoggComponent comp)//idk if it is canser or no, will be like that for a time
     {
-        RemComp<AcsendingComponent>(uid);
+        string? message = null;
+        if (RemComp<AcsendingComponent>(uid) ||
+            comp.ConsumedAscensionReagent > 0)
+            message += Loc.GetString("cult-yogg-acsending-stopped");
 
         comp.ConsumedAscensionReagent = 0;
 
         //Remove all corrupted items
         var ev = new DropAllStuckOnEquipEvent(uid);
         RaiseLocalEvent(uid, ref ev, true);
-        _popup.PopupEntity(Loc.GetString("cult-yogg-acsending-stopped"), uid, uid);
+
+        if (ev.DroppedItems.Count > 0)
+            message += message is null
+                ? Loc.GetString("cult-yogg-dropped-items")
+                : " " + Loc.GetString("cult-yogg-dropped-items-not-first");
+
+        _popup.PopupEntity(message, uid, uid);
     }
 
     //Check for avaliable amoiunt of MiGo or gib MiGo to replace

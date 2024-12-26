@@ -78,7 +78,7 @@ public sealed class SharedMiGoErectSystem : EntitySystem
 
         if (actionComponent.Cooldown.HasValue && actionComponent.Cooldown.Value.End > _gameTiming.CurTime)
         {
-            _popupSystem.PopupEntity(Loc.GetString("cult-yogg-building-cooldown-popup"), entity, entity);
+            _popupSystem.PopupClient(Loc.GetString("cult-yogg-building-cooldown-popup"), entity, entity);
             return;
         }
         var location = GetCoordinates(args.Location);
@@ -86,7 +86,7 @@ public sealed class SharedMiGoErectSystem : EntitySystem
 
         if (tileRef == null || _turfSystem.IsTileBlocked(tileRef.Value, Physics.CollisionGroup.MachineMask))
         {
-            _popupSystem.PopupEntity(Loc.GetString("cult-yogg-building-tile-blocked-popup"), entity, entity);
+            _popupSystem.PopupClient(Loc.GetString("cult-yogg-building-tile-blocked-popup"), entity, entity);
             return;
         }
 
