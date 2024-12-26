@@ -3,10 +3,12 @@
 using Robust.Shared.Containers;
 using Robust.Shared.Serialization;
 using Content.Shared.Damage;
+using Content.Shared.Whitelist;
+using Robust.Shared.GameStates;
 
 namespace Content.Shared.SS220.CultYogg.Pod;
 
-[RegisterComponent]
+[RegisterComponent, NetworkedComponent]
 public sealed partial class CultYoggPodComponent : Component
 {
     /// <summary>
@@ -14,6 +16,19 @@ public sealed partial class CultYoggPodComponent : Component
     /// </summary>
     [DataField]
     public TimeSpan HealingFreq = TimeSpan.FromSeconds(1);
+
+    /// <summary>
+    /// Whitelist of entities that are cultists
+    /// </summary>
+    [DataField]
+    public EntityWhitelist? CultistsWhitelist = new()
+    {
+        Components = new[]
+        {
+            "CultYogg",
+            "MiGo"
+        }
+    };
 
     [DataField]
     public DamageSpecifier Heal = new DamageSpecifier // god forgive me for hardcoding values
