@@ -20,11 +20,11 @@
     modifiers:
       coefficients:
         Blunt: 0.45
-        Slash: 0.6
+        Slash: 0.7
         Piercing: 0.45
-        Heat: 0.3
-        Radiation: 0.3
-        Caustic: 0.3
+        Heat: 0.4
+        Radiation: 0.4
+        Caustic: 0.1
         Stamina: 0.35
   - type: ClothingSpeedModifier
     walkModifier: 0.9

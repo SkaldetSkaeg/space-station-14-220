@@ -31,7 +31,7 @@
     - type: MobThresholds
       thresholds:
         0: Alive
-        150: Dead
+        120: Dead
     - type: Stamina
       critThreshold: 100
     - type: Butcherable
@@ -48,9 +48,9 @@
         path: /Audio/Effects/bite.ogg #maybe different sound
       damage:
         types:
-          Piercing: 5
-          Slash: 10
-          Poison: 10
+          Piercing: 3
+          Slash: 2
+          Poison: 2
     - type: TypingIndicator #new indicator?
       proto: alien
     - type: Tag
@@ -151,9 +151,9 @@
     animation: WeaponArcBite
     damage:
       types:
-        Piercing: 10
-        Slash: 5
-        Poison: 10
+        Piercing: 2
+        Slash: 2
+        Poison: 4
 
 - type: entity
   name: corrupted pig
@@ -185,13 +185,12 @@
     animation: WeaponArcBite
     damage:
       types:
-        Blunt: 15
-        Piercing: 10
+        Blunt: 4
         Poison: 15
   - type: MobThresholds
     thresholds:
       0: Alive
-      375: Dead
+      275: Dead
 
 - type: entity
   name: corrupted chicken
@@ -220,8 +219,8 @@
     animation: WeaponArcBite
     damage:
       types:
-        Piercing: 8
-        Poison: 10
+        Piercing: 6
+        Poison: 3
 
 - type: entity
   name: corrupted space bear
@@ -240,7 +239,7 @@
   - type: MobThresholds
     thresholds:
       0: Alive
-      100: Dead
+      250: Dead
   - type: Stamina
     critThreshold: 150
   - type: MeleeWeapon
@@ -251,8 +250,7 @@
     damage:
       types:
         Blunt: 7
-        Slash: 10
-        Poison: 10
+        Slash: 5
 
 - type: entity
   name: corrupted bat
@@ -278,9 +276,8 @@
     animation: WeaponArcBite
     damage:
       types:
-        Piercing: 7
-        Slash: 3
-        Poison: 10
+        Piercing: 3
+        Poison: 5
   - type: MovementSpeedModifier
     baseWalkSpeed : 4
     baseSprintSpeed : 6.5
@@ -373,9 +370,8 @@
     animation: WeaponArcBite
     damage:
       types:
-        Piercing: 16
+        Piercing: 8
         Slash: 2
-        Poison: 15
   - type: MobThresholds
     thresholds:
       0: Alive
@@ -413,7 +409,7 @@
     animation: WeaponArcBite
     damage:
       types:
-        Piercing: 14
+        Piercing: 6
         Slash: 8
   - type: MobThresholds
     thresholds:
@@ -445,9 +441,9 @@
     animation: WeaponArcBite
     damage:
       types:
-        Piercing: 10
+        Piercing: 3
         Poison: 8
-        Cellular: 8
+        Cellular: 4
   - type: MovementSpeedModifier
     baseWalkSpeed: 3.5
     baseSprintSpeed: 6
@@ -482,9 +478,9 @@
     animation: WeaponArcBite
     damage:
       types:
-        Piercing: 15
-        Slash: 15
-        Poison: 10
+        Piercing: 6
+        Slash: 6
+        Poison: 3
   - type: MobThresholds
     thresholds:
       0: Alive
@@ -520,7 +516,7 @@
     animation: WeaponArcBite
     damage:
       types:
-        Piercing: 20
+        Piercing: 15
   - type: MobThresholds
     thresholds:
       0: Alive
@@ -554,15 +550,15 @@
       collection: Punch
     damage:
       types:
-        Blunt: 30
-        Poison: 10
+        Blunt: 15
+        Poison: 8
         Structural: 25
     angle: 60
     animation: WeaponArcFist
   - type: MobThresholds
     thresholds:
       0: Alive
-      600: Dead
+      280: Dead
 
 - type: entity
   name: corrupted hamster
@@ -598,15 +594,15 @@
     damage:
       types:
         Piercing: 8
-        Poison: 10
+        Poison: 8
   - type: MovementSpeedModifier
     baseWalkSpeed: 3.5
     baseSprintSpeed: 5
   - type: MobThresholds
     thresholds:
       0: Alive
-      80: Critical
-      180: Dead
+      100: Critical
+      120: Dead
 
 - type: entity
   name: corrupted kangaroo
@@ -632,9 +628,8 @@
     attackRate: 1.5
     damage:
       types:
-        Blunt: 15
-        Slash: 15
-        Poison: 10
+        Blunt: 10
+        Slash: 2
     soundHit:
       collection: Punch
     animation: WeaponArcFist
@@ -645,7 +640,7 @@
     thresholds:
       0: Alive
       200: Critical
-      400: Dead
+      220: Dead
 
 - type: entity
   name: corrupted spase kangaroo
@@ -676,9 +671,8 @@
     animation: WeaponArcClaw
     damage:
       types:
-        Blunt: 15
-        Slash: 15
-        Poison: 10
+        Blunt: 10
+        Slash: 2
   - type: MovementSpeedModifier
     baseWalkSpeed: 3.5
     baseSprintSpeed: 4.5
@@ -725,9 +719,9 @@
     animation: WeaponArcClaw
     damage:
       types:
-        Slash: 10
-        Piercing: 6
-        Poison: 10
+        Slash: 2
+        Piercing: 2
+        Poison: 6
   - type: MovementSpeedModifier
     baseWalkSpeed: 3.5
     baseSprintSpeed: 5
