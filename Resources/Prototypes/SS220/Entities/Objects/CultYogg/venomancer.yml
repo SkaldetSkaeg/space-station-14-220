@@ -23,14 +23,14 @@
         acid:
           maxVol: 6
           reagents:
-          - ReagentId: PolytrinicAcid
+          - ReagentId: CultYoggVenomancerAcid
             Quantity: 6
     - type: SolutionRegeneration
       solution: acid
       duration: 3
       generated:
         reagents:
-          - ReagentId: PolytrinicAcid
+          - ReagentId: CultYoggVenomancerAcid
             Quantity: 6
     - type: Sprite
       sprite: SS220/Objects/Weapons/Guns/cult_yogg_venomancer.rsi
@@ -74,7 +74,7 @@
   - type: Projectile
     damage:
       types:
-        Caustic: 2
+        Burn: 3
   - type: Sprite
     sprite: Objects/Weapons/Guns/Projectiles/xeno_toxic.rsi
     layers:

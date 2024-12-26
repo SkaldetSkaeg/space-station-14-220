@@ -27,14 +27,14 @@
     soundHit: /Audio/SS220/Weapons/Melee/CultYogg/beach_hit.ogg
     soundSwing: /Audio/SS220/Weapons/Melee/CultYogg/beach_swing.ogg
     wideAnimationRotation: -135
-    attackRate: 1.5
-    range: 2
+    attackRate: 1
+    range: 1.5
     angle: 100
     damage:
       types:
-        Poison: 10
-        Blunt: 10
-        Structural: 15
+        Poison: 5
+        Blunt: 17
+        Structural: 5
   - type: DisarmOnAttack
     chance: 0.6
     heavyAttackChance: 0.2

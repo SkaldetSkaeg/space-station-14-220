@@ -21,16 +21,16 @@
       - state: inhand-right
   - type: MeleeWeapon
     wideAnimationRotation: -100
-    attackRate: 1
-    range: 2
+    attackRate: 1.5
+    range: 1.5
     angle: 100
     damage:
       types:
-#        Poison: 15
-        Blunt: 30
-        Structural: 20
+        Poison: 5
+        Blunt: 15
+        Structural: 10
     soundHit:
-      path: "/Audio/Items/wirecutter.ogg" # звук удара, заменить
+      path: /Audio/Weapons/bladeslice.ogg
   - type: Tool
     qualities:
       - Cutting
