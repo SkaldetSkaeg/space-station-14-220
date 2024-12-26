@@ -10,6 +10,9 @@ namespace Content.Server.SS220.CultYogg.Pond;
 [RegisterComponent, Access(typeof(CultPondSystem))]
 public sealed partial class CultPondComponent : Component
 {
+    [ViewVariables]
+    public bool IsFilled = false;
+
     [DataField("solutionName", required: true), ViewVariables(VVAccess.ReadWrite)]
     public string Solution;
 
