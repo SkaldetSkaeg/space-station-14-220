@@ -33,6 +33,8 @@ using Content.Shared.Database;
 using Content.Server.Administration.Logs;
 using Content.Server.SS220.Objectives.Systems;
 using Content.Server.SS220.Objectives.Components;
+using Robust.Shared.Utility;
+using Content.Server.Pinpointer;
 
 namespace Content.Server.SS220.GameTicking.Rules;
 
@@ -50,6 +52,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
     [Dependency] private readonly ChatSystem _chat = default!;
     [Dependency] private readonly RoundEndSystem _roundEnd = default!;
     [Dependency] private readonly SharedRoleSystem _role = default!;
+    [Dependency] private readonly NavMapSystem _navMap = default!;
 
     private List<List<string>> _sacraficialTiers = [];
     public TimeSpan DefaultShuttleArriving { get; set; } = TimeSpan.FromSeconds(85);
@@ -411,7 +414,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
     {
         foreach (var station in _station.GetStations())
         {
-            _chat.DispatchStationAnnouncement(station, Loc.GetString("cult-yogg-shuttle-call"), colorOverride: Color.Crimson);
+            _chat.DispatchStationAnnouncement(station, Loc.GetString("cult-yogg-shuttle-call", ("location", FormattedMessage.RemoveMarkupOrThrow(_navMap.GetNearestBeaconString(args.Entity)))), colorOverride: Color.Crimson);
         }
         _roundEnd.RequestRoundEnd(DefaultShuttleArriving, null);
 
@@ -421,15 +424,6 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
             return;
 
         cultRuleComp.Summoned = true;//Win EndText
-
-        var ev = new CultYoggForceAscendingEvent();
-
-        //Event hadn't raised on Cultists even with broadcast, so i made this
-        var query = EntityQueryEnumerator<CultYoggComponent>();
-        while (query.MoveNext(out var ent, out var comp))
-        {
-            RaiseLocalEvent(ent, ref ev, true);//Make all cultists MiGo
-        }
     }
 
     #endregion

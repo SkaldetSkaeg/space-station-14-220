@@ -20,6 +20,8 @@ using Robust.Shared.Timing;
 using Robust.Shared.Prototypes;
 using System.Linq;
 using Robust.Shared.Audio.Systems;
+using Content.Shared.Mobs.Components;
+using Content.Shared.Mobs;
 
 namespace Content.Server.SS220.CultYogg.Cultists;
 
@@ -112,9 +114,14 @@ public sealed class CultYoggSystem : SharedCultYoggSystem
                 }
                 break;
             case 3:
-                var ev = new CultYoggForceAscendingEvent();//making cultist MiGo
-                RaiseLocalEvent(entity, ref ev);
+                if (!TryComp<MobStateComponent>(entity, out var mobstate))
+                    return;
 
+                if (mobstate.CurrentState != MobState.Dead) //if he is dead we skip him
+                {
+                    var ev = new CultYoggForceAscendingEvent();//making cultist MiGo
+                    RaiseLocalEvent(entity, ref ev);
+                }
                 break;
             default:
                 Log.Error("Something went wrong with CultYogg stages");
