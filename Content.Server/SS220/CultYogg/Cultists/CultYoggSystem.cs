@@ -114,7 +114,7 @@ public sealed class CultYoggSystem : SharedCultYoggSystem
                 else
                 {
                     // We have species-marking only for the Nians, so this log only leads to unnecessary errors.
-                    //Log.Error($"{newMarkingId} marking doesn't exist"); 
+                    //Log.Error($"{newMarkingId} marking doesn't exist");
                 }
                 break;
             case 3:
@@ -260,15 +260,6 @@ public sealed class CultYoggSystem : SharedCultYoggSystem
             _popup.PopupEntity(Loc.GetString("cult-yogg-acsending-have-acsending"), uid, uid);
             return;
         }
-
-        if (!AvaliableMiGoCheck() && !TryReplaceMiGo())//if amount of migo < required amount of migo or have 1 to replace
-        {
-            _popup.PopupEntity(Loc.GetString("cult-yogg-acsending-migo-full"), uid, uid);
-            return;
-        }
-
-        //Maybe in later version we will detiriorate the body and add some kind of effects
-
         //IDK how to check if he already has this action, so i did this markup
         _popup.PopupEntity(Loc.GetString("cult-yogg-acsending-started"), uid, uid);
         EnsureComp<AcsendingComponent>(uid);
@@ -295,48 +286,6 @@ public sealed class CultYoggSystem : SharedCultYoggSystem
         _popup.PopupEntity(message, uid, uid);
     }
 
-    //Check for avaliable amoiunt of MiGo or gib MiGo to replace
-    private bool AvaliableMiGoCheck()
-    {
-        //Check number of MiGo in gamerule
-        var ruleComp = _cultRule.GetCultGameRule();
-
-        if (ruleComp is null)
-            return false;
-
-        int reqMiGo = ruleComp.ReqAmountOfMiGo;
-
-        var query = EntityQueryEnumerator<MiGoComponent>();
-        while (query.MoveNext(out var uid, out var comp))
-        {
-            reqMiGo--;
-        }
-
-        if (reqMiGo > 0)
-            return true;
-
-        return false;
-    }
-    private bool TryReplaceMiGo()
-    {
-        //if any MiGo needs to be replaced add here
-        List<EntityUid> migoOnDelete = [];
-
-        var query = EntityQueryEnumerator<MiGoComponent>();
-        while (query.MoveNext(out var uid, out var comp))
-        {
-            if (comp.MayBeReplaced)
-                migoOnDelete.Add(uid);
-        }
-
-        if (migoOnDelete.Count != 0 && TryComp<BodyComponent>(migoOnDelete[0], out var body)) //ToDo check for cancer coding
-        {
-            _body.GibBody(migoOnDelete[0], body: body);
-            return true;
-        }
-
-        return false;
-    }
     private bool AcsendingCultistCheck()//if anybody else is acsending
     {
         var query = EntityQueryEnumerator<CultYoggComponent, AcsendingComponent>();

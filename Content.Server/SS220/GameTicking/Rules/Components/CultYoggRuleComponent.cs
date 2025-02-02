@@ -21,7 +21,7 @@ public sealed partial class CultYoggRuleComponent : Component
     public int AmountOfSacrificesToWarningAnouncement = 2;
 
     [DataField]
-    public int ReqAmountOfMiGo = 3;
+    public int ReqAmountOfMiGo = 1;
 
     /// <summary>
     /// General requirements
@@ -72,6 +72,14 @@ public sealed partial class CultYoggRuleComponent : Component
     /// </summary>
     [DataField]
     public int AmountOfSacrifices = 0;
+
+    [DataField]
+    public int CultStageFromRatio = 0;
+
+    //requires for a player ratio
+    //
+    [DataField]
+    public int[,] CultRatios = { { 60, 10, 20 }, { 0, 20, 30 }};
 
     [DataField]
     public bool Summoned = false;

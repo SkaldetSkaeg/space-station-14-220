@@ -43,6 +43,7 @@ using Robust.Shared.Map;
 using Content.Server.EUI;
 using Robust.Server.Player;
 using Content.Server.SS220.CultYogg.DeCultReminder;
+using Content.Shared.Zombies;
 
 namespace Content.Server.SS220.GameTicking.Rules;
 
@@ -340,14 +341,16 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
 
         _antag.SendBriefing(uid, Loc.GetString("cult-yogg-role-greeting"), null, comp.GreetSoundNotification);
 
-        if (initial)
-            comp.InitialCultistMinds.Add(mindId);
-
         // Change the faction
         _npcFaction.RemoveFaction(uid, comp.NanoTrasenFaction, false);
         _npcFaction.AddFaction(uid, comp.CultYoggFaction);
 
         EnsureComp<CultYoggComponent>(uid);
+
+        if (initial)
+            comp.InitialCultistMinds.Add(mindId);
+        else
+            CalculateCultRatio(comp);
 
         //update stage cause it might be midstage
         var ev = new ChangeCultYoggStageEvent(comp.AmountOfSacrifices);
@@ -364,8 +367,58 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         foreach (var obj in comp.ListofObjectives)
         {
             _role.MindAddRole(mindId, comp.MindCultYoggAntagId, mindComp, true);
-            var objective = _mind.TryAddObjective(mindId, mindComp, obj);
+            _mind.TryAddObjective(mindId, mindComp, obj);
         }
+    }
+
+    private void CalculateCultRatio(CultYoggRuleComponent comp)
+    {
+        int allPeople = 0;
+        int cultists = 0;
+
+        //count all migos
+        var migos = AllEntityQuery<MiGoComponent, MobStateComponent>();
+        while (migos.MoveNext(out var uid, out _, out var mob))
+        {
+            if (!_mobState.IsAlive(uid, mob))
+                continue;
+
+            cultists++;
+        }
+
+        //count players and cultists
+        var players = AllEntityQuery<HumanoidAppearanceComponent, ActorComponent, MobStateComponent>();
+        while (players.MoveNext(out var uid, out _, out _, out var mob))
+        {
+            if (!_mobState.IsAlive(uid, mob))
+                continue;
+
+            if (HasComp<CultYoggComponent>(uid))
+                cultists++;
+
+            allPeople++;
+        }
+
+        //its shitty, but rn pohui
+        for (int i = 0; i < comp.CultRatios.GetLength(0); i++)
+        {
+            if (comp.CultRatios[i, 1] < allPeople)
+                continue;
+
+            if (comp.CultRatios[i, 2] > cultists / allPeople * 100)
+            {
+                comp.CultStageFromRatio = 1;
+                return;
+            }
+
+            if (comp.CultRatios[i, 3] > cultists / allPeople * 100)
+            {
+                comp.CultStageFromRatio = 2;
+                return;
+            }
+        }
+
+        return;
     }
     #endregion
 
