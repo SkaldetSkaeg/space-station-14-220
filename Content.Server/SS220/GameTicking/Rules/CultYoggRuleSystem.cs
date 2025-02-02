@@ -356,6 +356,9 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         var ev = new ChangeCultYoggStageEvent(comp.AmountOfSacrifices);
         RaiseLocalEvent(uid, ref ev);
 
+        var ev2 = new ChangeCultYoggStageEvent(comp.CultStageFromRatio);
+        RaiseLocalEvent(uid, ref ev);
+
         //Add telepathy
         var telepathy = EnsureComp<TelepathyComponent>(uid);
         telepathy.CanSend = true;//we are allowing it cause testing

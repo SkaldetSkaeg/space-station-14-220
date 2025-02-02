@@ -77,7 +77,6 @@ public sealed partial class CultYoggRuleComponent : Component
     public int CultStageFromRatio = 0;
 
     //requires for a player ratio
-    //
     [DataField]
     public int[,] CultRatios = { { 60, 10, 20 }, { 0, 20, 30 }};
 
