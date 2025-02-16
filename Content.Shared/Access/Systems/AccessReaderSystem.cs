@@ -93,6 +93,7 @@ public sealed class AccessReaderSystem : EntitySystem
         args.Handled = true;
         accessReader.Value.Comp.AccessLists.Clear();
         accessReader.Value.Comp.AccessLog.Clear();
+        LogAccess((uid, reader), Loc.GetString("access-reader-logs-reinitialization"));
         Dirty(uid, reader);
     }
 
