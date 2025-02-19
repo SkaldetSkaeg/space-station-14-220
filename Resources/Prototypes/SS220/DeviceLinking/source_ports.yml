@@ -1,0 +1,5 @@
+- type: sourcePort
+  id: WeaponContolSender
+  name: signal-port-name-artifact-analyzer-sender
+  description: signal-port-description-artifact-analyzer-sender
+  defaultLinks: [ WeaponContolReceiver ]
