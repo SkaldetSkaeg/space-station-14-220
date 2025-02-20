@@ -92,11 +92,11 @@
       state: generic_panel_open
   - type: RadarConsole
   - type: ActivatableUI
-    key: enum.RadarConsoleUiKey.Key
+    key: enum.WeaponControlConsoleUiKey.Key
   - type: UserInterface
     interfaces:
-        enum.RadarConsoleUiKey.Key:
-          type: RadarConsoleBoundUserInterface
+        enum.WeaponControlConsoleUiKey.Key:
+          type: WeaponControlConsoleBoundUserInterface
         enum.WiresUiKey.Key:
           type: WiresBoundUserInterface
   - type: Computer
