@@ -19,6 +19,7 @@
     - type: ComputerBoard
       prototype: ComputerShuttleSalvage
     - type: StealTarget
+
 - type: entity
   parent: BaseComputerCircuitboard
   id: CluwneCommsComputerCircuitboard
@@ -30,6 +31,7 @@
       state: cpu_clown
     - type: ComputerBoard
       prototype: ComputerCluwneComms
+
 - type: entity
   parent: BaseComputerCircuitboard
   id: WeaponContolConsoleCircuitboard
