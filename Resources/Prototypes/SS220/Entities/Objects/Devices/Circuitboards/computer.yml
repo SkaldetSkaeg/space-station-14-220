@@ -19,6 +19,7 @@
     - type: ComputerBoard
       prototype: ComputerShuttleSalvage
     - type: StealTarget
+      stealGroup: SalvageShuttleConsoleCircuitboard
 
 - type: entity
   parent: BaseComputerCircuitboard

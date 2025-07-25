@@ -58,6 +58,7 @@ public sealed class RadarConsoleSystem : SharedRadarConsoleSystem
 
             _uiSystem.SetUiState(uid, RadarConsoleUiKey.Key, new NavBoundUserInterfaceState(state));
         }
+
         //SS220 WeaponControl start
         if (_uiSystem.HasUi(uid, WeaponControlConsoleUiKey.Key))
         {

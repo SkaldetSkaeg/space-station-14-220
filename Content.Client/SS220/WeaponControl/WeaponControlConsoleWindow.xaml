@@ -5,8 +5,14 @@
                       Title="{Loc 'weapon-control-console-window-title'}"
                       SetSize="648 648"
                       MinSize="256 256">
-    <ui:ShuttleNavControl Name="NavRadar"
-                     Margin="4"
-                     HorizontalExpand = "True"
-                     VerticalExpand = "True"/>
+    <BoxContainer Orientation="Vertical">
+        <ui:ShuttleNavControl Name="NavRadar"
+                              Margin="4"
+                              HorizontalExpand = "True"
+                              VerticalExpand = "True"/>
+        <Button Name="SubmitButton"
+                Access="Public"
+                Text="{Loc 'cargo-console-order-menu-submit-button'}"
+                TextAlign="Center" />
+    </BoxContainer>
 </controls:FancyWindow>

@@ -11,14 +11,10 @@ using Content.Shared.SS220.WeaponControl;
 namespace Content.Client.SS220.WeaponControl;
 
 [UsedImplicitly]
-public sealed class WeaponControlConsoleBoundUserInterface : BoundUserInterface
+public sealed class WeaponControlConsoleBoundUserInterface(EntityUid owner, Enum uiKey) : BoundUserInterface(owner, uiKey)
 {
     [ViewVariables]
     private WeaponControlConsoleWindow? _window;
-
-    public WeaponControlConsoleBoundUserInterface(EntityUid owner, Enum uiKey) : base(owner, uiKey)
-    {
-    }
 
     protected override void Open()
     {
