@@ -215,6 +215,9 @@
     - map: [ "enum.WiresVisualLayers.MaintenancePanel" ]
       state: generic_panel_open
   - type: RadarConsole
+  - type: WorldLoader
+    radius: 256
+  - type: WeaponControlConsole
   - type: ActivatableUI
     key: enum.WeaponControlConsoleUiKey.Key
   - type: UserInterface

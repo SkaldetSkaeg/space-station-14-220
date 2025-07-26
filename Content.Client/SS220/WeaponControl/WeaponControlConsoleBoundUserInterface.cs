@@ -1,3 +1,5 @@
+// © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
+
 using Robust.Shared.Map;
 using Robust.Shared.Serialization;
 using Content.Client.Shuttles.UI;
@@ -26,9 +28,9 @@ public sealed class WeaponControlConsoleBoundUserInterface(EntityUid owner, Enum
     protected override void UpdateState(BoundUserInterfaceState state)
     {
         base.UpdateState(state);
-        if (state is not NavBoundUserInterfaceState cState)
+        if (state is not WeaponControlBoundUserInterfaceState cState)
             return;
 
-        _window?.UpdateState(cState.State);
+        _window?.UpdateState(Owner, cState);
     }
 }
