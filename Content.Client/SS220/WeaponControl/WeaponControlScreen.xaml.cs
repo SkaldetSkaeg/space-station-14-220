@@ -33,18 +33,18 @@ public sealed partial class WeaponControlScreen : BoxContainer
     public void SetConsole(EntityUid? console)
     {
         _consoleEntity = console;
-        //NavRadar.SetConsole(console);
+        NavRadar.SetConsole(console);
     }
 
     public void UpdateState(NavInterfaceState scc)
     {
-        //NavRadar.UpdateState(scc);
+        NavRadar.UpdateState(scc);
     }
 
     public void SetMatrix(EntityCoordinates? coordinates, Angle? angle)
     {
         _shuttleEntity = coordinates?.EntityId;
-        //NavRadar.SetMatrix(coordinates, angle);
+        NavRadar.SetMatrix(coordinates, angle);
     }
 
     protected override void Draw(DrawingHandleScreen handle)
@@ -56,5 +56,26 @@ public sealed partial class WeaponControlScreen : BoxContainer
         {
             return;
         }
+
+        var (_, worldRot, worldMatrix) = _xformSystem.GetWorldPositionRotationMatrix(gridXform);
+        var worldPos = Vector2.Transform(gridBody.LocalCenter, worldMatrix);
+
+        // Get the positive reduced angle.
+        var displayRot = -worldRot.Reduced();
+
+        GridPosition.Text = Loc.GetString("shuttle-console-position-value",
+            ("X", $"{worldPos.X:0.0}"),
+            ("Y", $"{worldPos.Y:0.0}"));
+        GridOrientation.Text = Loc.GetString("shuttle-console-orientation-value",
+            ("angle", $"{displayRot.Degrees:0.0}"));
+
+        var gridVelocity = gridBody.LinearVelocity;
+        gridVelocity = displayRot.RotateVec(gridVelocity);
+        // Get linear velocity relative to the console entity
+        GridLinearVelocity.Text = Loc.GetString("shuttle-console-linear-velocity-value",
+            ("X", $"{gridVelocity.X + 10f * float.Epsilon:0.0}"),
+            ("Y", $"{gridVelocity.Y + 10f * float.Epsilon:0.0}"));
+        GridAngularVelocity.Text = Loc.GetString("shuttle-console-angular-velocity-value",
+            ("angularVelocity", $"{-MathHelper.RadiansToDegrees(gridBody.AngularVelocity) + 10f * float.Epsilon:0.0}"));
     }
 }
