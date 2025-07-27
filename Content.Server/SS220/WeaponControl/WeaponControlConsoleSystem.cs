@@ -4,11 +4,15 @@ using Content.Server.Power.Components;
 using Content.Server.Power.EntitySystems;
 using Content.Server.Shuttles.Components;
 using Content.Server.Shuttles.Events;
+using Content.Server.Shuttles.Systems;
 using Content.Server.SS220.CruiseControl;
 using Content.Server.Station.Systems;
 using Content.Shared.Access.Systems;
 using Content.Shared.ActionBlocker;
 using Content.Shared.Alert;
+using Content.Shared.DeviceLinking;
+using Content.Shared.DeviceLinking.Events;
+using Content.Shared.DeviceNetwork;
 using Content.Shared.Movement.Systems;
 using Content.Shared.Popups;
 using Content.Shared.Power;
@@ -26,7 +30,6 @@ using Robust.Shared.Collections;
 using Robust.Shared.GameStates;
 using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
-using Content.Server.Shuttles.Systems;
 
 namespace Content.Server.SS220.WeaponControl;
 
@@ -49,6 +52,7 @@ public sealed partial class WeaponControlConsoleSystem : EntitySystem
         {
             subs.Event<BoundUIClosedEvent>(OnConsoleUIClose);
         });
+        SubscribeLocalEvent<WeaponControlConsoleComponent, NewLinkEvent>(OnNewLink);
     }
 
     private void OnConsoleShutdown(Entity<WeaponControlConsoleComponent> ent, ref ComponentShutdown args)
@@ -83,27 +87,30 @@ public sealed partial class WeaponControlConsoleSystem : EntitySystem
         //RemovePilot(args.Actor);
     }
 
+    private void OnNewLink(Entity<WeaponControlConsoleComponent> ent, ref NewLinkEvent args)
+    {
+        if (args.Source != ent.Owner)
+            return;
+
+        DockingInterfaceState? dockState = null;
+        UpdateState(ent, ref dockState);
+    }
+
     private void UpdateState(EntityUid consoleUid, ref DockingInterfaceState? dockState)
     {
-        EntityUid? entity = consoleUid;
+        if (!TryComp(consoleUid, out TransformComponent? consoleXform))//not sure about method
+            return;
 
-        var getShuttleEv = new ConsoleShuttleEvent
-        {
-            Console = entity,
-        };
+        if (!_ui.HasUi(consoleUid, WeaponControlConsoleUiKey.Key))
+            return;
 
-        RaiseLocalEvent(entity.Value, ref getShuttleEv);
-        entity = getShuttleEv.Console;
-
-        TryComp(entity, out TransformComponent? consoleXform);
         var shuttleGridUid = consoleXform?.GridUid;
 
         NavInterfaceState navState;
         dockState ??= _shuttleConsole.GetDockState();
 
-        if (shuttleGridUid != null && entity != null)
+        if (shuttleGridUid != null)
         {
-            //navState = _shuttleConsole.GetNavState(entity.Value, dockState.Docks);
             navState = _shuttleConsole.GetNavState(consoleUid, dockState.Docks);
         }
         else
@@ -111,10 +118,15 @@ public sealed partial class WeaponControlConsoleSystem : EntitySystem
             navState = new NavInterfaceState(0f, null, null, []);
         }
 
-        if (_ui.HasUi(consoleUid, WeaponControlConsoleUiKey.Key))
-        {
-            _ui.SetUiState(consoleUid, WeaponControlConsoleUiKey.Key, new WeaponControlBoundUserInterfaceState(navState));
-        }
+        WeaponControlInterfaceState weaponState;
+
+        if (!TryComp<DeviceLinkSourceComponent>(consoleUid, out var linkSource))
+            return;
+
+        weaponState = new(linkSource.LinkedPorts);
+
+
+        _ui.SetUiState(consoleUid, WeaponControlConsoleUiKey.Key, new WeaponControlBoundUserInterfaceState(navState, weaponState));
     }
 
     public override void Update(float frameTime)

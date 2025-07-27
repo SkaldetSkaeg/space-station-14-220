@@ -24,10 +24,10 @@ public sealed partial class WeaponControlConsoleWindow : FancyWindow, IComputerW
     public void UpdateState(EntityUid owner, WeaponControlBoundUserInterfaceState cState)
     {
         var coordinates = _entManager.GetCoordinates(cState.NavState.Coordinates);
-        NavContainer.SetShuttle(coordinates?.EntityId);
-        NavContainer.SetConsole(owner);
-        NavContainer.Visible = true;
+        WeaponContainer.SetShuttle(coordinates?.EntityId);
+        WeaponContainer.SetConsole(owner);
+        WeaponContainer.Visible = true;
 
-        NavContainer.UpdateState(cState.NavState);
+        WeaponContainer.UpdateState(cState.NavState);
     }
 }
