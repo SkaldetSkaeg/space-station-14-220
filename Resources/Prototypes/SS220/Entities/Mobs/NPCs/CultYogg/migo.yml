@@ -63,6 +63,8 @@
         type: MiGoErectBoundUserInterface
       enum.MiGoUiKey.Teleport:
         type: MiGoTeleportBoundUserInterface
+      enum.MiGoUiKey.Spectate:
+        type: MiGoTeleportBoundUserInterface
   - type: ShowCultYoggIcons
   - type: NpcFactionMember
     factions:
