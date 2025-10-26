@@ -22,5 +22,6 @@ public enum MiGoUiKey : byte
 {
     Erect,
     Plant,
-    Teleport
+    Teleport,
+    Spectate
 }

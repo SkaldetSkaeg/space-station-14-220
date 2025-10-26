@@ -1,5 +1,6 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
+using Content.Client.Access.UI;
 using Content.Shared.SS220.CultYogg.MiGo;
 using Robust.Client.UserInterface;
 using static Robust.Client.UserInterface.Controls.BaseButton;
@@ -54,5 +55,7 @@ public sealed class MiGoTeleportBoundUserInterface(EntityUid owner, Enum uiKey) 
     {
         if (args.Button.Parent?.Parent?.Parent?.Parent is not MiGoTeleportTarget target)
             return;
+
+        //_ui.OpenUi(Owner, MiGoUiKey.Spectate);
     }
 }
