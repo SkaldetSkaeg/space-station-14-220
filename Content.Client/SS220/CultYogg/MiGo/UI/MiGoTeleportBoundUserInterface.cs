@@ -17,6 +17,7 @@ public sealed class MiGoTeleportBoundUserInterface(EntityUid owner, Enum uiKey) 
 
         _menu = this.CreateWindowCenteredLeft<MiGoTeleportMenu>();
         _menu.OnTeleportToTarget += TeleportToTarget;
+        _menu.OnSpectateTarget += SpectateTarget;
     }
 
     protected override void UpdateState(BoundUserInterfaceState state)
@@ -47,5 +48,11 @@ public sealed class MiGoTeleportBoundUserInterface(EntityUid owner, Enum uiKey) 
             return;
 
         SendMessage(new MiGoTeleportToTargetMessage(target.TargetNetEnt));
+    }
+
+    private void SpectateTarget(ButtonEventArgs args)
+    {
+        if (args.Button.Parent?.Parent?.Parent?.Parent is not MiGoTeleportTarget target)
+            return;
     }
 }
