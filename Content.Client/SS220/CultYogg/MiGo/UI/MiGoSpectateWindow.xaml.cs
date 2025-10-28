@@ -31,4 +31,5 @@ public sealed partial class MiGoSpectateWindow : DefaultWindow
         //CameraViewBackground.ShaderOverride = shader;
 
     }
+
 }
