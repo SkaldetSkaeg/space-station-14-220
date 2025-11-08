@@ -11,3 +11,10 @@
 
 - type: statusEffect
   id: ChemicalAdaptationEffect
+
+- type: entity
+  parent: MobStatusEffectDebuff
+  id: StatusEffectRave
+  name: rave
+  components:
+  - type: Rave

@@ -2,7 +2,7 @@
 
 using Content.Server.Chat.Systems;
 using Content.Shared.Dataset;
-using Content.Shared.StatusEffect;
+using Content.Shared.StatusEffectNew;
 using Content.Shared.SS220.CultYogg.Rave;
 using Content.Shared.Examine;
 using Content.Shared.SS220.CultYogg.CultYoggIcons;
