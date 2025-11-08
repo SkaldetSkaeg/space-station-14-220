@@ -62,7 +62,7 @@ public sealed class RaveSystem : SharedRaveSystem
 
     private void OnSaintWaterDrinked(Entity<RaveComponent> uid, ref OnSaintWaterDrinkEvent args)
     {
-        TryRemoveRavenness(uid);
+        _statusEffectsSystem.TryRemoveStatusEffect(uid, EffectKey);
     }
 
     private void OnExamined(Entity<RaveComponent> uid, ref ExaminedEvent args)
@@ -71,31 +71,6 @@ public sealed class RaveSystem : SharedRaveSystem
             return;
 
         args.PushMarkup($"[color=green]{Loc.GetString("cult-yogg-shroom-markup", ("ent", uid))}[/color]");
-    }
-
-    public void TryApplyRavenness(EntityUid uid, TimeSpan time, StatusEffectsComponent? status = null)
-    {
-        if (!Resolve(uid, ref status, false))
-            return;
-
-        if (!_statusEffectsSystem.HasStatusEffect(uid, EffectKey, status))
-        {
-            _statusEffectsSystem.TryAddStatusEffect<RaveComponent>(uid, EffectKey, time, true, status);
-        }
-        else
-        {
-            _statusEffectsSystem.TryAddTime(uid, EffectKey, time, status);
-        }
-    }
-
-    public void TryRemoveRavenness(EntityUid uid)
-    {
-        _statusEffectsSystem.TryRemoveStatusEffect(uid, EffectKey);
-    }
-
-    public void TryRemoveRavennessTime(EntityUid uid, double timeRemoved)
-    {
-        _statusEffectsSystem.TryRemoveTime(uid, EffectKey, TimeSpan.FromSeconds(timeRemoved));
     }
 
     private void SetupRaving(Entity<RaveComponent> uid, ref ComponentStartup args)
