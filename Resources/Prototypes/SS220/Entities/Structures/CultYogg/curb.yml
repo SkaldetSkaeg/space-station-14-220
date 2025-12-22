@@ -9,10 +9,10 @@
   components:
   - type: Sprite
     drawdepth: FloorTiles
-    sprite: /Textures/SS220/Structures/CultYogg/crub.rsi
+    sprite: /Textures/SS220/Structures/CultYogg/curb.rsi
     state: curbcult
   - type: Icon
-    sprite: /Textures/SS220/StructuresCultYogg/crub.rsi
+    sprite: /Textures/SS220/StructuresCultYogg/curb.rsi
     state: curbcult
   - type: Fixtures
     fixtures:

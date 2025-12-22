@@ -20,9 +20,6 @@
   - type: Icon
     sprite: SS220/Structures/CultYogg/catwalk.rsi
     state: catwalk_0
-  #- type: IconSmooth
-  #  key: catwalk
-  #  base: catwalk_
   - type: Transform
     anchored: true
   - type: FootstepModifier
