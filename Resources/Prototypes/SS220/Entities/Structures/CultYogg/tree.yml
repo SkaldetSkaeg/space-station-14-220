@@ -31,3 +31,25 @@
       shader: unshaded
     drawdepth: Overdoors
     offset: "0.0,0.5"
+
+- type: entity
+  id: VoidSeedling
+  suffix: CultYogg
+  name: Void seedling
+  description: Fresh sapling of the tree of the abyss.
+  components:
+  - type: Clickable
+  - type: Sprite
+    sprite: SS220/Structures/CultYogg/void_seedling.rsi
+    state: base
+  - type: Physics
+    bodyType: Static
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.1,-0.3,0.1,0.4"
+        density: 4000
+        layer:
+        - WallLayer
