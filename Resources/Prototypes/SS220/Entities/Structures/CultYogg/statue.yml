@@ -18,3 +18,7 @@
     - state: light
       shader: unshaded
     offset: "0.0,0.5"
+  - type: PointLight
+    radius: 2
+    color: "#FFFF1BFF"
+    energy: 5
