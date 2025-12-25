@@ -24,7 +24,7 @@ public sealed class CultYoggChamelenBlockerSystem : EntitySystem
         if (!_cultRuleSystem.TryGetCultGameRule(out var rule))
             return;
 
-        if (rule.Value.Comp.Stage != CultYoggStage.Alarm)
+        if (rule.Value.Comp.Stage < CultYoggStage.Alarm)
             return;
 
         var ev = new ChameleonRevealEvent();
@@ -49,7 +49,7 @@ public sealed class CultYoggChamelenBlockerSystem : EntitySystem
         if (!_cultRuleSystem.TryGetCultGameRule(out var rule))
             return;
 
-        if (rule.Value.Comp.Stage != CultYoggStage.Alarm)
+        if (rule.Value.Comp.Stage < CultYoggStage.Alarm)
             return;
 
         var proto = MetaData(ent).EntityPrototype;

@@ -28,7 +28,7 @@ public sealed class TeleportationChasmSystem : SharedTeleportationChasmSystem
     {
         base.Update(frameTime);
 
-        List<EntityUid> toRemove = [];
+        List<EntityUid> toTeleport = [];
 
         var query = EntityQueryEnumerator<TeleportationChasmFallingComponent>();
         while (query.MoveNext(out var uid, out var chasmFalling))
@@ -42,10 +42,10 @@ public sealed class TeleportationChasmSystem : SharedTeleportationChasmSystem
                 continue;
             }
 
-            toRemove.Add(uid);
+            toTeleport.Add(uid);
         }
 
-        foreach (var uid in toRemove)
+        foreach (var uid in toTeleport)
         {
             TeleportToRandomLocation(uid);
             RemComp<TeleportationChasmFallingComponent>(uid);
