@@ -63,12 +63,11 @@
         - CultYogg
         - MiGo
     - type: Damageable
-      damageModifierSet: Wood
     - type: Destructible
       thresholds:
       - trigger:
           !type:DamageTrigger
-          damage: 20
+          damage: 30
         behaviors:
         - !type:DoActsBehavior
           acts: [ "Destruction" ]
@@ -90,6 +89,18 @@
           damage:
             types:
               Heat: 0.5
+    - type: Temperature
+      heatDamage:
+        types:
+          Heat: 10
+      coldDamage:
+        types:
+          Cold: 5
+    - type: AtmosExposed
+    - type: Barotrauma
+      damage:
+        types:
+          Blunt: 0.10
 
 - type: entity
   parent: SeedBase
