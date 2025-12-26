@@ -1,44 +1,38 @@
 {
   "version": 1,
   "license": "EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt",
-  "copyright": "By Gabbka for SS220",
+  "copyright": "By MixNikita/Gabbka for SS220",
   "size": {
     "x": 32,
     "y": 32
   },
   "states": [
     {
-      "name": "dead"
+      "name": "kudzu_11"
     },
     {
-      "name": "icon"
+      "name": "kudzu_21"
     },
     {
-      "name": "seed"
+      "name": "kudzu_31"
     },
     {
-      "name": "stage-1"
+      "name": "kudzu_12"
     },
     {
-      "name": "stage-2"
+      "name": "kudzu_22"
     },
     {
-      "name": "stage-3"
+      "name": "kudzu_32"
     },
     {
-      "name": "stage-4"
+      "name": "kudzu_13"
     },
     {
-      "name": "stage-5"
+      "name": "kudzu_23"
     },
     {
-      "name": "stage-6"
-    },
-    {
-      "name": "stage-7"
-    },
-    {
-      "name": "harvest"
+      "name": "kudzu_33"
     }
   ]
 }

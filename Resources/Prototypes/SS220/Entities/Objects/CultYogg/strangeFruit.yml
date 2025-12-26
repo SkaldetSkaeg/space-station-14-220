@@ -37,13 +37,19 @@
       - Wall
   components:
     - type: Sprite
-      sprite: SS220/Objects/CultYogg/strangefruit.rsi
+      sprite: SS220/Objects/CultYogg/strange_kudzu.rsi
       state: kudzu_11
       drawdepth: HighFloorObjects
     - type: Clickable
     - type: Kudzu
       growthTickChance: 0.2
       spreadChance: 0.2
+      damageRecovery:
+        types:
+          Slash: -0.5
+          Heat: -1.0
+          Cold: -1.0
+          Blunt: -0.5
     - type: Fixtures
       fixtures:
         fix1:
