@@ -43,13 +43,14 @@
     - type: Clickable
     - type: Kudzu
       growthTickChance: 0.2
-      spreadChance: 0.2
+      spreadChance: 0.1
       damageRecovery:
         types:
           Slash: -0.5
           Heat: -1.0
           Cold: -1.0
           Blunt: -0.5
+    - type: KudzuVisuals
     - type: Fixtures
       fixtures:
         fix1:
@@ -73,7 +74,7 @@
       thresholds:
       - trigger:
           !type:DamageTrigger
-          damage: 30
+          damage: 40
         behaviors:
         - !type:DoActsBehavior
           acts: [ "Destruction" ]
@@ -106,7 +107,7 @@
     - type: Barotrauma
       damage:
         types:
-          Blunt: 0.10
+          Blunt: 0.5
 
 - type: entity
   parent: SeedBase
