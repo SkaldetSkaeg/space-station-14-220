@@ -16,7 +16,7 @@ public sealed partial class CultYoggPurifiedComponent : Component
     public FixedPoint2 TotalAmountOfHolyWater = 0;
 
     [DataField]
-    public FixedPoint2 AmountToPurify = 10;
+    public FixedPoint2 AmountToPurify = 30;
 
     /// <summary>
     /// The random time between incidents, (min, max).
