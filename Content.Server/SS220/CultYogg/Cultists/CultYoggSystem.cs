@@ -286,8 +286,8 @@ public sealed class CultYoggSystem : SharedCultYoggSystem
         EnsureComp<CultYoggPurifiedComponent>(ent, out var purifyedComp);
         purifyedComp.TotalAmountOfHolyWater += args.SaintWaterAmount;
 
-        if (purifyedComp.TotalAmountOfHolyWater >= purifyedComp.AmountToPurify && purifyedComp.PurifyingEventTime == null)
-            purifyedComp.PurifyingEventTime = _timing.CurTime + purifyedComp.BeforePurifyingTime;
+        if (purifyedComp.TotalAmountOfHolyWater >= purifyedComp.AmountToPurify)
+            purifyedComp.PurifyingEventTime ??= _timing.CurTime + purifyedComp.BeforePurifyingTime;
 
         purifyedComp.PurifyingDecayEventTime = _timing.CurTime + purifyedComp.BeforeDeclinesTime; //setting timer, when purifying will be removed
         Dirty(ent, ent.Comp);
