@@ -54,6 +54,7 @@
   suffix: CultYogg
   components:
   - type: Sprite
+    noRot: true
     sprite: SS220/Objects/CultYogg/light_bulb.rsi
     layers:
       - state: bulb_off
@@ -92,6 +93,7 @@
   suffix: CultYogg
   components:
   - type: Sprite
+    noRot: true
     sprite: SS220/Objects/CultYogg/light_tube.rsi
     layers:
     - state: tube_off
