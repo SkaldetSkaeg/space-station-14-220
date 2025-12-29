@@ -14,7 +14,6 @@ public sealed class CultYoggPurifiedSystem : EntitySystem
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
     [Dependency] private readonly CultYoggRuleSystem _cultRuleSystem = default!;
-    [Dependency] private readonly CultYoggSystem _cultSystem = default!;
 
     public override void Initialize()
     {
@@ -31,20 +30,19 @@ public sealed class CultYoggPurifiedSystem : EntitySystem
     {
         base.Update(frameTime);
 
-        var query = EntityQueryEnumerator<CultYoggComponent, CultYoggPurifiedComponent>();
-        while (query.MoveNext(out var ent, out var cult, out var purifyedComp))
+        var query = EntityQueryEnumerator<CultYoggPurifiedComponent>();
+        while (query.MoveNext(out var ent, out var purifyedComp))
         {
-            if (_timing.CurTime >= purifyedComp.PurifyingDecayEventTime)
-                RemComp<CultYoggPurifiedComponent>(ent);
+            if (_timing.CurTime >= purifyedComp.DecayTime)
+                RemCompDeferred<CultYoggPurifiedComponent>(ent);
 
-            if (purifyedComp.PurifyingEventTime <= _timing.CurTime)
+            if (_timing.CurTime >= purifyedComp.PurifyTime)
             {
                 //After purifying effect
-                _audio.PlayPvs(purifyedComp.PurifyingCollection, ent);
-
-                _cultSystem.DeleteVisuals((ent, cult));
+                _audio.PlayPvs(purifyedComp.PurifiedSound, ent);
 
                 RemComp<CultYoggComponent>(ent);
+                //ToDo_SS220 make it better
                 _cultRuleSystem.CheckSimplifiedEslavement();//Add token if it was last cultist
             }
         }

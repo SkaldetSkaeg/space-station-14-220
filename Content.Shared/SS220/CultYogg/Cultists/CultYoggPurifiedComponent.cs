@@ -27,12 +27,12 @@ public sealed partial class CultYoggPurifiedComponent : Component
     /// Amount of time requierd to requied for purifying removal
     /// </summary>
     [DataField]
-    public TimeSpan BeforeDeclinesTime = TimeSpan.FromSeconds(120);
+    public TimeSpan BeforeDecayTime = TimeSpan.FromSeconds(120);
 
     /// <summary>
     /// Buffer to markup when time to decrease Holy water buffer has come
     /// </summary>
-    public TimeSpan? PurifyingDecayEventTime;
+    public TimeSpan? DecayTime;
 
     /// <summary>
     /// The time it takes for the cultist to purify itself is needed to cancel it, if the cultist has the opportunity
@@ -43,13 +43,13 @@ public sealed partial class CultYoggPurifiedComponent : Component
     /// <summary>
     /// The exact time when the cultist will be purified
     /// </summary>
-    public TimeSpan? PurifyingEventTime;
+    public TimeSpan? PurifyTime;
 
     /// <summary>
     /// Contains special sounds which be played when entity will be purified
     /// </summary>
     [DataField]
-    public SoundSpecifier PurifyingCollection = new SoundCollectionSpecifier("CultYoggPurifyingSounds");
+    public SoundSpecifier PurifiedSound = new SoundCollectionSpecifier("CultYoggPurifyingSounds");
 
     [DataField]
     public SpriteSpecifier.Rsi Sprite = new(new("SS220/Effects/cult_yogg_purifying.rsi"), "purifyingEffect");
