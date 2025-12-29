@@ -64,8 +64,8 @@
     addPrefix: true
   - type: PointLight
     enabled: false
-    radius: 3
-    energy: 2
+    radius: 4
+    energy: 3
     netsync: false
   - type: ToggleableVisuals
     spriteLayer: enum.ToggleableVisuals.Layer
@@ -102,8 +102,8 @@
     addPrefix: true
   - type: PointLight
     enabled: false
-    radius: 3
-    energy: 2
+    radius: 4
+    energy: 3
     netsync: false
   - type: ToggleableVisuals
     spriteLayer: enum.ToggleableVisuals.Layer
