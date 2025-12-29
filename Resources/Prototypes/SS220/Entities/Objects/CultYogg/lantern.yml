@@ -94,8 +94,8 @@
   - type: Sprite
     sprite: SS220/Objects/CultYogg/light_tube.rsi
     layers:
-      - state: tube_off
-        map: [ "enum.ToggleableVisuals.Layer" ]
+    - state: tube_off
+      map: [ "enum.ToggleableVisuals.Layer" ]
   - type: Item
     heldPrefix: off
   - type: CultYoggLamp
