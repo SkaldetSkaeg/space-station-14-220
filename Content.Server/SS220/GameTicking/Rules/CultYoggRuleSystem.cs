@@ -324,10 +324,10 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         if (!TryGetCultGameRule(out var rule))
             return;
 
-        if (!TryMakeCultistMind(args.Target.Value, rule.Value, true))
+        if (!TryMakeCultistMind(args.Target.Value, rule.Value, false))
             return;
 
-        MakeCultist(args.Target.Value, rule.Value, false);
+        MakeCultist(args.Target.Value, rule.Value);
     }
     #endregion
 
@@ -337,7 +337,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         if (!TryMakeCultistMind(args.EntityUid, ent, true))
             return;
 
-        MakeCultist(args.EntityUid, ent, true);
+        MakeCultist(args.EntityUid, ent);
         UpdateMiGoTeleportList();
     }
 
@@ -381,7 +381,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         return true;
     }
 
-    public void MakeCultist(EntityUid uid, Entity<CultYoggRuleComponent> rule, bool initial = false, bool sendBriefing = true)
+    public void MakeCultist(EntityUid uid, Entity<CultYoggRuleComponent> rule)
     {
         // Change the faction
         _npcFaction.RemoveFaction(uid, rule.Comp.NanoTrasenFaction, false);
