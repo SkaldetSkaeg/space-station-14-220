@@ -8,7 +8,6 @@ using Content.Shared.Whitelist;
 using Robust.Shared.Audio;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom;
-using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype;
 
 namespace Content.Server.SS220.GameTicking.Rules.Components;
 
@@ -83,9 +82,6 @@ public sealed partial class CultYoggRuleComponent : Component
     /// </summary>
     [DataField]
     public int AmountOfSacrifices = 0;
-
-    [DataField]
-    public bool Summoned;
 
     [DataField]
     public SoundSpecifier SummonMusic = new SoundCollectionSpecifier("CultYoggMusic");//ToDo make own

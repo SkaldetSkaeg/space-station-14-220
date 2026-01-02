@@ -48,6 +48,7 @@ using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Utility;
+using System.Data;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Content.Server.SS220.GameTicking.Rules;
@@ -503,8 +504,6 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         var selectedSong = _audio.ResolveSound(comp.SummonMusic);
 
         _sound.DispatchStationEventMusic(godUid, selectedSong, StationEventMusicType.Nuke);//should i rename somehow?
-
-        comp.Summoned = true;//Win EndText
     }
 
     private EntityCoordinates FindGodSummonCoordinates(Entity<CultYoggRuleComponent> rule)
@@ -553,7 +552,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
     {
         base.AppendRoundEndText(uid, component, gameRule, ref args);
 
-        if (component.Summoned)
+        if (component.Stage is CultYoggStage.God)
         {
             args.AddLine(Loc.GetString("cult-yogg-round-end-win"));
         }
@@ -593,6 +592,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         {
             if (mob.CurrentState == MobState.Dead)
                 continue;
+
             cultistsCount++;
         }
 
@@ -601,6 +601,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         {
             if (mob.CurrentState == MobState.Dead)
                 continue;
+
             cultistsCount++;
         }
 
@@ -609,11 +610,9 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
     #endregion
 
     #region Stages
-    private bool TryGetNextStage(Entity<CultYoggRuleComponent> rule,
+    private static bool TryGetNextStage(Entity<CultYoggRuleComponent> rule,
         out CultYoggStage nextStage, [NotNullWhen(true)] out CultYoggStageDefinition? stageDefinition)
     {
-        stageDefinition = null;
-
         nextStage = rule.Comp.Stage + 1;
         if (!rule.Comp.Stages.TryGetValue(nextStage, out stageDefinition))
             return false;
@@ -668,10 +667,13 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         if (AnyCultistsAlive())
             return;
 
+        if (AnyMiGoAlive())
+            return;
+
         if (!TryGetCultGameRule(out var rule))
             return;
 
-        if (rule.Value.Comp.Summoned)//if it is endgame and all are MiGos == no new cultists
+        if (rule.Value.Comp.Stage is CultYoggStage.God)//if it is endgame and all are MiGos == no new cultists
             return;
 
         SendCultAnounce(Loc.GetString("cult-yogg-add-token-no-cultists"));
@@ -681,6 +683,21 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
     public bool AnyCultistsAlive()
     {
         var query = EntityQueryEnumerator<CultYoggComponent, MobStateComponent, MindContainerComponent>();
+        while (query.MoveNext(out _, out _, out var state, out var mind))
+        {
+            if (!mind.HasMind)
+                continue;
+
+            if (state.CurrentState != MobState.Dead)
+                return true;
+        }
+
+        return false;
+    }
+
+    public bool AnyMiGoAlive()
+    {
+        var query = EntityQueryEnumerator<MiGoComponent, MobStateComponent, MindContainerComponent>();
         while (query.MoveNext(out _, out _, out var state, out var mind))
         {
             if (!mind.HasMind)
