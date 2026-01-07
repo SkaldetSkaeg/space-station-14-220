@@ -47,14 +47,15 @@ using Robust.Shared.Map;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
+using Robust.Shared.Timing;
 using Robust.Shared.Utility;
-using System.Data;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Content.Server.SS220.GameTicking.Rules;
 
 public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
 {
+    [Dependency] private readonly IGameTiming _gameTiming = default!;
     [Dependency] private readonly IAdminLogManager _adminLogger = default!;
     [Dependency] private readonly NpcFactionSystem _npcFaction = default!;
     [Dependency] private readonly AntagSelectionSystem _antag = default!;
@@ -358,7 +359,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         if (initial && !rule.Comp.InitialCultistMinds.Contains(mindId))
             rule.Comp.InitialCultistMinds.Add(mindId);
 
-        foreach (var obj in rule.Comp.ListofObjectives)
+        foreach (var obj in rule.Comp.ListOfObjectives)
         {
             _role.MindAddRole(mindId, rule.Comp.MindCultYoggAntagId, mindComp, true);
             _mind.TryAddObjective(mindId, mindComp, obj);
@@ -413,7 +414,6 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
     #endregion
 
     #region Cultists de-making
-
     private void DeCult(ref CultYoggDeCultingEvent args)
     {
         if (!TryGetCultGameRule(out var rule))
@@ -433,7 +433,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         if (!_role.MindHasRole<CultYoggRoleComponent>(mindId, out var _))
             return;
 
-        foreach (var obj in component.ListofObjectives)
+        foreach (var obj in component.ListOfObjectives)
         {
             if (!_mind.TryFindObjective(mindId, obj, out var objUid))
                 continue;
@@ -584,6 +584,9 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         }
     }
 
+    /// <summary>
+    /// Getting the number of all Mi-Go and cultists.
+    /// </summary>
     private float GetCultistsFraction()
     {
         int cultistsCount = 0;
@@ -635,6 +638,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
 
         var changeStageEvent = new ChangeCultYoggStageEvent(stage);
         RaiseLocalEvent(ref changeStageEvent);
+
         var queryCultists = EntityQueryEnumerator<CultYoggComponent>();
         while (queryCultists.MoveNext(out var uid, out _))
         {
@@ -644,18 +648,45 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
 
     private void DoStageEffects(Entity<CultYoggRuleComponent> rule, CultYoggStage stage)
     {
-        if (stage is CultYoggStage.Alarm)
+        switch (stage)
         {
+            case CultYoggStage.Reveal:
+                SendCultAnounce(Loc.GetString("cult-yogg-reveal-telepathy-announce"));
+                break;
+            case CultYoggStage.Alarm:
+                SendCultAnounce(Loc.GetString("cult-yogg-alarm-telepathy-announce"));
+                rule.Comp.AlertTime = _gameTiming.CurTime + rule.Comp.BeforeAlertTime;
+                break;
+            case CultYoggStage.God:
+                SummonGod(rule, FindGodSummonCoordinates(rule));
+                break;
+            default:
+                break;
+        }
+    }
+
+    public override void Update(float frameTime)
+    {
+        base.Update(frameTime);
+
+        var query = EntityQueryEnumerator<CultYoggRuleComponent>();
+
+        while (query.MoveNext(out var _, out var rule))
+        {
+            if (rule.AlertTime is null)
+                continue;
+
+            if (_gameTiming.CurTime < rule.AlertTime)
+                continue;
+
             foreach (var station in _station.GetStations())
             {
                 _chat.DispatchStationAnnouncement(station, Loc.GetString("cult-yogg-cultists-warning"), playDefaultSound: false, colorOverride: Color.Red);
-                _audio.PlayGlobal(rule.Comp.BroadcastSound, Filter.Broadcast(), true);
+                _audio.PlayGlobal(rule.BroadcastSound, Filter.Broadcast(), true);
                 _alertLevel.SetLevel(station, "gamma", true, true, true);
             }
-        }
-        else if (stage is CultYoggStage.God)
-        {
-            SummonGod(rule, FindGodSummonCoordinates(rule));
+
+            rule.AlertTime = null;
         }
     }
     #endregion
