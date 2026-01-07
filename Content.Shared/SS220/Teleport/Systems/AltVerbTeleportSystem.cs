@@ -2,11 +2,10 @@
 
 using Content.Shared.DoAfter;
 using Content.Shared.Popups;
-using Content.Shared.SS220.Teleport;
 using Content.Shared.Verbs;
 using Content.Shared.Whitelist;
 
-namespace Content.Shared.SS220.Teleport;
+namespace Content.Shared.SS220.Teleport.Systems;
 
 public sealed class AltVerbTeleportSystem : EntitySystem
 {
