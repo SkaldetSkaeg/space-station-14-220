@@ -558,6 +558,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         }
         else
         {
+            //ToDo_SS220 rework this migic numbers shit
             var fraction = GetCultistsFraction();
             if (fraction <= 0)
                 args.AddLine(Loc.GetString("cult-yogg-round-end-amount-none"));
@@ -587,7 +588,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
     /// <summary>
     /// Getting the number of all Mi-Go and cultists.
     /// </summary>
-    private float GetCultistsFraction()
+    private int GetCultistsFraction()
     {
         int cultistsCount = 0;
         var queryCultists = EntityQueryEnumerator<HumanoidAppearanceComponent, CultYoggComponent, MobStateComponent>();
