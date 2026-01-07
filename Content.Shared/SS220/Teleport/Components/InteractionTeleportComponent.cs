@@ -2,13 +2,13 @@
 
 using Content.Shared.Whitelist;
 
-namespace Content.Shared.SS220.AltVerbTeleport;
+namespace Content.Shared.SS220.Teleport.Components;
 
 /// <summary>
-///     Used when you need to teleport through AltVerb
+///     Used when you need to teleport not through contact, but through DragDrop or Verb
 /// </summary>
 [RegisterComponent]
-public sealed partial class AltVerbTeleportComponent : Component
+public sealed partial class InteractionTeleportComponent : Component
 {
     /// <summary>
     ///     Which entities can use teleportation
@@ -29,4 +29,3 @@ public sealed partial class AltVerbTeleportComponent : Component
     [DataField]
     public TimeSpan? TeleportDoAfterTime;
 }
-

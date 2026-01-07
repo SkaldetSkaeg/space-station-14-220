@@ -2,13 +2,13 @@
 
 using Content.Shared.Whitelist;
 
-namespace Content.Shared.SS220.InteractionTeleport;
+namespace Content.Shared.SS220.Teleport;
 
 /// <summary>
-///     Used when you need to teleport not through contact, but through DragDrop or Verb
+///     Used when you need to teleport through AltVerb
 /// </summary>
 [RegisterComponent]
-public sealed partial class InteractionTeleportComponent : Component
+public sealed partial class AltVerbTeleportComponent : Component
 {
     /// <summary>
     ///     Which entities can use teleportation

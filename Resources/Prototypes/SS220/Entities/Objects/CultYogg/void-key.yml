@@ -41,6 +41,8 @@
   - type: DeleteOnTeleported
     deleteSound:
       path: /Audio/Effects/glass_smash.ogg
+  - type: SpawnBeforeTeleport
+    spawnedEnt: VoidKey #ToDo_SS220 change it to effect
 
 - type: entity
   id: VoidPortal

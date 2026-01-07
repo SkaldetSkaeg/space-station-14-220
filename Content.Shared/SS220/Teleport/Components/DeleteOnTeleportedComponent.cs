@@ -2,7 +2,7 @@
 
 using Robust.Shared.Audio;
 
-namespace Content.Shared.SS220.DeleteOnTeleported;
+namespace Content.Shared.SS220.Teleport.Components;
 
 /// <summary>
 ///     Removes the teleportation device entity after its use is exhausted.
