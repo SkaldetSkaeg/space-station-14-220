@@ -12,7 +12,7 @@ cult-yogg-round-end-user-was-enslaved = - [color=plum]{ $name }[/color] ([color=
 cult-yogg-round-end-amount-none = [color=green]Все сторонники культа были уничтожены![/color]
 cult-yogg-round-end-amount-low = [color=green]Почти все сторонники культа были уничтожены.[/color]
 cult-yogg-round-end-amount-medium = [color=yellow]Культ провалил призыв.[/color]
-cult-yogg-round-end-amount-high = [color=crimson]культ был близок к призыву.[/color]
+cult-yogg-round-end-amount-high = [color=crimson]Культ был близок к призыву.[/color]
 cult-yogg-round-end-win = [color=darkred]Повелитель явился в наш мир![/color]
 
 objective-issuer-cult-yogg = [color=crimson]По Заветам Посланника Бога Нашего Йог-Сотота[/color]
@@ -28,3 +28,8 @@ cult-yogg-shuttle-call = Датчики станции зафиксировал�
 
 cult-yogg-reveal-telepathy-announce = Свет знаний Йог-Сотота поселился в ващшем взгляде.
 cult-yogg-alarm-telepathy-announce = Набрана критическая масса прислужников. В скором времени неверные обнаружат наше присутствие.
+
+cult-yogg-cultists-numb = Информация о культе
+    Количество культистов:{$cultists} (Живых:{$aliveCultists})
+    Количество Ми-Го:{$MiGo} (Живых:{$aliveMiGo})
+

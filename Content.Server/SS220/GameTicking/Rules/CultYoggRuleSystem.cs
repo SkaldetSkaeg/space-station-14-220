@@ -10,6 +10,7 @@ using Content.Server.EUI;
 using Content.Server.GameTicking;
 using Content.Server.GameTicking.Rules;
 using Content.Server.Pinpointer;
+using Content.Server.Roles;
 using Content.Server.RoundEnd;
 using Content.Server.SS220.CultYogg.DeCultReminder;
 using Content.Server.SS220.CultYogg.Sacraficials;
@@ -21,6 +22,7 @@ using Content.Shared.Audio;
 using Content.Shared.Database;
 using Content.Shared.GameTicking.Components;
 using Content.Shared.Humanoid;
+using Content.Shared.Localizations;
 using Content.Shared.Mind;
 using Content.Shared.Mind.Components;
 using Content.Shared.Mobs;
@@ -28,6 +30,7 @@ using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.NPC.Systems;
 using Content.Shared.Roles;
+using Content.Shared.Roles.Components;
 using Content.Shared.Roles.Jobs;
 using Content.Shared.SS220.CultYogg.Altar;
 using Content.Shared.SS220.CultYogg.Cultists;
@@ -93,9 +96,10 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         SubscribeLocalEvent<SacraficialReplacementEvent>(SacraficialReplacement);
 
         SubscribeLocalEvent<CultYoggRuleComponent, CultYoggSacrificedTargetEvent>(OnTargetSacrificed);
+        SubscribeLocalEvent<CultYoggRoleComponent, GetBriefingEvent>(OnGetBriefing);
     }
 
-    #region Sacreficials picking
+    #region Sacraficials picking
     protected override void Added(EntityUid uid, CultYoggRuleComponent component, GameRuleComponent gameRule, GameRuleAddedEvent args)
     {
         component.InitialCrewCount = GameTicker.ReadyPlayerCount();
@@ -377,6 +381,9 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
             ProgressToStage(rule, nextStage);
         }
 
+        EnsureComp<RoleBriefingComponent>(mindId, out var briefingComp);
+        briefingComp.Briefing = "smth";
+
         DirtyEntity(mindId);//Not quite sure if it is required
 
         return true;
@@ -584,33 +591,6 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
                 ("username", data.UserName)));
         }
     }
-
-    /// <summary>
-    /// Getting the number of all Mi-Go and cultists.
-    /// </summary>
-    private int GetCultistsFraction()
-    {
-        int cultistsCount = 0;
-        var queryCultists = EntityQueryEnumerator<HumanoidAppearanceComponent, CultYoggComponent, MobStateComponent>();
-        while (queryCultists.MoveNext(out _, out _, out _, out var mob))
-        {
-            if (mob.CurrentState == MobState.Dead)
-                continue;
-
-            cultistsCount++;
-        }
-
-        var queryMiGo = EntityQueryEnumerator<MiGoComponent, MobStateComponent>();
-        while (queryMiGo.MoveNext(out _, out _, out var mob))
-        {
-            if (mob.CurrentState == MobState.Dead)
-                continue;
-
-            cultistsCount++;
-        }
-
-        return cultistsCount;
-    }
     #endregion
 
     #region Stages
@@ -748,6 +728,32 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
     }
     #endregion
 
+    #region Briefing info
+    private void OnGetBriefing(Entity<CultYoggRoleComponent> role, ref GetBriefingEvent args)
+    {
+        if (args.Briefing != null)
+            return;
+
+        var ent = args.Mind.Comp.OwnedEntity;
+
+        if (ent is null)
+            return;
+
+        if (!TryGetCultGameRule(out var rule))
+            return;
+
+        args.Append(MakeBriefing(rule.Value));
+    }
+
+    private string MakeBriefing(Entity<CultYoggRuleComponent> rule)
+    {
+        var briefing = Loc.GetString("cult-yogg-cultists-numb", ("aliveCultists", GetAliveCultistsNumber()), ("cultists", GetCultistsNumber()), ("aliveMiGo", GetAliveMiGoNumber()), ("MiGo", GetMiGoNumber()));
+
+        return briefing;
+    }
+
+    #endregion
+
     public bool TryGetCultGameRule([NotNullWhen(true)] out Entity<CultYoggRuleComponent>? rule)
     {
         rule = null;
@@ -771,4 +777,64 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
             _migo.UpdateTeleportTargets(ent);
         }
     }
+
+    #region Cultist counting
+    /// <summary>
+    /// Getting the number of all Mi-Go and cultists.
+    /// </summary>
+    private int GetCultistsFraction()
+    {
+        return GetCultistsNumber() + GetMiGoNumber();
+    }
+
+    private int GetAliveCultistsNumber()
+    {
+        int cultistsCount = 0;
+        var queryCultists = EntityQueryEnumerator<HumanoidAppearanceComponent, CultYoggComponent, MobStateComponent>();
+        while (queryCultists.MoveNext(out _, out _, out _, out var mob))
+        {
+            if (mob.CurrentState == MobState.Dead)
+                continue;
+
+            cultistsCount++;
+        }
+        return cultistsCount;
+    }
+
+    private int GetCultistsNumber()
+    {
+        int cultistsCount = 0;
+        var queryCultists = EntityQueryEnumerator<HumanoidAppearanceComponent, CultYoggComponent>();
+        while (queryCultists.MoveNext(out _, out _, out _))
+        {
+            cultistsCount++;
+        }
+        return cultistsCount;
+    }
+
+    private int GetAliveMiGoNumber()
+    {
+        int migoCount = 0;
+        var queryCultists = EntityQueryEnumerator<HumanoidAppearanceComponent, MiGoComponent, MobStateComponent>();
+        while (queryCultists.MoveNext(out _, out _, out _, out var mob))
+        {
+            if (mob.CurrentState == MobState.Dead)
+                continue;
+
+            migoCount++;
+        }
+        return migoCount;
+    }
+
+    private int GetMiGoNumber()
+    {
+        int migoCount = 0;
+        var queryCultists = EntityQueryEnumerator<HumanoidAppearanceComponent, MiGoComponent>();
+        while (queryCultists.MoveNext(out _, out _, out _))
+        {
+            migoCount++;
+        }
+        return migoCount;
+    }
+    #endregion
 }
