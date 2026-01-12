@@ -13,7 +13,7 @@ namespace Content.Server.SS220.GameTicking.Rules.Components;
 [RegisterComponent, Access(typeof(CultYoggRuleSystem))]
 public sealed partial class CultYoggRuleComponent : Component
 {
-    #region Stage
+    #region GameRuleSelection
     /// <summary>
     /// Current state of the rule
     /// </summary>
@@ -25,7 +25,9 @@ public sealed partial class CultYoggRuleComponent : Component
         ReadyToStart = 1,
         Started = 2,
     }
+    #endregion
 
+    #region Stage
     [DataField]
     public Dictionary<CultYoggStage, CultYoggStageDefinition> Stages { get; private set; } = [];
 
@@ -149,9 +151,14 @@ public sealed partial class CultYoggStageDefinition
     public int? SacrificesRequired;
 
     /// <summary>
-    /// Fraction of total crew converted to cultists that will progress cult to this stage.
+    /// The percentage of the entire crew converted to the cult that will advance the cult to this stage.
     /// </summary>
     [DataField]
     public FixedPoint2? CultistsFractionRequired;
+
+    /// <summary>
+    /// Direct calculation of required cultist stages for progression to avoid round-start progression.
+    /// </summary>
+    public int? CultistsAmountRequired;
 }
 

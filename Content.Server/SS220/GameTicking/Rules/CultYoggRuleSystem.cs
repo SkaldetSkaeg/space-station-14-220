@@ -22,7 +22,6 @@ using Content.Shared.Audio;
 using Content.Shared.Database;
 using Content.Shared.GameTicking.Components;
 using Content.Shared.Humanoid;
-using Content.Shared.Localizations;
 using Content.Shared.Mind;
 using Content.Shared.Mind.Components;
 using Content.Shared.Mobs;
@@ -103,6 +102,24 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
     protected override void Added(EntityUid uid, CultYoggRuleComponent component, GameRuleComponent gameRule, GameRuleAddedEvent args)
     {
         component.InitialCrewCount = GameTicker.ReadyPlayerCount();
+
+        GenerateStagesCount((uid, component));
+    }
+
+    private void GenerateStagesCount(Entity<CultYoggRuleComponent> rule)
+    {
+        foreach (var (stage, stageDef) in rule.Comp.Stages)
+        {
+            if (stageDef.CultistsFractionRequired is null)
+                continue;
+
+            stageDef.CultistsAmountRequired = 5 + (int)stage;//ToDo_SS220 figure out how to get amount of currently picked
+
+            int persentAmount = (int)(rule.Comp.InitialCrewCount * stageDef.CultistsFractionRequired);
+
+            if (persentAmount > stageDef.CultistsAmountRequired)
+                stageDef.CultistsAmountRequired = persentAmount;
+        }
     }
 
     /// <summary>
@@ -371,12 +388,9 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
 
         rule.Comp.TotalCultistsConverted++;
 
-        var amountOfCultists = rule.Comp.TotalCultistsConverted;
-        var totalCrew = rule.Comp.InitialCrewCount;
+        var amountOfCultists = GetCultistsFraction();
 
-        while (TryGetNextStage(rule, out var nextStage, out var nextStageDefinition)
-            && nextStageDefinition.CultistsFractionRequired is { } cultistsFractionRequired
-            && cultistsFractionRequired * totalCrew <= amountOfCultists)
+        while (TryGetNextStage(rule, out var nextStage, out var nextStageDefinition) && nextStageDefinition.CultistsAmountRequired <= amountOfCultists)
         {
             ProgressToStage(rule, nextStage);
         }
@@ -749,11 +763,13 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
     {
         var briefing = Loc.GetString("cult-yogg-cultists-numb-info", ("aliveCultists", GetAliveCultistsNumber()), ("cultists", GetCultistsNumber()), ("aliveMiGo", GetAliveMiGoNumber()), ("MiGo", GetMiGoNumber()));
 
-        if (TryGetNextStage(rule, out var nextStage, out var nextStageDefinition) && nextStageDefinition.CultistsFractionRequired is { } cultistsFractionRequired)
+        if (TryGetNextStage(rule, out var nextStage, out var nextStageDefinition))
         {
-            // string amount2 = (amount == null) ? "-" : amount.ToString();
-            briefing += "\n" + Loc.GetString("cult-yogg-stage-info", ("stage", rule.Comp.Stage), ("count", ""));//ToDo_SS220
+            var count = "-";
+            if (nextStageDefinition.CultistsAmountRequired != null)
+                count = nextStageDefinition.CultistsAmountRequired.Value.ToString();//well not sure
 
+            briefing += "\n" + Loc.GetString("cult-yogg-stage-info", ("stage", rule.Comp.Stage), ("count", count));
         }
 
         return briefing;
