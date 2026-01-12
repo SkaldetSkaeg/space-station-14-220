@@ -3,6 +3,7 @@
 using Content.Server.Administration.Logs;
 using Content.Server.AlertLevel;
 using Content.Server.Antag;
+using Content.Server.Antag.Components;
 using Content.Server.Audio;
 using Content.Server.Chat.Managers;
 using Content.Server.Chat.Systems;
@@ -101,24 +102,32 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
     #region Sacraficials picking
     protected override void Added(EntityUid uid, CultYoggRuleComponent component, GameRuleComponent gameRule, GameRuleAddedEvent args)
     {
-        component.InitialCrewCount = GameTicker.ReadyPlayerCount();
+        base.Added(uid, component, gameRule, args);
 
+        component.InitialCrewCount = GameTicker.ReadyPlayerCount();
         GenerateStagesCount((uid, component));
     }
 
     private void GenerateStagesCount(Entity<CultYoggRuleComponent> rule)
     {
+        if (!TryComp<AntagSelectionComponent>(rule.Owner, out var selectionComp))
+            return;
+
+        var count = _antag.GetTargetAntagCount((rule, selectionComp), rule.Comp.InitialCrewCount);
+
         foreach (var (stage, stageDef) in rule.Comp.Stages)
         {
             if (stageDef.CultistsFractionRequired is null)
                 continue;
 
-            stageDef.CultistsAmountRequired = 5 + (int)stage;//ToDo_SS220 figure out how to get amount of currently picked
+            stageDef.CultistsAmountRequired = count + (int)stage;
 
-            int persentAmount = (int)(rule.Comp.InitialCrewCount * stageDef.CultistsFractionRequired);
+            int perсentAmount = (int)(rule.Comp.InitialCrewCount * stageDef.CultistsFractionRequired);
 
-            if (persentAmount > stageDef.CultistsAmountRequired)
-                stageDef.CultistsAmountRequired = persentAmount;
+            if (perсentAmount <= stageDef.CultistsAmountRequired)
+                continue;
+
+            stageDef.CultistsAmountRequired = perсentAmount;
         }
     }
 
@@ -127,6 +136,8 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
     /// </summary>
     protected override void Started(EntityUid uid, CultYoggRuleComponent component, GameRuleComponent gameRule, GameRuleStartedEvent args)
     {
+        base.Started(uid, component, gameRule, args);
+
         if (component.SacraficialsWerePicked)
         {
             _adminLogger.Add(LogType.EventRan, LogImpact.High, $"CultYogg tried to tun several instanses of a gamurule");

@@ -36,4 +36,4 @@ cult-yogg-cultists-numb-info =
 
 cult-yogg-stage-info =
     Текущая стадия культа: {$stage}
-    Порабощений до следующей стадии: {$count}
+    Необходимо в культе для прогресса стадии: {$count}
