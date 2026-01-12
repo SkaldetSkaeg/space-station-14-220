@@ -747,7 +747,14 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
 
     private string MakeBriefing(Entity<CultYoggRuleComponent> rule)
     {
-        var briefing = Loc.GetString("cult-yogg-cultists-numb", ("aliveCultists", GetAliveCultistsNumber()), ("cultists", GetCultistsNumber()), ("aliveMiGo", GetAliveMiGoNumber()), ("MiGo", GetMiGoNumber()));
+        var briefing = Loc.GetString("cult-yogg-cultists-numb-info", ("aliveCultists", GetAliveCultistsNumber()), ("cultists", GetCultistsNumber()), ("aliveMiGo", GetAliveMiGoNumber()), ("MiGo", GetMiGoNumber()));
+
+        if (TryGetNextStage(rule, out var nextStage, out var nextStageDefinition) && nextStageDefinition.CultistsFractionRequired is { } cultistsFractionRequired)
+        {
+            // string amount2 = (amount == null) ? "-" : amount.ToString();
+            briefing += "\n" + Loc.GetString("cult-yogg-stage-info", ("stage", rule.Comp.Stage), ("count", ""));//ToDo_SS220
+
+        }
 
         return briefing;
     }
