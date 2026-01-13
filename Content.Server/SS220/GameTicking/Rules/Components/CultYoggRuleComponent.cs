@@ -67,6 +67,9 @@ public sealed partial class CultYoggRuleComponent : Component
     public int AmountOfSacrifices = 0;
     #endregion
 
+    /// <summary>
+    /// Internal variable for storing the estimated number of station crew
+    /// </summary>
     public int InitialCrewCount;
     public int TotalCultistsConverted;
 
