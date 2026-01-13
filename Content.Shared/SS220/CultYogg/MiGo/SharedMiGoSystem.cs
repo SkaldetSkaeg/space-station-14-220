@@ -93,6 +93,8 @@ public abstract class SharedMiGoSystem : EntitySystem
         SubscribeLocalEvent<MiGoComponent, MiGoTeleportToTargetMessage>(OnMiGoTeleportToTarget);
 
         SubscribeLocalEvent<MiGoComponent, InteractionAttemptEvent>(OnInteractionAttempt);
+
+        SubscribeLocalEvent<MiGoComponent, ChangeCultYoggStageEvent>(OnUpdateStage);
     }
 
     protected virtual void OnCompInit(Entity<MiGoComponent> uid, ref ComponentStartup args)
@@ -104,7 +106,11 @@ public abstract class SharedMiGoSystem : EntitySystem
         _actions.AddAction(uid, ref uid.Comp.MiGoSacrificeActionEntity, uid.Comp.MiGoSacrificeAction);
         _actions.AddAction(uid, ref uid.Comp.MiGoToggleLightActionEntity, uid.Comp.MiGoToggleLightAction);
         _actions.AddAction(uid, ref uid.Comp.MiGoTeleportActionEntity, uid.Comp.MiGoTeleportAction);
+
+        SynchStage(uid);
     }
+
+    protected virtual void SynchStage(Entity<MiGoComponent> uid) { }
 
     private void OnBoundUIOpened(Entity<MiGoComponent> entity, ref BoundUIOpenedEvent args)
     {
@@ -241,6 +247,12 @@ public abstract class SharedMiGoSystem : EntitySystem
             return;
         }
 
+        if (uid.Comp.CurrentStage < CultYoggStage.Alarm)
+        {
+            _popup.PopupClient(Loc.GetString("cult-yogg-sacrifice-only-stage-alarm"), uid);
+            return;
+        }
+
         var altarsClose = _entityLookup.GetEntitiesInRange<CultYoggAltarComponent>(Transform(uid).Coordinates, uid.Comp.SaraficeStartRange);
 
         if (altarsClose.Count == 0)
@@ -271,13 +283,14 @@ public abstract class SharedMiGoSystem : EntitySystem
 
         var targetUid = strapComp.BuckledEntities.FirstOrDefault();
 
-        var sacrificeDoAfter = new DoAfterArgs(EntityManager, user, ent.Comp.RutualTime, new MiGoSacrificeDoAfterEvent(), ent, target: targetUid)
+        var sacrificeDoAfter = new DoAfterArgs(EntityManager, user, ent.Comp.RitualTime, new MiGoSacrificeDoAfterEvent(), ent, targetUid)
         {
-            BreakOnDamage = true,
-            BreakOnMove = true,
+            BreakOnDamage = false,
+            BreakOnMove = false,
             BlockDuplicate = true,
             CancelDuplicate = true,
-            DuplicateCondition = DuplicateConditions.SameEvent
+            DuplicateCondition = DuplicateConditions.SameEvent,
+            DistanceThreshold = 3f//Idk why it isn't working
         };
 
         var started = _doAfter.TryStartDoAfter(sacrificeDoAfter);
@@ -286,6 +299,8 @@ public abstract class SharedMiGoSystem : EntitySystem
         {
             _popup.PopupPredicted(Loc.GetString("cult-yogg-sacrifice-started", ("user", user), ("target", targetUid)),
                 ent, null, PopupType.MediumCaution);
+
+            ent.Comp.AnnounceTime = _timing.CurTime + ent.Comp.AnnounceDelay;//add announce
         }
 
         return started;
@@ -614,4 +629,13 @@ public abstract class SharedMiGoSystem : EntitySystem
         });
     }
     #endregion
+
+    private void OnUpdateStage(Entity<MiGoComponent> ent, ref ChangeCultYoggStageEvent args)
+    {
+        if (ent.Comp.CurrentStage == args.Stage)
+            return;
+
+        ent.Comp.CurrentStage = args.Stage;
+        Dirty(ent);
+    }
 }

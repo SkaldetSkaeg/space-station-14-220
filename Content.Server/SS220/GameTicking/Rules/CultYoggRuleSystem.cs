@@ -97,6 +97,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
 
         SubscribeLocalEvent<CultYoggRuleComponent, CultYoggSacrificedTargetEvent>(OnTargetSacrificed);
         SubscribeLocalEvent<CultYoggRoleComponent, GetBriefingEvent>(OnGetBriefing);
+        SubscribeLocalEvent<ProgressCultEvent>(OnProgressCult);
     }
 
     #region Sacraficials picking
@@ -178,6 +179,9 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
                 allSuitable.Add(mind);
         }
 
+        if (allSuitable.Count <= 0)
+            return false;
+
         sacraficial = _random.Pick(allSuitable);
 
         if (sacraficial != null)
@@ -188,9 +192,12 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
 
     public bool TryPickAnySacraficial(CultYoggRuleComponent comp, List<EntityUid> allHumans, [NotNullWhen(true)] out EntityUid? sacraficial)
     {
-        var allSuitable = new List<EntityUid>();
+        sacraficial = null;
 
-        sacraficial = _random.Pick(allSuitable);
+        if (allHumans.Count <= 0)
+            return false;
+
+        sacraficial = _random.Pick(allHumans);
 
         if (sacraficial != null)
             return true;
@@ -332,16 +339,6 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         }
 
         rule.Comp.TotalCultistsConverted++;
-
-        var amountOfCultists = GetCultistsFraction();
-
-        while (TryGetNextStage(rule, out var nextStage, out var nextStageDefinition) && nextStageDefinition.CultistsAmountRequired <= amountOfCultists)
-        {
-            ProgressToStage(rule, nextStage);
-        }
-
-        EnsureComp<RoleBriefingComponent>(mindId, out var briefingComp);
-        briefingComp.Briefing = "smth";
 
         DirtyEntity(mindId);//Not quite sure if it is required
 
@@ -553,6 +550,25 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
     #endregion
 
     #region Stages
+    private void OnProgressCult(ref ProgressCultEvent args)
+    {
+        if (!TryGetCultGameRule(out var rule))
+            return;
+
+        var amountOfCultists = GetCultistsFraction();
+
+        if (!TryGetNextStage(rule.Value, out var nextStage, out var nextStageDefinition))
+            return;
+
+        if (nextStageDefinition is null)
+            return;
+
+        if (nextStageDefinition.CultistsAmountRequired > amountOfCultists)
+            return;
+
+        ProgressToStage(rule.Value, nextStage);
+    }
+
     private void GenerateStagesCount(Entity<CultYoggRuleComponent> rule)
     {
         if (!TryComp<AntagSelectionComponent>(rule.Owner, out var selectionComp))
@@ -600,10 +616,15 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         DoStageEffects(rule, stage);
 
         var changeStageEvent = new ChangeCultYoggStageEvent(stage);
-        RaiseLocalEvent(ref changeStageEvent);
 
         var queryCultists = EntityQueryEnumerator<CultYoggComponent>();
         while (queryCultists.MoveNext(out var uid, out _))
+        {
+            RaiseLocalEvent(uid, ref changeStageEvent);
+        }
+
+        var queryMiGo = EntityQueryEnumerator<MiGoComponent>();
+        while (queryMiGo.MoveNext(out var uid, out _))
         {
             RaiseLocalEvent(uid, ref changeStageEvent);
         }

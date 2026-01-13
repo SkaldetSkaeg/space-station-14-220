@@ -3,6 +3,7 @@
 using Content.Server.Body.Systems;
 using Content.Server.Projectiles;
 using Content.Server.Roles.Jobs;
+using Content.Server.SS220.GameTicking.Rules;
 using Content.Shared.Alert;
 using Content.Shared.Body.Components;
 using Content.Shared.Body.Systems;
@@ -44,6 +45,7 @@ public sealed partial class MiGoSystem : SharedMiGoSystem
     [Dependency] private readonly ProjectileSystem _projectile = default!;
     [Dependency] private readonly PullingSystem _pullingSystem = default!;
     [Dependency] private readonly JobSystem _jobSystem = default!;
+    [Dependency] private readonly CultYoggRuleSystem _cultRuleSystem = default!;
 
     private readonly ProtoId<ReagentPrototype> _ascensionReagent = "TheBloodOfYogg";
     private readonly ProtoId<NpcFactionPrototype> _cultYoggFaction = "CultYogg";
@@ -58,6 +60,18 @@ public sealed partial class MiGoSystem : SharedMiGoSystem
 
         SubscribeLocalEvent<MiGoComponent, MindAddedMessage>(OnMindAdded);
         SubscribeLocalEvent<MiGoComponent, TemperatureChangeAttemptEvent>(OnTemperatureDamage);
+    }
+
+    protected override void SynchStage(Entity<MiGoComponent> ent)
+    {
+        if (!_cultRuleSystem.TryGetCultGameRule(out var rule))
+            return;
+
+        if (ent.Comp.CurrentStage == rule.Value.Comp.Stage)
+            return;
+
+        ent.Comp.CurrentStage = rule.Value.Comp.Stage;
+        Dirty(ent, ent.Comp);
     }
 
     private void OnMindAdded(Entity<MiGoComponent> ent, ref MindAddedMessage args)

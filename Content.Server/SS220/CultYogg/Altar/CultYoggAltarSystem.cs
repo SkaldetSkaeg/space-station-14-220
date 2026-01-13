@@ -1,17 +1,25 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
+using Content.Server.Administration.Logs;
 using Content.Server.Body.Systems;
+using Content.Server.Chat.Systems;
 using Content.Server.Destructible;
+using Content.Server.NPC.Systems;
+using Content.Server.Pinpointer;
 using Content.Server.SS220.GameTicking.Rules.Components;
+using Content.Shared.Actions;
+using Content.Shared.Actions.Components;
 using Content.Shared.Buckle.Components;
+using Content.Shared.Database;
 using Content.Shared.GameTicking.Components;
 using Content.Shared.SS220.CultYogg.Altar;
 using Content.Shared.SS220.CultYogg.Cultists;
 using Content.Shared.SS220.CultYogg.MiGo;
-using Content.Shared.Actions;
-using Content.Shared.Actions.Components;
-using Content.Server.Administration.Logs;
-using Content.Shared.Database;
+using Robust.Shared.Audio.Systems;
+using Robust.Shared.Player;
+using Robust.Shared.Serialization.Manager;
+using Robust.Shared.Timing;
+using Robust.Shared.Utility;
 
 namespace Content.Server.SS220.CultYogg.Altar;
 
@@ -20,6 +28,13 @@ public sealed partial class CultYoggAltarSystem : SharedCultYoggAltarSystem
     [Dependency] private readonly SharedActionsSystem _actionsSystem = default!;
     [Dependency] private readonly IAdminLogManager _adminLog = default!;
     [Dependency] private readonly BodySystem _body = default!;
+    [Dependency] private readonly IGameTiming _time = default!;
+    [Dependency] private readonly ChatSystem _chat = default!;
+    [Dependency] private readonly ISerializationManager _serManager = default!;
+    [Dependency] private readonly NavMapSystem _navMap = default!;
+    [Dependency] private readonly NPCSystem _npc = default!;
+    [Dependency] private readonly SharedAudioSystem _audio = default!;
+
 
     public override void Initialize()
     {
@@ -30,7 +45,10 @@ public sealed partial class CultYoggAltarSystem : SharedCultYoggAltarSystem
     private void OnDoAfter(Entity<CultYoggAltarComponent> ent, ref MiGoSacrificeDoAfterEvent args)
     {
         if (args.Cancelled)
+        {
+            ent.Comp.AnnounceTime = null;
             return;
+        }
 
         if (args.Target == null)
             return;
@@ -71,5 +89,27 @@ public sealed partial class CultYoggAltarSystem : SharedCultYoggAltarSystem
         }
 
         UpdateAppearance(ent, ent.Comp, appearanceComp);
+    }
+
+    public override void Update(float frameTime)
+    {
+        base.Update(frameTime);
+
+        var query = EntityQueryEnumerator<CultYoggAltarComponent, TransformComponent>();
+        while (query.MoveNext(out var ent, out var altarComp, out var xform))
+        {
+            if (altarComp.AnnounceTime == null)
+                continue;
+
+            if (_time.CurTime <= altarComp.AnnounceTime)
+                continue;
+
+            var msg = Loc.GetString("cult-yogg-sacrifice-warning",
+    ("location", FormattedMessage.RemoveMarkupOrThrow(_navMap.GetNearestBeaconString((ent, xform)))));
+            _chat.DispatchGlobalAnnouncement(msg, playSound: false, colorOverride: Color.Red);
+            _audio.PlayGlobal(altarComp.Sound, Filter.Broadcast(), true);
+
+            altarComp.AnnounceTime = null;
+        }
     }
 }
