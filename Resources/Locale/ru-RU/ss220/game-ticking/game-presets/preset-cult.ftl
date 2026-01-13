@@ -30,7 +30,6 @@ cult-yogg-reveal-telepathy-announce = Свет знаний Йог-Сотота 
 cult-yogg-alarm-telepathy-announce = Набрана критическая масса прислужников. В скором времени неверные обнаружат наше присутствие.
 
 cult-yogg-cultists-numb-info =
-    Информация о культе
     Количество культистов:{$cultists} (Живых:{$aliveCultists})
     Количество Ми-Го:{$MiGo} (Живых:{$aliveMiGo})
 

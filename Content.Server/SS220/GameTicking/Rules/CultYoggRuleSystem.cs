@@ -10,6 +10,7 @@ using Content.Server.Chat.Systems;
 using Content.Server.EUI;
 using Content.Server.GameTicking;
 using Content.Server.GameTicking.Rules;
+using Content.Server.GameTicking.Rules.Components;
 using Content.Server.Pinpointer;
 using Content.Server.Roles;
 using Content.Server.RoundEnd;
@@ -82,7 +83,6 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
     [Dependency] private readonly SharedStuckOnEquipSystem _stuckOnEquip = default!;
     [Dependency] private readonly SharedMiGoSystem _migo = default!;
 
-    private List<List<string>> _sacraficialTiers = [];
     public TimeSpan DefaultShuttleArriving { get; set; } = TimeSpan.FromSeconds(85);
 
     public override void Initialize()
@@ -108,29 +108,6 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         GenerateStagesCount((uid, component));
     }
 
-    private void GenerateStagesCount(Entity<CultYoggRuleComponent> rule)
-    {
-        if (!TryComp<AntagSelectionComponent>(rule.Owner, out var selectionComp))
-            return;
-
-        var count = _antag.GetTargetAntagCount((rule, selectionComp), rule.Comp.InitialCrewCount);
-
-        foreach (var (stage, stageDef) in rule.Comp.Stages)
-        {
-            if (stageDef.CultistsFractionRequired is null)
-                continue;
-
-            stageDef.CultistsAmountRequired = count + (int)stage;
-
-            int perсentAmount = (int)(rule.Comp.InitialCrewCount * stageDef.CultistsFractionRequired);
-
-            if (perсentAmount <= stageDef.CultistsAmountRequired)
-                continue;
-
-            stageDef.CultistsAmountRequired = perсentAmount;
-        }
-    }
-
     /// <summary>
     /// Used to generate sacraficials at the start of the gamerule
     /// </summary>
@@ -138,17 +115,14 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
     {
         base.Started(uid, component, gameRule, args);
 
-        if (component.SacraficialsWerePicked)
+        if (component.SelectionStatus == CultYoggRuleComponent.SelectionState.Started)
         {
-            _adminLogger.Add(LogType.EventRan, LogImpact.High, $"CultYogg tried to tun several instanses of a gamurule");
+            _adminLogger.Add(LogType.EventRan, LogImpact.High, $"CultYogg tried to run several instanses of a gamurule");
             return;
         }
 
-        component.SacraficialsWerePicked = true;//had wierd thing with multiple event calling, so i did this shit
-
-        GenerateJobsList(component);
         //_adminLogger.Add(LogType.EventRan, LogImpact.High, $"CultYogg game rule has started picking up sacraficials");
-        SetSacraficials(component);
+        TrySetSacraficials(component);
 
         var ev = new CultYoggReinitObjEvent();
         var query = EntityQueryEnumerator<CultYoggSummonConditionComponent>();
@@ -158,103 +132,74 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         }
     }
 
-    //Filling list of jobs fot better range
-    private void GenerateJobsList(CultYoggRuleComponent comp)
+    private bool TrySetSacraficials(CultYoggRuleComponent comp)
     {
-        if (_sacraficialTiers.Count != 0)
+        List<EntityUid> allHumans = GetAllSuitable();
+
+        EntityUid? sacraficial;
+
+        if (!TryPickCommandSacraficial(comp, allHumans, out sacraficial))
+            _adminLogger.Add(LogType.EventRan, LogImpact.Low, $"CultYogg failed to pick command sacraficial");
+        else
         {
-            //_adminLogger.Add(LogType.EventRan, LogImpact.High, $"CultYogg tried to generate another tier list");
-            return;
+            SetSacraficeTarget(comp, sacraficial.Value);
+            return true;
+
         }
 
-        List<string> firstTier = comp.FirstTierJobs;//just captain as main target
-
-        List<string> secondTier = [];//heads
-
-        if (!_proto.TryIndex<DepartmentPrototype>(comp.SecondTierDepartament, out var commandList))
-            return;
-
-        foreach (var role in commandList.Roles)
+        if (!TryPickAnySacraficial(comp, allHumans, out sacraficial))
+            _adminLogger.Add(LogType.EventRan, LogImpact.Low, $"CultYogg failed to pick any non cultist alive sacraficial");
+        else
         {
-            if (firstTier.Contains(role.Id))
-                continue;
-
-            secondTier.Add(role.Id);
+            SetSacraficeTarget(comp, sacraficial.Value);
+            return true;
         }
 
-        List<string> thirdTier = [];//everybody else except heads
-
-        foreach (var departament in _proto.EnumeratePrototypes<DepartmentPrototype>())
-        {
-            if (comp.BannedDepartaents.Contains(departament.ID))
-                continue;
-
-            if (departament.ID == comp.SecondTierDepartament)
-                continue;
-
-            foreach (var role in departament.Roles)
-            {
-                if (firstTier.Contains(role.Id))
-                    continue;
-
-                if (secondTier.Contains(role.Id))
-                    continue;
-
-                thirdTier.Add(role.Id);
-            }
-        }
-
-        _sacraficialTiers.Add(firstTier);
-        _sacraficialTiers.Add(secondTier);
-        _sacraficialTiers.Add(thirdTier);
+        _adminLogger.Add(LogType.EventRan, LogImpact.Extreme, $"CultYogg failed to pick any sacraficial, Game rule needs a manual admin picking");//Like that for now
+        return false;
     }
 
-    private void SetSacraficials(CultYoggRuleComponent component)
+    public bool TryPickCommandSacraficial(CultYoggRuleComponent comp, List<EntityUid> allHumans, [NotNullWhen(true)] out EntityUid? sacraficial)
     {
-        var allHumans = GetAliveNoneCultHumans();
-
-        _adminLogger.Add(LogType.EventRan, LogImpact.High, $"Amount of tiers is {_sacraficialTiers.Count}");
-        for (int i = 0; i < _sacraficialTiers.Count; i++)
-        {
-            //_adminLogger.Add(LogType.EventRan, LogImpact.High, $"CultYogg trying to pick {i} tier, max tiers {_sacraficialTiers.Count}");
-            SetSacraficeTarget(component, PickFromTierPerson(allHumans, i), i);
-        }
-    }
-
-    public EntityUid? PickFromTierPerson(List<EntityUid> allHumans, int tier)//ToDo wierd naming
-    {
-        if (tier >= _sacraficialTiers.Count)
-        {
-            //_adminLogger.Add(LogType.EventRan, LogImpact.High, $"CultYogg tier: {tier} is over amount of tiers {_sacraficialTiers.Count}. Exiting the loop");
-            return null;
-        }
+        sacraficial = null;
 
         var allSuitable = new List<EntityUid>();
+
+        if (!_proto.TryIndex(comp.SacrafisialDepartament, out var commandDepartament))
+            return false;
 
         foreach (var mind in allHumans)
         {
             // RequireAdminNotify used as a cheap way to check for command department
-            if (!_job.MindTryGetJob(mind, out var prototype))
+            if (!_job.MindTryGetJob(mind, out var jobProto))
                 continue;
 
-            if (_sacraficialTiers[tier].Contains(prototype.ID))
+            if (commandDepartament.Roles.Contains(jobProto.ID))
                 allSuitable.Add(mind);
         }
 
-        if (allSuitable.Count == 0)
-        {
-            //_adminLogger.Add(LogType.EventRan, LogImpact.High, $"CultYogg tier: {tier}, has no suitable people trying to pick next tier, max {_sacraficialTiers.Count}");
-            return PickFromTierPerson(allHumans, ++tier);
-        }
+        sacraficial = _random.Pick(allSuitable);
 
-        return _random.Pick(allSuitable);
+        if (sacraficial != null)
+            return true;
+
+        return false;
     }
 
-    private void SetSacraficeTarget(CultYoggRuleComponent component, EntityUid? uid, int tier)
+    public bool TryPickAnySacraficial(CultYoggRuleComponent comp, List<EntityUid> allHumans, [NotNullWhen(true)] out EntityUid? sacraficial)
     {
-        if (uid is null)
-            return;
+        var allSuitable = new List<EntityUid>();
 
+        sacraficial = _random.Pick(allSuitable);
+
+        if (sacraficial != null)
+            return true;
+
+        return false;
+    }
+
+    private void SetSacraficeTarget(CultYoggRuleComponent component, EntityUid uid)
+    {
         if (!TryComp<MindComponent>(uid, out var mind))
             return;
 
@@ -264,14 +209,10 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         if (session.AttachedEntity is null)
             return;
 
-        //_adminLogger.Add(LogType.EventRan, LogImpact.High, $"CultYogg person {meta.EntityName} where picked for a tier: {tier}");
-
-        var sacrComp = EnsureComp<CultYoggSacrificialComponent>(session.AttachedEntity.Value);
-
-        sacrComp.Tier = tier;
+        EnsureComp<CultYoggSacrificialComponent>(session.AttachedEntity.Value);
     }
 
-    private List<EntityUid> GetAliveNoneCultHumans()//maybe add here sacraficials and cultists filter
+    private List<EntityUid> GetAllSuitable()
     {
         var allHumans = new List<EntityUid>();
 
@@ -286,10 +227,10 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
             if (mc.Mind == null)
                 continue;
 
-            if (HasComp<CultYoggComponent>(uid))
+            if (HasComp<CultYoggSacrificialComponent>(uid))
                 continue;
 
-            if (HasComp<CultYoggSacrificialComponent>(uid))
+            if (HasComp<CultYoggComponent>(uid))
                 continue;
 
             if (_station.GetOwningStation(uid) != station)
@@ -329,18 +270,11 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         if (sacrComp.WasSacraficed)
             return;
 
-        SetNewSacraficial(rule.Value.Comp, sacrComp.Tier);
+        TrySetSacraficials(rule.Value.Comp);
 
         RemComp<CultYoggSacrificialComponent>(args.Entity);
 
         SendCultAnounce(Loc.GetString("cult-yogg-sacraficial-was-replaced", ("name", MetaData(args.Entity).EntityName)));
-    }
-
-    private void SetNewSacraficial(CultYoggRuleComponent comp, int tier)
-    {
-        var allHumans = GetAliveNoneCultHumans();
-
-        SetSacraficeTarget(comp, PickFromTierPerson(allHumans, tier), tier);
     }
     #endregion
 
@@ -619,6 +553,29 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
     #endregion
 
     #region Stages
+    private void GenerateStagesCount(Entity<CultYoggRuleComponent> rule)
+    {
+        if (!TryComp<AntagSelectionComponent>(rule.Owner, out var selectionComp))
+            return;
+
+        var count = _antag.GetTargetAntagCount((rule, selectionComp), rule.Comp.InitialCrewCount);
+
+        foreach (var (stage, stageDef) in rule.Comp.Stages)
+        {
+            if (stageDef.CultistsToCrewFraction is null)
+                continue;
+
+            stageDef.CultistsAmountRequired = count + (int)stage;
+
+            int perсentAmount = (int)(rule.Comp.InitialCrewCount * stageDef.CultistsToCrewFraction);
+
+            if (perсentAmount <= stageDef.CultistsAmountRequired)
+                continue;
+
+            stageDef.CultistsAmountRequired = perсentAmount;
+        }
+    }
+
     private static bool TryGetNextStage(Entity<CultYoggRuleComponent> rule,
         out CultYoggStage nextStage, [NotNullWhen(true)] out CultYoggStageDefinition? stageDefinition)
     {

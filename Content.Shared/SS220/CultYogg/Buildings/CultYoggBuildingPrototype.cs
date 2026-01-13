@@ -8,7 +8,7 @@ using Robust.Shared.Utility;
 namespace Content.Shared.SS220.CultYogg.Buildings;
 
 [Prototype]
-[Serializable] 
+[Serializable]
 public sealed partial class CultYoggBuildingPrototype : IPrototype
 {
     [ViewVariables]
@@ -53,8 +53,10 @@ public partial struct CultYoggBuildingMaterial
 {
     [DataField("stack", required: true)]
     public ProtoId<StackPrototype> StackType;
+
     [DataField(required: true)]
     public int Count;
+
     [DataField(required: true)]
     public SpriteSpecifier Icon;
 }

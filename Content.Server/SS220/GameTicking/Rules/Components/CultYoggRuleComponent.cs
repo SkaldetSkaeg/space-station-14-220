@@ -2,6 +2,7 @@
 
 using Content.Shared.FixedPoint;
 using Content.Shared.NPC.Prototypes;
+using Content.Shared.Roles;
 using Content.Shared.SS220.CultYogg.Altar;
 using Content.Shared.SS220.CultYogg.Cultists;
 using Content.Shared.Whitelist;
@@ -57,17 +58,7 @@ public sealed partial class CultYoggRuleComponent : Component
     /// <summary>
     /// General requirements
     /// </summary>
-
-    public readonly List<string> FirstTierJobs = ["Captain"];
-    public readonly string SecondTierDepartament = "Command";
-    public readonly List<string> BannedDepartaents = ["GhostRoles"];
-
-    public bool SacraficialsWerePicked = false;//buffer to prevent multiple generations
-
-    /// <summary>
-    /// Storage for a sacraficials
-    /// </summary>
-    public readonly int[] TierOfSacraficials = [1, 2, 3];//trying to save tier in target, so they might be replaced with the same lvl target
+    public readonly ProtoId<DepartmentPrototype> SacrafisialDepartament = "Command";
 
     /// <summary>
     /// Check for an endgame screen title
@@ -154,7 +145,7 @@ public sealed partial class CultYoggStageDefinition
     /// The percentage of the entire crew converted to the cult that will advance the cult to this stage.
     /// </summary>
     [DataField]
-    public FixedPoint2? CultistsFractionRequired;
+    public FixedPoint2? CultistsToCrewFraction;
 
     /// <summary>
     /// Direct calculation of required cultist stages for progression to avoid round-start progression.

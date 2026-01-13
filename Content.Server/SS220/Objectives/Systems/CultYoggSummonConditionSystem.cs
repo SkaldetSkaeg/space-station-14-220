@@ -67,11 +67,13 @@ public sealed class CultYoggSummonConditionSystem : EntitySystem
         if (!_cultRule.TryGetCultGameRule(out var rule))
             return;
 
-        var sacrificesRequired = 0;
+        var sacrificesRequired = 1;
         foreach ((_, var stageDefinition) in rule.Value.Comp.Stages)
         {
-            if (stageDefinition.SacrificesRequired is { } stageSacrifices)
-                sacrificesRequired = stageSacrifices;
+            if (stageDefinition.SacrificesRequired is null)
+                continue;
+
+            sacrificesRequired = stageDefinition.SacrificesRequired.Value;
         }
 
         ent.Comp.ReqSacrAmount = sacrificesRequired;
