@@ -18,8 +18,8 @@ cult-yogg-round-end-win = [color=darkred]Повелитель явился в н
 objective-issuer-cult-yogg = [color=crimson]По Заветам Посланника Бога Нашего Йог-Сотота[/color]
 
 objective-cult-yogg-sacrafice-start = Призовите темного бога, принеся в жертву следующие цели:
-objective-cult-yogg-sacrafice-task-job =  в должности
 objective-condition-cult-yogg-sacrafice-person = {$targetName}, в должности {CAPITALIZE($job)}
+objective-condition-cult-yogg-enslave = Соберите в культе не менее {$amont} прислужников
 
 cult-yogg-add-token-no-cultists = В рядах культа не осталось ни одного прислужника, любой Ми-Го может захватить культиста без Ми-Гомицелия.
 

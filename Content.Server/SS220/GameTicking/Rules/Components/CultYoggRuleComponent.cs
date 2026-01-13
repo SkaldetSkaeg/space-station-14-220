@@ -104,7 +104,7 @@ public sealed partial class CultYoggRuleComponent : Component
     /// Variables required to make new cultists
     /// </summary>
     [DataField]
-    public List<string> ListOfObjectives = ["CultYoggSacraficeObjective"];
+    public List<EntProtoId> ListOfObjectives = ["CultYoggEnslaveObjective", "CultYoggSacraficeObjective"];
 
     public EntProtoId MindCultYoggAntagId = "MindRoleCultYogg";
 

@@ -69,6 +69,7 @@
     - CultYogg
   - type: AntagObjectives
     objectives:
+    - CultYoggEnslaveObjective
     - CultYoggSacraficeObjective
   #situational for logic
   - type: Puller

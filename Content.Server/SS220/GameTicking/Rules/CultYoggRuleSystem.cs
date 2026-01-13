@@ -816,12 +816,12 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
     /// <summary>
     /// Getting the number of all Mi-Go and cultists.
     /// </summary>
-    private int GetCultistsFraction()
+    public int GetCultistsFraction()
     {
         return GetCultistsNumber() + GetMiGoNumber();
     }
 
-    private int GetAliveCultistsNumber()
+    public int GetAliveCultistsNumber()
     {
         int cultistsCount = 0;
         var queryCultists = EntityQueryEnumerator<HumanoidAppearanceComponent, CultYoggComponent, MobStateComponent>();
@@ -835,7 +835,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         return cultistsCount;
     }
 
-    private int GetCultistsNumber()
+    public int GetCultistsNumber()
     {
         int cultistsCount = 0;
         var queryCultists = EntityQueryEnumerator<HumanoidAppearanceComponent, CultYoggComponent>();
@@ -846,7 +846,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         return cultistsCount;
     }
 
-    private int GetAliveMiGoNumber()
+    public int GetAliveMiGoNumber()
     {
         int migoCount = 0;
         var queryCultists = EntityQueryEnumerator<HumanoidAppearanceComponent, MiGoComponent, MobStateComponent>();
@@ -860,7 +860,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         return migoCount;
     }
 
-    private int GetMiGoNumber()
+    public int GetMiGoNumber()
     {
         int migoCount = 0;
         var queryCultists = EntityQueryEnumerator<HumanoidAppearanceComponent, MiGoComponent>();
