@@ -847,6 +847,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         {
             migoCount++;
         }
+
         return migoCount;
     }
     #endregion
