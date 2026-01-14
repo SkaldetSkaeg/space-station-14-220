@@ -810,6 +810,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
 
             cultistsCount++;
         }
+        
         return cultistsCount;
     }
 
