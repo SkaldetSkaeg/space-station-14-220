@@ -135,7 +135,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
 
     private bool TrySetSacraficials(CultYoggRuleComponent comp)
     {
-        List<EntityUid> allHumans = GetAllSuitable();
+        var allSuitable = GetAllSuitable();
 
         EntityUid? sacraficial;
 
