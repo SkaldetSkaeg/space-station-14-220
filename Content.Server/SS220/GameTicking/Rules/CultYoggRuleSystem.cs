@@ -166,16 +166,15 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
 
         var allSuitable = new List<EntityUid>();
 
-        if (!_proto.TryIndex(comp.SacrafisialDepartament, out var commandDepartament))
+        if (!_proto.TryIndex(comp.SacrafisialDepartament, out var sacrafisialDepartament))
             return false;
 
         foreach (var mind in allHumans)
         {
-            // RequireAdminNotify used as a cheap way to check for command department
             if (!_job.MindTryGetJob(mind, out var jobProto))
                 continue;
 
-            if (commandDepartament.Roles.Contains(jobProto.ID))
+            if (sacrafisialDepartament.Roles.Contains(jobProto.ID))
                 allSuitable.Add(mind);
         }
 
