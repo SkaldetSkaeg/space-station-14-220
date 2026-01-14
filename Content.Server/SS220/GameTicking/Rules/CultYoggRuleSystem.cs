@@ -118,7 +118,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
 
         if (component.SelectionStatus == CultYoggRuleComponent.SelectionState.Started)
         {
-            _adminLogger.Add(LogType.EventRan, LogImpact.High, $"CultYogg tried to run several instanses of a gamurule");
+            log.Error($"CultYogg tried to run several instanses of a gamurule!");
             return;
         }
 
