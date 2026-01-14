@@ -107,10 +107,10 @@ public abstract class SharedMiGoSystem : EntitySystem
         _actions.AddAction(uid, ref uid.Comp.MiGoToggleLightActionEntity, uid.Comp.MiGoToggleLightAction);
         _actions.AddAction(uid, ref uid.Comp.MiGoTeleportActionEntity, uid.Comp.MiGoTeleportAction);
 
-        SynchStage(uid);
+        SyncStage(uid);
     }
 
-    protected virtual void SynchStage(Entity<MiGoComponent> uid) { }
+    protected virtual void SyncStage(Entity<MiGoComponent> uid) { }
 
     private void OnBoundUIOpened(Entity<MiGoComponent> entity, ref BoundUIOpenedEvent args)
     {

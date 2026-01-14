@@ -45,6 +45,12 @@ public sealed partial class CultYoggBuildingPrototype : IPrototype
     /// </summary>
     [DataField("materials")]
     public List<CultYoggBuildingMaterial> Materials { get; private set; } = [];
+
+    /// <summary>
+    /// Restricts construction strictly to the station, if true
+    /// </summary>
+    [DataField]
+    public bool RequireStation;
 }
 
 [DataDefinition]

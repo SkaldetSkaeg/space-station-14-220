@@ -62,7 +62,7 @@ public sealed partial class MiGoSystem : SharedMiGoSystem
         SubscribeLocalEvent<MiGoComponent, TemperatureChangeAttemptEvent>(OnTemperatureDamage);
     }
 
-    protected override void SynchStage(Entity<MiGoComponent> ent)
+    protected override void SyncStage(Entity<MiGoComponent> ent)
     {
         if (!_cultRuleSystem.TryGetCultGameRule(out var rule))
             return;
