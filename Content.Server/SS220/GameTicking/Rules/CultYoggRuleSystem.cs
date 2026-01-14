@@ -425,6 +425,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         _npcFaction.RemoveFaction(uid, component.CultYoggFaction, false);
         _npcFaction.AddFaction(uid, component.NanoTrasenFaction);
 
+        RemComp<CultYoggComponent>(uid);
         //Remove telepathy
         RemComp<TelepathyComponent>(uid);
 
@@ -809,7 +810,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
 
             cultistsCount++;
         }
-        
+
         return cultistsCount;
     }
 

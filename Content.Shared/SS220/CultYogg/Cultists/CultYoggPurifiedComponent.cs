@@ -21,13 +21,13 @@ public sealed partial class CultYoggPurifiedComponent : Component
     /// The amount of holy water in units required for deconversion
     /// </summary>
     [DataField]
-    public FixedPoint2 AmountToPurify = 30;
+    public FixedPoint2 AmountToPurify = 15;
 
     /// <summary>
     /// Amount of time requierd to requied for purifying removal
     /// </summary>
     [DataField]
-    public TimeSpan BeforeDecayTime = TimeSpan.FromSeconds(120);
+    public TimeSpan BeforeDecayTime = TimeSpan.FromSeconds(60);
 
     /// <summary>
     /// Buffer to markup when time to decrease Holy water buffer has come
@@ -38,7 +38,7 @@ public sealed partial class CultYoggPurifiedComponent : Component
     /// The time it takes for the cultist to purify itself is needed to cancel it, if the cultist has the opportunity
     /// </summary>
     [DataField]
-    public TimeSpan BeforePurifyingTime = TimeSpan.FromSeconds(120);
+    public TimeSpan BeforePurifyingTime = TimeSpan.FromSeconds(60);
 
     /// <summary>
     /// The exact time when the cultist will be purified

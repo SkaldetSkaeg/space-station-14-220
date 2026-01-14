@@ -41,7 +41,9 @@ public sealed class CultYoggPurifiedSystem : EntitySystem
                 //After purifying effect
                 _audio.PlayPvs(purifyedComp.PurifiedSound, ent);
 
-                RemComp<CultYoggComponent>(ent);
+                var ev = new CultYoggDeCultingEvent(ent);
+                RaiseLocalEvent(ent, ref ev, true);
+
                 //ToDo_SS220 make it better
                 _cultRuleSystem.CheckSimplifiedEslavement();//Add token if it was last cultist
             }

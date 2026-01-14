@@ -167,9 +167,5 @@ public abstract class SharedCultYoggSystem : EntitySystem
         _actions.RemoveAction(uid.Comp.PukeShroomActionEntity);
 
         DeleteVisuals(uid);
-
-        //sending to a gamerule so it would be deleted and added in one place
-        var ev = new CultYoggDeCultingEvent(uid);
-        RaiseLocalEvent(uid, ref ev, true);
     }
 }
