@@ -29,6 +29,7 @@ public sealed class AltVerbTeleportSystem : EntitySystem
         {
             if (ent.Comp.WhitelistRejectedLoc != null)
                 _popup.PopupPredicted(Loc.GetString(ent.Comp.WhitelistRejectedLoc), ent, args.User, PopupType.MediumCaution);
+                
             return;
         }
 
