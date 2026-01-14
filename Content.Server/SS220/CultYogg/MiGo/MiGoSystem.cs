@@ -71,7 +71,7 @@ public sealed partial class MiGoSystem : SharedMiGoSystem
             return;
 
         ent.Comp.CurrentStage = rule.Value.Comp.Stage;
-        Dirty(ent, ent.Comp);
+        Dirty(ent);
     }
 
     private void OnMindAdded(Entity<MiGoComponent> ent, ref MindAddedMessage args)
