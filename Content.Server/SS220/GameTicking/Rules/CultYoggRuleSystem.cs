@@ -118,7 +118,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
 
         if (component.SelectionStatus == CultYoggRuleComponent.SelectionState.Started)
         {
-            log.Error($"CultYogg tried to run several instanses of a gamurule!");
+            Log.Error($"CultYogg tried to run several instanses of a gamurule!");
             return;
         }
 
@@ -139,7 +139,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
 
         EntityUid? sacraficial;
 
-        if (!TryPickCommandSacraficial(comp, allHumans, out sacraficial))
+        if (!TryPickCommandSacraficial(comp, allSuitable, out sacraficial))
             _adminLogger.Add(LogType.EventRan, LogImpact.Low, $"CultYogg failed to pick command sacraficial");
         else
         {
@@ -148,7 +148,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
 
         }
 
-        if (!TryPickAnySacraficial(comp, allHumans, out sacraficial))
+        if (!TryPickAnySacraficial(comp, allSuitable, out sacraficial))
             _adminLogger.Add(LogType.EventRan, LogImpact.Low, $"CultYogg failed to pick any non cultist alive sacraficial");
         else
         {
