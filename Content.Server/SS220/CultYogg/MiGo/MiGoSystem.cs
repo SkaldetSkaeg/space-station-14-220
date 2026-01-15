@@ -197,11 +197,6 @@ public sealed partial class MiGoSystem : SharedMiGoSystem
             bodySolution.RemoveReagent(reagentRoRemove); // Removes from body
             _solutionContainer.UpdateChemicals(bodySolutionEnt.Value);
         }
-
-        if (IsEslavementSimplified)//Remove token if is was
-            return;
-
-        SetSimplifiedEslavement(false);
     }
     #endregion
 }

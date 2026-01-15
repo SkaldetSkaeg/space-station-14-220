@@ -674,62 +674,6 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
     }
     #endregion
 
-    #region SimplifiedEslavement
-
-    public void CheckSimplifiedEslavement()
-    {
-        if (AnyCultistsAlive())
-            return;
-
-        if (AnyMiGoAlive())
-            return;
-
-        if (!TryGetCultGameRule(out var rule))
-            return;
-
-        if (rule.Value.Comp.Stage is CultYoggStage.God)//if it is endgame and all are MiGos == no new cultists
-            return;
-
-        SendCultAnounce(Loc.GetString("cult-yogg-add-token-no-cultists"));
-        AddSimplifiedEslavement();
-    }
-
-    public bool AnyCultistsAlive()
-    {
-        var query = EntityQueryEnumerator<CultYoggComponent, MobStateComponent, MindContainerComponent>();
-        while (query.MoveNext(out _, out _, out var state, out var mind))
-        {
-            if (!mind.HasMind)
-                continue;
-
-            if (state.CurrentState != MobState.Dead)
-                return true;
-        }
-
-        return false;
-    }
-
-    public bool AnyMiGoAlive()
-    {
-        var query = EntityQueryEnumerator<MiGoComponent, MobStateComponent, MindContainerComponent>();
-        while (query.MoveNext(out _, out _, out var state, out var mind))
-        {
-            if (!mind.HasMind)
-                continue;
-
-            if (state.CurrentState != MobState.Dead)
-                return true;
-        }
-
-        return false;
-    }
-
-    private void AddSimplifiedEslavement()
-    {
-        _migo.SetSimplifiedEslavement(true);//not sure if it should be function or i shoud remove read-write access
-    }
-    #endregion
-
     #region Briefing info
     private void OnGetBriefing(Entity<CultYoggRoleComponent> role, ref GetBriefingEvent args)
     {
@@ -801,10 +745,13 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
     public int GetAliveCultistsNumber()
     {
         int cultistsCount = 0;
-        var queryCultists = EntityQueryEnumerator<HumanoidAppearanceComponent, CultYoggComponent, MobStateComponent>();
-        while (queryCultists.MoveNext(out _, out _, out _, out var mob))
+        var queryCultists = EntityQueryEnumerator<CultYoggComponent>();
+        while (queryCultists.MoveNext(out var ent, out _))
         {
-            if (mob.CurrentState == MobState.Dead)
+            if (_mobState.IsAlive(ent))
+                continue;
+
+            if (!_mind.TryGetMind(ent, out _, out _))
                 continue;
 
             cultistsCount++;
@@ -816,8 +763,8 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
     public int GetCultistsNumber()
     {
         int cultistsCount = 0;
-        var queryCultists = EntityQueryEnumerator<HumanoidAppearanceComponent, CultYoggComponent>();
-        while (queryCultists.MoveNext(out _, out _, out _))
+        var queryCultists = EntityQueryEnumerator<CultYoggComponent>();
+        while (queryCultists.MoveNext(out _, out _))
         {
             cultistsCount++;
         }
@@ -828,10 +775,13 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
     public int GetAliveMiGoNumber()
     {
         int migoCount = 0;
-        var queryCultists = EntityQueryEnumerator<HumanoidAppearanceComponent, MiGoComponent, MobStateComponent>();
-        while (queryCultists.MoveNext(out _, out _, out _, out var mob))
+        var queryCultists = EntityQueryEnumerator<MiGoComponent>();
+        while (queryCultists.MoveNext(out var ent, out _))
         {
-            if (mob.CurrentState == MobState.Dead)
+            if (_mobState.IsAlive(ent))
+                continue;
+
+            if (!_mind.TryGetMind(ent, out _, out _))
                 continue;
 
             migoCount++;
@@ -843,8 +793,8 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
     public int GetMiGoNumber()
     {
         int migoCount = 0;
-        var queryCultists = EntityQueryEnumerator<HumanoidAppearanceComponent, MiGoComponent>();
-        while (queryCultists.MoveNext(out _, out _, out _))
+        var queryCultists = EntityQueryEnumerator<MiGoComponent>();
+        while (queryCultists.MoveNext(out _, out _))
         {
             migoCount++;
         }

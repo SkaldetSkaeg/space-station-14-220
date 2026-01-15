@@ -58,10 +58,6 @@ public sealed class CultYoggSystem : SharedCultYoggSystem
         SubscribeLocalEvent<CultYoggComponent, OnSaintWaterDrinkEvent>(OnSaintWaterDrinked);
         SubscribeLocalEvent<CultYoggComponent, ChangeCultYoggStageEvent>(OnUpdateStage);
         SubscribeLocalEvent<CultYoggComponent, CloningEvent>(OnCloning);
-
-        SubscribeLocalEvent<CultYoggComponent, PlayerDetachedEvent>(OnPlayerDetached);
-        SubscribeLocalEvent<CultYoggComponent, BeingCryoDeletedEvent>(OnCryoDeleted);
-        SubscribeLocalEvent<CultYoggComponent, SuicideEvent>(OnSuicide);
     }
 
     #region Visuals
@@ -291,23 +287,6 @@ public sealed class CultYoggSystem : SharedCultYoggSystem
 
         purifyedComp.DecayTime = _timing.CurTime + purifyedComp.BeforeDecayTime; //setting timer, when purifying will be removed
         Dirty(ent, ent.Comp);
-    }
-    #endregion
-
-    #region CheckSimplifiedEslavement
-    private void OnPlayerDetached(Entity<CultYoggComponent> ent, ref PlayerDetachedEvent args)
-    {
-        _cultRuleSystem.CheckSimplifiedEslavement();
-    }
-
-    private void OnCryoDeleted(Entity<CultYoggComponent> ent, ref BeingCryoDeletedEvent args)
-    {
-        _cultRuleSystem.CheckSimplifiedEslavement();
-    }
-
-    private void OnSuicide(Entity<CultYoggComponent> ent, ref SuicideEvent args)
-    {
-        _cultRuleSystem.CheckSimplifiedEslavement();
     }
     #endregion
 

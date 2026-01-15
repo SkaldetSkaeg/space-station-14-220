@@ -11,6 +11,7 @@ using Content.Shared.Humanoid;
 using Content.Shared.Interaction.Events;
 using Content.Shared.Mind;
 using Content.Shared.Mindshield.Components;
+using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Movement.Pulling.Events;
@@ -59,11 +60,6 @@ public abstract class SharedMiGoSystem : EntitySystem
     [Dependency] private readonly EntityLookupSystem _entityLookup = default!;
     [Dependency] private readonly SharedTransformSystem _transformSystem = default!;
     [Dependency] private readonly ISharedAdminLogManager _adminLogger = default!;
-
-    /// <summary>
-    /// Allows you to resolve dead-end situations where there are no cultists left, allowing you to recruit without feeding the mushroom
-    /// </summary>
-    protected static bool IsEslavementSimplified = false;
 
     public override void Initialize()
     {
@@ -523,7 +519,7 @@ public abstract class SharedMiGoSystem : EntitySystem
             return false;
         }
 
-        if (!HasComp<RaveComponent>(target) && !IsEslavementSimplified)
+        if (!HasComp<RaveComponent>(target) && AnyCultistsAlive())//If the mushroom was eaten or no cultists alive
         {
             reason = Loc.GetString("cult-yogg-enslave-should-eat-shroom");
             return false;
@@ -554,9 +550,21 @@ public abstract class SharedMiGoSystem : EntitySystem
         return true;
     }
 
-    public void SetSimplifiedEslavement(bool newVaule)
+    protected bool AnyCultistsAlive()
     {
-        IsEslavementSimplified = newVaule;
+        var queryCultists = EntityQueryEnumerator<CultYoggComponent>();
+        while (queryCultists.MoveNext(out var ent, out _))
+        {
+            if (_mobState.IsAlive(ent))
+                continue;
+
+            if (!_mind.TryGetMind(ent, out _, out _))
+                continue;
+
+            return true;
+        }
+
+        return false;
     }
     #endregion
 
