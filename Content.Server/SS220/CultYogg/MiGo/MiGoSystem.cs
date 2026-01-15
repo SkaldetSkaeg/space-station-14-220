@@ -67,9 +67,6 @@ public sealed partial class MiGoSystem : SharedMiGoSystem
         if (!_cultRuleSystem.TryGetCultGameRule(out var rule))
             return;
 
-        if (ent.Comp.CurrentStage == rule.Value.Comp.Stage)
-            return;
-
         ent.Comp.CurrentStage = rule.Value.Comp.Stage;
         Dirty(ent);
     }

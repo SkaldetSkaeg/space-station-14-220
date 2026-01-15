@@ -4,7 +4,6 @@ using Content.Server.Administration.Logs;
 using Content.Server.Body.Systems;
 using Content.Server.Chat.Systems;
 using Content.Server.Destructible;
-using Content.Server.NPC.Systems;
 using Content.Server.Pinpointer;
 using Content.Server.SS220.GameTicking.Rules.Components;
 using Content.Shared.Actions;
@@ -17,7 +16,6 @@ using Content.Shared.SS220.CultYogg.Cultists;
 using Content.Shared.SS220.CultYogg.MiGo;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Player;
-using Robust.Shared.Serialization.Manager;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
 
@@ -30,9 +28,7 @@ public sealed partial class CultYoggAltarSystem : SharedCultYoggAltarSystem
     [Dependency] private readonly BodySystem _body = default!;
     [Dependency] private readonly IGameTiming _time = default!;
     [Dependency] private readonly ChatSystem _chat = default!;
-    [Dependency] private readonly ISerializationManager _serManager = default!;
     [Dependency] private readonly NavMapSystem _navMap = default!;
-    [Dependency] private readonly NPCSystem _npc = default!;
     [Dependency] private readonly SharedAudioSystem _audio = default!;
 
 
@@ -106,8 +102,7 @@ public sealed partial class CultYoggAltarSystem : SharedCultYoggAltarSystem
 
             var msg = Loc.GetString("cult-yogg-sacrifice-warning",
     ("location", FormattedMessage.RemoveMarkupOrThrow(_navMap.GetNearestBeaconString((ent, xform)))));
-            _chat.DispatchGlobalAnnouncement(msg, playSound: false, colorOverride: Color.Red);
-            _audio.PlayGlobal(altarComp.Sound, Filter.Broadcast(), true);
+            _chat.DispatchGlobalAnnouncement(msg, announcementSound: altarComp.Sound, colorOverride: Color.Red);
 
             altarComp.AnnounceTime = null;
         }

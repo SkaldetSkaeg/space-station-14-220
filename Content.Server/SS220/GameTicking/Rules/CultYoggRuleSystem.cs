@@ -155,8 +155,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
             SetSacraficeTarget(comp, sacraficial.Value);
             return true;
         }
-
-        _adminLogger.Add(LogType.EventRan, LogImpact.Extreme, $"CultYogg failed to pick any sacraficial, Game rule needs a manual admin picking");//Like that for now
+        _chatManager.SendAdminAlert(Loc.GetString("CultYogg failed to pick any sacraficial, Game rule needs a manual admin picking"));
         return false;
     }
 
@@ -666,8 +665,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
 
             foreach (var station in _station.GetStations())
             {
-                _chat.DispatchStationAnnouncement(station, Loc.GetString("cult-yogg-cultists-warning"), playDefaultSound: false, colorOverride: Color.Red);
-                _audio.PlayGlobal(rule.BroadcastSound, Filter.Broadcast(), true);
+                _chat.DispatchStationAnnouncement(station, Loc.GetString("cult-yogg-cultists-warning"), announcementSound: rule.BroadcastSound, colorOverride: Color.Red);
                 _alertLevel.SetLevel(station, "gamma", true, true, true);
             }
 
