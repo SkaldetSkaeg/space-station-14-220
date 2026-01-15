@@ -73,7 +73,7 @@ public sealed class CultYoggSummonConditionSystem : EntitySystem
             if (stageDefinition.SacrificesRequired is null)
                 continue;
 
-            if(sacrificesRequired >= stageDefinition.SacrificesRequired.Value)
+            if (sacrificesRequired >= stageDefinition.SacrificesRequired.Value)
                 continue;
 
             sacrificesRequired = stageDefinition.SacrificesRequired.Value;
