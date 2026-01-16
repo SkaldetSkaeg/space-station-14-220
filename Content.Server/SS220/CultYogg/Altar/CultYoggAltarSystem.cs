@@ -53,7 +53,7 @@ public sealed partial class CultYoggAltarSystem : SharedCultYoggAltarSystem
         if (!TryComp<AppearanceComponent>(ent, out var appearanceComp))
             return;
 
-        _adminLog.Add(LogType.RoundFlow, LogImpact.Medium, $"Cult Yogg sacrificed {ToPrettyString(sacrificial.Value):sacrificial}");
+        _adminLog.Add(LogType.RoundFlow, LogImpact.Medium, $"Cult Yogg sacrificed {ToPrettyString(sacrificial.Value):target}");
         _body.GibBody(sacrificial.Value, true);
         ent.Comp.Used = true;
 
