@@ -136,7 +136,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         EntityUid? sacraficial;
 
         if (!TryPickCommandSacraficial(comp, allSuitable, out sacraficial))
-            _adminLogger.Add(LogType.EventRan, LogImpact.Low, $"CultYogg failed to pick command sacraficial");
+            Log.Error($"CultYogg failed to pick command sacraficial");
         else
         {
             SetSacraficeTarget(comp, sacraficial.Value);
@@ -145,13 +145,13 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         }
 
         if (!TryPickAnySacraficial(comp, allSuitable, out sacraficial))
-            _adminLogger.Add(LogType.EventRan, LogImpact.Low, $"CultYogg failed to pick any non cultist alive sacraficial");
+            Log.Error($"CultYogg failed to pick any non cultist alive sacraficial");
         else
         {
             SetSacraficeTarget(comp, sacraficial.Value);
             return true;
         }
-        _chatManager.SendAdminAlert(Loc.GetString("CultYogg failed to pick any sacraficial, Game rule needs a manual admin picking"));
+        _chatManager.SendAdminAlert(Loc.GetString("CultYogg failed to pick any non cultist alive sacraficial on station, Game rule needs a manual admin picking"));
         return false;
     }
 
