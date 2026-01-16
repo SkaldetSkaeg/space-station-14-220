@@ -161,7 +161,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
 
         var allSuitable = new List<EntityUid>();
 
-        if (!_proto.TryIndex(comp.SacrafisialDepartament, out var sacrafisialDepartament))
+        if (!_proto.TryIndex(comp.SacraficialDepartament, out var sacraficialDepartament))
             return false;
 
         foreach (var mind in allHumans)
@@ -169,7 +169,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
             if (!_job.MindTryGetJob(mind, out var jobProto))
                 continue;
 
-            if (sacrafisialDepartament.Roles.Contains(jobProto.ID))
+            if (sacraficialDepartament.Roles.Contains(jobProto.ID))
                 allSuitable.Add(mind);
         }
 
@@ -579,12 +579,12 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
 
             stageDef.CultistsAmountRequired = count + (int)stage;
 
-            int perсentAmount = (int)(rule.Comp.InitialCrewCount * stageDef.CultistsToCrewFraction);
+            int percentAmount = (int)(rule.Comp.InitialCrewCount * stageDef.CultistsToCrewFraction);
 
-            if (perсentAmount <= stageDef.CultistsAmountRequired)
+            if (percentAmount <= stageDef.CultistsAmountRequired)
                 continue;
 
-            stageDef.CultistsAmountRequired = perсentAmount;
+            stageDef.CultistsAmountRequired = percentAmount;
         }
     }
 
@@ -744,7 +744,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         var queryCultists = EntityQueryEnumerator<CultYoggComponent>();
         while (queryCultists.MoveNext(out var ent, out _))
         {
-            if (_mobState.IsAlive(ent))
+            if (!_mobState.IsAlive(ent))
                 continue;
 
             if (!_mind.TryGetMind(ent, out _, out _))
@@ -774,7 +774,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         var queryCultists = EntityQueryEnumerator<MiGoComponent>();
         while (queryCultists.MoveNext(out var ent, out _))
         {
-            if (_mobState.IsAlive(ent))
+            if (!_mobState.IsAlive(ent))
                 continue;
 
             if (!_mind.TryGetMind(ent, out _, out _))

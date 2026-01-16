@@ -58,7 +58,7 @@ public sealed partial class CultYoggRuleComponent : Component
     /// <summary>
     /// General requirements
     /// </summary>
-    public readonly ProtoId<DepartmentPrototype> SacrafisialDepartament = "Command";
+    public readonly ProtoId<DepartmentPrototype> SacraficialDepartament = "Command";
 
     /// <summary>
     /// Check for an endgame screen title

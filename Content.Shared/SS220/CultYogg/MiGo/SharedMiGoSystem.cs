@@ -250,7 +250,7 @@ public abstract class SharedMiGoSystem : EntitySystem
             return;
         }
 
-        var altarsClose = _entityLookup.GetEntitiesInRange<CultYoggAltarComponent>(Transform(uid).Coordinates, uid.Comp.SaraficeStartRange);
+        var altarsClose = _entityLookup.GetEntitiesInRange<CultYoggAltarComponent>(Transform(uid).Coordinates, uid.Comp.SacrificeStartRange);
 
         if (altarsClose.Count == 0)
         {
@@ -560,7 +560,7 @@ public abstract class SharedMiGoSystem : EntitySystem
         var queryCultists = EntityQueryEnumerator<CultYoggComponent>();
         while (queryCultists.MoveNext(out var ent, out _))
         {
-            if (_mobState.IsAlive(ent))
+            if (!_mobState.IsAlive(ent))
                 continue;
 
             if (!_mind.TryGetMind(ent, out _, out _))
