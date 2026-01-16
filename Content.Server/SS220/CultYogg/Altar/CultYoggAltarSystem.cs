@@ -28,7 +28,6 @@ public sealed partial class CultYoggAltarSystem : SharedCultYoggAltarSystem
     [Dependency] private readonly ChatSystem _chat = default!;
     [Dependency] private readonly NavMapSystem _navMap = default!;
 
-
     public override void Initialize()
     {
         base.Initialize();
