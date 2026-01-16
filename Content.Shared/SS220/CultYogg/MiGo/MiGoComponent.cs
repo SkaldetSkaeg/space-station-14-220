@@ -89,7 +89,7 @@ public sealed partial class MiGoComponent : Component
     /// How far from altar MiGo can start action
     /// </summary>
     [ViewVariables]
-    public float SaraficeStartRange = 1.5f;
+    public float SaraficeStartRange = 2f;
 
     #region Building
     /// <summary>

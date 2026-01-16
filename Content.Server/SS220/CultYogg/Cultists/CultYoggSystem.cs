@@ -1,7 +1,6 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
 using Content.Server.Humanoid;
-using Content.Server.SS220.Bed.Cryostorage;
 using Content.Server.SS220.GameTicking.Rules;
 using Content.Shared.Actions;
 using Content.Shared.Body.Components;
@@ -9,7 +8,6 @@ using Content.Shared.Body.Systems;
 using Content.Shared.Cloning.Events;
 using Content.Shared.Humanoid;
 using Content.Shared.Humanoid.Markings;
-using Content.Shared.Interaction.Events;
 using Content.Shared.Mind;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
@@ -19,7 +17,6 @@ using Content.Shared.Popups;
 using Content.Shared.SS220.CultYogg.Cultists;
 using Content.Shared.SS220.StuckOnEquip;
 using Robust.Shared.Audio.Systems;
-using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 using System.Linq;

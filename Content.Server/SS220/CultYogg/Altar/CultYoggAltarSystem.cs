@@ -14,8 +14,6 @@ using Content.Shared.GameTicking.Components;
 using Content.Shared.SS220.CultYogg.Altar;
 using Content.Shared.SS220.CultYogg.Cultists;
 using Content.Shared.SS220.CultYogg.MiGo;
-using Robust.Shared.Audio.Systems;
-using Robust.Shared.Player;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
 
@@ -29,7 +27,6 @@ public sealed partial class CultYoggAltarSystem : SharedCultYoggAltarSystem
     [Dependency] private readonly IGameTiming _time = default!;
     [Dependency] private readonly ChatSystem _chat = default!;
     [Dependency] private readonly NavMapSystem _navMap = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
 
 
     public override void Initialize()
@@ -46,14 +43,19 @@ public sealed partial class CultYoggAltarSystem : SharedCultYoggAltarSystem
             return;
         }
 
-        if (args.Target == null)
+        if (!TryComp<StrapComponent>(ent, out var strapComp))
+            return;
+
+        var sacrificial = strapComp.BuckledEntities.FirstOrNull();
+
+        if (sacrificial == null)
             return;
 
         if (!TryComp<AppearanceComponent>(ent, out var appearanceComp))
             return;
 
-        _adminLog.Add(LogType.RoundFlow, LogImpact.Medium, $"Cult Yogg sacrificed {ToPrettyString(args.Target.Value):target}");
-        _body.GibBody(args.Target.Value, true);
+        _adminLog.Add(LogType.RoundFlow, LogImpact.Medium, $"Cult Yogg sacrificed {ToPrettyString(sacrificial.Value):sacrificial}");
+        _body.GibBody(sacrificial.Value, true);
         ent.Comp.Used = true;
 
         RemComp<StrapComponent>(ent);

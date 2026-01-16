@@ -35,6 +35,7 @@ using Robust.Shared.Physics.Systems;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
+using Robust.Shared.Utility;
 using System.Linq;
 
 namespace Content.Shared.SS220.CultYogg.MiGo;
@@ -277,16 +278,20 @@ public abstract class SharedMiGoSystem : EntitySystem
         if (!TryComp<StrapComponent>(ent, out var strapComp))
             return false;
 
-        var targetUid = strapComp.BuckledEntities.FirstOrDefault();
+        var targetUid = strapComp.BuckledEntities.FirstOrNull();
 
-        var sacrificeDoAfter = new DoAfterArgs(EntityManager, user, ent.Comp.RitualTime, new MiGoSacrificeDoAfterEvent(), ent, targetUid)
+        if (targetUid == null)
+            return false;
+
+        var sacrificeDoAfter = new DoAfterArgs(EntityManager, user, ent.Comp.RitualTime, new MiGoSacrificeDoAfterEvent(), ent, ent)
         {
             BreakOnDamage = false,
             BreakOnMove = false,
             BlockDuplicate = true,
             CancelDuplicate = true,
             DuplicateCondition = DuplicateConditions.SameEvent,
-            DistanceThreshold = 3f//Idk why it isn't working
+            DistanceThreshold = 2.5f,
+            MovementThreshold = 2.5f
         };
 
         var started = _doAfter.TryStartDoAfter(sacrificeDoAfter);
@@ -296,7 +301,7 @@ public abstract class SharedMiGoSystem : EntitySystem
             _popup.PopupPredicted(Loc.GetString("cult-yogg-sacrifice-started", ("user", user), ("target", targetUid)),
                 ent, null, PopupType.MediumCaution);
 
-            ent.Comp.AnnounceTime = _timing.CurTime + ent.Comp.AnnounceDelay;//add announce
+            ent.Comp.AnnounceTime = _timing.CurTime + ent.Comp.AnnounceDelay;
         }
 
         return started;
