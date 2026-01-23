@@ -150,7 +150,7 @@ public sealed partial class MiGoSystem : SharedMiGoSystem
 
         UpdateMovementSpeed(uid, comp);
 
-        DirtyEntity(uid);//make fully dirty, cause a lot of things
+        DirtyEntity(uid);// We "are making dirty" the entire entity, since ChangeForm affects many components and visual state.
     }
 
     //moving in astral faster
