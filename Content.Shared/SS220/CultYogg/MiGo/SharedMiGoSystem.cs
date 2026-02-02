@@ -586,12 +586,20 @@ public abstract class SharedMiGoSystem : EntitySystem
     {
         List<(string, NetEntity)> warps = [];
 
-        var query = EntityQueryEnumerator<CultYoggComponent>();
+        var queryCultists = EntityQueryEnumerator<CultYoggComponent>();
 
-        while (query.MoveNext(out var ent, out _))
+        while (queryCultists.MoveNext(out var ent, out _))
         {
-            warps.Add((MetaData(ent).EntityName, GetNetEntity(ent)));//Am i doing some canser move with sending netent?
+            warps.Add((MetaData(ent).EntityName, GetNetEntity(ent)));
         }
+
+        var queryMiGo = EntityQueryEnumerator<CultYoggComponent>();
+
+        while (queryMiGo.MoveNext(out var ent, out _))
+        {
+            warps.Add((MetaData(ent).EntityName, GetNetEntity(ent)));
+        }
+
         return warps;
     }
 

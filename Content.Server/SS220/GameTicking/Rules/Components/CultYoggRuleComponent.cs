@@ -154,5 +154,11 @@ public sealed partial class CultYoggStageDefinition
     /// Direct calculation of required cultist stages for progression to avoid round-start progression.
     /// </summary>
     public int? CultistsAmountRequired;
+
+    /// <summary>
+    /// Objectives given upon reaching the stage.
+    /// </summary>
+    [DataField]
+    public List<EntProtoId>? StageObjectives;
 }
 

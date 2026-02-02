@@ -42,13 +42,16 @@ using Content.Shared.SS220.StuckOnEquip;
 using Content.Shared.SS220.Telepathy;
 using Content.Shared.Station.Components;
 using Content.Shared.Zombies;
+using JetBrains.FormatRipper.Elf;
 using Robust.Server.Player;
 using Robust.Shared.Audio.Systems;
+using Robust.Shared.GameObjects;
 using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
+using System.Data;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Content.Server.SS220.GameTicking.Rules;
@@ -254,9 +257,9 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
 
         while (TryGetNextStage(rule, out var nextStage, out var nextStageDefinition)
             && nextStageDefinition.SacrificesRequired is { } sacrificesRequired
-            && sacrificesRequired <= rule.Comp.AmountOfSacrifices)
+            && sacrificesRequired <= rule.Comp.AmountOfSacrifices)//ToDo_SS220 make it a bit better
         {
-            ProgressToStage(rule, nextStage);
+            ProgressToStage(rule, nextStage, nextStageDefinition);
         }
     }
 
@@ -326,11 +329,14 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         if (initial && !rule.Comp.InitialCultistMinds.Contains(mindId))
             rule.Comp.InitialCultistMinds.Add(mindId);
 
-        foreach (var obj in rule.Comp.ListOfObjectives)
-        {
-            _role.MindAddRole(mindId, rule.Comp.MindCultYoggAntagId, mindComp, true);
-            _mind.TryAddObjective(mindId, mindComp, obj);
-        }
+        _role.MindAddRole(mindId, rule.Comp.MindCultYoggAntagId, mindComp, true);
+
+        //foreach (var obj in rule.Comp.ListOfObjectives)
+        //{
+        //    _mind.TryAddObjective(mindId, mindComp, obj);
+        //}
+
+        GiveAllActiveObjectives(rule, uid);
 
         rule.Comp.TotalCultistsConverted++;
 
@@ -565,7 +571,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         if (nextStageDefinition.CultistsAmountRequired > amountOfCultists)
             return;
 
-        ProgressToStage(rule.Value, nextStage);
+        ProgressToStage(rule.Value, nextStage, nextStageDefinition);
     }
 
     private void GenerateStagesCount(Entity<CultYoggRuleComponent> rule)
@@ -601,7 +607,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         return true;
     }
 
-    private void ProgressToStage(Entity<CultYoggRuleComponent> rule, CultYoggStage stage)
+    private void ProgressToStage(Entity<CultYoggRuleComponent> rule, CultYoggStage stage, CultYoggStageDefinition stageDefinition)
     {
         // Only forward
         if (stage <= rule.Comp.Stage)
@@ -620,12 +626,14 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         while (queryCultists.MoveNext(out var uid, out _))
         {
             RaiseLocalEvent(uid, ref changeStageEvent);
+            TryGiveStageObjectives(uid, stageDefinition);
         }
 
         var queryMiGo = EntityQueryEnumerator<MiGoComponent>();
         while (queryMiGo.MoveNext(out var uid, out _))
         {
             RaiseLocalEvent(uid, ref changeStageEvent);
+            TryGiveStageObjectives(uid, stageDefinition);
         }
     }
 
@@ -670,6 +678,35 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
 
             rule.AlertTime = null;
         }
+    }
+    #endregion
+
+    #region Objectives
+    private void GiveAllActiveObjectives(Entity<CultYoggRuleComponent> rule, EntityUid ent)
+    {
+        foreach (var (stage, stageDef) in rule.Comp.Stages)
+        {
+            if (stage > rule.Comp.Stage)
+                continue;
+
+            TryGiveStageObjectives(ent, stageDef);
+        }
+    }
+
+    private bool TryGiveStageObjectives(EntityUid ent, CultYoggStageDefinition stageDefinition)
+    {
+        if (!_mind.TryGetMind(ent, out var mindId, out var mindComp))
+            return false;
+
+        if (stageDefinition.StageObjectives is null)
+            return false;
+
+        foreach (var obj in stageDefinition.StageObjectives)
+        {
+            _mind.TryAddObjective(mindId, mindComp, obj);
+        }
+
+        return true;
     }
     #endregion
 
