@@ -94,12 +94,6 @@ public sealed partial class CultYoggRuleComponent : Component
     [DataField]
     public ProtoId<NpcFactionPrototype> CultYoggFaction = "CultYogg";
 
-    /// <summary>
-    /// Variables required to make new cultists
-    /// </summary>
-    [DataField]
-    public List<EntProtoId> ListOfObjectives = ["CultYoggEnslaveObjective", "CultYoggSacraficeObjective"];
-
     public EntProtoId MindCultYoggAntagId = "MindRoleCultYogg";
 
     //telephaty channel

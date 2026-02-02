@@ -42,13 +42,16 @@ using Content.Shared.SS220.StuckOnEquip;
 using Content.Shared.SS220.Telepathy;
 using Content.Shared.Station.Components;
 using Content.Shared.Zombies;
+using JetBrains.FormatRipper.Elf;
 using Robust.Server.Player;
 using Robust.Shared.Audio.Systems;
+using Robust.Shared.GameObjects;
 using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
+using System.Data;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Content.Server.SS220.GameTicking.Rules;
@@ -328,12 +331,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
 
         _role.MindAddRole(mindId, rule.Comp.MindCultYoggAntagId, mindComp, true);
 
-        //foreach (var obj in rule.Comp.ListOfObjectives)
-        //{
-        //    _mind.TryAddObjective(mindId, mindComp, obj);
-        //}
-
-        GiveAllActiveObjectives(rule, uid);
+        GiveAllActiveObjectives(rule, mindId, mindComp);
 
         rule.Comp.TotalCultistsConverted++;
 
@@ -379,13 +377,13 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         if (!TryGetCultGameRule(out var rule))
             return;
 
-        DeCultMind(args.Entity, rule.Value.Comp);
+        DeCultMind(args.Entity, rule.Value);
 
         DeMakeCultist(args.Entity, rule.Value.Comp);
         UpdateMiGoTeleportList();
     }
 
-    public void DeCultMind(EntityUid uid, CultYoggRuleComponent component)
+    public void DeCultMind(EntityUid uid, Entity<CultYoggRuleComponent> rule)
     {
         if (!_mind.TryGetMind(uid, out var mindId, out var mindComp))
             return;
@@ -393,13 +391,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         if (!_role.MindHasRole<CultYoggRoleComponent>(mindId, out var _))
             return;
 
-        foreach (var obj in component.ListOfObjectives)
-        {
-            if (!_mind.TryFindObjective(mindId, obj, out var objUid))
-                continue;
-
-            _mind.TryRemoveObjective(mindId, mindComp, objUid.Value);
-        }
+        RemoveAllActiveObjectives(rule, mindId, mindComp);
 
         _role.MindRemoveRole<CultYoggRoleComponent>(mindId);
 
@@ -679,28 +671,52 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
     #endregion
 
     #region Objectives
-    private void GiveAllActiveObjectives(Entity<CultYoggRuleComponent> rule, EntityUid ent)
+    private void GiveAllActiveObjectives(Entity<CultYoggRuleComponent> rule, EntityUid mindId, MindComponent mindComp)
     {
         foreach (var (stage, stageDef) in rule.Comp.Stages)
         {
             if (stage > rule.Comp.Stage)
                 continue;
 
-            TryGiveStageObjectives(ent, stageDef);
+            TryGiveStageObjectives(mindId, mindComp, stageDef);
         }
     }
 
-    private bool TryGiveStageObjectives(EntityUid ent, CultYoggStageDefinition stageDefinition)
+    private bool TryGiveStageObjectives(EntityUid mindId, MindComponent mindComp, CultYoggStageDefinition stageDef)
     {
-        if (!_mind.TryGetMind(ent, out var mindId, out var mindComp))
+        if (stageDef.StageObjectives is null)
             return false;
 
-        if (stageDefinition.StageObjectives is null)
-            return false;
-
-        foreach (var obj in stageDefinition.StageObjectives)
+        foreach (var obj in stageDef.StageObjectives)
         {
             _mind.TryAddObjective(mindId, mindComp, obj);
+        }
+
+        return true;
+    }
+
+    private void RemoveAllActiveObjectives(Entity<CultYoggRuleComponent> rule, EntityUid mindId, MindComponent mindComp)
+    {
+        foreach (var (stage, stageDef) in rule.Comp.Stages)
+        {
+            if (stage > rule.Comp.Stage)
+                continue;
+
+            TryGiveStageObjectives(mindId, mindComp, stageDef);
+        }
+    }
+
+    private bool TryRemoveStageObjectives(EntityUid mindId, MindComponent mindComp, CultYoggStageDefinition stageDef)
+    {
+        if (stageDef.StageObjectives is null)
+            return false;
+
+        foreach (var obj in stageDef.StageObjectives)
+        {
+            if (!_mind.TryFindObjective(mindId, obj, out var objUid))
+                continue;
+
+            _mind.TryRemoveObjective(mindId, mindComp, objUid.Value);
         }
 
         return true;
