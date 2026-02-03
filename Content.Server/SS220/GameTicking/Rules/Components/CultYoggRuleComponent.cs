@@ -61,7 +61,7 @@ public sealed partial class CultYoggRuleComponent : Component
     public readonly ProtoId<DepartmentPrototype> SacraficialDepartament = "Command";
 
     /// <summary>
-    /// Check for an endgame screen title
+    /// Shows how many sacrifices were made
     /// </summary>
     [DataField]
     public int AmountOfSacrifices = 0;
@@ -105,8 +105,6 @@ public sealed partial class CultYoggRuleComponent : Component
     {
         Tags = ["CultYoggInnerHandToggleable"]
     };
-
-
     #endregion
 
     #region GodSummoning
