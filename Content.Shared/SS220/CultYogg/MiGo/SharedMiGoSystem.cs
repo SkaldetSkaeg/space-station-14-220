@@ -24,7 +24,6 @@ using Content.Shared.SS220.CultYogg.Buildings;
 using Content.Shared.SS220.CultYogg.Cultists;
 using Content.Shared.SS220.CultYogg.Rave;
 using Content.Shared.SS220.CultYogg.Sacrificials;
-using Content.Shared.StatusEffectNew;
 using Content.Shared.Verbs;
 using Content.Shared.Zombies;
 using Robust.Shared.Audio;
@@ -46,7 +45,6 @@ public abstract class SharedMiGoSystem : EntitySystem
     [Dependency] private readonly INetManager _net = default!;
     [Dependency] private readonly SharedDoAfterSystem _doAfter = default!;
     [Dependency] private readonly SharedPhysicsSystem _physics = default!;
-    [Dependency] private readonly StatusEffectsSystem _statusEffectsSystem = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly SharedMiGoErectSystem _miGoErectSystem = default!;
     [Dependency] private readonly SharedAudioSystem _audio = default!;
@@ -581,27 +579,22 @@ public abstract class SharedMiGoSystem : EntitySystem
     {
         List<(string, NetEntity)> warps = [];
 
-        var queryCultists = EntityQueryEnumerator<CultYoggComponent>();
-
-        while (queryCultists.MoveNext(out var ent, out _))
-        {
-            if (owner == ent)
-                continue;
-
-            warps.Add((MetaData(ent).EntityName, GetNetEntity(ent)));
-        }
-
-        var queryMiGo = EntityQueryEnumerator<MiGoComponent>();
-
-        while (queryMiGo.MoveNext(out var ent, out _))
-        {
-            if (owner == ent)
-                continue;
-
-            warps.Add((MetaData(ent).EntityName, GetNetEntity(ent)));
-        }
+        AddTeleportPoints<CultYoggComponent>(owner, warps);
+        AddTeleportPoints<MiGoComponent>(owner, warps);
 
         return warps;
+    }
+
+    private void AddTeleportPoints<T>(EntityUid owner, List<(string, NetEntity)> warps) where T : IComponent
+    {
+        var query = EntityQueryEnumerator<T>();
+        while (query.MoveNext(out var uid, out _))
+        {
+            if (owner == uid)
+                continue;
+
+            warps.Add((MetaData(uid).EntityName, GetNetEntity(uid)));
+        }
     }
 
     private void OnMiGoTeleportToTarget(Entity<MiGoComponent> ent, ref MiGoTeleportToTargetMessage args)

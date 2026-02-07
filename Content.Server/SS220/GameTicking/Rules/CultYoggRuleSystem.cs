@@ -589,26 +589,21 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         //Sending all cult related new stage and new stage objectives
         var changeStageEvent = new ChangeCultYoggStageEvent(stage);
 
-        var queryCultists = EntityQueryEnumerator<CultYoggComponent>();
-        while (queryCultists.MoveNext(out var uid, out _))
-        {
-            RaiseLocalEvent(uid, ref changeStageEvent);
+        UpdateStageOnEnts<CultYoggComponent>(ref changeStageEvent, stageDefinition);
+        UpdateStageOnEnts<MiGoComponent>(ref changeStageEvent, stageDefinition);
+    }
 
-            if (!_mind.TryGetMind(uid, out var mindId, out var mindComp))//cause idk how to check every mind with cultist role
+    private void UpdateStageOnEnts<T>(ref ChangeCultYoggStageEvent stageEvent, CultYoggStageDefinition stageDef) where T : IComponent
+    {
+        var query = EntityQueryEnumerator<T>();
+        while (query.MoveNext(out var uid, out _))
+        {
+            RaiseLocalEvent(uid, ref stageEvent);
+
+            if (!_mind.TryGetMind(uid, out var mindId, out var mindComp))
                 continue;
 
-            TryGiveStageObjectives(mindId, mindComp, stageDefinition);
-        }
-
-        var queryMiGo = EntityQueryEnumerator<MiGoComponent>();
-        while (queryMiGo.MoveNext(out var uid, out _))
-        {
-            RaiseLocalEvent(uid, ref changeStageEvent);
-
-            if (!_mind.TryGetMind(uid, out var mindId, out var mindComp))//cause idk how to check every mind with cultist role
-                continue;
-
-            TryGiveStageObjectives(mindId, mindComp, stageDefinition);
+            TryGiveStageObjectives(mindId, mindComp, stageDef);
         }
     }
 
