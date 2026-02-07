@@ -37,7 +37,7 @@
         stageObjectives:
         - CultYoggEnslaveObjective
       Reveal:
-        cultistsToCrewFraction: 0.2
+        cultistsToCrewFraction: 0.25
       Alarm:
         cultistsToCrewFraction: 0.3
         stageObjectives:
@@ -57,9 +57,9 @@
         stageObjectives:
         - CultYoggEnslaveObjective
       Reveal:
-        cultistsToCrewFraction: 0.1
+        cultistsToCrewFraction: 0.15
       Alarm:
-        cultistsToCrewFraction: 0.2
+        cultistsToCrewFraction: 0.25
         stageObjectives:
         - CultYoggSacraficeObjective
       God:
