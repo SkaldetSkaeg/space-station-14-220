@@ -99,29 +99,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         base.Added(uid, component, gameRule, args);
 
         component.InitialCrewCount = GameTicker.ReadyPlayerCount();
-        GenerateStagesCount((uid, component));
-    }
-
-    /// <summary>
-    /// Used to generate sacraficials at the start of the gamerule
-    /// </summary>
-    protected override void Started(EntityUid uid, CultYoggRuleComponent component, GameRuleComponent gameRule, GameRuleStartedEvent args)
-    {
-        base.Started(uid, component, gameRule, args);
-
-        if (component.SelectionStatus == CultYoggRuleComponent.SelectionState.Started)
-        {
-            Log.Error($"CultYogg tried to run several instanses of a gamurule!");
-            return;
-        }
-
-        //ToDo_SS220 move it somewhere else
-        //var ev = new CultYoggReinitObjEvent();
-        //var query = EntityQueryEnumerator<CultYoggSummonConditionComponent>(); //Initi
-        //while (query.MoveNext(out var ent, out _))
-        //{
-        //    RaiseLocalEvent(ent, ref ev); //Reinitialise objective if gamerule was forced
-        //}
+        GenerateStagesCount((uid, component));//trying to count cultists, but someone "nasral"
     }
 
     #region Sacraficials picking
@@ -135,7 +113,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
             Log.Error($"CultYogg failed to pick command sacraficial");
         else
         {
-            SetSacraficeTarget(comp, sacraficial.Value);
+            SetSacraficeTarget(sacraficial.Value);
             return true;
         }
 
@@ -143,7 +121,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
             Log.Error($"CultYogg failed to pick any non cultist alive sacraficial");
         else
         {
-            SetSacraficeTarget(comp, sacraficial.Value);
+            SetSacraficeTarget(sacraficial.Value);
             return true;
         }
         _chatManager.SendAdminAlert(Loc.GetString("CultYogg failed to pick any non cultist alive sacraficial on station, Game rule needs a manual admin picking"));
@@ -194,7 +172,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         return false;
     }
 
-    private void SetSacraficeTarget(CultYoggRuleComponent component, EntityUid uid)
+    private void SetSacraficeTarget(EntityUid uid)
     {
         if (!TryComp<MindComponent>(uid, out var mind))
             return;
@@ -599,8 +577,11 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         _adminLogger.Add(LogType.RoundFlow, LogImpact.High, $"Cult Yogg progressed to {stage}");
         _chatManager.SendAdminAlert(Loc.GetString("cult-yogg-stage-admin-alert", ("stage", stage)));
 
-        //Adding Stage sacraficials
-        TryInitializeStageSacraficials(rule, stageDefinition);
+        if (!TryGetNextStage(rule, out _, out var nextStageDefinition))
+            return;
+
+        //Adding Stage sacraficials for progressing for a next stage
+        TryInitializeNextStageSacraficials(rule, nextStageDefinition);
 
         //doing stage non-entity-related things
         DoStageEffects(rule, stage);
@@ -650,12 +631,12 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         }
     }
 
-    private bool TryInitializeStageSacraficials(Entity<CultYoggRuleComponent> rule, CultYoggStageDefinition stageDefinition)
+    private bool TryInitializeNextStageSacraficials(Entity<CultYoggRuleComponent> rule, CultYoggStageDefinition stageDefinition)
     {
         if (stageDefinition.SacrificesRequired is null)
             return false;
 
-        var sacrInitCount = stageDefinition.SacrificesRequired + rule.Comp.AmountOfSacrifices;
+        var sacrInitCount = stageDefinition.SacrificesRequired - rule.Comp.AmountOfSacrifices;
 
         for (var i = 0; i < sacrInitCount; i++)
         {
@@ -722,7 +703,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
             if (stage > rule.Comp.Stage)
                 continue;
 
-            TryGiveStageObjectives(mindId, mindComp, stageDef);
+            TryRemoveStageObjectives(mindId, mindComp, stageDef);
         }
     }
 

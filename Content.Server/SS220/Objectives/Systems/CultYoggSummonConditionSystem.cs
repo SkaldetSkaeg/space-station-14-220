@@ -27,7 +27,6 @@ public sealed class CultYoggSummonConditionSystem : EntitySystem
         SubscribeLocalEvent<CultYoggSummonConditionComponent, ComponentInit>(OnInit);
         SubscribeLocalEvent<CultYoggSummonConditionComponent, ObjectiveAfterAssignEvent>(OnAfterAssign);
         SubscribeLocalEvent<CultYoggSummonConditionComponent, ObjectiveGetProgressEvent>(OnGetProgress);
-        SubscribeLocalEvent<CultYoggSummonConditionComponent, CultYoggReinitObjEvent>(OnReInit);
         SubscribeLocalEvent<CultYoggSummonConditionComponent, CultYoggUpdateSacrObjEvent>(OnSacrUpdate);
     }
 
@@ -43,11 +42,6 @@ public sealed class CultYoggSummonConditionSystem : EntitySystem
     }
 
     private void OnSacrUpdate(Entity<CultYoggSummonConditionComponent> ent, ref CultYoggUpdateSacrObjEvent args)
-    {
-        SacraficialsUpdate(ent);
-    }
-
-    private void OnReInit(Entity<CultYoggSummonConditionComponent> ent, ref CultYoggReinitObjEvent args)
     {
         SacraficialsUpdate(ent);
     }
@@ -105,11 +99,6 @@ public sealed class CultYoggSummonConditionSystem : EntitySystem
 
         _metaData.SetEntityName(ent, title.ToString());
     }
-}
-
-[ByRefEvent, Serializable]
-public sealed class CultYoggReinitObjEvent : EntityEventArgs
-{
 }
 
 [ByRefEvent, Serializable]
