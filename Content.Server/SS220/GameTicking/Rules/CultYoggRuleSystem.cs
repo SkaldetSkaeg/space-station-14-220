@@ -350,6 +350,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         DeCultMind(args.Entity, rule.Value);
 
         DeMakeCultist(args.Entity, rule.Value.Comp);
+
         UpdateMiGoTeleportList();
     }
 
@@ -379,7 +380,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         //Remove all corrupted items
         _stuckOnEquip.RemoveAllStuckItems(uid);
 
-        _sharedRestrictedItemSystem.DropAllRestrictedItems(uid);
+        _sharedRestrictedItemSystem.DropAllRestrictedItems(uid);//ToDo_SS220 make it by component or tag
 
         // Change the faction
         _npcFaction.RemoveFaction(uid, component.CultYoggFaction, false);
@@ -387,6 +388,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
 
         //remove cultist component
         RemComp<CultYoggComponent>(uid);
+
         //Remove telepathy
         RemComp<TelepathyComponent>(uid);
 
