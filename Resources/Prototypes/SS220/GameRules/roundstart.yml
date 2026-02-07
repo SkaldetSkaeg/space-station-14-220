@@ -41,7 +41,7 @@
       Alarm:
         cultistsToCrewFraction: 0.3
         stageObjectives:
-        - CultYoggSacraficeObjective
+        - CultYoggSacrificeObjective
       God:
         sacrificesRequired: 1
 
@@ -61,7 +61,7 @@
       Alarm:
         cultistsToCrewFraction: 0.25
         stageObjectives:
-        - CultYoggSacraficeObjective
+        - CultYoggSacrificeObjective
       God:
         sacrificesRequired: 1
 

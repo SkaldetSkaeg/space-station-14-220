@@ -23,7 +23,7 @@ using Content.Shared.SS220.CultYogg.Altar;
 using Content.Shared.SS220.CultYogg.Buildings;
 using Content.Shared.SS220.CultYogg.Cultists;
 using Content.Shared.SS220.CultYogg.Rave;
-using Content.Shared.SS220.CultYogg.Sacraficials;
+using Content.Shared.SS220.CultYogg.Sacrificials;
 using Content.Shared.StatusEffectNew;
 using Content.Shared.Verbs;
 using Content.Shared.Zombies;
@@ -234,7 +234,7 @@ public abstract class SharedMiGoSystem : EntitySystem
     {
         if (!uid.Comp.IsPhysicalForm)
         {
-            _popup.PopupClient(Loc.GetString("cult-yogg-cant-sacrafice-in-astral"), uid);
+            _popup.PopupClient(Loc.GetString("cult-yogg-cant-sacrifice-in-astral"), uid);
             return;
         }
 
@@ -526,7 +526,7 @@ public abstract class SharedMiGoSystem : EntitySystem
 
         if (HasComp<CultYoggSacrificialComponent>(target))
         {
-            reason = Loc.GetString("cult-yogg-enslave-is-sacraficial");
+            reason = Loc.GetString("cult-yogg-enslave-is-sacrificial");
             return false;
         }
 

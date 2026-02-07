@@ -54,11 +54,11 @@ public sealed partial class CultYoggRuleComponent : Component
     public SoundSpecifier BroadcastSound = new SoundPathSpecifier("/Audio/Misc/notice1.ogg");
     #endregion
 
-    #region Sacraficial
+    #region Sacrificial
     /// <summary>
     /// General requirements
     /// </summary>
-    public readonly ProtoId<DepartmentPrototype> SacraficialDepartament = "Command";
+    public readonly ProtoId<DepartmentPrototype> SacrificialDepartament = "Command";
 
     /// <summary>
     /// Shows how many sacrifices were made

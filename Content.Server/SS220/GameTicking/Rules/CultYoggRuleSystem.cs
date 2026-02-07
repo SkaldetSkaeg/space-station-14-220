@@ -14,7 +14,7 @@ using Content.Server.Pinpointer;
 using Content.Server.Roles;
 using Content.Server.RoundEnd;
 using Content.Server.SS220.CultYogg.DeCultReminder;
-using Content.Server.SS220.CultYogg.Sacraficials;
+using Content.Server.SS220.CultYogg.Sacrificials;
 using Content.Server.SS220.GameTicking.Rules.Components;
 using Content.Server.Station.Systems;
 using Content.Shared.Audio;
@@ -32,7 +32,7 @@ using Content.Shared.SS220.CultYogg.Altar;
 using Content.Shared.SS220.CultYogg.Cultists;
 using Content.Shared.SS220.CultYogg.CultYoggIcons;
 using Content.Shared.SS220.CultYogg.MiGo;
-using Content.Shared.SS220.CultYogg.Sacraficials;
+using Content.Shared.SS220.CultYogg.Sacrificials;
 using Content.Shared.SS220.InnerHandToggleable;
 using Content.Shared.SS220.RestrictedItem;
 using Content.Shared.SS220.Roles;
@@ -87,7 +87,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         SubscribeLocalEvent<CultYoggEnslavedEvent>(MiGoEnslave);
         SubscribeLocalEvent<CultYoggDeCultingEvent>(DeCult);
 
-        SubscribeLocalEvent<SacraficialReplacementEvent>(SacraficialReplacement);
+        SubscribeLocalEvent<SacrificialReplacementEvent>(SacrificialReplacement);
 
         SubscribeLocalEvent<CultYoggRuleComponent, CultYoggSacrificedTargetEvent>(OnTargetSacrificed);
         SubscribeLocalEvent<CultYoggRoleComponent, GetBriefingEvent>(OnGetBriefing);
@@ -102,39 +102,39 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         GenerateStagesCount((uid, component));//trying to count cultists, but someone "nasral"
     }
 
-    #region Sacraficials picking
-    private bool TrySetSacraficial(CultYoggRuleComponent comp)
+    #region Sacrificials picking
+    private bool TrySetSacrificial(CultYoggRuleComponent comp)
     {
         var allSuitable = GetAllSuitable();
 
-        EntityUid? sacraficial;
+        EntityUid? sacrificial;
 
-        if (!TryPickCommandSacraficial(comp, allSuitable, out sacraficial))
-            Log.Error($"CultYogg failed to pick command sacraficial");
+        if (!TryPickCommandSacrificial(comp, allSuitable, out sacrificial))
+            Log.Error($"CultYogg failed to pick command sacrificial");
         else
         {
-            SetSacraficeTarget(sacraficial.Value);
+            SetSacrificeTarget(sacrificial.Value);
             return true;
         }
 
-        if (!TryPickAnySacraficial(comp, allSuitable, out sacraficial))
-            Log.Error($"CultYogg failed to pick any non cultist alive sacraficial");
+        if (!TryPickAnySacrificial(comp, allSuitable, out sacrificial))
+            Log.Error($"CultYogg failed to pick any non cultist alive sacrificial");
         else
         {
-            SetSacraficeTarget(sacraficial.Value);
+            SetSacrificeTarget(sacrificial.Value);
             return true;
         }
-        _chatManager.SendAdminAlert(Loc.GetString("CultYogg failed to pick any non cultist alive sacraficial on station, Game rule needs a manual admin picking"));
+        _chatManager.SendAdminAlert(Loc.GetString("CultYogg failed to pick any non cultist alive sacrificial on station, Game rule needs a manual admin picking"));
         return false;
     }
 
-    public bool TryPickCommandSacraficial(CultYoggRuleComponent comp, List<EntityUid> allHumans, [NotNullWhen(true)] out EntityUid? sacraficial)
+    public bool TryPickCommandSacrificial(CultYoggRuleComponent comp, List<EntityUid> allHumans, [NotNullWhen(true)] out EntityUid? sacrificial)
     {
-        sacraficial = null;
+        sacrificial = null;
 
         var allSuitable = new List<EntityUid>();
 
-        if (!_proto.TryIndex(comp.SacraficialDepartament, out var sacraficialDepartament))
+        if (!_proto.TryIndex(comp.SacrificialDepartament, out var sacrificialDepartament))
             return false;
 
         foreach (var mind in allHumans)
@@ -142,37 +142,37 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
             if (!_job.MindTryGetJob(mind, out var jobProto))
                 continue;
 
-            if (sacraficialDepartament.Roles.Contains(jobProto.ID))
+            if (sacrificialDepartament.Roles.Contains(jobProto.ID))
                 allSuitable.Add(mind);
         }
 
         if (allSuitable.Count <= 0)
             return false;
 
-        sacraficial = _random.Pick(allSuitable);
+        sacrificial = _random.Pick(allSuitable);
 
-        if (sacraficial != null)
+        if (sacrificial != null)
             return true;
 
         return false;
     }
 
-    public bool TryPickAnySacraficial(CultYoggRuleComponent comp, List<EntityUid> allHumans, [NotNullWhen(true)] out EntityUid? sacraficial)
+    public bool TryPickAnySacrificial(CultYoggRuleComponent comp, List<EntityUid> allHumans, [NotNullWhen(true)] out EntityUid? sacrificial)
     {
-        sacraficial = null;
+        sacrificial = null;
 
         if (allHumans.Count <= 0)
             return false;
 
-        sacraficial = _random.Pick(allHumans);
+        sacrificial = _random.Pick(allHumans);
 
-        if (sacraficial != null)
+        if (sacrificial != null)
             return true;
 
         return false;
     }
 
-    private void SetSacraficeTarget(EntityUid uid)
+    private void SetSacrificeTarget(EntityUid uid)
     {
         if (!TryComp<MindComponent>(uid, out var mind))
             return;
@@ -219,7 +219,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
     }
     #endregion
 
-    #region Sacraficials Events
+    #region Sacrificials Events
     private void OnTargetSacrificed(Entity<CultYoggRuleComponent> rule, ref CultYoggSacrificedTargetEvent args)
     {
         rule.Comp.LastSacrificialAltar = args.Altar;
@@ -233,7 +233,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         }
     }
 
-    private void SacraficialReplacement(ref SacraficialReplacementEvent args)
+    private void SacrificialReplacement(ref SacrificialReplacementEvent args)
     {
         if (!TryGetCultGameRule(out var rule))
             return;
@@ -241,14 +241,14 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         if (!TryComp<CultYoggSacrificialComponent>(args.Entity, out var sacrComp))
             return;
 
-        if (sacrComp.WasSacraficed)
+        if (sacrComp.WasSacrificed)
             return;
 
-        TrySetSacraficial(rule.Value.Comp);
+        TrySetSacrificial(rule.Value.Comp);
 
         RemComp<CultYoggSacrificialComponent>(args.Entity);
 
-        SendCultAnounce(Loc.GetString("cult-yogg-sacraficial-was-replaced", ("name", MetaData(args.Entity).EntityName)));
+        SendCultAnounce(Loc.GetString("cult-yogg-sacrificial-was-replaced", ("name", MetaData(args.Entity).EntityName)));
     }
     #endregion
 
@@ -331,7 +331,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         var innerToggle = EnsureComp<InnerHandToggleableComponent>(uid);
         innerToggle.Whitelist = rule.Comp.WhitelistToggleable;
 
-        EnsureComp<ShowCultYoggIconsComponent>(uid);//icons of cultists and sacraficials
+        EnsureComp<ShowCultYoggIconsComponent>(uid);//icons of cultists and sacrificials
         EnsureComp<ZombieImmuneComponent>(uid);//they are practically mushrooms
 
         var cultifiedEv = new GotCultifiedEvent();
@@ -580,8 +580,8 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         if (!TryGetNextStage(rule, out _, out var nextStageDefinition))
             return;
 
-        //Adding Stage sacraficials for progressing for a next stage
-        TryInitializeNextStageSacraficials(rule, nextStageDefinition);
+        //Adding Stage sacrificials for progressing for a next stage
+        TryInitializeNextStageSacrificials(rule, nextStageDefinition);
 
         //doing stage non-entity-related things
         DoStageEffects(rule, stage);
@@ -631,7 +631,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         }
     }
 
-    private bool TryInitializeNextStageSacraficials(Entity<CultYoggRuleComponent> rule, CultYoggStageDefinition stageDefinition)
+    private bool TryInitializeNextStageSacrificials(Entity<CultYoggRuleComponent> rule, CultYoggStageDefinition stageDefinition)
     {
         if (stageDefinition.SacrificesRequired is null)
             return false;
@@ -640,7 +640,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
 
         for (var i = 0; i < sacrInitCount; i++)
         {
-            TrySetSacraficial(rule.Comp);
+            TrySetSacrificial(rule.Comp);
         }
 
         return true;
