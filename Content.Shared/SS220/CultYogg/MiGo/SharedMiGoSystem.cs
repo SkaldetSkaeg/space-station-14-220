@@ -199,11 +199,11 @@ public abstract class SharedMiGoSystem : EntitySystem
 
         var healComponent = EnsureComp<CultYoggHealComponent>(args.Target);
 
-        healComponent.HealingTime = _timing.CurTime + uid.Comp.HealingEffectTime;
+        healComponent.HealingEffectTime = _timing.CurTime + uid.Comp.HealingEffectTime;
         healComponent.Heal = args.Heal;
         healComponent.BloodlossModifier = args.BloodlossModifier;
         healComponent.ModifyBloodLevel = args.ModifyBloodLevel;
-        healComponent.TimeBetweenIncidents = args.TimeBetweenIncidents;
+        healComponent.TimeBetweenHealingTicks = args.TimeBetweenIncidents;
         healComponent.Sprite = args.EffectSprite;
         healComponent.ModifyStamina = args.ModifyStamina;
 

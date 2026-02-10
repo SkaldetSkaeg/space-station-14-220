@@ -32,7 +32,7 @@ public abstract class SharedCultYoggHealSystem : EntitySystem
 
     private void SetupMiGoHeal(Entity<CultYoggHealComponent> ent, ref ComponentStartup args)
     {
-        ent.Comp.NextIncidentTime = _time.CurTime + ent.Comp.TimeBetweenIncidents;
+        ent.Comp.NextHealingTickTime = _time.CurTime + ent.Comp.TimeBetweenHealingTicks;
     }
 
     private void OnDamageChanged(Entity<CultYoggHealComponent> ent, ref DamageChangedEvent args)
@@ -57,18 +57,18 @@ public abstract class SharedCultYoggHealSystem : EntitySystem
         var query = EntityQueryEnumerator<CultYoggHealComponent>();
         while (query.MoveNext(out var ent, out var healComp))
         {
-            if (healComp.HealingTime is { } endTime && endTime <= _time.CurTime)
+            if (healComp.HealingEffectTime is { } endTime && endTime <= _time.CurTime)
             {
                 RemCompDeferred<CultYoggHealComponent>(ent);
                 continue;
             }
 
-            if (healComp.NextIncidentTime > _time.CurTime)
+            if (healComp.NextHealingTickTime > _time.CurTime)
                 continue;
 
             Heal((ent, healComp));
 
-            healComp.NextIncidentTime = _time.CurTime + healComp.TimeBetweenIncidents;
+            healComp.NextHealingTickTime = _time.CurTime + healComp.TimeBetweenHealingTicks;
         }
     }
 

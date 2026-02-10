@@ -14,10 +14,10 @@
     grid:
     - 0,0,9,5
   - type: RestrictedStorage
-    slots: [BACK]
     whitelist:
       components:
       - CultYogg
+      - MiGo
   - type: StuckOnEquip
   - type: Tag
     tags:

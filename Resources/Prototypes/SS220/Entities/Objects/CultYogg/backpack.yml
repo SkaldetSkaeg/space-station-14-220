@@ -15,9 +15,9 @@
     - 0,0,9,5
   - type: RestrictedStorage
     whitelist:
-      requireAll: true
       components:
       - CultYogg
+      - MiGo
   - type: StuckOnEquip
   - type: Tag
     tags:
