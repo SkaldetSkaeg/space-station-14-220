@@ -99,7 +99,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         base.Added(uid, component, gameRule, args);
 
         component.InitialCrewCount = GameTicker.ReadyPlayerCount();
-        GenerateStagesCount((uid, component));//trying to count cultists, but someone "nasral"
+        GenerateStagesCount((uid, component));//trying to count cultists, but someone "made a realy questioanable balance change"
     }
 
     #region Sacrificials picking
