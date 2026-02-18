@@ -124,7 +124,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
             SetSacrificeTarget(sacrificial.Value);
             return true;
         }
-        _chatManager.SendAdminAlert(Loc.GetString("CultYogg failed to pick any non cultist alive sacrificial on station, Game rule needs a manual admin picking"));
+        _chatManager.SendAdminAlert("CultYogg failed to pick any non cultist alive sacrificial on station, Game rule needs a manual admin picking");
         return false;
     }
 
