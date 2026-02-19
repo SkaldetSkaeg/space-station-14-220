@@ -300,7 +300,8 @@ public sealed class CultYoggSystem : SharedCultYoggSystem
 
     private void OnCryoDeleted(Entity<CultYoggComponent> ent, ref BeingCryoDeletedEvent args)
     {
-        //ToDo_SS220 add here some kind of admin alert + chamgelog
+        _chatManager.SendAdminAlert(Loc.GetString("cult-yogg-cultist-deleted-by-cryo", ("ent", ent)));
+
         var ev = new CultYoggDeCultingEvent(ent);
         RaiseLocalEvent(ent, ref ev, true);
     }
