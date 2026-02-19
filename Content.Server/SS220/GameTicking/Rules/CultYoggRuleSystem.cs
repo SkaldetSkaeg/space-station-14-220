@@ -579,11 +579,11 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         _adminLogger.Add(LogType.RoundFlow, LogImpact.High, $"Cult Yogg progressed to {stage}");
         _chatManager.SendAdminAlert(Loc.GetString("cult-yogg-stage-admin-alert", ("stage", stage)));
 
-        if (!TryGetNextStage(rule, out _, out var nextStageDefinition))
-            return;
-
-        //Adding Stage sacrificials for progressing for a next stage
-        TryInitializeNextStageSacrificials(rule, nextStageDefinition);
+        if (TryGetNextStage(rule, out _, out var nextStageDefinition))
+        {
+            //Adding Stage sacrificials for progressing for a next stage
+            TryInitializeNextStageSacrificials(rule, nextStageDefinition);
+        }
 
         //doing stage non-entity-related things
         DoStageEffects(rule, stage);
