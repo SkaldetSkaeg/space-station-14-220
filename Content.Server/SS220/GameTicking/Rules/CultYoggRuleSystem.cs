@@ -603,7 +603,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
         UpdateStageOnEnts<CultYoggComponent>(ref changeStageEvent, stageDefinition);
         UpdateStageOnEnts<MiGoComponent>(ref changeStageEvent, stageDefinition);
 
-        if (TryGetNextStage(rule, out _, out var nextStageDefinition))//No next stage = no new sacraficials
+        if (TryGetNextStage(rule, out _, out var nextStageDefinition))//No next stage = no new sacrificials
         {
             TryInitializeNextStageSacrificials(rule, nextStageDefinition);
         }
