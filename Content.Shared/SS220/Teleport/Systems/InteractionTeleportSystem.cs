@@ -81,14 +81,31 @@ public sealed class InteractionTeleportSystem : EntitySystem
             return true;
         }
 
-        var teleportDoAfter = new DoAfterArgs(EntityManager, user, ent.Comp.TeleportDoAfterTime.Value, new InteractionTeleportDoAfterEvent(), ent, target)
+        DoAfterArgs teleportDoAfter;
+
+        if (ent.Comp.DamageThreshold == null)
         {
-            BreakOnDamage = false,
-            BreakOnMove = true,
-            BlockDuplicate = true,
-            CancelDuplicate = true,
-            DuplicateCondition = DuplicateConditions.SameEvent
-        };
+            teleportDoAfter = new DoAfterArgs(EntityManager, user, ent.Comp.TeleportDoAfterTime.Value, new InteractionTeleportDoAfterEvent(), ent, user)
+            {
+                BreakOnDamage = false,
+                BreakOnMove = true,
+                BlockDuplicate = true,
+                CancelDuplicate = true,
+                DuplicateCondition = DuplicateConditions.SameEvent
+            };
+        }
+        else
+        {
+            teleportDoAfter = new DoAfterArgs(EntityManager, user, ent.Comp.TeleportDoAfterTime.Value, new InteractionTeleportDoAfterEvent(), ent, user)
+            {
+                BreakOnDamage = true,
+                DamageThreshold = ent.Comp.DamageThreshold.Value,
+                BreakOnMove = true,
+                BlockDuplicate = true,
+                CancelDuplicate = true,
+                DuplicateCondition = DuplicateConditions.SameEvent
+            };
+        }
 
         var started = _doAfter.TryStartDoAfter(teleportDoAfter);
 

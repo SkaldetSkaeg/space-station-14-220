@@ -29,7 +29,7 @@ public sealed class AltVerbTeleportSystem : EntitySystem
         {
             if (ent.Comp.WhitelistRejectedLoc != null)
                 _popup.PopupPredicted(Loc.GetString(ent.Comp.WhitelistRejectedLoc), ent, args.User, PopupType.MediumCaution);
-                
+
             return;
         }
 
@@ -50,14 +50,31 @@ public sealed class AltVerbTeleportSystem : EntitySystem
             return true;
         }
 
-        var teleportDoAfter = new DoAfterArgs(EntityManager, user, ent.Comp.TeleportDoAfterTime.Value, new InteractionTeleportDoAfterEvent(), ent, user)
+        DoAfterArgs teleportDoAfter;
+
+        if (ent.Comp.DamageThreshold == null)
         {
-            BreakOnDamage = false,
-            BreakOnMove = true,
-            BlockDuplicate = true,
-            CancelDuplicate = true,
-            DuplicateCondition = DuplicateConditions.SameEvent
-        };
+            teleportDoAfter = new DoAfterArgs(EntityManager, user, ent.Comp.TeleportDoAfterTime.Value, new InteractionTeleportDoAfterEvent(), ent, user)
+            {
+                BreakOnDamage = false,
+                BreakOnMove = true,
+                BlockDuplicate = true,
+                CancelDuplicate = true,
+                DuplicateCondition = DuplicateConditions.SameEvent
+            };
+        }
+        else
+        {
+            teleportDoAfter = new DoAfterArgs(EntityManager, user, ent.Comp.TeleportDoAfterTime.Value, new InteractionTeleportDoAfterEvent(), ent, user)
+            {
+                BreakOnDamage = true,
+                DamageThreshold = ent.Comp.DamageThreshold.Value,
+                BreakOnMove = true,
+                BlockDuplicate = true,
+                CancelDuplicate = true,
+                DuplicateCondition = DuplicateConditions.SameEvent
+            };
+        }
 
         if (_doAfter.TryStartDoAfter(teleportDoAfter))
         {

@@ -1,5 +1,7 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
+using Content.Shared.Damage;
+using Content.Shared.FixedPoint;
 using Content.Shared.Whitelist;
 
 namespace Content.Shared.SS220.Teleport.Components;
@@ -28,4 +30,10 @@ public sealed partial class InteractionTeleportComponent : Component
     /// </summary>
     [DataField]
     public TimeSpan? TeleportDoAfterTime;
+
+    /// <summary>
+    ///     The amount of damage required to interrupt a DoAfter of the teleport
+    /// </summary>
+    [DataField]
+    public FixedPoint2? DamageThreshold;
 }

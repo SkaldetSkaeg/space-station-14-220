@@ -64,6 +64,7 @@
     prototype: VoidPortalClosed
   - type: InteractionTeleport
     teleportDoAfterTime: 2
+    damageThreshold: 7
     userWhitelist:
       components:
       - HumanoidAppearance
