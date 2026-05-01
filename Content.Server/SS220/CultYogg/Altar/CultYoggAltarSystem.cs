@@ -14,7 +14,6 @@ using Content.Shared.GameTicking.Components;
 using Content.Shared.SS220.CultYogg.Altar;
 using Content.Shared.SS220.CultYogg.Cultists;
 using Content.Shared.SS220.CultYogg.MiGo;
-using JetBrains.FormatRipper.Elf;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
 
