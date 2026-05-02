@@ -33,6 +33,9 @@
     userWhitelist:
       components:
       - CultYogg
+    userBlacklist:
+      components:
+      - VoidBlocker
   - type: RandomTeleport
     targetsComponent: "RandomTeleportTarget"
     whitelist:
@@ -43,6 +46,9 @@
       path: /Audio/Effects/glass_smash.ogg
   - type: SpawnBeforeTeleport
     spawnedEnt: TeleportVanishEffect
+  - type: AfterTeleportStatusEffect
+    effectsList:
+      StatusEffectVoidBlocker: 600
 
 - type: entity
   id: VoidPortal

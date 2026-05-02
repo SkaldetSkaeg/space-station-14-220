@@ -2,6 +2,7 @@
 
 using Content.Shared.DoAfter;
 using Content.Shared.Popups;
+using Content.Shared.SS220.Teleport.Components;
 using Content.Shared.Verbs;
 using Content.Shared.Whitelist;
 
@@ -32,6 +33,9 @@ public sealed class AltVerbTeleportSystem : EntitySystem
 
             return;
         }
+
+        if (_whitelist.IsBlacklistPass(ent.Comp.UserBlacklist, args.User))
+            return;
 
         TryStartTeleport(ent, args.User);
     }

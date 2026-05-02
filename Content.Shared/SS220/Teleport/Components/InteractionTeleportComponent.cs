@@ -19,6 +19,12 @@ public sealed partial class InteractionTeleportComponent : Component
     public EntityWhitelist? UserWhitelist;
 
     /// <summary>
+    ///     Which entities can't use teleportation
+    /// </summary>
+    [DataField]
+    public EntityWhitelist? UserBlacklist;
+
+    /// <summary>
     ///     Message when whitelisting is rejected
     /// </summary>
     [DataField]

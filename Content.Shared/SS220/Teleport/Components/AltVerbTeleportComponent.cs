@@ -1,10 +1,9 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
-using Content.Shared.Damage;
 using Content.Shared.FixedPoint;
 using Content.Shared.Whitelist;
 
-namespace Content.Shared.SS220.Teleport;
+namespace Content.Shared.SS220.Teleport.Components;
 
 /// <summary>
 ///     Used when you need to teleport through AltVerb
@@ -17,6 +16,12 @@ public sealed partial class AltVerbTeleportComponent : Component
     /// </summary>
     [DataField]
     public EntityWhitelist? UserWhitelist;
+
+    /// <summary>
+    ///     Which entities can't use teleportation
+    /// </summary>
+    [DataField]
+    public EntityWhitelist? UserBlacklist;
 
     /// <summary>
     ///     Message when whitelisting is rejected
@@ -37,4 +42,3 @@ public sealed partial class AltVerbTeleportComponent : Component
     [DataField]
     public FixedPoint2? DamageThreshold;
 }
-
