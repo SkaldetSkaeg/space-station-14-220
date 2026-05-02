@@ -3,7 +3,6 @@
 using Content.Shared.Actions;
 using Content.Shared.DoAfter;
 using Content.Shared.Polymorph;
-using Content.Shared.SS220.CultYogg.MiGo;
 
 namespace Content.Shared.SS220.AstralLeap;
 
