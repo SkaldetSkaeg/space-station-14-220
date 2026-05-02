@@ -43,6 +43,9 @@
       path: /Audio/Effects/glass_smash.ogg
   - type: SpawnBeforeTeleport
     spawnedEnt: TeleportVanishEffect
+  - type: AfterTeleportStatusEffect
+    effectsList:
+      StatusEffectStunned: 2 #ToDo_SS220 del stub
 
 - type: entity
   id: VoidPortal

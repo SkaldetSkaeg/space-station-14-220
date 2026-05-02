@@ -2,6 +2,7 @@
 
 using Content.Shared.DoAfter;
 using Content.Shared.Popups;
+using Content.Shared.SS220.Teleport.Components;
 using Content.Shared.Verbs;
 using Content.Shared.Whitelist;
 
