@@ -73,7 +73,7 @@
     damageThreshold: 7
     userWhitelist:
       components:
-      - HumanoidAppearance
+      - CultYogg
   - type: RandomTeleport
     targetsComponent: "RandomTeleportTarget"
     whitelist:
