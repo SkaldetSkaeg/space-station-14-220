@@ -54,31 +54,15 @@ public sealed class AltVerbTeleportSystem : EntitySystem
             return true;
         }
 
-        DoAfterArgs teleportDoAfter;
-
-        if (ent.Comp.DamageThreshold == null)
+        var teleportDoAfter = new DoAfterArgs(EntityManager, user, ent.Comp.TeleportDoAfterTime.Value, new InteractionTeleportDoAfterEvent(), ent, user)
         {
-            teleportDoAfter = new DoAfterArgs(EntityManager, user, ent.Comp.TeleportDoAfterTime.Value, new InteractionTeleportDoAfterEvent(), ent, user)
-            {
-                BreakOnDamage = false,
-                BreakOnMove = true,
-                BlockDuplicate = true,
-                CancelDuplicate = true,
-                DuplicateCondition = DuplicateConditions.SameEvent
-            };
-        }
-        else
-        {
-            teleportDoAfter = new DoAfterArgs(EntityManager, user, ent.Comp.TeleportDoAfterTime.Value, new InteractionTeleportDoAfterEvent(), ent, user)
-            {
-                BreakOnDamage = true,
-                DamageThreshold = ent.Comp.DamageThreshold.Value,
-                BreakOnMove = true,
-                BlockDuplicate = true,
-                CancelDuplicate = true,
-                DuplicateCondition = DuplicateConditions.SameEvent
-            };
-        }
+            BreakOnDamage = ent.Comp.DamageThreshold != null,
+            DamageThreshold = ent.Comp.DamageThreshold ?? 0,
+            BreakOnMove = true,
+            BlockDuplicate = true,
+            CancelDuplicate = true,
+            DuplicateCondition = DuplicateConditions.SameEvent
+        };
 
         if (_doAfter.TryStartDoAfter(teleportDoAfter))
         {
