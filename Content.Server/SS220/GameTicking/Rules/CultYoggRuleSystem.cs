@@ -41,8 +41,6 @@ using Content.Shared.SS220.Roles;
 using Content.Shared.SS220.StuckOnEquip;
 using Content.Shared.SS220.Telepathy;
 using Content.Shared.Station.Components;
-using Content.Shared.StatusEffect;
-using Content.Shared.StatusEffectNew;
 using Content.Shared.Zombies;
 using Robust.Server.Player;
 using Robust.Shared.Audio.Systems;
@@ -564,7 +562,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
 
             stageDef.CultistsAmountRequired = count + (int)stage;
 
-            int percentAmount = (int)(rule.Comp.InitialCrewCount * stageDef.CultistsToCrewFraction);
+            int percentAmount = (int)(Shared.FixedPoint.FixedPoint2)(rule.Comp.InitialCrewCount * stageDef.CultistsToCrewFraction);
 
             if (percentAmount <= stageDef.CultistsAmountRequired)
                 continue;
