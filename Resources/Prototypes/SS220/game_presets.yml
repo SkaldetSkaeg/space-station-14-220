@@ -23,6 +23,7 @@
   maxPlayers: 59 # WARNING: this should be always synced with other cult game rules and presets!
   rules:
   - CultYoggRuleMidPop
+  - SleeperAgents
   - BasicRoundstartVariation
   - SubGamemodesRule
   - NoNewCrewAntagsStationEventScheduler
@@ -41,6 +42,7 @@
   minPlayers: 60 # WARNING: this should be always synced with other cult game rules and presets!
   rules:
   - CultYoggRuleHighPop
+  - SleeperAgents
   - BasicRoundstartVariation
   - SubGamemodesRule
   - MeteorSwarmScheduler
