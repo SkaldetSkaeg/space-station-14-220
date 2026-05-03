@@ -24,6 +24,7 @@
   rules:
   - CultYoggRuleMidPop
   - BasicRoundstartVariation
+  - SubModLowTraitorDynamic
   - SubGamemodesRule
   - ModerateAntagEventsTable
   #- NoNewCrewAntagsStationEventScheduler
