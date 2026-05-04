@@ -26,7 +26,6 @@
   - BasicRoundstartVariation
   - SubModLowTraitorDynamic
   - SubGamemodesRule
-  - ModerateAntagEventsTable
   #- NoNewCrewAntagsStationEventScheduler
   - SpaceTrafficControlFriendlyEventScheduler
   - EmergencyShuttleAutoVote
@@ -46,7 +45,8 @@
   - BasicRoundstartVariation
   - SubGamemodesRule
   - MeteorSwarmScheduler
-  - ModerateAntagEventsTable
+  - SubModLowTraitorDynamic
+  - SubGamemodesRule
   #- NoNewCrewAntagsStationEventScheduler
   - SpaceTrafficControlFriendlyEventScheduler
   - EmergencyShuttleAutoVote
