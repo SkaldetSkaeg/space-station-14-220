@@ -562,7 +562,7 @@ public sealed class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComponent>
 
             stageDef.CultistsAmountRequired = count + (int)stage;
 
-            int percentAmount = (int)(Shared.FixedPoint.FixedPoint2)(stageDef.CultistsToCrewFraction * rule.Comp.InitialCrewCount );
+            int percentAmount = (int)(stageDef.CultistsToCrewFraction.Value * rule.Comp.InitialCrewCount);
 
             if (percentAmount <= stageDef.CultistsAmountRequired)
                 continue;
