@@ -37,7 +37,7 @@ public sealed class InteractionTeleportSystem : EntitySystem
             return;
         }
 
-        if (_whitelist.IsBlacklistPass(ent.Comp.UserBlacklist, args.User))
+        if (_whitelist.IsWhitelistPass(ent.Comp.UserBlacklist, args.User))
             return;
 
         var user = args.User;
@@ -71,7 +71,7 @@ public sealed class InteractionTeleportSystem : EntitySystem
             return;
         }
 
-        if (_whitelist.IsBlacklistPass(ent.Comp.UserBlacklist, args.User))
+        if (_whitelist.IsWhitelistPass(ent.Comp.UserBlacklist, args.User))
             return;
 
         TryStartTeleport(ent, args.Dragged, args.User);

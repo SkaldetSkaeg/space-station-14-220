@@ -34,7 +34,7 @@ public sealed class AltVerbTeleportSystem : EntitySystem
             return;
         }
 
-        if (_whitelist.IsBlacklistPass(ent.Comp.UserBlacklist, args.User))
+        if (_whitelist.IsWhitelistPass(ent.Comp.UserBlacklist, args.User))
             return;
 
         TryStartTeleport(ent, args.User);
