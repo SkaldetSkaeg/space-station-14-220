@@ -13,6 +13,8 @@
       soundGunshot: /Audio/SS220/Weapons/Guns/CultYogg/spikegun_shot.ogg
       soundEmpty: null
       fireRate: 5
+      minAngle: 2
+      maxAngle: 15
       angleIncrease: 4
       angleDecay: 14
       selectedMode: FullAuto
@@ -74,6 +76,7 @@
     bodyType: Dynamic
     linearDamping: 0.3
     angularDamping: 0
+  - type: PathologyOnProjectileHit # SS220-add-projectile-wounds
   - type: Projectile
     impactEffect: BulletImpactEffect
     damage:
