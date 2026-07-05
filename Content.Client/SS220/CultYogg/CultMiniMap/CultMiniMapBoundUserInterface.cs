@@ -39,7 +39,7 @@ public sealed class CultMiniMapBoundUserInterface(EntityUid owner, Enum uiKey) :
         {
             case CultMiniMapState st:
                 EntMan.TryGetComponent<TransformComponent>(Owner, out var xform);
-                _menu?.ShowSensors(st.Sensors, Owner, xform?.Coordinates);
+                _menu?.ShowSensors(st.Sensors, Owner, xform?.Coordinates);//ToDo_SS220 rewrite this one
                 break;
         }
     }
