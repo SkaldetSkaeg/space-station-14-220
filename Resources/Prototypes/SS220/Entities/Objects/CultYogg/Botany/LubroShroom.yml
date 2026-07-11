@@ -8,7 +8,7 @@
   components:
   - type: Edible
   - type: Clothing
-    sprite: SS220/Objects/CultYogg/lurbo_shroom.rsi
+    sprite: SS220/Objects/CultYogg/Botany/lurbo_shroom.rsi
     equipSound: /Audio/SS220/CultYogg/lurbo_kill.ogg
     unequipSound: /Audio/SS220/CultYogg/lurbo_unequip.ogg
     soundOnPocketSlot: false
@@ -34,7 +34,7 @@
         - ReagentId: Water
           Quantity: 1
   - type: Sprite
-    sprite: SS220/Objects/CultYogg/lurbo_shroom.rsi
+    sprite: SS220/Objects/CultYogg/Botany/lurbo_shroom.rsi
     state: produce
   - type: Produce
     seedId: LubroShroomSpores
@@ -57,14 +57,14 @@
     - type: Seed
       seedId: LubroShroomSpores
     - type: Sprite
-      sprite: SS220/Objects/CultYogg/lurbo_shroom.rsi
+      sprite: SS220/Objects/CultYogg/Botany/lurbo_shroom.rsi
 
 - type: seed
   id: LubroShroomSpores
   name: seeds-lurbo-shroom-name
   noun: seeds-noun-spores
   displayName: seeds-lurbo-shroom-display-name
-  plantRsi: SS220/Objects/CultYogg/lurbo_shroom.rsi
+  plantRsi: SS220/Objects/CultYogg/Botany/lurbo_shroom.rsi
   packetPrototype: LubroShroomSeeds
   productPrototypes:
     - FoodLubroShroomCult
@@ -105,7 +105,7 @@
         - ReagentId: Water
           Quantity: 1
   - type: Sprite
-    sprite: SS220/Objects/CultYogg/lurbo_shroom_dead.rsi
+    sprite: SS220/Objects/CultYogg/Botany/lurbo_shroom_dead.rsi
     state: icon
   - type: Extractable
     grindableSolutionName: food

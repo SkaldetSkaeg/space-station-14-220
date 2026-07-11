@@ -5,12 +5,12 @@
   description: a hidden mushroom trap for infidels.
   components:
     - type: Sprite
-      sprite: SS220/Objects/CultYogg/miko_trap_shroom.rsi
+      sprite: SS220/Objects/CultYogg/Botany/miko_trap_shroom.rsi
       layers:
       - state: produce
         map: ["base"]
     - type: Item
-      sprite: SS220/Objects/CultYogg/miko_trap_shroom.rsi
+      sprite: SS220/Objects/CultYogg/Botany/miko_trap_shroom.rsi
     - type: Appearance
     - type: GenericVisualizer
       visuals:
@@ -55,14 +55,14 @@
   - type: Seed
     seedId: MikoTrapShroomSpores
   - type: Sprite
-    sprite: SS220/Objects/CultYogg/miko_trap_shroom.rsi
+    sprite: SS220/Objects/CultYogg/Botany/miko_trap_shroom.rsi
 
 - type: seed
   id: MikoTrapShroomSpores
   name: seeds-miko-trap-shroom-name
   noun: seeds-noun-spores
   displayName: seeds-miko-trap-shroom-display-name
-  plantRsi: SS220/Objects/CultYogg/miko_trap_shroom.rsi
+  plantRsi: SS220/Objects/CultYogg/Botany/miko_trap_shroom.rsi
   packetPrototype: MikoTrapShroomSeeds
   productPrototypes:
   - FoodMikoTrapShroomCult

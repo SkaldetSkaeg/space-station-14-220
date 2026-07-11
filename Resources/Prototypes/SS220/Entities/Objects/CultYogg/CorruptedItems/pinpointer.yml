@@ -8,7 +8,7 @@
   suffix: CultYogg, Pinpointer
   components:
   - type: Sprite
-    sprite: SS220/Objects/CultYogg/pinpointer.rsi
+    sprite: SS220/Objects/CultYogg/CorruptedItems/pinpointer.rsi
     layers:
     - state: bug
       map: ["enum.PinpointerLayers.Base"]
@@ -18,7 +18,7 @@
       visible: false
       offset: "-0.0075,0.27125"
   - type: Icon
-    sprite: SS220/Objects/CultYogg/pinpointer.rsi
+    sprite: SS220/Objects/CultYogg/CorruptedItems/pinpointer.rsi
     state: bug
   - type: Pinpointer
     mode: Component

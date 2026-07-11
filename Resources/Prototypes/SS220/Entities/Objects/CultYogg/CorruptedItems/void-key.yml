@@ -7,10 +7,10 @@
   description: Opens portals to the VOID
   components:
   - type: Sprite
-    sprite: SS220/Objects/CultYogg/voidkey.rsi
+    sprite: SS220/Objects/CultYogg/CorruptedItems/voidkey.rsi
     state: icon
   - type: Item
-    sprite: SS220/Objects/CultYogg/voidkey.rsi
+    sprite: SS220/Objects/CultYogg/CorruptedItems/voidkey.rsi
     size: Tiny
   - type: UseDelay
     delay: 10
@@ -59,7 +59,7 @@
   - type: Sprite
     noRot: true
     drawdepth: Ghosts
-    sprite: SS220/Objects/CultYogg/portal.rsi
+    sprite: SS220/Objects/CultYogg/void_portal_enter.rsi
     layers:
     - state: portal_loop
       shader: unshaded
@@ -90,7 +90,7 @@
   - type: Sprite
     noRot: true
     drawdepth: Ghosts
-    sprite: SS220/Objects/CultYogg/portal.rsi
+    sprite: SS220/Objects/CultYogg/void_portal_enter.rsi
     layers:
     - state: portal_open
       shader: unshaded
@@ -107,7 +107,7 @@
   - type: Sprite
     noRot: true
     drawdepth: Ghosts
-    sprite: SS220/Objects/CultYogg/portal.rsi
+    sprite: SS220/Objects/CultYogg/void_portal_enter.rsi
     layers:
     - state: portal_close
       shader: unshaded

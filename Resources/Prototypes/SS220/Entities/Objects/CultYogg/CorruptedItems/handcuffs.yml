@@ -11,9 +11,10 @@
     size: Small
     storedRotation: 90
   - type: Handcuff
-    cuffedRSI: SS220/Objects/CultYogg/cult-handcuffs.rsi
+    cuffedRSI: SS220/Objects/CultYogg/CorruptedItems/handcuffs.rsi
     bodyIconState: body-overlay
 
+#ToDo_SS220 do we need sound?
     #startCuffSound:
     #  path: /Audio/Items/Handcuffs/rope_start.ogg
     #endCuffSound:
@@ -28,7 +29,7 @@
     #Указать нужные звуки, у меня их на руках нет
 
   - type: Sprite
-    sprite: SS220/Objects/CultYogg/cult-handcuffs.rsi
+    sprite: SS220/Objects/CultYogg/CorruptedItems/handcuffs.rsi
     state: handcuff
   - type: Tag
     tags:

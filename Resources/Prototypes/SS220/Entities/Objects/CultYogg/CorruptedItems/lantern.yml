@@ -7,7 +7,7 @@
   suffix: CultYogg
   components:
   - type: Sprite
-    sprite: SS220/Objects/CultYogg/lantern_cult.rsi
+    sprite: SS220/Objects/CultYogg/CorruptedItems/lantern_cult.rsi
     layers:
       - state: lantern
       - state: lantern-on
@@ -15,7 +15,7 @@
         visible: false
         map: [ "light" ]
   - type: Clothing
-    sprite: SS220/Objects/CultYogg/lantern_cult.rsi
+    sprite: SS220/Objects/CultYogg/CorruptedItems/lantern_cult.rsi
     equippedPrefix: off
     quickEquip: false
     slots:
@@ -55,7 +55,7 @@
   components:
   - type: Sprite
     noRot: true
-    sprite: SS220/Objects/CultYogg/light_bulb.rsi
+    sprite: SS220/Objects/CultYogg/CorruptedItems/light_bulb.rsi
     layers:
     - state: bulb_off
       map: [ "enum.ToggleableVisuals.Layer" ]
@@ -94,7 +94,7 @@
   components:
   - type: Sprite
     noRot: true
-    sprite: SS220/Objects/CultYogg/light_tube.rsi
+    sprite: SS220/Objects/CultYogg/CorruptedItems/light_tube.rsi
     layers:
     - state: tube_off
       map: [ "enum.ToggleableVisuals.Layer" ]

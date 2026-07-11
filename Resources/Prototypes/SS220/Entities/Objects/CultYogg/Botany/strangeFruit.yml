@@ -7,7 +7,7 @@
   id: ProductStrangeFruitCultYogg
   components:
   - type: Sprite
-    sprite: SS220/Objects/CultYogg/strangefruit.rsi
+    sprite: SS220/Objects/CultYogg/Botany/strangefruit.rsi
     state: icon
   - type: Produce
     seedId: StrangeFruit
@@ -37,7 +37,7 @@
       - Wall
   components:
     - type: Sprite
-      sprite: SS220/Objects/CultYogg/strange_kudzu.rsi
+      sprite: SS220/Objects/CultYogg/Botany/strange_kudzu.rsi
       state: kudzu_11
       drawdepth: HighFloorObjects
     - type: Clickable
@@ -120,14 +120,14 @@
     - type: Seed
       seedId: StrangeFruit
     - type: Sprite
-      sprite: SS220/Objects/CultYogg/strangefruit.rsi
+      sprite: SS220/Objects/CultYogg/Botany/strangefruit.rsi
 
 - type: seed
   id: StrangeFruit
   name: seeds-strange-fruit-name
   noun: seeds-noun-seeds
   displayName: seeds-strange-fruit-display-name
-  plantRsi: SS220/Objects/CultYogg/strangefruit.rsi
+  plantRsi: SS220/Objects/CultYogg/Botany/strangefruit.rsi
   packetPrototype: CultStrangeFruitSeed
   productPrototypes:
     - ProductStrangeFruitCultYogg
