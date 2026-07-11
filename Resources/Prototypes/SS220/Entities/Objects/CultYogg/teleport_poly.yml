@@ -1,0 +1,26 @@
+# © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
+
+- type: polymorph
+  id: VoidChasmBlank
+  configuration:
+    entity: AfterTeleportedBlank
+    forced: true
+    duration: 2
+    polymorphPopup: null
+    exitPolymorphPopup: null
+
+#attempt to create an appearance effect
+- type: entity
+  id: AfterTeleportedBlank
+  suffix: CultYogg
+  components:
+  - type: Eye
+  - type: ContentEye
+  - type: CameraRecoil
+  - type: MindContainer
+  - type: Spectral
+  - type: FTLSmashImmune
+  - type: CargoSellBlacklist
+  - type: TriggerOnSpawn
+  - type: SpawnOnTrigger
+    proto: VoidPortalExit
