@@ -304,7 +304,7 @@ public abstract partial class SharedMiGoSystem : EntitySystem
             return false;
         }
 
-        if (!_mobState.IsAlive(target))
+        if (_mobState.IsDead(target))
         {
             reason = Loc.GetString("cult-yogg-enslave-must-be-alive");
             return false;
