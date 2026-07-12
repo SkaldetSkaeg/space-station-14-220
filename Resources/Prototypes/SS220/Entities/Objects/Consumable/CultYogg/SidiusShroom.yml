@@ -12,15 +12,16 @@
   - type: SolutionContainerManager
     solutions:
       food:
-        maxVol: 30.0
+        maxVol: 100.0
         reagents:
         - ReagentId: Nutriment
-          Quantity: 15
+          Quantity: 50
         - ReagentId: Water
-          Quantity: 15
+          Quantity: 50
   - type: Sprite
     sprite: SS220/Objects/CultYogg/Botany/sidious_shroom.rsi
     state: produce
+    scale: 0.7, 0.7
   - type: Produce
     seedId: SidiousShroomSpores
   - type: Extractable

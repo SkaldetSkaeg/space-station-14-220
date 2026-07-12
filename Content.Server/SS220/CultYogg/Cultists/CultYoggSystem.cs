@@ -159,8 +159,7 @@ public sealed partial class CultYoggSystem : SharedCultYoggSystem
         var currentHunger = _hungerSystem.GetHunger(hungerComp);
         if (currentHunger <= ent.Comp.HungerCost || hungerComp.CurrentThreshold == ent.Comp.MinHungerThreshold)
         {
-            _popup.PopupEntity(Loc.GetString("cult-yogg-digest-no-nutritions"), ent);
-            //_popup.PopupClient(Loc.GetString("cult-yogg-digest-no-nutritions"), ent, ent);//idk if it isn't working, but OnSericultureStart is an ok
+            _popup.PopupClient(Loc.GetString("cult-yogg-digest-no-nutritions"), ent, ent);
             return;
         }
 
