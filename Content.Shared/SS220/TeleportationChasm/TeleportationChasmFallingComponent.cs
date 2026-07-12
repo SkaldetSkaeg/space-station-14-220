@@ -15,7 +15,7 @@ public sealed partial class TeleportationChasmFallingComponent : Component
     /// <summary>
     ///     Entity that send us falling and will teleport us.
     /// </summary>
-    public Entity<TeleportationChasmComponent>? ChasmEnt;
+    public EntityUid? ChasmEnt;
 
     /// <summary>
     ///     Time it should take for the falling animation (scaling down) to complete.
