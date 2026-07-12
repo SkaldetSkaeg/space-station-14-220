@@ -6,7 +6,7 @@ using Content.Shared.SS220.Teleport;
 
 namespace Content.Server.SS220.Teleport.Systems;
 
-public sealed partial class SpawnBeforeTeleportSystem : EntitySystem
+public sealed partial class PolymorphTeleportedSystem : EntitySystem
 {
     [Dependency] private PolymorphSystem _polymorphSystem = default!;
 
