@@ -8,7 +8,7 @@
   description: description
   components:
   - type: CultYoggWeapon
-    item: CultYoggCocoonBeach
+    item: CocoonBeach
   - type: Sprite
     sprite: SS220/Objects/Weapons/Melee/CultYogg/beach.rsi
     state: icon

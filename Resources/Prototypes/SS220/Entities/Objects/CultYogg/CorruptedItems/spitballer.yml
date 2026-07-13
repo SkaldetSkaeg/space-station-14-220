@@ -7,7 +7,7 @@
   suffix: CultYogg
   components:
     - type: CultYoggWeapon
-      item: CultYoggCocoonSpitballer
+      item: CocoonSpitballer
     - type: Gun
       soundGunshot: /Audio/SS220/Weapons/Guns/CultYogg/spitballer_shot.ogg
       soundEmpty: null

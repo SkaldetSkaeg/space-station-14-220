@@ -1,7 +1,6 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
 using Content.Shared.Body.Systems;
-using Content.Shared.Damage;
 using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Systems;
 using Content.Shared.Mobs;
@@ -9,9 +8,7 @@ using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Popups;
 using Content.Shared.SS220.Pathology;
-using Lidgren.Network;
 using Robust.Shared.Timing;
-using System.Security.Cryptography;
 
 namespace Content.Shared.SS220.CultYogg.MiGo;
 
@@ -99,7 +96,6 @@ public abstract partial class SharedCultYoggHealSystem : EntitySystem
                     _pathology.TryChangePathologyStack(ent.Owner, key, ent.Comp.StackChange);
             }
         }
-
 
         if (!_mobState.IsDead(ent, mobComp))
             return;

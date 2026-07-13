@@ -7,7 +7,7 @@
   suffix: CultYogg
   components:
   - type: CultYoggWeapon
-    item: CultYoggCocoonSedativeSting
+    item: CocoonSedativeSting
   - type: Sprite
     sprite: SS220/Objects/Weapons/Melee/CultYogg/sedativesting.rsi
     state: icon

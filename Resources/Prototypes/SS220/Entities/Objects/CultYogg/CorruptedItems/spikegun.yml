@@ -7,7 +7,7 @@
   suffix: CultYogg
   components:
     - type: CultYoggWeapon
-      item: CultYoggCocoonSpikegun
+      item: CocoonSpikegun
     - type: AmmoCounter
     - type: Gun
       soundGunshot: /Audio/SS220/Weapons/Guns/CultYogg/spikegun_shot.ogg

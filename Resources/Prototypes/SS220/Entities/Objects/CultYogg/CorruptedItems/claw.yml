@@ -8,7 +8,7 @@
   description: description
   components:
   - type: CultYoggWeapon
-    item: CultYoggCocoonClaw
+    item: CocoonClaw
   - type: Sprite
     sprite: SS220/Objects/Weapons/Melee/CultYogg/claw.rsi
     state: icon

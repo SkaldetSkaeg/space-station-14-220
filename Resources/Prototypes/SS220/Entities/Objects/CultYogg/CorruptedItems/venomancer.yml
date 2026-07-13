@@ -7,7 +7,7 @@
   id: Venomancer
   components:
   - type: CultYoggWeapon
-    item: CultYoggCocoonVenomancer
+    item: CocoonVenomancer
   - type: AmmoCounter
   - type: Gun
     soundGunshot: /Audio/Weapons/Xeno/alien_spitacid.ogg
