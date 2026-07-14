@@ -141,7 +141,7 @@ public sealed partial class CultYoggSystem : SharedCultYoggSystem
 
         args.Handled = true;
 
-        _vomitSystem.Vomit(ent);
+        //_vomitSystem.Vomit(ent);//for experement
         Spawn(ent.Comp.PukedEntity, Transform(ent).Coordinates);
 
         _actions.RemoveAction(ent.Owner, ent.Comp.PukeShroomActionEntity);
