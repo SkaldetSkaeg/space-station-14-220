@@ -16,7 +16,7 @@
   frame: CultYoggBuildingFrame
   result: CultYoggPod
   materials:
-  - stack: CableHVlive
+  - stack: LivingRootsStack
     count: 5
     icon: { sprite: SS220/Interface/Materials/material_icons_16.rsi, state: coilhv}
   - stack: Tokl
@@ -29,11 +29,8 @@
   frame: CultYoggBuildingFrame
   result: CultYoggFungusHydroponic
   materials:
-  - stack: CableMVlive
-    count: 5
-    icon: { sprite: SS220/Interface/Materials/material_icons_16.rsi, state: coilmv}
-  - stack: CableHVlive
-    count: 5
+  - stack: LivingRootsStack
+    count: 10
     icon: { sprite: SS220/Interface/Materials/material_icons_16.rsi, state: coilhv}
   - stack: Tokl
     count: 10
@@ -45,12 +42,9 @@
   frame: CultYoggBuildingFrame
   result: CultYoggAltar
   materials:
-  - stack: CableMVlive
+  - stack: LivingRootsStack
     count: 10
     icon: { sprite: SS220/Interface/Materials/material_icons_16.rsi, state: coilmv}
-  - stack: Cablelive
-    count: 10
-    icon: { sprite: SS220/Interface/Materials/material_icons_16.rsi, state: coillv}
   - stack: Tokl
     count: 10
     icon: { sprite: SS220/Interface/Materials/material_icons_16.rsi, state: tokl}
@@ -62,10 +56,7 @@
   frame: CultYoggBuildingFrame
   result: CultYoggPond
   materials:
-  - stack: Cablelive
-    count: 5
-    icon: { sprite: SS220/Interface/Materials/material_icons_16.rsi, state: coillv}
-  - stack: CableHVlive
+  - stack: LivingRootsStack
     count: 5
     icon: { sprite: SS220/Interface/Materials/material_icons_16.rsi, state: coilhv}
   - stack: Tokl
@@ -83,10 +74,7 @@
   frame: CultYoggBuildingFrame
   result: VoidTeleportEnter
   materials:
-  - stack: CableMVlive
-    count: 2
-    icon: { sprite: SS220/Interface/Materials/material_icons_16.rsi, state: coilmv}
-  - stack: CableHVlive
+  - stack: LivingRootsStack
     count: 7
     icon: { sprite: SS220/Interface/Materials/material_icons_16.rsi, state: coilhv}
   - stack: Tokl

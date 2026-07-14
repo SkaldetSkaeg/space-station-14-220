@@ -94,21 +94,21 @@
   id: CableHVlive
   from:
     stackType: CableHV
-  result: CableHVStack1Live
+  result: LivingRootsStack1
   corruptionReverseEffect: ExorcismUncorruptEffect
 
 - type: corrupted
   id: CableMVlive
   from:
     stackType: CableMV
-  result: CableMVStack1Live
+  result: LivingRootsStack1
   corruptionReverseEffect: ExorcismUncorruptEffect
 
 - type: corrupted
   id: Cablelive
   from:
     stackType: Cable
-  result: CableApcStack1Live
+  result: LivingRootsStack1
 #Resources end
 
 - type: corrupted
