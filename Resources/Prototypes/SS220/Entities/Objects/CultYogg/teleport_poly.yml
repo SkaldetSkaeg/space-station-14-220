@@ -22,6 +22,6 @@
   - type: Spectral
   - type: FTLSmashImmune
   - type: CargoSellBlacklist
-  - type: TriggerOnSpawn
-  - type: SpawnOnTrigger
-    proto: VoidPortalExit
+  - type: ConditionalSpawner
+    prototypes:
+    - VoidPortalExit
