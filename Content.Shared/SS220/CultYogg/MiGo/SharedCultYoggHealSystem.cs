@@ -93,7 +93,7 @@ public abstract partial class SharedCultYoggHealSystem : EntitySystem
             foreach (var (key, _) in pathologyHolder.ActivePathologies)
             {
                 if (!_pathology.TryRemovePathology(ent.Owner, key))
-                    _pathology.TryChangePathologyStack(ent.Owner, key, ent.Comp.StackChange);
+                    _pathology.TryChangePathologyStack(ent.Owner, key, ent.Comp.PathologiesChangeAmount);
             }
         }
 

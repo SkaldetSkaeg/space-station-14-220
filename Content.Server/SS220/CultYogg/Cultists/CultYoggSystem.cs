@@ -26,7 +26,7 @@ namespace Content.Server.SS220.CultYogg.Cultists;
 public sealed partial class CultYoggSystem : SharedCultYoggSystem
 {
     [Dependency] private SharedActionsSystem _actions = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
     [Dependency] private GibbingSystem _gibbing = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private IGameTiming _timing = default!;

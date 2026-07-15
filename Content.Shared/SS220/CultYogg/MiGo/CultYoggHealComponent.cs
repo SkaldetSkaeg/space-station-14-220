@@ -39,7 +39,7 @@ public sealed partial class CultYoggHealComponent : Component
     /// Amount of pathologies from surgery that will be removed per healing tick.
     /// </summary>
     [DataField]
-    public int StackChange = -1;
+    public int PathologiesChangeAmount = -1;
 
     /// <summary>
     /// Time between each healing incident

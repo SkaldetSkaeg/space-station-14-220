@@ -12,4 +12,4 @@
     - state: portal
       shader: unshaded
   - type: TimedDespawn
-    lifetime: 3.3 #0.1 sec to handle despawn
+    lifetime: 3.3 #additional 0.1 sec to handle despawn
