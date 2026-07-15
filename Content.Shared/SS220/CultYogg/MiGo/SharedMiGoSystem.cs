@@ -19,6 +19,7 @@ using Content.Shared.SS220.CultYogg.Buildings;
 using Content.Shared.SS220.CultYogg.Cultists;
 using Content.Shared.SS220.CultYogg.Rave;
 using Content.Shared.SS220.CultYogg.Sacrificials;
+using Content.Shared.SS220.Teleport;
 using Content.Shared.Verbs;
 using Content.Shared.Zombies;
 using Robust.Shared.Audio.Systems;
@@ -60,6 +61,8 @@ public abstract partial class SharedMiGoSystem : EntitySystem
         SubscribeLocalEvent<MiGoComponent, MiGoEnslavementActionEvent>(OnMiGoEnslaveAction);
 
         SubscribeLocalEvent<MiGoComponent, BoundUIOpenedEvent>(OnBoundUIOpened);
+
+        SubscribeLocalEvent<MiGoComponent, AfterTeleportedEvent>(OnAfterTeleported);
 
         SubscribeLocalEvent<GetVerbsEvent<Verb>>(OnGetVerb);
 
@@ -177,13 +180,30 @@ public abstract partial class SharedMiGoSystem : EntitySystem
     #endregion
 
     #region Erect
-    private void MiGoErectAction(Entity<MiGoComponent> entity, ref MiGoErectActionEvent args)
+    private void MiGoErectAction(Entity<MiGoComponent> ent, ref MiGoErectActionEvent args)
     {
         //will wait when sw will update ui parts to copy paste, cause rn it has an errors
-        if (args.Handled || !TryComp<ActorComponent>(entity, out var actor))
+        if (args.Handled || !TryComp<ActorComponent>(ent, out var actor))
             return;
 
-        _miGoErectSystem.OpenUI(entity, actor);
+        EntityUid? currentGrid = Transform(ent).GridUid;
+
+        if (currentGrid != null)
+        {
+            var name = MetaData(currentGrid.Value).EntityName;
+            if (name != null && ent.Comp.BlockedGrids.Contains(name))
+            {
+                _popup.PopupClient(Loc.GetString("cult-yogg-cant-buid-in-astral"), ent, ent);
+                return;
+            }
+        }
+
+        _miGoErectSystem.OpenUI(ent, actor);
+    }
+
+    private void OnAfterTeleported(Entity<MiGoComponent> ent, ref AfterTeleportedEvent args)
+    {
+        _userInterfaceSystem.CloseUis(ent.Owner);
     }
     #endregion
 

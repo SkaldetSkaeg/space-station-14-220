@@ -59,6 +59,9 @@ public sealed partial class TeleportationChasmSystem : SharedTeleportationChasmS
 
                 var ev = new TargetTeleportedEvent(ent);
                 RaiseLocalEvent(teleporter, ref ev);
+
+                var targetEv = new TargetTeleportedEvent(teleporter);
+                RaiseLocalEvent(ent, ref targetEv);
             }
 
             RemComp<TeleportationChasmFallingComponent>(ent);

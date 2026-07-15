@@ -8,7 +8,6 @@ using Content.Shared.Body;
 using Content.Shared.Cloning.Events;
 using Content.Shared.Gibbing;
 using Content.Shared.Humanoid;
-using Content.Shared.Medical;
 using Content.Shared.Mind;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
@@ -35,7 +34,6 @@ public sealed partial class CultYoggSystem : SharedCultYoggSystem
     [Dependency] private HungerSystem _hungerSystem = default!;
     [Dependency] private SharedStuckOnEquipSystem _stuckOnEquip = default!;
     [Dependency] private ThirstSystem _thirstSystem = default!;
-    [Dependency] private VomitSystem _vomitSystem = default!;
     [Dependency] private CultYoggRuleSystem _cultRuleSystem = default!;
     [Dependency] private IChatManager _chatManager = default!;
 
@@ -165,7 +163,7 @@ public sealed partial class CultYoggSystem : SharedCultYoggSystem
 
         if (thirstComp.CurrentThirst <= ent.Comp.ThirstCost || thirstComp.CurrentThirstThreshold == ent.Comp.MinThirstThreshold)
         {
-            _popup.PopupEntity(Loc.GetString("cult-yogg-digest-no-water"), ent);
+            _popup.PopupClient(Loc.GetString("cult-yogg-digest-no-water"), ent, ent);
             return;
         }
 
@@ -193,7 +191,6 @@ public sealed partial class CultYoggSystem : SharedCultYoggSystem
         // Get original body position and spawn MiGo here
         var migo = SpawnAtPosition(ent.Comp.AscendedEntity, Transform(ent).Coordinates);
 
-
         if (_mind.TryGetMind(ent, out var mindId, out var mind))
             _mind.TransferTo(mindId, migo, mind: mind);// Move the mind if there is one and it's supposed to be transferred
 
@@ -212,15 +209,11 @@ public sealed partial class CultYoggSystem : SharedCultYoggSystem
     }
 
     public void StartAscension(EntityUid ent)
-    { //idk if it is canser or no, will be like that for a time
+    {
+        //idk if it is canser or no, will be like that for a time
         if (HasComp<AcsendingComponent>(ent))
             return;
 
-        if (!NoAcsendingCultists())//to prevent becaming MiGo at the same time
-        {
-            _popup.PopupEntity(Loc.GetString("cult-yogg-acsending-have-acsending"), ent, ent);
-            return;
-        }
         _popup.PopupEntity(Loc.GetString("cult-yogg-acsending-started"), ent, ent);
         EnsureComp<AcsendingComponent>(ent);
     }
@@ -236,16 +229,6 @@ public sealed partial class CultYoggSystem : SharedCultYoggSystem
             _popup.PopupEntity(Loc.GetString("cult-yogg-dropped-items"), ent, ent);//and now i dont see any :(
 
         Dirty(ent, ent.Comp);
-    }
-
-    private bool NoAcsendingCultists()//if anybody else is acsending
-    {
-        var query = EntityQueryEnumerator<AcsendingComponent>();
-        while (query.MoveNext(out _, out _))
-        {
-            return false;
-        }
-        return true;
     }
     #endregion
 

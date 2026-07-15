@@ -18,7 +18,7 @@ public sealed partial class InteractionTeleportDoAfterEvent : SimpleDoAfterEvent
 public record struct BeforeTeleportTargetEvent(EntityUid Target, EntityUid User);
 
 /// <summary>
-///     Sends information about the completed interaction to other teleport components, which are supposed to perform the teleportation
+///     Sends information about the completed interaction to other teleport components, which are supposed to perform the teleportation.
 ///     Raised on teleporter entity.
 /// </summary>
 /// <param name="Target">The entity that is currently teleporting</param>

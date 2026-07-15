@@ -73,9 +73,8 @@
     damageThreshold: 7
     userWhitelist:
       components:
-      - HumanoidProfile
       - CultYogg
-      requireAll: true
+      - MiGo
   - type: RandomTeleport
     targetsComponent: "RandomTeleportTarget"
     whitelist:
