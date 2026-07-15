@@ -140,7 +140,6 @@ public sealed partial class CultYoggSystem : SharedCultYoggSystem
 
         args.Handled = true;
 
-        //_vomitSystem.Vomit(ent);//ToDo_SS22 for experement, cause hunger, vomit, speed
         _audio.PlayPvs(ent.Comp.VomitSound, ent);
 
         Spawn(ent.Comp.PukedEntity, Transform(ent).Coordinates);
