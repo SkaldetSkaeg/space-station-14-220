@@ -27,7 +27,7 @@ public record struct BeforeTeleportTargetEvent(EntityUid Target, EntityUid User)
 public record struct TeleportTargetEvent(EntityUid Target, EntityUid User);
 
 /// <summary>
-///     Sends information to the teleporter itself that the target entity has been teleported for further postinteractions
+///     Sends information to the teleporter itself that the target entity has been teleported for further postinteractions.
 /// </summary>
 /// <param name="Target">The entity that was teleported</param>
 [ByRefEvent, Serializable]

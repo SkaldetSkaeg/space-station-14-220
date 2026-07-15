@@ -17,7 +17,7 @@ cult-yogg-teleport-must-be-cultist = Цель телепорта должна п
 cult-yogg-teleport-out-of-range = Цель телепорта вне пределах досягаемости
 cult-yogg-teleport-cooldown = Телепорт будет доступен через {$time} сек
 
-cult-yogg-cant-buid-in-astral = Вы не можете здесь строить
+cult-yogg-cant-buid-on-grid = Вы не можете здесь строить
 
 cult-yogg-heal-verb = [italic]Исцелить[/italic]
 cult-yogg-heal-only-cultists = Оболочка не принадлежит культу

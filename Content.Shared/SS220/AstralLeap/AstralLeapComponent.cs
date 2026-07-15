@@ -27,4 +27,10 @@ public sealed partial class AstralLeapComponent : Component
     /// </summary>
     [DataField(required: true)]
     public ProtoId<PolymorphPrototype> AstralEnt;
+
+    /// <summary>
+    /// Grids where astral leap is blocked
+    /// <summary>
+    [DataField]
+    public string[] BlockedGrids = ["The Void"];
 }

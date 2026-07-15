@@ -193,7 +193,7 @@ public abstract partial class SharedMiGoSystem : EntitySystem
             var name = MetaData(currentGrid.Value).EntityName;
             if (name != null && ent.Comp.BlockedGrids.Contains(name))
             {
-                _popup.PopupClient(Loc.GetString("cult-yogg-cant-buid-in-astral"), ent, ent);
+                _popup.PopupClient(Loc.GetString("cult-yogg-cant-buid-on-grid"), ent, ent);
                 return;
             }
         }
