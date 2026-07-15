@@ -1,12 +1,13 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
+using Content.Server.Chat.Managers;
 using Content.Server.SS220.Bed.Cryostorage;
 using Content.Server.SS220.GameTicking.Rules;
 using Content.Shared.Actions;
-using Content.Server.Chat.Managers;
+using Content.Shared.Body;
 using Content.Shared.Cloning.Events;
+using Content.Shared.Gibbing;
 using Content.Shared.Humanoid;
-using Content.Shared.Humanoid.Markings;
 using Content.Shared.Medical;
 using Content.Shared.Mind;
 using Content.Shared.Mobs;
@@ -17,11 +18,8 @@ using Content.Shared.Popups;
 using Content.Shared.SS220.CultYogg.Cultists;
 using Content.Shared.SS220.EntityEffects.Events;
 using Content.Shared.SS220.StuckOnEquip;
-using Robust.Shared.Prototypes;
+using Robust.Shared.Audio.Systems;
 using Robust.Shared.Timing;
-using Content.Shared.Body;
-using Content.Shared.Gibbing;
-using Content.Server.Body;
 using Robust.Shared.Utility;
 
 namespace Content.Server.SS220.CultYogg.Cultists;
@@ -29,6 +27,7 @@ namespace Content.Server.SS220.CultYogg.Cultists;
 public sealed partial class CultYoggSystem : SharedCultYoggSystem
 {
     [Dependency] private SharedActionsSystem _actions = default!;
+    [Dependency] private readonly SharedAudioSystem _audio = default!;
     [Dependency] private GibbingSystem _gibbing = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private IGameTiming _timing = default!;
@@ -141,7 +140,9 @@ public sealed partial class CultYoggSystem : SharedCultYoggSystem
 
         args.Handled = true;
 
-        //_vomitSystem.Vomit(ent);//for experement
+        //_vomitSystem.Vomit(ent);//ToDo_SS22 for experement, cause hunger, vomit, speed
+        _audio.PlayPvs(ent.Comp.VomitSound, ent);
+
         Spawn(ent.Comp.PukedEntity, Transform(ent).Coordinates);
 
         _actions.RemoveAction(ent.Owner, ent.Comp.PukeShroomActionEntity);
