@@ -4,6 +4,7 @@ using Content.Shared.Actions;
 using Content.Shared.DoAfter;
 using Content.Shared.Polymorph;
 using Content.Shared.Popups;
+using Content.Shared.Whitelist;
 
 namespace Content.Shared.SS220.AstralLeap;
 
@@ -12,6 +13,7 @@ public sealed partial class AstralLeapSystem : EntitySystem
     [Dependency] private SharedActionsSystem _actions = default!;
     [Dependency] private SharedDoAfterSystem _doAfter = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private EntityWhitelistSystem _whitelist = default!;
 
     public override void Initialize()
     {
@@ -40,14 +42,10 @@ public sealed partial class AstralLeapSystem : EntitySystem
     {
         EntityUid? currentGrid = Transform(ent).GridUid;
 
-        if (currentGrid != null)
+        if (ent.Comp.GridsBlacklist != null && _whitelist.IsValid(ent.Comp.GridsBlacklist, currentGrid))
         {
-            var name = MetaData(currentGrid.Value).EntityName;
-            if (name != null && ent.Comp.BlockedGrids.Contains(name))
-            {
-                _popup.PopupClient(Loc.GetString("astral-grid-blocked"), ent, ent);
-                return;
-            }
+            _popup.PopupClient(Loc.GetString("astral-grid-blocked"), ent, ent);
+            return;
         }
 
         if (ent.Comp.AstralLeapDoAfterTime is null)

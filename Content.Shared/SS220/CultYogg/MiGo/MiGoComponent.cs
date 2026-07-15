@@ -109,7 +109,8 @@ public sealed partial class MiGoComponent : Component
     /// <summary>
     /// Grids where construction is blocked
     /// <summary>
-    public string[] BlockedGrids = ["The Void"];
+    [DataField]
+    public EntityWhitelist? ConstructionGridsBlacklist;
     #endregion
 
     /// <summary>

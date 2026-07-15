@@ -21,6 +21,7 @@ using Content.Shared.SS220.CultYogg.Rave;
 using Content.Shared.SS220.CultYogg.Sacrificials;
 using Content.Shared.SS220.Teleport;
 using Content.Shared.Verbs;
+using Content.Shared.Whitelist;
 using Content.Shared.Zombies;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Network;
@@ -47,6 +48,7 @@ public abstract partial class SharedMiGoSystem : EntitySystem
     [Dependency] private SharedMindSystem _mind = default!;
     [Dependency] private EntityLookupSystem _entityLookup = default!;
     [Dependency] private ISharedAdminLogManager _adminLogger = default!;
+    [Dependency] private EntityWhitelistSystem _whitelist = default!;
 
     public override void Initialize()
     {
@@ -188,14 +190,10 @@ public abstract partial class SharedMiGoSystem : EntitySystem
 
         EntityUid? currentGrid = Transform(ent).GridUid;
 
-        if (currentGrid != null)
+        if (ent.Comp.ConstructionGridsBlacklist != null && _whitelist.IsValid(ent.Comp.ConstructionGridsBlacklist, currentGrid))
         {
-            var name = MetaData(currentGrid.Value).EntityName;
-            if (name != null && ent.Comp.BlockedGrids.Contains(name))
-            {
-                _popup.PopupClient(Loc.GetString("cult-yogg-cant-buid-on-grid"), ent, ent);
-                return;
-            }
+            _popup.PopupClient(Loc.GetString("cult-yogg-cant-buid-on-grid"), ent, ent);
+            return;
         }
 
         _miGoErectSystem.OpenUI(ent, actor);

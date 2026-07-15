@@ -1,6 +1,7 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
 using Content.Shared.Polymorph;
+using Content.Shared.Whitelist;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 
@@ -32,5 +33,5 @@ public sealed partial class AstralLeapComponent : Component
     /// Grids where astral leap is blocked
     /// <summary>
     [DataField]
-    public string[] BlockedGrids = ["The Void"];
+    public EntityWhitelist? GridsBlacklist;
 }
