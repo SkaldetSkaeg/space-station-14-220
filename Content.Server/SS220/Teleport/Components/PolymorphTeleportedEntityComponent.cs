@@ -9,7 +9,7 @@ namespace Content.Server.SS220.Teleport.Components;
 ///     Polymorph teleported entity after its being teleported
 /// </summary>
 [RegisterComponent]
-public sealed partial class PolymorphTeleportedComponent : Component
+public sealed partial class PolymorphTeleportedEntityComponent : Component
 {
     /// <summary>
     ///     The entity we polymorph into
