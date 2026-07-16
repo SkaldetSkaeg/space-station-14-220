@@ -41,6 +41,8 @@
     whitelist:
       tags:
       - VoidTeleporationTarget
+  - type: PolymorphTeleported
+    polymorphEnt: VoidKeyCameraPoly
   - type: DeleteOnTeleported
     deleteSound:
       path: /Audio/Effects/glass_smash.ogg
@@ -80,6 +82,8 @@
     whitelist:
       tags:
       - VoidTeleporationTarget
+  - type: PolymorphTeleported
+    polymorphEnt: VoidKeyCameraPoly
 
 #Animation entities for a better immersions
 - type: entity

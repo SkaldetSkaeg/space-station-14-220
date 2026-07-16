@@ -5,5 +5,5 @@ ent-VoidPortalSpawn = Портал в бездну
 ent-VoidPortalClosed = Портал в бездну
     .desc = Нестабильный разрыв на ткани мироздания. Он вот-вот закроется.
 
-ent-VoidPortalExit = Разрыв в бездну
+ent-VoidPortalChasmExit = Разрыв в бездну
     .desc = Нестабильный разрыв на ткани мироздания.

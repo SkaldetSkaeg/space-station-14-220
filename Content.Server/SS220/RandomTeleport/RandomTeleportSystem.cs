@@ -37,7 +37,7 @@ public sealed partial class RandomTeleportSystem : EntitySystem
         var ev = new TargetTeleportedEvent(args.Target);
         RaiseLocalEvent(ent, ref ev);
 
-        var targetEv = new TargetTeleportedEvent(ent);
+        var targetEv = new AfterTeleportedEvent(ent);
         RaiseLocalEvent(args.Target, ref targetEv);
     }
 
