@@ -29,28 +29,21 @@ public sealed partial class TeleportationChasmSystem : SharedTeleportationChasmS
     {
         base.Update(frameTime);
 
-        List<Entity<TeleportationChasmFallingComponent>> toTeleport = [];
-
         var query = EntityQueryEnumerator<TeleportationChasmFallingComponent>();
-        while (query.MoveNext(out var uid, out var chasmFalling))
+        while (query.MoveNext(out var ent, out var chasmFalling))
         {
             if (_timing.CurTime < chasmFalling.NextTeleportationTime)
                 continue;
 
             if (chasmFalling.ShouldBeDeleted)
             {
-                QueueDel(uid);
+                QueueDel(ent);
                 continue;
             }
 
-            toTeleport.Add((uid, chasmFalling));
-        }
-
-        foreach (var ent in toTeleport)
-        {
-            if (ent.Comp.ChasmEnt != null)
+            if (chasmFalling.ChasmEnt != null)
             {
-                var teleporter = ent.Comp.ChasmEnt.Value;
+                var teleporter = chasmFalling.ChasmEnt.Value;
 
                 var beforeEv = new BeforeTeleportTargetEvent(ent, ent);
                 RaiseLocalEvent(teleporter, ref beforeEv);
@@ -64,7 +57,7 @@ public sealed partial class TeleportationChasmSystem : SharedTeleportationChasmS
                 RaiseLocalEvent(ent, ref targetEv);
             }
 
-            RemComp<TeleportationChasmFallingComponent>(ent);
+            RemCompDeferred<TeleportationChasmFallingComponent>(ent);
             _blocker.UpdateCanMove(ent);
         }
     }
