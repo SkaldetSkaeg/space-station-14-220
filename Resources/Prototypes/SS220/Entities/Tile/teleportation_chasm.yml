@@ -14,7 +14,7 @@
       components:
       - Explosive
       - ProjectileGrenade
-  - type: PolymorphTeleported
+  - type: PolymorphTeleportedEntity
     polymorphEnt: VoidChasmCameraPoly
   - type: StepTrigger
     requiredTriggeredSpeed: 0
