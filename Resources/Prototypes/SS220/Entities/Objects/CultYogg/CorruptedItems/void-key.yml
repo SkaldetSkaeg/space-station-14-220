@@ -41,7 +41,7 @@
     whitelist:
       tags:
       - VoidTeleporationTarget
-  - type: PolymorphTeleportedEntity
+  - type: PolymorphTeleportTarget
     polymorphEnt: VoidKeyCameraPoly
   - type: DeleteOnTeleported
     deleteSound:
@@ -82,7 +82,7 @@
     whitelist:
       tags:
       - VoidTeleporationTarget
-  - type: PolymorphTeleportedEntity
+  - type: PolymorphTeleportTarget
     polymorphEnt: VoidKeyCameraPoly
 
 #Animation entities for a better immersions
