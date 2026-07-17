@@ -20,6 +20,8 @@ public sealed partial class TeleportationChasmSystem : SharedTeleportationChasmS
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private SharedStationSystem _station = default!;
 
+    private List<Entity<TeleportationChasmFallingComponent>> _toTeleport = [];
+
     public override void Initialize()
     {
         base.Initialize();
@@ -28,8 +30,6 @@ public sealed partial class TeleportationChasmSystem : SharedTeleportationChasmS
     public override void Update(float frameTime)//we cant teleport in shared, cause wierd shit happened
     {
         base.Update(frameTime);
-
-        List<Entity<TeleportationChasmFallingComponent>> toTeleport = [];
 
         var query = EntityQueryEnumerator<TeleportationChasmFallingComponent>();
         while (query.MoveNext(out var uid, out var chasmFalling))
@@ -43,10 +43,10 @@ public sealed partial class TeleportationChasmSystem : SharedTeleportationChasmS
                 continue;
             }
 
-            toTeleport.Add((uid, chasmFalling));
+            _toTeleport.Add((uid, chasmFalling));
         }
 
-        foreach (var ent in toTeleport)
+        foreach (var ent in _toTeleport)
         {
             if (ent.Comp.ChasmEnt != null)
             {
@@ -67,6 +67,8 @@ public sealed partial class TeleportationChasmSystem : SharedTeleportationChasmS
             RemComp<TeleportationChasmFallingComponent>(ent);
             _blocker.UpdateCanMove(ent);
         }
+
+        _toTeleport.Clear();
     }
 
     private void TeleportToRandomLocation(EntityUid ent)
