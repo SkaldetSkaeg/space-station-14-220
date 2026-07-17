@@ -20,7 +20,7 @@ public sealed partial class TeleportationChasmSystem : SharedTeleportationChasmS
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private SharedStationSystem _station = default!;
 
-    private List<Entity<TeleportationChasmFallingComponent>> _toTeleport = [];
+    private List<Entity<TeleportationChasmFallingComponent>> _toTeleportBuffer = [];
 
     public override void Initialize()
     {
@@ -43,10 +43,10 @@ public sealed partial class TeleportationChasmSystem : SharedTeleportationChasmS
                 continue;
             }
 
-            _toTeleport.Add((uid, chasmFalling));
+            _toTeleportBuffer.Add((uid, chasmFalling));
         }
 
-        foreach (var ent in _toTeleport)
+        foreach (var ent in _toTeleportBuffer)
         {
             if (ent.Comp.ChasmEnt != null)
             {
@@ -68,7 +68,7 @@ public sealed partial class TeleportationChasmSystem : SharedTeleportationChasmS
             _blocker.UpdateCanMove(ent);
         }
 
-        _toTeleport.Clear();
+        _toTeleportBuffer.Clear();
     }
 
     private void TeleportToRandomLocation(EntityUid ent)
