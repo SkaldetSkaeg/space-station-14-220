@@ -8,7 +8,10 @@
     },
     "states": [
         {
-            "name": "portal_gate",
+            "name": "base"
+        },
+        {
+            "name": "light",
             "delays": [
                 [
                     0.1,

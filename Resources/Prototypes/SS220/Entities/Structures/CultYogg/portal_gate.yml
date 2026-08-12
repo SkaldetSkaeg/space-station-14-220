@@ -9,7 +9,7 @@
   - type: Clickable
   - type: PointLight
     radius: 3.0
-    energy: 4.5
+    energy: 1.5
     color: "#9dc8c8"
   - type: Physics
     bodyType: Static
@@ -25,6 +25,8 @@
   - type: Sprite
     sprite: SS220/Structures/CultYogg/void_portal_gate.rsi
     layers:
-    - state: portal_gate
+    - state: base
+    - state: light
+      shader: unshaded
     drawdepth: Overdoors
     offset: "0.0,0.5"
