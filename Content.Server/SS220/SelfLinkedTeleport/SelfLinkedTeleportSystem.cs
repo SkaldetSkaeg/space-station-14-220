@@ -2,19 +2,16 @@
 
 using Content.Shared.Administration.Logs;
 using Content.Shared.Database;
-using Content.Shared.Movement.Pulling.Components;
-using Content.Shared.Movement.Pulling.Systems;
 using Content.Shared.SS220.SelfLinkedTeleport;
 using Content.Shared.Whitelist;
+using Robust.Shared.Map;
 
 namespace Content.Server.SS220.SelfLinkedTeleport;
 
 public sealed partial class SelfLinkedTeleportSystem : SharedSelfLinkedTeleportSystem
 {
     [Dependency] private EntityWhitelistSystem _whitelist = default!;
-    [Dependency] private SharedTransformSystem _transformSystem = default!;
     [Dependency] private ISharedAdminLogManager _adminLogger = default!;
-    [Dependency] private PullingSystem _pulling = default!;
 
     public override void Initialize()
     {
@@ -77,17 +74,17 @@ public sealed partial class SelfLinkedTeleportSystem : SharedSelfLinkedTeleportS
         return false;
     }
 
-    protected override void Warp(Entity<SelfLinkedTeleportComponent> ent, EntityUid target, EntityUid user)
+    protected override bool TryTeleport(
+        Entity<SelfLinkedTeleportComponent> ent,
+        EntityUid target,
+        EntityUid user,
+        EntityUid destination,
+        EntityCoordinates destinationCoordinates)
     {
-        if (ent.Comp.LinkedEntity == null)//we shouldn't interact  at all if we are  here
-            return;
+        if (!base.TryTeleport(ent, target, user, destination, destinationCoordinates))
+            return false;
 
-        if (TryComp(user, out PullerComponent? puller) && TryComp(puller.Pulling, out PullableComponent? pullable))
-            _pulling.TryStopPull(puller.Pulling.Value, pullable);
-
-        _adminLogger.Add(LogType.Teleport, $"{ToPrettyString(user):user} used linked telepoter {ToPrettyString(ent):teleport enter} and tried teleport {ToPrettyString(target):target} to {ToPrettyString(ent.Comp.LinkedEntity.Value):teleport exit}");
-
-        var xform = Transform(target);
-        _transformSystem.SetCoordinates(target, xform, Transform(ent.Comp.LinkedEntity.Value).Coordinates);
+        _adminLogger.Add(LogType.Teleport, $"{ToPrettyString(user):user} used linked telepoter {ToPrettyString(ent):teleport enter} and tried teleport {ToPrettyString(target):target} to {ToPrettyString(destination):teleport exit}");
+        return true;
     }
 }

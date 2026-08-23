@@ -12,16 +12,16 @@ namespace Content.Shared.SS220.Teleport.Components;
 public sealed partial class InteractionTeleportComponent : Component
 {
     /// <summary>
-    ///     Which entities can use teleportation
+    ///     Which entities can be teleported
     /// </summary>
     [DataField]
-    public EntityWhitelist? UserWhitelist;
+    public EntityWhitelist? TargetWhitelist;
 
     /// <summary>
-    ///     Which entities can't use teleportation
+    ///     Which entities can't be teleported
     /// </summary>
     [DataField]
-    public EntityWhitelist? UserBlacklist;
+    public EntityWhitelist? TargetBlacklist;
 
     /// <summary>
     ///     Message when whitelisting is rejected

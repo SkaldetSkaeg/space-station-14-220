@@ -30,14 +30,14 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
         if (!args.CanAccess || !args.CanInteract)
             return;
 
-        if (_whitelist.IsWhitelistFail(ent.Comp.UserWhitelist, args.User))
+        if (_whitelist.IsWhitelistFail(ent.Comp.TargetWhitelist, args.User))
         {
             if (ent.Comp.WhitelistRejectedLoc != null)
                 _popup.PopupPredicted(Loc.GetString(ent.Comp.WhitelistRejectedLoc), ent, args.User, PopupType.MediumCaution);
             return;
         }
 
-        if (_whitelist.IsWhitelistPass(ent.Comp.UserBlacklist, args.User))
+        if (_whitelist.IsWhitelistPass(ent.Comp.TargetBlacklist, args.User))
             return;
 
         var user = args.User;
@@ -59,19 +59,20 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
             return;
 
         args.Handled = true;
-        args.CanDrop = true;
+        args.CanDrop = !_whitelist.IsWhitelistFail(ent.Comp.TargetWhitelist, args.Dragged) &&
+                       !_whitelist.IsWhitelistPass(ent.Comp.TargetBlacklist, args.Dragged);
     }
 
     private void OnDragDropTarget(Entity<InteractionTeleportComponent> ent, ref DragDropTargetEvent args)
     {
-        if (_whitelist.IsWhitelistFail(ent.Comp.UserWhitelist, args.Dragged))
+        if (_whitelist.IsWhitelistFail(ent.Comp.TargetWhitelist, args.Dragged))
         {
             if (ent.Comp.WhitelistRejectedLoc != null)
                 _popup.PopupPredicted(Loc.GetString(ent.Comp.WhitelistRejectedLoc), ent, args.User, PopupType.MediumCaution);
             return;
         }
 
-        if (_whitelist.IsWhitelistPass(ent.Comp.UserBlacklist, args.User))
+        if (_whitelist.IsWhitelistPass(ent.Comp.TargetBlacklist, args.Dragged))
             return;
 
         TryStartTeleport(ent, args.Dragged, args.User);

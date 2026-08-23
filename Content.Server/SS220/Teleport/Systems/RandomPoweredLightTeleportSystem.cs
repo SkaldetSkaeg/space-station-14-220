@@ -3,6 +3,7 @@
 using Content.Server.SS220.Teleport.Components;
 using Content.Shared.Light.Components;
 using Content.Shared.SS220.Teleport;
+using Content.Shared.SS220.Teleport.Systems;
 using Content.Shared.Station;
 using Robust.Shared.Map;
 using Robust.Shared.Random;
@@ -12,9 +13,9 @@ namespace Content.Server.SS220.Teleport.Systems;
 
 public sealed partial class RandomPoweredLightTeleportSystem : EntitySystem
 {
-    [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private SharedStationSystem _station = default!;
+    [Dependency] private SharedTeleportSystem _teleport = default!;
 
     public override void Initialize()
     {
@@ -25,19 +26,16 @@ public sealed partial class RandomPoweredLightTeleportSystem : EntitySystem
 
     private void OnTeleportTarget(Entity<RandomPoweredLightTeleportComponent> ent, ref TeleportTargetEvent args)
     {
-        var before = new BeforeTeleportTargetEvent(args.Target, args.User);
-        RaiseLocalEvent(ent, ref before);
+        if (args.Handled || !TryTeleportToRandomLocation(ent, args.Target, args.User))
+            return;
 
-        TeleportToRandomLocation(args.Target);
-
-        var teleported = new TargetTeleportedEvent(args.Target);
-        RaiseLocalEvent(ent, ref teleported);
+        args.Handled = true;
     }
 
-    private void TeleportToRandomLocation(EntityUid target)
+    private bool TryTeleportToRandomLocation(EntityUid teleporter, EntityUid target, EntityUid user)
     {
         if (_station.GetStations().FirstOrNull() is not { } station)
-            return;
+            return false;
 
         var validLocations = new List<EntityCoordinates>();
         var locations = EntityQueryEnumerator<PoweredLightComponent, TransformComponent>();
@@ -53,10 +51,10 @@ public sealed partial class RandomPoweredLightTeleportSystem : EntitySystem
         if (validLocations.Count == 0)
         {
             Log.Warning($"RandomPoweredLightTeleport couldn't teleport {ToPrettyString(target)} because there were no valid locations");
-            return;
+            return false;
         }
 
         var teleportLocation = _random.Pick(validLocations);
-        _transform.SetCoordinates(target, Transform(target), teleportLocation);
+        return _teleport.TryTeleport(teleporter, target, user, teleportLocation);
     }
 }

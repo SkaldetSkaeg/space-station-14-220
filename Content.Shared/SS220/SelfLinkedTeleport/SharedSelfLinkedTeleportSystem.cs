@@ -3,6 +3,8 @@
 using Content.Shared.Examine;
 using Content.Shared.Popups;
 using Content.Shared.SS220.Teleport;
+using Content.Shared.SS220.Teleport.Systems;
+using Robust.Shared.Map;
 
 namespace Content.Shared.SS220.SelfLinkedTeleport;
 
@@ -11,6 +13,7 @@ public abstract partial class SharedSelfLinkedTeleportSystem : EntitySystem
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private SharedAppearanceSystem _appearance = default!;
     [Dependency] private SharedPointLightSystem _lights = default!;
+    [Dependency] private SharedTeleportSystem _teleport = default!;
 
     public override void Initialize()
     {
@@ -23,16 +26,20 @@ public abstract partial class SharedSelfLinkedTeleportSystem : EntitySystem
 
     private void OnTeleportTarget(Entity<SelfLinkedTeleportComponent> ent, ref TeleportTargetEvent args)
     {
-        var beforeEv = new BeforeTeleportTargetEvent(args.User, args.Target);
-        RaiseLocalEvent(ent, ref beforeEv);
+        if (args.Handled ||
+            ent.Comp.LinkedEntity is not { } destination ||
+            !Exists(destination) ||
+            TerminatingOrDeleted(destination))
+        {
+            return;
+        }
 
-        Warp(ent, args.Target, args.User);
+        var destinationCoordinates = Transform(destination).Coordinates;
 
-        var ev = new TargetTeleportedEvent(args.Target);
-        RaiseLocalEvent(ent, ref ev);
+        if (!TryTeleport(ent, args.Target, args.User, destination, destinationCoordinates))
+            return;
 
-        var targetEv = new AfterTeleportedEvent(ent);
-        RaiseLocalEvent(args.Target, ref targetEv);
+        args.Handled = true;
     }
 
     private void OnTeleportUseAttempt(Entity<SelfLinkedTeleportComponent> ent, ref TeleportUseAttemptEvent args)
@@ -52,7 +59,15 @@ public abstract partial class SharedSelfLinkedTeleportSystem : EntitySystem
             args.PushMarkup(Loc.GetString("linked-teleport-has-link"));
     }
 
-    protected virtual void Warp(Entity<SelfLinkedTeleportComponent> ent, EntityUid target, EntityUid user) { }
+    protected virtual bool TryTeleport(
+        Entity<SelfLinkedTeleportComponent> ent,
+        EntityUid target,
+        EntityUid user,
+        EntityUid destination,
+        EntityCoordinates destinationCoordinates)
+    {
+        return _teleport.TryTeleport(ent, target, user, destinationCoordinates);
+    }
 
     protected virtual void UpdateVisuals(Entity<SelfLinkedTeleportComponent> ent)
     {
