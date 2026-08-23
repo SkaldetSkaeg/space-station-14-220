@@ -12,8 +12,6 @@ public sealed partial class TeleportationChasmSystem : SharedTeleportationChasmS
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private ActionBlockerSystem _blocker = default!;
 
-    private readonly List<Entity<TeleportationChasmFallingComponent>> _finishedFallingBuffer = [];
-
     public override void Update(float frameTime)
     {
         base.Update(frameTime);
@@ -30,21 +28,14 @@ public sealed partial class TeleportationChasmSystem : SharedTeleportationChasmS
                 continue;
             }
 
-            _finishedFallingBuffer.Add((uid, chasmFalling));
-        }
-
-        foreach (var ent in _finishedFallingBuffer)
-        {
-            if (ent.Comp.Teleporter is { } teleporter)
+            if (chasmFalling.Teleporter is { } teleporter)
             {
-                var teleport = new TeleportTargetEvent(ent, ent);
+                var teleport = new TeleportTargetEvent(uid, uid);
                 RaiseLocalEvent(teleporter, ref teleport);
             }
 
-            RemComp<TeleportationChasmFallingComponent>(ent);
-            _blocker.UpdateCanMove(ent);
+            RemCompDeferred<TeleportationChasmFallingComponent>(uid);
+            _blocker.UpdateCanMove(uid);
         }
-
-        _finishedFallingBuffer.Clear();
     }
 }

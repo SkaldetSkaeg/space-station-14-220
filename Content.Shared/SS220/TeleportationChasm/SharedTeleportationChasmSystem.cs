@@ -67,6 +67,9 @@ public abstract partial class SharedTeleportationChasmSystem : EntitySystem
 
     private void OnUpdateCanMove(Entity<TeleportationChasmFallingComponent> ent, ref UpdateCanMoveEvent args)
     {
+        if (!ent.Comp.Running)
+            return;
+
         args.Cancel();
     }
 }
