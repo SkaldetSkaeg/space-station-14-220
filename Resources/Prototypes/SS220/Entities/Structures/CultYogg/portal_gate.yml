@@ -13,6 +13,13 @@
     color: "#9dc8c8"
   - type: Physics
     bodyType: Static
+  - type: CollisionTeleportTrigger
+    teleporterFixtureId: portal
+    blacklistToDelete:
+      components:
+      - Explosive
+      - ProjectileGrenade
+  - type: RandomPoweredLightTeleport
   - type: Fixtures
     fixtures:
       left:
@@ -37,10 +44,12 @@
         layer:
         - WallLayer
       portal:
-        shape: !type:PhysShapeAabb
+        shape:
+          !type:PhysShapeAabb
           bounds: "-0.55,-0.4,0.55,0.4"
         layer:
-        - None
+        - WallLayer
+        hard: false
   - type: Sprite
     sprite: SS220/Structures/CultYogg/void_portal_gate.rsi
     layers:

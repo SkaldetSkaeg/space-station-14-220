@@ -1,14 +1,9 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
 using Content.Shared.ActionBlocker;
-using Content.Shared.Light.Components;
 using Content.Shared.SS220.Teleport;
 using Content.Shared.SS220.TeleportationChasm;
-using Content.Shared.Station;
-using Robust.Shared.Map;
-using Robust.Shared.Random;
 using Robust.Shared.Timing;
-using Robust.Shared.Utility;
 
 namespace Content.Server.SS220.TeleportationChasm;
 
@@ -16,18 +11,10 @@ public sealed partial class TeleportationChasmSystem : SharedTeleportationChasmS
 {
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private ActionBlockerSystem _blocker = default!;
-    [Dependency] private SharedTransformSystem _transformSystem = default!;
-    [Dependency] private IRobustRandom _random = default!;
-    [Dependency] private SharedStationSystem _station = default!;
 
-    private List<Entity<TeleportationChasmFallingComponent>> _toTeleportBuffer = [];
+    private readonly List<Entity<TeleportationChasmFallingComponent>> _finishedFallingBuffer = [];
 
-    public override void Initialize()
-    {
-        base.Initialize();
-    }
-
-    public override void Update(float frameTime)//we cant teleport in shared, cause wierd shit happened
+    public override void Update(float frameTime)
     {
         base.Update(frameTime);
 
@@ -43,65 +30,21 @@ public sealed partial class TeleportationChasmSystem : SharedTeleportationChasmS
                 continue;
             }
 
-            _toTeleportBuffer.Add((uid, chasmFalling));
+            _finishedFallingBuffer.Add((uid, chasmFalling));
         }
 
-        foreach (var ent in _toTeleportBuffer)
+        foreach (var ent in _finishedFallingBuffer)
         {
-            if (ent.Comp.ChasmEnt != null)
+            if (ent.Comp.Teleporter is { } teleporter)
             {
-                var teleporter = ent.Comp.ChasmEnt.Value;
-
-                var beforeEv = new BeforeTeleportTargetEvent(ent, ent);
-                RaiseLocalEvent(teleporter, ref beforeEv);
-
-                TeleportToRandomLocation(ent);
-
-                var ev = new TargetTeleportedEvent(ent);
-                RaiseLocalEvent(teleporter, ref ev);
+                var teleport = new TeleportTargetEvent(ent, ent);
+                RaiseLocalEvent(teleporter, ref teleport);
             }
 
             RemComp<TeleportationChasmFallingComponent>(ent);
             _blocker.UpdateCanMove(ent);
         }
 
-        _toTeleportBuffer.Clear();
-    }
-
-    private void TeleportToRandomLocation(EntityUid ent)
-    {
-        if (_station.GetStations().FirstOrNull() is not { } station) // only "proper" way to find THE station
-            return;
-
-        var validLocations = new List<EntityCoordinates>();
-
-        var locations = EntityQueryEnumerator<PoweredLightComponent, TransformComponent>();
-        while (locations.MoveNext(out var uid, out _, out var transform))
-        {
-            var owningStation = _station.GetOwningStation(uid);//rude, but working
-
-            if (owningStation != station)
-                continue;
-
-            validLocations.Add(transform.Coordinates);
-        }
-
-        TryTeleportFromCoordList(validLocations, ent);
-    }
-
-    private bool TryTeleportFromCoordList(List<EntityCoordinates> coords, EntityUid teleported)
-    {
-        if (coords.Count == 0)
-        {
-            Log.Warning($"TeleportationChasm couldn't teleport the {teleported} because there were no locations left to teleport to");
-            return false;
-        }
-
-        //I didnt found normal ways to check empty tiles
-        var teleportLocation = _random.Pick(coords);
-
-        var xform = Transform(teleported);
-        _transformSystem.SetCoordinates(teleported, xform, teleportLocation);
-        return true;
+        _finishedFallingBuffer.Clear();
     }
 }

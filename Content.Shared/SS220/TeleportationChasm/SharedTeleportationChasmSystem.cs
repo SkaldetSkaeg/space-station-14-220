@@ -42,7 +42,7 @@ public abstract partial class SharedTeleportationChasmSystem : EntitySystem
     {
         var falling = AddComp<TeleportationChasmFallingComponent>(target);
 
-        falling.ChasmEnt = ent.Owner;
+        falling.Teleporter = ent.Owner;
 
         falling.NextTeleportationTime = _timing.CurTime + falling.TeleportationTime;
         _blocker.UpdateCanMove(target);

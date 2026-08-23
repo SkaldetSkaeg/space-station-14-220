@@ -13,9 +13,9 @@ namespace Content.Shared.SS220.TeleportationChasm;
 public sealed partial class TeleportationChasmFallingComponent : Component
 {
     /// <summary>
-    ///     Entity that send us falling and will teleport us.
+    ///     Teleporter that caused the target to start falling.
     /// </summary>
-    public EntityUid? ChasmEnt;
+    public EntityUid? Teleporter;
 
     /// <summary>
     ///     Time it should take for the falling animation (scaling down) to complete.
