@@ -27,7 +27,10 @@ public sealed partial class RandomTeleportSystem : EntitySystem
 
     private void OnTeleportTarget(Entity<RandomTeleportComponent> ent, ref TeleportTargetEvent args)
     {
-        if (args.Handled || !TryTeleport(ent, args.Target, args.User))
+        if (args.Handled)
+            return;
+
+        if (!TryTeleport(ent, args.Target, args.User))
             return;
 
         args.Handled = true;

@@ -67,12 +67,15 @@ public sealed partial class RaveSystem : SharedRaveSystem
 
     private void RemoveEffect(Entity<RaveComponent> entity)
     {
-        if (entity.Comp.EffectEntity is not { } effectEntity
-            || !TryComp<TextureFadeOverlayComponent>(effectEntity, out var overlay))
+        if (entity.Comp.EffectEntity is not { } effectEntity)
+            return;
+
+        entity.Comp.EffectEntity = null;
+
+        if (!TryComp<TextureFadeOverlayComponent>(effectEntity, out var overlay))
             return;
 
         overlay.SetUniformProgressionSpeed(0.01f);
         overlay.DeleteAfterFadedOut = true;
-        entity.Comp.EffectEntity = null;
     }
 }

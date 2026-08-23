@@ -26,13 +26,17 @@ public abstract partial class SharedSelfLinkedTeleportSystem : EntitySystem
 
     private void OnTeleportTarget(Entity<SelfLinkedTeleportComponent> ent, ref TeleportTargetEvent args)
     {
-        if (args.Handled ||
-            ent.Comp.LinkedEntity is not { } destination ||
-            !Exists(destination) ||
-            TerminatingOrDeleted(destination))
-        {
+        if (args.Handled)
             return;
-        }
+
+        if (ent.Comp.LinkedEntity is not { } destination)
+            return;
+
+        if (!Exists(destination))
+            return;
+
+        if (TerminatingOrDeleted(destination))
+            return;
 
         var destinationCoordinates = Transform(destination).Coordinates;
 

@@ -102,15 +102,11 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
             DuplicateCondition = DuplicateConditions.SameEvent
         };
 
-        var started = _doAfter.TryStartDoAfter(teleportDoAfter);
-
-        if (started)
-        {
-            _popup.PopupPredicted(Loc.GetString("teleport-user-started"), ent, user, PopupType.MediumCaution);
-            return true;
-        }
-        else
+        if (!_doAfter.TryStartDoAfter(teleportDoAfter))
             return false;
+
+        _popup.PopupPredicted(Loc.GetString("teleport-user-started"), ent, user, PopupType.MediumCaution);
+        return true;
     }
 
     private void OnTeleportDoAfter(Entity<InteractionTeleportComponent> ent, ref InteractionTeleportDoAfterEvent args)

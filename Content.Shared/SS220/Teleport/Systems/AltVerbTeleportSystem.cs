@@ -79,15 +79,11 @@ public sealed partial class AltVerbTeleportSystem : EntitySystem
             DuplicateCondition = DuplicateConditions.SameEvent
         };
 
-        if (_doAfter.TryStartDoAfter(teleportDoAfter))
-        {
-            _popup.PopupPredicted(Loc.GetString("teleport-user-started"), ent, user, PopupType.MediumCaution);
-            return true;
-        }
-        else
-        {
+        if (!_doAfter.TryStartDoAfter(teleportDoAfter))
             return false;
-        }
+
+        _popup.PopupPredicted(Loc.GetString("teleport-user-started"), ent, user, PopupType.MediumCaution);
+        return true;
     }
 
     private void OnAltVerbTeleportDoAfter(Entity<AltVerbTeleportComponent> ent, ref AltVerbTeleportDoAfterEvent args)

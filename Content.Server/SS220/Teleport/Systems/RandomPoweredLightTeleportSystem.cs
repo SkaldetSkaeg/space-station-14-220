@@ -26,7 +26,10 @@ public sealed partial class RandomPoweredLightTeleportSystem : EntitySystem
 
     private void OnTeleportTarget(Entity<RandomPoweredLightTeleportComponent> ent, ref TeleportTargetEvent args)
     {
-        if (args.Handled || !TryTeleportToRandomLocation(ent, args.Target, args.User))
+        if (args.Handled)
+            return;
+
+        if (!TryTeleportToRandomLocation(ent, args.Target, args.User))
             return;
 
         args.Handled = true;
