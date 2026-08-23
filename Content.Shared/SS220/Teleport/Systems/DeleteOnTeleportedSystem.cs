@@ -18,9 +18,9 @@ public sealed partial class DeleteOnTeleportedSystem : EntitySystem
 
     private void OnTargetTeleported(Entity<DeleteOnTeleportedComponent> ent, ref TargetTeleportedEvent args)
     {
-        ent.Comp.Amount--;
+        ent.Comp.RemainingUses--;
 
-        if (ent.Comp.Amount > 0)
+        if (ent.Comp.RemainingUses > 0)
             return;
 
         _audio.PlayPredicted(ent.Comp.DeleteSound, ent, args.Target);

@@ -17,10 +17,10 @@ public sealed partial class CollisionTeleportTriggerComponent : Component
     public string? TeleporterFixtureId;
 
     /// <summary>
-    ///     Entities matching this filter are deleted instead of teleported.
+    ///     Entities matching this whitelist are deleted instead of teleported.
     /// </summary>
     [DataField]
-    public EntityWhitelist? BlacklistToDelete;
+    public EntityWhitelist? DeleteWhitelist;
 
     /// <summary>
     ///     Targets currently touching the teleporter fixture.

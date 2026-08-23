@@ -38,32 +38,32 @@ public sealed partial class RandomTeleportSystem : EntitySystem
 
     private bool TryTeleport(Entity<RandomTeleportComponent> ent, EntityUid target, EntityUid user)
     {
-        if (ent.Comp.TargetsComponent is null)
+        if (ent.Comp.DestinationComponent is null)
             return false;
 
-        if (!_componentFactory.TryGetRegistration(ent.Comp.TargetsComponent, out var registration))
+        if (!_componentFactory.TryGetRegistration(ent.Comp.DestinationComponent, out var registration))
             return false;
 
-        var validLocations = new List<EntityCoordinates>();
+        var validDestinations = new List<EntityCoordinates>();
 
-        var query1 = EntityManager.AllEntityQueryEnumerator(registration.Type);
-        while (query1.MoveNext(out var destination, out _))
+        var query = EntityManager.AllEntityQueryEnumerator(registration.Type);
+        while (query.MoveNext(out var destination, out _))
         {
-            if (_whitelist.IsWhitelistFail(ent.Comp.TeleportTargetWhitelist, destination))
+            if (_whitelist.IsWhitelistFail(ent.Comp.DestinationWhitelist, destination))
                 continue;
 
-            validLocations.Add(Transform(destination).Coordinates);
+            validDestinations.Add(Transform(destination).Coordinates);
         }
 
-        if (validLocations.Count == 0)
+        if (validDestinations.Count == 0)
             return false;
 
-        var teleportLocation = _random.Pick(validLocations);
+        var destinationCoordinates = _random.Pick(validDestinations);
 
-        if (!_teleport.TryTeleport(ent, target, user, teleportLocation))
+        if (!_teleport.TryTeleport(ent, target, user, destinationCoordinates))
             return false;
 
-        _adminLogger.Add(LogType.Teleport, $"{ToPrettyString(user):user} used linked telepoter {ToPrettyString(ent):teleport} and tried teleport {ToPrettyString(target):target} to random location");
+        _adminLogger.Add(LogType.Teleport, $"{ToPrettyString(user):user} used telepoter {ToPrettyString(ent):teleport} and teleported {ToPrettyString(target):target} to random location");
         return true;
     }
 }

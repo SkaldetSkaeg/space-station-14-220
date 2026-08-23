@@ -40,7 +40,7 @@ public abstract partial class SharedSelfLinkedTeleportSystem : EntitySystem
 
         var destinationCoordinates = Transform(destination).Coordinates;
 
-        if (!TryTeleport(ent, args.Target, args.User, destination, destinationCoordinates))
+        if (!TryTeleport(ent, args.Target, args.User, destinationCoordinates))
             return;
 
         args.Handled = true;
@@ -67,7 +67,6 @@ public abstract partial class SharedSelfLinkedTeleportSystem : EntitySystem
         Entity<SelfLinkedTeleportComponent> ent,
         EntityUid target,
         EntityUid user,
-        EntityUid destination,
         EntityCoordinates destinationCoordinates)
     {
         return _teleport.TryTeleport(ent, target, user, destinationCoordinates);

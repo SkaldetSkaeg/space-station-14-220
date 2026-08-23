@@ -53,7 +53,10 @@ public sealed partial class RaveSystem : SharedRaveSystem
 
     private void EnsureEffect(Entity<RaveComponent> entity)
     {
-        if (entity.Owner != _playerManager.LocalEntity || entity.Comp.EffectEntity is not null)
+        if (entity.Owner != _playerManager.LocalEntity)
+            return;
+
+        if (entity.Comp.EffectEntity is not null)
             return;
 
         var effectEntity = Spawn(_effectPrototype);

@@ -10,7 +10,7 @@
     - Wall
   components:
   - type: TeleportationChasm
-    blacklistToDelete:
+    deleteWhitelist:
       components:
       - Explosive
       - ProjectileGrenade

@@ -26,7 +26,13 @@ public sealed partial class AltVerbTeleportSystem : EntitySystem
 
     private void OnGetAlternativeVerb(Entity<AltVerbTeleportComponent> ent, ref GetVerbsEvent<AlternativeVerb> args)
     {
-        if (!args.CanAccess || !args.CanInteract || args.Hands == null)
+        if (!args.CanAccess)
+            return;
+
+        if (!args.CanInteract)
+            return;
+
+        if (args.Hands == null)
             return;
 
         if (_hands.GetActiveItem((args.User, args.Hands)) != ent.Owner)
@@ -57,10 +63,10 @@ public sealed partial class AltVerbTeleportSystem : EntitySystem
         if (_hands.GetActiveItem(user) != ent.Owner)
             return false;
 
-        var ev = new TeleportUseAttemptEvent(user, user);
-        RaiseLocalEvent(ent, ref ev);
+        var attemptEvent = new TeleportUseAttemptEvent(user, user);
+        RaiseLocalEvent(ent, ref attemptEvent);
 
-        if (ev.Cancelled)
+        if (attemptEvent.Cancelled)
             return false;
 
         if (ent.Comp.TeleportDoAfterTime is null)
@@ -102,7 +108,7 @@ public sealed partial class AltVerbTeleportSystem : EntitySystem
 
     private void SendTeleporting(Entity<AltVerbTeleportComponent> ent, EntityUid user)
     {
-        var ev = new TeleportTargetEvent(user, user);
-        RaiseLocalEvent(ent, ref ev);
+        var teleportEvent = new TeleportTargetEvent(user, user);
+        RaiseLocalEvent(ent, ref teleportEvent);
     }
 }

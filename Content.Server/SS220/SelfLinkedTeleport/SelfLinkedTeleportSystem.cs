@@ -43,29 +43,26 @@ public sealed partial class SelfLinkedTeleportSystem : SharedSelfLinkedTeleportS
         ent.Comp.LinkedEntity = null;
         UpdateVisuals(ent);
 
-        if (ent.Comp.LinkedEntity != null)
-            return true;
-
-        var locations = EntityQueryEnumerator<SelfLinkedTeleportComponent>();
-        while (locations.MoveNext(out var uid, out var teleport))
+        var query = EntityQueryEnumerator<SelfLinkedTeleportComponent>();
+        while (query.MoveNext(out var candidate, out var candidateComp))
         {
-            if (uid == ent.Owner)//shouldn't be linked to itself
+            if (candidate == ent.Owner)//shouldn't be linked to itself
                 continue;
 
-            if (TerminatingOrDeleted(uid))
+            if (TerminatingOrDeleted(candidate))
                 continue;
 
-            if (_whitelist.IsWhitelistFail(ent.Comp.WhitelistLinked, uid))
+            if (_whitelist.IsWhitelistFail(ent.Comp.LinkWhitelist, candidate))
                 continue;
 
-            if (teleport.LinkedEntity != null)
+            if (candidateComp.LinkedEntity != null)
                 continue;
 
-            ent.Comp.LinkedEntity = uid;
-            teleport.LinkedEntity = ent;
+            ent.Comp.LinkedEntity = candidate;
+            candidateComp.LinkedEntity = ent;
             UpdateVisuals(ent);
-            UpdateVisuals((uid, teleport));
-            Dirty(uid, teleport);
+            UpdateVisuals((candidate, candidateComp));
+            Dirty(candidate, candidateComp);
             Dirty(ent);
 
             return true;
@@ -78,13 +75,12 @@ public sealed partial class SelfLinkedTeleportSystem : SharedSelfLinkedTeleportS
         Entity<SelfLinkedTeleportComponent> ent,
         EntityUid target,
         EntityUid user,
-        EntityUid destination,
         EntityCoordinates destinationCoordinates)
     {
-        if (!base.TryTeleport(ent, target, user, destination, destinationCoordinates))
+        if (!base.TryTeleport(ent, target, user, destinationCoordinates))
             return false;
 
-        _adminLogger.Add(LogType.Teleport, $"{ToPrettyString(user):user} used linked telepoter {ToPrettyString(ent):teleport enter} and tried teleport {ToPrettyString(target):target} to {ToPrettyString(destination):teleport exit}");
+        _adminLogger.Add(LogType.Teleport, $"{ToPrettyString(user):user} used linked telepoter {ToPrettyString(ent):teleport enter} and tried teleport {ToPrettyString(target):target} to {ToPrettyString(ent.Comp.LinkedEntity):teleport exit}");
         return true;
     }
 }

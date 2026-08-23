@@ -40,24 +40,24 @@ public sealed partial class RandomPoweredLightTeleportSystem : EntitySystem
         if (_station.GetStations().FirstOrNull() is not { } station)
             return false;
 
-        var validLocations = new List<EntityCoordinates>();
-        var locations = EntityQueryEnumerator<PoweredLightComponent, TransformComponent>();
+        var validDestinations = new List<EntityCoordinates>();
+        var query = EntityQueryEnumerator<PoweredLightComponent, TransformComponent>();
 
-        while (locations.MoveNext(out var uid, out _, out var transform))
+        while (query.MoveNext(out var uid, out _, out var transform))
         {
             if (_station.GetOwningStation(uid) != station)
                 continue;
 
-            validLocations.Add(transform.Coordinates);
+            validDestinations.Add(transform.Coordinates);
         }
 
-        if (validLocations.Count == 0)
+        if (validDestinations.Count == 0)
         {
             Log.Warning($"RandomPoweredLightTeleport couldn't teleport {ToPrettyString(target)} because there were no valid locations");
             return false;
         }
 
-        var teleportLocation = _random.Pick(validLocations);
-        return _teleport.TryTeleport(teleporter, target, user, teleportLocation);
+        var destinationCoordinates = _random.Pick(validDestinations);
+        return _teleport.TryTeleport(teleporter, target, user, destinationCoordinates);
     }
 }

@@ -21,7 +21,7 @@
     netsync: true
     enabled: false
   - type: SelfLinkedTeleport
-    whitelistLinked:
+    linkWhitelist:
       tags:
       - CultYoggTeleportExit
   - type: Tag
@@ -69,7 +69,7 @@
     netsync: true
     enabled: false
   - type: SelfLinkedTeleport
-    whitelistLinked:
+    linkWhitelist:
       tags:
       - CultYoggTeleportEnter
   - type: Tag

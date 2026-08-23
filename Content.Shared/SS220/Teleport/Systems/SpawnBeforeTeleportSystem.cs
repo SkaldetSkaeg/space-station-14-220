@@ -18,6 +18,6 @@ public sealed partial class SpawnBeforeTeleportSystem : EntitySystem
     private void OnBeforeTeleport(Entity<SpawnBeforeTeleportComponent> ent, ref BeforeTeleportTargetEvent args)
     {
         var position = _transform.GetMapCoordinates(ent);
-        EntityManager.PredictedSpawn(ent.Comp.SpawnedEnt, position);
+        EntityManager.PredictedSpawn(ent.Comp.SpawnPrototype, position);
     }
 }

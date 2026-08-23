@@ -15,7 +15,7 @@
     bodyType: Static
   - type: CollisionTeleportTrigger
     teleporterFixtureId: portal
-    blacklistToDelete:
+    deleteWhitelist:
       components:
       - Explosive
       - ProjectileGrenade

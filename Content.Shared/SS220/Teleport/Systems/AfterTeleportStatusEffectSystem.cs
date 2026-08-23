@@ -18,7 +18,7 @@ public sealed partial class AfterTeleportStatusEffectSystem : EntitySystem
 
     private void OnTargetTeleported(Entity<AfterTeleportStatusEffectComponent> ent, ref TargetTeleportedEvent args)
     {
-        foreach (var (effect, duration) in ent.Comp.EffectsList)
+        foreach (var (effect, duration) in ent.Comp.Effects)
         {
             _statusEffectsNew.TryAddStatusEffectDuration(args.Target, effect, duration);
             _statusEffectsOld.TryAddStatusEffect(args.Target, effect, duration, false);//because some effects are in the old form

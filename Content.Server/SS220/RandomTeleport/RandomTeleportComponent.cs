@@ -12,18 +12,18 @@ namespace Content.Server.SS220.RandomTeleport;
 public sealed partial class RandomTeleportComponent : Component, ISerializationHooks
 {
     [DataField(required: true)]
-    public string? TargetsComponent;
+    public string? DestinationComponent;
 
-    [DataField("whitelist")]
-    public EntityWhitelist? TeleportTargetWhitelist;
+    [DataField]
+    public EntityWhitelist? DestinationWhitelist;
 
     void ISerializationHooks.AfterDeserialization()
     {
-        if (string.IsNullOrEmpty(TargetsComponent))
-            throw new NullReferenceException("TargetsComponent string cannot be null or empty!");
+        if (string.IsNullOrEmpty(DestinationComponent))
+            throw new NullReferenceException("DestinationComponent string cannot be null or empty!");
 
         var factory = IoCManager.Resolve<IComponentFactory>();
-        if (!factory.TryGetRegistration(TargetsComponent, out _))
+        if (!factory.TryGetRegistration(DestinationComponent, out _))
             throw new Exception("Component not found");
     }
 }

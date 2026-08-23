@@ -30,20 +30,20 @@ public sealed partial class CollisionTeleportTriggerSystem : EntitySystem
         if (!ent.Comp.CollidingTargets.Add(target))
             return;
 
-        if (_whitelist.IsWhitelistPass(ent.Comp.BlacklistToDelete, target))
+        if (_whitelist.IsWhitelistPass(ent.Comp.DeleteWhitelist, target))
         {
             PredictedQueueDel(target);
             return;
         }
 
-        var attempt = new TeleportUseAttemptEvent(target, target);
-        RaiseLocalEvent(ent, ref attempt);
+        var attemptEvent = new TeleportUseAttemptEvent(target, target);
+        RaiseLocalEvent(ent, ref attemptEvent);
 
-        if (attempt.Cancelled)
+        if (attemptEvent.Cancelled)
             return;
 
-        var teleport = new TeleportTargetEvent(target, target);
-        RaiseLocalEvent(ent, ref teleport);
+        var teleportEvent = new TeleportTargetEvent(target, target);
+        RaiseLocalEvent(ent, ref teleportEvent);
     }
 
     private void OnEndCollide(Entity<CollisionTeleportTriggerComponent> ent, ref EndCollideEvent args)

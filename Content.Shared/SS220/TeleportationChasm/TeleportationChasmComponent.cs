@@ -19,8 +19,8 @@ public sealed partial class TeleportationChasmComponent : Component
     public SoundSpecifier FallingSound = new SoundPathSpecifier("/Audio/Effects/falling.ogg");
 
     /// <summary>
-    ///     Filter entities that we remove instead of teleporting
+    ///     Entities matching this filter are deleted instead of teleported.
     /// </summary>
     [DataField]
-    public EntityWhitelist? BlacklistToDelete;
+    public EntityWhitelist? DeleteWhitelist;
 }

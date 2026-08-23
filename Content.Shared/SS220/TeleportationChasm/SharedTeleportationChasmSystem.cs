@@ -44,14 +44,14 @@ public abstract partial class SharedTeleportationChasmSystem : EntitySystem
 
         falling.Teleporter = ent.Owner;
 
-        falling.NextTeleportationTime = _timing.CurTime + falling.TeleportationTime;
+        falling.FallEndTime = _timing.CurTime + falling.FallDuration;
         _blocker.UpdateCanMove(target);
 
         if (playSound)
             _audio.PlayPredicted(ent.Comp.FallingSound, ent, target);
 
-        if (_whitelistSystem.IsWhitelistPass(ent.Comp.BlacklistToDelete, target))
-            falling.ShouldBeDeleted = true;
+        if (_whitelistSystem.IsWhitelistPass(ent.Comp.DeleteWhitelist, target))
+            falling.DeleteInsteadOfTeleport = true;
     }
 
     private void OnStepTriggerAttempt(Entity<TeleportationChasmComponent> ent, ref StepTriggerAttemptEvent args)

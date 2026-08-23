@@ -38,8 +38,8 @@
       components:
       - VoidBlocker
   - type: RandomTeleport
-    targetsComponent: "RandomTeleportTarget"
-    whitelist:
+    destinationComponent: "RandomTeleportTarget"
+    destinationWhitelist:
       tags:
       - VoidTeleporationTarget
   - type: PolymorphTeleportTarget
@@ -48,9 +48,9 @@
     deleteSound:
       path: /Audio/Effects/glass_smash.ogg
   - type: SpawnBeforeTeleport
-    spawnedEnt: TeleportVanishEffect
+    spawnPrototype: TeleportVanishEffect
   - type: AfterTeleportStatusEffect
-    effectsList:
+    effects:
       StatusEffectVoidBlocker: 600
 
 - type: entity
@@ -79,8 +79,8 @@
       - CultYogg
       - MiGo
   - type: RandomTeleport
-    targetsComponent: "RandomTeleportTarget"
-    whitelist:
+    destinationComponent: "RandomTeleportTarget"
+    destinationWhitelist:
       tags:
       - VoidTeleporationTarget
   - type: PolymorphTeleportTarget

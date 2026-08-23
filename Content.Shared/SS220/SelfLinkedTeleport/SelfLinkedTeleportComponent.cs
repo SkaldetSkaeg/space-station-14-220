@@ -22,7 +22,7 @@ public sealed partial class SelfLinkedTeleportComponent : Component
     ///     Which entities can it linked to
     /// </summary>
     [DataField, AutoNetworkedField]
-    public EntityWhitelist? WhitelistLinked;
+    public EntityWhitelist? LinkWhitelist;
 }
 
 [Serializable, NetSerializable]

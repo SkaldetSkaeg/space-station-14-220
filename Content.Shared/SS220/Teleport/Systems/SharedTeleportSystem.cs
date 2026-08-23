@@ -11,21 +11,25 @@ namespace Content.Shared.SS220.Teleport.Systems;
 /// </summary>
 public sealed partial class SharedTeleportSystem : EntitySystem
 {
-    [Dependency] private readonly SharedTransformSystem _transform = default!;
-    [Dependency] private readonly PullingSystem _pulling = default!;
+    [Dependency] private SharedTransformSystem _transform = default!;
+    [Dependency] private PullingSystem _pulling = default!;
 
     public bool TryTeleport(EntityUid teleporter, EntityUid target, EntityUid user, EntityCoordinates destination)
     {
-        if (!Exists(teleporter) ||
-            !Exists(target) ||
-            TerminatingOrDeleted(target) ||
-            !destination.IsValid(EntityManager))
-        {
+        if (!Exists(teleporter))
             return false;
-        }
 
-        var before = new BeforeTeleportTargetEvent(target, user);
-        RaiseLocalEvent(teleporter, ref before);
+        if (!Exists(target))
+            return false;
+
+        if (TerminatingOrDeleted(target))
+            return false;
+
+        if (!destination.IsValid(EntityManager))
+            return false;
+
+        var beforeTeleportEvent = new BeforeTeleportTargetEvent(target, user);
+        RaiseLocalEvent(teleporter, ref beforeTeleportEvent);
 
         if (TerminatingOrDeleted(target))
             return false;
@@ -35,11 +39,11 @@ public sealed partial class SharedTeleportSystem : EntitySystem
 
         _transform.SetCoordinates(target, Transform(target), destination);
 
-        var teleporterEvent = new TargetTeleportedEvent(target);
-        RaiseLocalEvent(teleporter, ref teleporterEvent);
+        var targetTeleportedEvent = new TargetTeleportedEvent(target);
+        RaiseLocalEvent(teleporter, ref targetTeleportedEvent);
 
-        var targetEvent = new AfterTeleportedEvent(teleporter);
-        RaiseLocalEvent(target, ref targetEvent);
+        var afterTeleportedEvent = new AfterTeleportedEvent(teleporter);
+        RaiseLocalEvent(target, ref afterTeleportedEvent);
 
         return true;
     }

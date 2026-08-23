@@ -14,5 +14,5 @@ public sealed partial class SpawnOnTeleportedComponent : Component
     ///     The entity we spawn
     /// </summary>
     [DataField(required: true)]
-    public EntProtoId SpawnedEnt;
+    public EntProtoId SpawnPrototype;
 }

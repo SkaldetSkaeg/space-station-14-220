@@ -11,10 +11,10 @@ namespace Content.Shared.SS220.Teleport.Components;
 public sealed partial class DeleteOnTeleportedComponent : Component
 {
     /// <summary>
-    ///     Number of uses before deletion
+    ///     Number of remaining uses before deletion.
     /// </summary>
     [DataField]
-    public int Amount = 1;
+    public int RemainingUses = 1;
 
     /// <summary>
     ///     Sound played when deleting

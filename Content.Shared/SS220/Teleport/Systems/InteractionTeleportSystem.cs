@@ -27,7 +27,10 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
 
     private void OnGetVerb(Entity<InteractionTeleportComponent> ent, ref GetVerbsEvent<Verb> args)//Not sure maybe it should be "InteractionVerb"
     {
-        if (!args.CanAccess || !args.CanInteract)
+        if (!args.CanAccess)
+            return;
+
+        if (!args.CanInteract)
             return;
 
         if (_whitelist.IsWhitelistFail(ent.Comp.TargetWhitelist, args.User))
@@ -80,10 +83,10 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
 
     private bool TryStartTeleport(Entity<InteractionTeleportComponent> ent, EntityUid target, EntityUid user)
     {
-        var ev = new TeleportUseAttemptEvent(target, user);
-        RaiseLocalEvent(ent, ref ev);
+        var attemptEvent = new TeleportUseAttemptEvent(target, user);
+        RaiseLocalEvent(ent, ref attemptEvent);
 
-        if (ev.Cancelled)
+        if (attemptEvent.Cancelled)
             return false;
 
         if (ent.Comp.TeleportDoAfterTime is null)
@@ -122,7 +125,7 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
 
     private void SendTeleporting(Entity<InteractionTeleportComponent> ent, EntityUid target, EntityUid user)
     {
-        var ev = new TeleportTargetEvent(target, user);
-        RaiseLocalEvent(ent, ref ev);
+        var teleportEvent = new TeleportTargetEvent(target, user);
+        RaiseLocalEvent(ent, ref teleportEvent);
     }
 }

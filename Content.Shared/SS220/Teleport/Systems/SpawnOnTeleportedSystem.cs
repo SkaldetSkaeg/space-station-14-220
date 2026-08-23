@@ -18,6 +18,6 @@ public sealed partial class SpawnOnTeleportedSystem : EntitySystem
     private void OnTargetTeleported(Entity<SpawnOnTeleportedComponent> ent, ref TargetTeleportedEvent args)
     {
         var position = _transform.GetMapCoordinates(ent);
-        EntityManager.PredictedSpawn(ent.Comp.SpawnedEnt, position);
+        EntityManager.PredictedSpawn(ent.Comp.SpawnPrototype, position);
     }
 }
