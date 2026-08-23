@@ -30,6 +30,7 @@
       types:
         Slash: 10
   - type: AltVerbTeleport
+    verbText: void-key-teleport-verb
     userWhitelist:
       components:
       - CultYogg

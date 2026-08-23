@@ -12,6 +12,12 @@ namespace Content.Shared.SS220.Teleport.Components;
 public sealed partial class AltVerbTeleportComponent : Component
 {
     /// <summary>
+    ///     Text displayed for the alternative-use verb.
+    /// </summary>
+    [DataField]
+    public LocId VerbText = "teleport-use-verb";
+
+    /// <summary>
     ///     Which entities can use teleportation
     /// </summary>
     [DataField]

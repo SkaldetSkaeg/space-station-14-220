@@ -6,7 +6,10 @@ using Robust.Shared.Serialization;
 namespace Content.Shared.SS220.Teleport;
 
 [Serializable, NetSerializable]
-public sealed partial class InteractionTeleportDoAfterEvent : SimpleDoAfterEvent { }
+public sealed partial class InteractionTeleportDoAfterEvent : SimpleDoAfterEvent;
+
+[Serializable, NetSerializable]
+public sealed partial class AltVerbTeleportDoAfterEvent : SimpleDoAfterEvent;
 
 /// <summary>
 ///     Sends information to the teleporter to handle events that must occur before teleportation.

@@ -1,6 +1,7 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
 using Content.Shared.DoAfter;
+using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Popups;
 using Content.Shared.SS220.Teleport.Components;
 using Content.Shared.Verbs;
@@ -12,18 +13,23 @@ public sealed partial class AltVerbTeleportSystem : EntitySystem
 {
     [Dependency] private EntityWhitelistSystem _whitelist = default!;
     [Dependency] private SharedDoAfterSystem _doAfter = default!;
+    [Dependency] private SharedHandsSystem _hands = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
 
     public override void Initialize()
     {
         base.Initialize();
 
-        SubscribeLocalEvent<AltVerbTeleportComponent, GetVerbsEvent<AlternativeVerb>>(OnAddSwitchModeVerb);
+        SubscribeLocalEvent<AltVerbTeleportComponent, GetVerbsEvent<AlternativeVerb>>(OnGetAlternativeVerb);
+        SubscribeLocalEvent<AltVerbTeleportComponent, AltVerbTeleportDoAfterEvent>(OnAltVerbTeleportDoAfter);
     }
 
-    private void OnAddSwitchModeVerb(Entity<AltVerbTeleportComponent> ent, ref GetVerbsEvent<AlternativeVerb> args)
+    private void OnGetAlternativeVerb(Entity<AltVerbTeleportComponent> ent, ref GetVerbsEvent<AlternativeVerb> args)
     {
-        if (!args.CanAccess || !args.CanInteract || args.Hands == null || !args.Using.HasValue)
+        if (!args.CanAccess || !args.CanInteract || args.Hands == null)
+            return;
+
+        if (_hands.GetActiveItem((args.User, args.Hands)) != ent.Owner)
             return;
 
         if (_whitelist.IsWhitelistFail(ent.Comp.UserWhitelist, args.User))
@@ -37,11 +43,20 @@ public sealed partial class AltVerbTeleportSystem : EntitySystem
         if (_whitelist.IsWhitelistPass(ent.Comp.UserBlacklist, args.User))
             return;
 
-        TryStartTeleport(ent, args.User);
+        var user = args.User;
+        args.Verbs.Add(new AlternativeVerb
+        {
+            Text = Loc.GetString(ent.Comp.VerbText),
+            IconEntity = GetNetEntity(ent.Owner),
+            Act = () => TryStartTeleport(ent, user)
+        });
     }
 
     private bool TryStartTeleport(Entity<AltVerbTeleportComponent> ent, EntityUid user)
     {
+        if (_hands.GetActiveItem(user) != ent.Owner)
+            return false;
+
         var ev = new TeleportUseAttemptEvent(user, user);
         RaiseLocalEvent(ent, ref ev);
 
@@ -54,7 +69,7 @@ public sealed partial class AltVerbTeleportSystem : EntitySystem
             return true;
         }
 
-        var teleportDoAfter = new DoAfterArgs(EntityManager, user, ent.Comp.TeleportDoAfterTime.Value, new InteractionTeleportDoAfterEvent(), ent, user)
+        var teleportDoAfter = new DoAfterArgs(EntityManager, user, ent.Comp.TeleportDoAfterTime.Value, new AltVerbTeleportDoAfterEvent(), eventTarget: ent, target: user)
         {
             BreakOnDamage = ent.Comp.DamageThreshold != null,
             DamageThreshold = ent.Comp.DamageThreshold ?? 0,
@@ -73,6 +88,20 @@ public sealed partial class AltVerbTeleportSystem : EntitySystem
         {
             return false;
         }
+    }
+
+    private void OnAltVerbTeleportDoAfter(Entity<AltVerbTeleportComponent> ent, ref AltVerbTeleportDoAfterEvent args)
+    {
+        if (args.Cancelled)
+            return;
+
+        if (args.Target is not { } target)
+            return;
+
+        if (_hands.GetActiveItem(args.User) != ent.Owner)
+            return;
+
+        SendTeleporting(ent, target);
     }
 
     private void SendTeleporting(Entity<AltVerbTeleportComponent> ent, EntityUid user)
