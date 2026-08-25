@@ -6,6 +6,7 @@ using Content.Shared.Popups;
 using Content.Shared.SS220.Teleport.Components;
 using Content.Shared.Verbs;
 using Content.Shared.Whitelist;
+using Robust.Shared.Network;
 
 namespace Content.Shared.SS220.Teleport.Systems;
 
@@ -14,6 +15,7 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
     [Dependency] private EntityWhitelistSystem _whitelist = default!;
     [Dependency] private SharedDoAfterSystem _doAfter = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private INetManager _net = default!;
 
     public override void Initialize()
     {
@@ -33,7 +35,7 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
         if (!args.CanInteract)
             return;
 
-        if (!IsTargetAllowed(ent, args.User, args.User))
+        if (!IsTargetAllowed(ent, args.User))
             return;
 
         var user = args.User;
@@ -65,23 +67,10 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
         args.Handled = true;
     }
 
-    private bool IsTargetAllowed(
-        Entity<InteractionTeleportComponent> ent,
-        EntityUid target,
-        EntityUid? popupUser = null)
+    private bool IsTargetAllowed(Entity<InteractionTeleportComponent> ent, EntityUid target)
     {
         if (_whitelist.IsWhitelistFail(ent.Comp.TargetWhitelist, target))
-        {
-            if (popupUser is { } user && ent.Comp.WhitelistRejectedLoc is { } rejectedLoc)
-                _popup.PopupPredicted(
-                    Loc.GetString(rejectedLoc),
-                    null,
-                    ent,
-                    user,
-                    PopupType.MediumCaution);
-
             return false;
-        }
 
         if (_whitelist.IsWhitelistPass(ent.Comp.TargetBlacklist, target))
             return false;
@@ -91,8 +80,11 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
 
     private bool TryStartTeleport(Entity<InteractionTeleportComponent> ent, EntityUid target, EntityUid user)
     {
-        if (!IsTargetAllowed(ent, target, user))
+        if (!IsTargetAllowed(ent, target))
+        {
+            ShowWhitelistRejectedPopup(ent, target, user);
             return false;
+        }
 
         var attemptEvent = new TeleportUseAttemptEvent(target, user);
         RaiseLocalEvent(ent, ref attemptEvent);
@@ -101,7 +93,7 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
             return false;
 
         if (ent.Comp.TeleportDoAfterTime is null)
-            return SendTeleporting(ent, target, user);
+            return TrySendTeleporting(ent, target, user);
 
         var teleportDoAfter = new DoAfterArgs(EntityManager, user, ent.Comp.TeleportDoAfterTime.Value, new InteractionTeleportDoAfterEvent(), ent, target)
         {
@@ -125,6 +117,25 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
         return true;
     }
 
+    private void ShowWhitelistRejectedPopup(
+        Entity<InteractionTeleportComponent> ent,
+        EntityUid target,
+        EntityUid user)
+    {
+        if (!_whitelist.IsWhitelistFail(ent.Comp.TargetWhitelist, target))
+            return;
+
+        if (ent.Comp.WhitelistRejectedLoc is not { } rejectedLoc)
+            return;
+
+        _popup.PopupPredicted(
+            Loc.GetString(rejectedLoc),
+            null,
+            ent,
+            user,
+            PopupType.MediumCaution);
+    }
+
     private void OnTeleportDoAfter(Entity<InteractionTeleportComponent> ent, ref InteractionTeleportDoAfterEvent args)
     {
         if (args.Cancelled)
@@ -133,10 +144,16 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
         if (args.Target == null)
             return;
 
-        SendTeleporting(ent, args.Target.Value, args.User);
+        if (TrySendTeleporting(ent, args.Target.Value, args.User))
+            return;
+
+        if (_net.IsClient)
+            return;
+
+        Log.Error($"InteractionTeleport on {ToPrettyString(ent)} couldn't teleport {ToPrettyString(args.Target.Value)} because no teleport implementation handled the request");
     }
 
-    private bool SendTeleporting(Entity<InteractionTeleportComponent> ent, EntityUid target, EntityUid user)
+    private bool TrySendTeleporting(Entity<InteractionTeleportComponent> ent, EntityUid target, EntityUid user)
     {
         var teleportEvent = new TeleportTargetEvent(target, user);
         RaiseLocalEvent(ent, ref teleportEvent);

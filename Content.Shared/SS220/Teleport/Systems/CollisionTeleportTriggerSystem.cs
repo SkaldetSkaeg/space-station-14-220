@@ -2,6 +2,7 @@
 
 using Content.Shared.SS220.Teleport.Components;
 using Content.Shared.Whitelist;
+using Robust.Shared.Network;
 using Robust.Shared.Physics.Events;
 
 namespace Content.Shared.SS220.Teleport.Systems;
@@ -9,6 +10,7 @@ namespace Content.Shared.SS220.Teleport.Systems;
 public sealed partial class CollisionTeleportTriggerSystem : EntitySystem
 {
     [Dependency] private EntityWhitelistSystem _whitelist = default!;
+    [Dependency] private INetManager _net = default!;
 
     public override void Initialize()
     {
@@ -40,5 +42,13 @@ public sealed partial class CollisionTeleportTriggerSystem : EntitySystem
 
         var teleportEvent = new TeleportTargetEvent(target, target);
         RaiseLocalEvent(ent, ref teleportEvent);
+
+        if (teleportEvent.Handled)
+            return;
+
+        if (_net.IsClient)
+            return;
+
+        Log.Error($"CollisionTeleportTrigger on {ToPrettyString(ent)} couldn't teleport {ToPrettyString(target)} because no teleport implementation handled the request");
     }
 }

@@ -6,6 +6,7 @@ using Content.Shared.Popups;
 using Content.Shared.SS220.Teleport.Components;
 using Content.Shared.Verbs;
 using Content.Shared.Whitelist;
+using Robust.Shared.Network;
 
 namespace Content.Shared.SS220.Teleport.Systems;
 
@@ -15,6 +16,7 @@ public sealed partial class AltVerbTeleportSystem : EntitySystem
     [Dependency] private SharedDoAfterSystem _doAfter = default!;
     [Dependency] private SharedHandsSystem _hands = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private INetManager _net = default!;
 
     public override void Initialize()
     {
@@ -38,20 +40,7 @@ public sealed partial class AltVerbTeleportSystem : EntitySystem
         if (_hands.GetActiveItem((args.User, args.Hands)) != ent.Owner)
             return;
 
-        if (_whitelist.IsWhitelistFail(ent.Comp.UserWhitelist, args.User))
-        {
-            if (ent.Comp.WhitelistRejectedLoc != null)
-                _popup.PopupPredicted(
-                    Loc.GetString(ent.Comp.WhitelistRejectedLoc),
-                    null,
-                    ent,
-                    args.User,
-                    PopupType.MediumCaution);
-
-            return;
-        }
-
-        if (_whitelist.IsWhitelistPass(ent.Comp.UserBlacklist, args.User))
+        if (!IsUserAllowed(ent, args.User))
             return;
 
         var user = args.User;
@@ -68,6 +57,12 @@ public sealed partial class AltVerbTeleportSystem : EntitySystem
         if (_hands.GetActiveItem(user) != ent.Owner)
             return false;
 
+        if (!IsUserAllowed(ent, user))
+        {
+            ShowWhitelistRejectedPopup(ent, user);
+            return false;
+        }
+
         var attemptEvent = new TeleportUseAttemptEvent(user, user);
         RaiseLocalEvent(ent, ref attemptEvent);
 
@@ -75,10 +70,7 @@ public sealed partial class AltVerbTeleportSystem : EntitySystem
             return false;
 
         if (ent.Comp.TeleportDoAfterTime is null)
-        {
-            SendTeleporting(ent, user);
-            return true;
-        }
+            return TrySendTeleporting(ent, user);
 
         var teleportDoAfter = new DoAfterArgs(EntityManager, user, ent.Comp.TeleportDoAfterTime.Value, new AltVerbTeleportDoAfterEvent(), eventTarget: ent, target: user)
         {
@@ -102,6 +94,33 @@ public sealed partial class AltVerbTeleportSystem : EntitySystem
         return true;
     }
 
+    private bool IsUserAllowed(Entity<AltVerbTeleportComponent> ent, EntityUid user)
+    {
+        if (_whitelist.IsWhitelistFail(ent.Comp.UserWhitelist, user))
+            return false;
+
+        if (_whitelist.IsWhitelistPass(ent.Comp.UserBlacklist, user))
+            return false;
+
+        return true;
+    }
+
+    private void ShowWhitelistRejectedPopup(Entity<AltVerbTeleportComponent> ent, EntityUid user)
+    {
+        if (!_whitelist.IsWhitelistFail(ent.Comp.UserWhitelist, user))
+            return;
+
+        if (ent.Comp.WhitelistRejectedLoc is not { } rejectedLoc)
+            return;
+
+        _popup.PopupPredicted(
+            Loc.GetString(rejectedLoc),
+            null,
+            ent,
+            user,
+            PopupType.MediumCaution);
+    }
+
     private void OnAltVerbTeleportDoAfter(Entity<AltVerbTeleportComponent> ent, ref AltVerbTeleportDoAfterEvent args)
     {
         if (args.Cancelled)
@@ -113,12 +132,19 @@ public sealed partial class AltVerbTeleportSystem : EntitySystem
         if (_hands.GetActiveItem(args.User) != ent.Owner)
             return;
 
-        SendTeleporting(ent, target);
+        if (TrySendTeleporting(ent, target))
+            return;
+
+        if (_net.IsClient)
+            return;
+
+        Log.Error($"AltVerbTeleport on {ToPrettyString(ent)} couldn't teleport {ToPrettyString(target)} because no teleport implementation handled the request");
     }
 
-    private void SendTeleporting(Entity<AltVerbTeleportComponent> ent, EntityUid user)
+    private bool TrySendTeleporting(Entity<AltVerbTeleportComponent> ent, EntityUid user)
     {
         var teleportEvent = new TeleportTargetEvent(user, user);
         RaiseLocalEvent(ent, ref teleportEvent);
+        return teleportEvent.Handled;
     }
 }

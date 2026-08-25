@@ -31,9 +31,6 @@ public sealed partial class SharedTeleportSystem : EntitySystem
         var beforeTeleportEvent = new BeforeTeleportTargetEvent(target, user);
         RaiseLocalEvent(teleporter, ref beforeTeleportEvent);
 
-        if (TerminatingOrDeleted(target))
-            return false;
-
         if (TryComp(target, out PullableComponent? targetPullable))
             _pulling.TryStopPull(target, targetPullable);
 

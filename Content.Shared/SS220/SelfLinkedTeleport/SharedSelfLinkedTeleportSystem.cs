@@ -29,13 +29,7 @@ public abstract partial class SharedSelfLinkedTeleportSystem : EntitySystem
         if (args.Handled)
             return;
 
-        if (ent.Comp.LinkedEntity is not { } destination)
-            return;
-
-        if (!Exists(destination))
-            return;
-
-        if (TerminatingOrDeleted(destination))
+        if (!TryGetDestination(ent, out var destination))
             return;
 
         var destinationCoordinates = Transform(destination).Coordinates;
@@ -48,24 +42,38 @@ public abstract partial class SharedSelfLinkedTeleportSystem : EntitySystem
 
     private void OnTeleportUseAttempt(Entity<SelfLinkedTeleportComponent> ent, ref TeleportUseAttemptEvent args)
     {
-        if (ent.Comp.LinkedEntity == null)
-        {
-            _popup.PopupPredicted(
-                Loc.GetString("linked-teleport-no-exit"),
-                null,
-                ent,
-                args.User,
-                PopupType.MediumCaution);
-            args.Cancelled = true;
-        }
+        if (ent.Comp.LinkedEntity != null)
+            return;
+
+        _popup.PopupPredicted(
+            Loc.GetString("linked-teleport-no-exit"),
+            null,
+            ent,
+            args.User,
+            PopupType.MediumCaution);
+
+        args.Cancelled = true;
     }
 
     private void OnExamined(Entity<SelfLinkedTeleportComponent> ent, ref ExaminedEvent args)
     {
-        if (ent.Comp.LinkedEntity == null)
-            args.PushMarkup(Loc.GetString("linked-teleport-no-exit"));
-        else
+        if (ent.Comp.LinkedEntity != null)
             args.PushMarkup(Loc.GetString("linked-teleport-has-link"));
+        else
+            args.PushMarkup(Loc.GetString("linked-teleport-no-exit"));
+    }
+
+    private bool TryGetDestination(Entity<SelfLinkedTeleportComponent> ent, out EntityUid destination)
+    {
+        destination = ent.Comp.LinkedEntity ?? EntityUid.Invalid;
+
+        if (!Exists(destination))
+            return false;
+
+        if (TerminatingOrDeleted(destination))
+            return false;
+
+        return true;
     }
 
     protected virtual bool TryTeleport(
