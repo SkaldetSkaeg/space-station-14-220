@@ -41,7 +41,12 @@ public sealed partial class AltVerbTeleportSystem : EntitySystem
         if (_whitelist.IsWhitelistFail(ent.Comp.UserWhitelist, args.User))
         {
             if (ent.Comp.WhitelistRejectedLoc != null)
-                _popup.PopupPredicted(Loc.GetString(ent.Comp.WhitelistRejectedLoc), ent, args.User, PopupType.MediumCaution);
+                _popup.PopupPredicted(
+                    Loc.GetString(ent.Comp.WhitelistRejectedLoc),
+                    null,
+                    ent,
+                    args.User,
+                    PopupType.MediumCaution);
 
             return;
         }
@@ -88,7 +93,12 @@ public sealed partial class AltVerbTeleportSystem : EntitySystem
         if (!_doAfter.TryStartDoAfter(teleportDoAfter))
             return false;
 
-        _popup.PopupPredicted(Loc.GetString("teleport-user-started"), ent, user, PopupType.MediumCaution);
+        _popup.PopupPredicted(
+            Loc.GetString("teleport-user-started"),
+            null,
+            user,
+            user,
+            PopupType.MediumCaution);
         return true;
     }
 

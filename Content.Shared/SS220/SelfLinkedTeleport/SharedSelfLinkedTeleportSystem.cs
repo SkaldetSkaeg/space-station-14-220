@@ -50,7 +50,12 @@ public abstract partial class SharedSelfLinkedTeleportSystem : EntitySystem
     {
         if (ent.Comp.LinkedEntity == null)
         {
-            _popup.PopupPredicted(Loc.GetString("linked-teleport-no-exit"), ent, args.User, PopupType.MediumCaution);
+            _popup.PopupPredicted(
+                Loc.GetString("linked-teleport-no-exit"),
+                null,
+                ent,
+                args.User,
+                PopupType.MediumCaution);
             args.Cancelled = true;
         }
     }

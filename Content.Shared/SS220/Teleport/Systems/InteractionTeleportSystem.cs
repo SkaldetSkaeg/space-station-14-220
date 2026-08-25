@@ -73,7 +73,12 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
         if (_whitelist.IsWhitelistFail(ent.Comp.TargetWhitelist, target))
         {
             if (popupUser is { } user && ent.Comp.WhitelistRejectedLoc is { } rejectedLoc)
-                _popup.PopupPredicted(Loc.GetString(rejectedLoc), ent, user, PopupType.MediumCaution);
+                _popup.PopupPredicted(
+                    Loc.GetString(rejectedLoc),
+                    null,
+                    ent,
+                    user,
+                    PopupType.MediumCaution);
 
             return false;
         }
@@ -111,7 +116,12 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
         if (!_doAfter.TryStartDoAfter(teleportDoAfter))
             return false;
 
-        _popup.PopupPredicted(Loc.GetString("teleport-user-started"), ent, user, PopupType.MediumCaution);
+        _popup.PopupPredicted(
+            Loc.GetString("teleport-user-started"),
+            null,
+            user,
+            user,
+            PopupType.MediumCaution);
         return true;
     }
 
