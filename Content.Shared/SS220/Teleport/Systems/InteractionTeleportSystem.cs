@@ -25,7 +25,7 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
         SubscribeLocalEvent<InteractionTeleportComponent, InteractionTeleportDoAfterEvent>(OnTeleportDoAfter);
     }
 
-    private void OnGetVerb(Entity<InteractionTeleportComponent> ent, ref GetVerbsEvent<Verb> args)//Not sure maybe it should be "InteractionVerb"
+    private void OnGetVerb(Entity<InteractionTeleportComponent> ent, ref GetVerbsEvent<Verb> args)
     {
         if (!args.CanAccess)
             return;
@@ -38,15 +38,11 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
 
         var user = args.User;
 
-        var teleportVerb = new Verb
+        args.Verbs.Add(new Verb
         {
             Text = Loc.GetString("teleport-use-verb"),
-            Act = () =>
-            {
-                TryStartTeleport(ent, user, user);
-            }
-        };
-        args.Verbs.Add(teleportVerb);
+            Act = () => TryStartTeleport(ent, user, user)
+        });
     }
 
     private void OnCanDropTarget(Entity<InteractionTeleportComponent> ent, ref CanDropTargetEvent args)

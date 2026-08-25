@@ -70,7 +70,7 @@ public sealed partial class RandomTeleportSystem : EntitySystem
         if (!_teleport.TryTeleport(ent, target, user, destinationCoordinates))
             return false;
 
-        _adminLogger.Add(LogType.Teleport, $"{ToPrettyString(user):user} used telepoter {ToPrettyString(ent):teleport} and teleported {ToPrettyString(target):target} to random location");
+        _adminLogger.Add(LogType.Teleport, $"{ToPrettyString(user):user} used teleporter {ToPrettyString(ent):teleport} and teleported {ToPrettyString(target):target} to random location");
         return true;
     }
 }

@@ -21,32 +21,37 @@ public sealed partial class SelfLinkedTeleportSystem : SharedSelfLinkedTeleportS
         SubscribeLocalEvent<SelfLinkedTeleportComponent, ComponentRemove>(OnRemove);
     }
 
-    private void OnMapInit(Entity<SelfLinkedTeleportComponent> ent, ref MapInitEvent args)//not sure about an event type
+    private void OnMapInit(Entity<SelfLinkedTeleportComponent> ent, ref MapInitEvent args)
     {
         TryFindNewLink(ent);
     }
 
     private void OnRemove(Entity<SelfLinkedTeleportComponent> ent, ref ComponentRemove args)
     {
-        if (ent.Comp.LinkedEntity == null)
+        if (ent.Comp.LinkedEntity is not { } linkedTeleporter)
             return;
 
-        if (TryComp<SelfLinkedTeleportComponent>(ent.Comp.LinkedEntity, out var linkedTeleporterComp))
-            TryFindNewLink((ent.Comp.LinkedEntity.Value, linkedTeleporterComp));
+        if (TryComp<SelfLinkedTeleportComponent>(linkedTeleporter, out var linkedTeleporterComp))
+        {
+            linkedTeleporterComp.LinkedEntity = null;
+            TryFindNewLink((linkedTeleporter, linkedTeleporterComp));
+        }
 
         ent.Comp.LinkedEntity = null;
         UpdateVisuals(ent);
     }
 
-    public bool TryFindNewLink(Entity<SelfLinkedTeleportComponent> ent)
+    private bool TryFindNewLink(Entity<SelfLinkedTeleportComponent> ent)
     {
-        ent.Comp.LinkedEntity = null;
+        if (ent.Comp.LinkedEntity != null)
+            return false;
+
         UpdateVisuals(ent);
 
         var query = EntityQueryEnumerator<SelfLinkedTeleportComponent>();
         while (query.MoveNext(out var candidate, out var candidateComp))
         {
-            if (candidate == ent.Owner)//shouldn't be linked to itself
+            if (candidate == ent.Owner)
                 continue;
 
             if (TerminatingOrDeleted(candidate))
@@ -68,8 +73,6 @@ public sealed partial class SelfLinkedTeleportSystem : SharedSelfLinkedTeleportS
             candidateComp.LinkedEntity = ent;
             UpdateVisuals(ent);
             UpdateVisuals((candidate, candidateComp));
-            Dirty(candidate, candidateComp);
-            Dirty(ent);
 
             return true;
         }
@@ -86,7 +89,7 @@ public sealed partial class SelfLinkedTeleportSystem : SharedSelfLinkedTeleportS
         if (!base.TryTeleport(ent, target, user, destinationCoordinates))
             return false;
 
-        _adminLogger.Add(LogType.Teleport, $"{ToPrettyString(user):user} used linked telepoter {ToPrettyString(ent):teleport enter} and tried teleport {ToPrettyString(target):target} to {ToPrettyString(ent.Comp.LinkedEntity):teleport exit}");
+        _adminLogger.Add(LogType.Teleport, $"{ToPrettyString(user):user} used linked teleporter {ToPrettyString(ent):teleport enter} and teleported {ToPrettyString(target):target} to {ToPrettyString(ent.Comp.LinkedEntity):teleport exit}");
         return true;
     }
 }

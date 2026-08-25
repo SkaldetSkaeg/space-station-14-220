@@ -37,7 +37,7 @@ public sealed partial class AltVerbTeleportComponent : Component
 
     /// <summary>
     ///     How long we are entering teleport
-    ///     Null if DoAfter shouldn't happen
+    ///     Null when teleportation should be immediate.
     /// </summary>
     [DataField]
     public TimeSpan? TeleportDoAfterTime;

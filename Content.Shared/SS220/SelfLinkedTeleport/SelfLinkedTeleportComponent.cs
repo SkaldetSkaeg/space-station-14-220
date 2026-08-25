@@ -22,7 +22,7 @@ public sealed partial class SelfLinkedTeleportComponent : Component
     ///     Filter used when searching for an unlinked teleport candidate.
     ///     Only the searching teleporter's whitelist is checked.
     /// </summary>
-    [DataField, AutoNetworkedField]
+    [DataField]
     public EntityWhitelist? LinkWhitelist;
 
     /// <summary>
