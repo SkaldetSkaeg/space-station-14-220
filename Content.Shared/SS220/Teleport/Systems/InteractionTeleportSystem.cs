@@ -33,14 +33,7 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
         if (!args.CanInteract)
             return;
 
-        if (_whitelist.IsWhitelistFail(ent.Comp.TargetWhitelist, args.User))
-        {
-            if (ent.Comp.WhitelistRejectedLoc != null)
-                _popup.PopupPredicted(Loc.GetString(ent.Comp.WhitelistRejectedLoc), ent, args.User, PopupType.MediumCaution);
-            return;
-        }
-
-        if (_whitelist.IsWhitelistPass(ent.Comp.TargetBlacklist, args.User))
+        if (!IsTargetAllowed(ent, args.User, args.User))
             return;
 
         var user = args.User;
@@ -62,23 +55,12 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
             return;
 
         args.Handled = true;
-        args.CanDrop = !_whitelist.IsWhitelistFail(ent.Comp.TargetWhitelist, args.Dragged) &&
-                       !_whitelist.IsWhitelistPass(ent.Comp.TargetBlacklist, args.Dragged);
+        args.CanDrop = IsTargetAllowed(ent, args.Dragged);
     }
 
     private void OnDragDropTarget(Entity<InteractionTeleportComponent> ent, ref DragDropTargetEvent args)
     {
         if (args.Handled)
-            return;
-
-        if (_whitelist.IsWhitelistFail(ent.Comp.TargetWhitelist, args.Dragged))
-        {
-            if (ent.Comp.WhitelistRejectedLoc != null)
-                _popup.PopupPredicted(Loc.GetString(ent.Comp.WhitelistRejectedLoc), ent, args.User, PopupType.MediumCaution);
-            return;
-        }
-
-        if (_whitelist.IsWhitelistPass(ent.Comp.TargetBlacklist, args.Dragged))
             return;
 
         if (!TryStartTeleport(ent, args.Dragged, args.User))
@@ -87,8 +69,30 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
         args.Handled = true;
     }
 
+    private bool IsTargetAllowed(
+        Entity<InteractionTeleportComponent> ent,
+        EntityUid target,
+        EntityUid? popupUser = null)
+    {
+        if (_whitelist.IsWhitelistFail(ent.Comp.TargetWhitelist, target))
+        {
+            if (popupUser is { } user && ent.Comp.WhitelistRejectedLoc is { } rejectedLoc)
+                _popup.PopupPredicted(Loc.GetString(rejectedLoc), ent, user, PopupType.MediumCaution);
+
+            return false;
+        }
+
+        if (_whitelist.IsWhitelistPass(ent.Comp.TargetBlacklist, target))
+            return false;
+
+        return true;
+    }
+
     private bool TryStartTeleport(Entity<InteractionTeleportComponent> ent, EntityUid target, EntityUid user)
     {
+        if (!IsTargetAllowed(ent, target, user))
+            return false;
+
         var attemptEvent = new TeleportUseAttemptEvent(target, user);
         RaiseLocalEvent(ent, ref attemptEvent);
 
