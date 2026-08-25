@@ -21,11 +21,4 @@ public sealed partial class CollisionTeleportTriggerComponent : Component
     /// </summary>
     [DataField]
     public EntityWhitelist? DeleteWhitelist;
-
-    /// <summary>
-    ///     Targets currently touching the teleporter fixture.
-    ///     Prevents targets with multiple fixtures from triggering more than once per contact.
-    /// </summary>
-    [ViewVariables]
-    public readonly HashSet<EntityUid> CollidingTargets = [];
 }

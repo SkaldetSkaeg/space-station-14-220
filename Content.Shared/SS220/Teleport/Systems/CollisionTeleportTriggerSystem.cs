@@ -15,7 +15,6 @@ public sealed partial class CollisionTeleportTriggerSystem : EntitySystem
         base.Initialize();
 
         SubscribeLocalEvent<CollisionTeleportTriggerComponent, StartCollideEvent>(OnStartCollide);
-        SubscribeLocalEvent<CollisionTeleportTriggerComponent, EndCollideEvent>(OnEndCollide);
     }
 
     private void OnStartCollide(Entity<CollisionTeleportTriggerComponent> ent, ref StartCollideEvent args)
@@ -27,9 +26,6 @@ public sealed partial class CollisionTeleportTriggerSystem : EntitySystem
             return;
 
         var target = args.OtherEntity;
-        if (!ent.Comp.CollidingTargets.Add(target))
-            return;
-
         if (_whitelist.IsWhitelistPass(ent.Comp.DeleteWhitelist, target))
         {
             PredictedQueueDel(target);
@@ -44,13 +40,5 @@ public sealed partial class CollisionTeleportTriggerSystem : EntitySystem
 
         var teleportEvent = new TeleportTargetEvent(target, target);
         RaiseLocalEvent(ent, ref teleportEvent);
-    }
-
-    private void OnEndCollide(Entity<CollisionTeleportTriggerComponent> ent, ref EndCollideEvent args)
-    {
-        if (ent.Comp.TeleporterFixtureId is { } fixtureId && args.OurFixtureId != fixtureId)
-            return;
-
-        ent.Comp.CollidingTargets.Remove(args.OtherEntity);
     }
 }
