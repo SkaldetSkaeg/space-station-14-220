@@ -28,10 +28,28 @@ public sealed partial class TeleportationChasmSystem : SharedTeleportationChasmS
                 continue;
             }
 
-            if (chasmFalling.Teleporter is { } teleporter)
+            if (chasmFalling.Teleporter is not { } teleporter)
             {
-                var teleportEvent = new TeleportTargetEvent(uid, uid);
-                RaiseLocalEvent(teleporter, ref teleportEvent);
+                Log.Error($"TeleportationChasm couldn't teleport {ToPrettyString(uid)} because the teleporter was not specified");
+                QueueDel(uid);
+                continue;
+            }
+
+            if (TerminatingOrDeleted(teleporter))
+            {
+                Log.Error($"TeleportationChasm couldn't teleport {ToPrettyString(uid)} because {ToPrettyString(teleporter)} was terminating or deleted");
+                QueueDel(uid);
+                continue;
+            }
+
+            var teleportEvent = new TeleportTargetEvent(uid, uid);
+            RaiseLocalEvent(teleporter, ref teleportEvent);
+
+            if (!teleportEvent.Handled)
+            {
+                Log.Error($"TeleportationChasm couldn't teleport {ToPrettyString(uid)} because no teleport implementation handled the request");
+                QueueDel(uid);
+                continue;
             }
 
             RemCompDeferred<TeleportationChasmFallingComponent>(uid);
