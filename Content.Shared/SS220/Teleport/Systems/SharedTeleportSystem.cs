@@ -34,8 +34,14 @@ public sealed partial class SharedTeleportSystem : EntitySystem
         if (TerminatingOrDeleted(target))
             return false;
 
-        if (TryComp(user, out PullerComponent? puller) && TryComp(puller.Pulling, out PullableComponent? pullable))
-            _pulling.TryStopPull(puller.Pulling.Value, pullable);
+        if (TryComp(target, out PullableComponent? targetPullable))
+            _pulling.TryStopPull(target, targetPullable);
+
+        if (TryComp(target, out PullerComponent? targetPuller) &&
+            TryComp(targetPuller.Pulling, out PullableComponent? pulledEntity))
+        {
+            _pulling.TryStopPull(targetPuller.Pulling.Value, pulledEntity);
+        }
 
         _transform.SetCoordinates(target, Transform(target), destination);
 

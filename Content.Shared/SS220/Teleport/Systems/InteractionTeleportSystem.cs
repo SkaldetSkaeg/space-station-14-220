@@ -68,6 +68,9 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
 
     private void OnDragDropTarget(Entity<InteractionTeleportComponent> ent, ref DragDropTargetEvent args)
     {
+        if (args.Handled)
+            return;
+
         if (_whitelist.IsWhitelistFail(ent.Comp.TargetWhitelist, args.Dragged))
         {
             if (ent.Comp.WhitelistRejectedLoc != null)
@@ -78,7 +81,10 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
         if (_whitelist.IsWhitelistPass(ent.Comp.TargetBlacklist, args.Dragged))
             return;
 
-        TryStartTeleport(ent, args.Dragged, args.User);
+        if (!TryStartTeleport(ent, args.Dragged, args.User))
+            return;
+
+        args.Handled = true;
     }
 
     private bool TryStartTeleport(Entity<InteractionTeleportComponent> ent, EntityUid target, EntityUid user)
@@ -90,10 +96,7 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
             return false;
 
         if (ent.Comp.TeleportDoAfterTime is null)
-        {
-            SendTeleporting(ent, target, user);
-            return true;
-        }
+            return SendTeleporting(ent, target, user);
 
         var teleportDoAfter = new DoAfterArgs(EntityManager, user, ent.Comp.TeleportDoAfterTime.Value, new InteractionTeleportDoAfterEvent(), ent, target)
         {
@@ -123,9 +126,10 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
         SendTeleporting(ent, args.Target.Value, args.User);
     }
 
-    private void SendTeleporting(Entity<InteractionTeleportComponent> ent, EntityUid target, EntityUid user)
+    private bool SendTeleporting(Entity<InteractionTeleportComponent> ent, EntityUid target, EntityUid user)
     {
         var teleportEvent = new TeleportTargetEvent(target, user);
         RaiseLocalEvent(ent, ref teleportEvent);
+        return teleportEvent.Handled;
     }
 }

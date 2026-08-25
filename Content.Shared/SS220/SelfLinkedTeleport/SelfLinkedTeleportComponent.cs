@@ -23,6 +23,12 @@ public sealed partial class SelfLinkedTeleportComponent : Component
     /// </summary>
     [DataField, AutoNetworkedField]
     public EntityWhitelist? LinkWhitelist;
+
+    /// <summary>
+    ///     Whether this teleporter can link to a teleporter located on another map.
+    /// </summary>
+    [DataField]
+    public bool CanLinkToOtherMaps = true;
 }
 
 [Serializable, NetSerializable]

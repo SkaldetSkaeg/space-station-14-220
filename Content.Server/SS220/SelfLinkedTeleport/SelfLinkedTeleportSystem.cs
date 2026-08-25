@@ -55,6 +55,12 @@ public sealed partial class SelfLinkedTeleportSystem : SharedSelfLinkedTeleportS
             if (_whitelist.IsWhitelistFail(ent.Comp.LinkWhitelist, candidate))
                 continue;
 
+            if ((!ent.Comp.CanLinkToOtherMaps || !candidateComp.CanLinkToOtherMaps) &&
+                Transform(ent).MapID != Transform(candidate).MapID)
+            {
+                continue;
+            }
+
             if (candidateComp.LinkedEntity != null)
                 continue;
 
