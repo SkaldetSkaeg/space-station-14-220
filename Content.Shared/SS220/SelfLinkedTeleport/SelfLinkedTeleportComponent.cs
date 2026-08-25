@@ -19,7 +19,8 @@ public sealed partial class SelfLinkedTeleportComponent : Component
     public EntityUid? LinkedEntity;
 
     /// <summary>
-    ///     Which entities can it linked to
+    ///     Filter used when searching for an unlinked teleport candidate.
+    ///     Only the searching teleporter's whitelist is checked.
     /// </summary>
     [DataField, AutoNetworkedField]
     public EntityWhitelist? LinkWhitelist;

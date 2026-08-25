@@ -49,10 +49,17 @@ public sealed partial class RandomTeleportSystem : EntitySystem
         var query = EntityManager.AllEntityQueryEnumerator(registration.Type);
         while (query.MoveNext(out var destination, out _))
         {
+            if (TerminatingOrDeleted(destination))
+                continue;
+
             if (_whitelist.IsWhitelistFail(ent.Comp.DestinationWhitelist, destination))
                 continue;
 
-            validDestinations.Add(Transform(destination).Coordinates);
+            var coordinates = Transform(destination).Coordinates;
+            if (!coordinates.IsValid(EntityManager))
+                continue;
+
+            validDestinations.Add(coordinates);
         }
 
         if (validDestinations.Count == 0)
