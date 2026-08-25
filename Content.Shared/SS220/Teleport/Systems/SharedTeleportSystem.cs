@@ -31,14 +31,7 @@ public sealed partial class SharedTeleportSystem : EntitySystem
         var beforeTeleportEvent = new BeforeTeleportTargetEvent(target, user);
         RaiseLocalEvent(teleporter, ref beforeTeleportEvent);
 
-        if (TryComp(target, out PullableComponent? targetPullable))
-            _pulling.TryStopPull(target, targetPullable);
-
-        if (TryComp(target, out PullerComponent? targetPuller) &&
-            TryComp(targetPuller.Pulling, out PullableComponent? pulledEntity))
-        {
-            _pulling.TryStopPull(targetPuller.Pulling.Value, pulledEntity);
-        }
+        StopPullingRelationships(target);
 
         _transform.SetCoordinates(target, Transform(target), destination);
 
@@ -49,5 +42,22 @@ public sealed partial class SharedTeleportSystem : EntitySystem
         RaiseLocalEvent(target, ref afterTeleportedEvent);
 
         return true;
+    }
+
+    private void StopPullingRelationships(EntityUid target)
+    {
+        if (TryComp(target, out PullableComponent? targetPullable))
+            _pulling.TryStopPull(target, targetPullable);
+
+        if (!TryComp(target, out PullerComponent? targetPuller))
+            return;
+
+        if (targetPuller.Pulling is not { } pulledTarget)
+            return;
+
+        if (!TryComp(pulledTarget, out PullableComponent? pulledEntity))
+            return;
+
+        _pulling.TryStopPull(pulledTarget, pulledEntity);
     }
 }

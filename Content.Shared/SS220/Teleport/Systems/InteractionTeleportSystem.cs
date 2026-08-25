@@ -80,11 +80,14 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
 
     private bool TryStartTeleport(Entity<InteractionTeleportComponent> ent, EntityUid target, EntityUid user)
     {
-        if (!IsTargetAllowed(ent, target))
+        if (_whitelist.IsWhitelistFail(ent.Comp.TargetWhitelist, target))
         {
-            ShowWhitelistRejectedPopup(ent, target, user);
+            ShowWhitelistRejectedPopup(ent, user);
             return false;
         }
+
+        if (_whitelist.IsWhitelistPass(ent.Comp.TargetBlacklist, target))
+            return false;
 
         var attemptEvent = new TeleportUseAttemptEvent(target, user);
         RaiseLocalEvent(ent, ref attemptEvent);
@@ -119,12 +122,8 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
 
     private void ShowWhitelistRejectedPopup(
         Entity<InteractionTeleportComponent> ent,
-        EntityUid target,
         EntityUid user)
     {
-        if (!_whitelist.IsWhitelistFail(ent.Comp.TargetWhitelist, target))
-            return;
-
         if (ent.Comp.WhitelistRejectedLoc is not { } rejectedLoc)
             return;
 

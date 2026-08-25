@@ -57,11 +57,14 @@ public sealed partial class AltVerbTeleportSystem : EntitySystem
         if (_hands.GetActiveItem(user) != ent.Owner)
             return false;
 
-        if (!IsUserAllowed(ent, user))
+        if (_whitelist.IsWhitelistFail(ent.Comp.UserWhitelist, user))
         {
             ShowWhitelistRejectedPopup(ent, user);
             return false;
         }
+
+        if (_whitelist.IsWhitelistPass(ent.Comp.UserBlacklist, user))
+            return false;
 
         var attemptEvent = new TeleportUseAttemptEvent(user, user);
         RaiseLocalEvent(ent, ref attemptEvent);
@@ -107,9 +110,6 @@ public sealed partial class AltVerbTeleportSystem : EntitySystem
 
     private void ShowWhitelistRejectedPopup(Entity<AltVerbTeleportComponent> ent, EntityUid user)
     {
-        if (!_whitelist.IsWhitelistFail(ent.Comp.UserWhitelist, user))
-            return;
-
         if (ent.Comp.WhitelistRejectedLoc is not { } rejectedLoc)
             return;
 
