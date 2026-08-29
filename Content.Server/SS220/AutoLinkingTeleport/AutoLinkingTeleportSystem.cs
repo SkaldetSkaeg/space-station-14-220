@@ -28,22 +28,22 @@ public sealed partial class AutoLinkingTeleportSystem : SharedAutoLinkingTelepor
 
     private void OnRemove(Entity<AutoLinkingTeleportComponent> ent, ref ComponentRemove args)
     {
-        if (ent.Comp.LinkedEntity is not { } linkedTeleporter)
+        if (ent.Comp.LinkedTeleporter is not { } linkedTeleporter)
             return;
 
         if (TryComp<AutoLinkingTeleportComponent>(linkedTeleporter, out var linkedTeleporterComp))
         {
-            linkedTeleporterComp.LinkedEntity = null;
+            linkedTeleporterComp.LinkedTeleporter = null;
             TryFindNewLink((linkedTeleporter, linkedTeleporterComp));
         }
 
-        ent.Comp.LinkedEntity = null;
+        ent.Comp.LinkedTeleporter = null;
         UpdateVisuals(ent);
     }
 
     private bool TryFindNewLink(Entity<AutoLinkingTeleportComponent> ent)
     {
-        if (ent.Comp.LinkedEntity != null)
+        if (ent.Comp.LinkedTeleporter != null)
             return false;
 
         UpdateVisuals(ent);
@@ -69,11 +69,11 @@ public sealed partial class AutoLinkingTeleportSystem : SharedAutoLinkingTelepor
                     continue;
             }
 
-            if (candidateComp.LinkedEntity != null)
+            if (candidateComp.LinkedTeleporter != null)
                 continue;
 
-            ent.Comp.LinkedEntity = candidate;
-            candidateComp.LinkedEntity = ent;
+            ent.Comp.LinkedTeleporter = candidate;
+            candidateComp.LinkedTeleporter = ent;
             UpdateVisuals(ent);
             UpdateVisuals((candidate, candidateComp));
 
@@ -92,7 +92,7 @@ public sealed partial class AutoLinkingTeleportSystem : SharedAutoLinkingTelepor
         if (!base.TryTeleport(ent, target, user, destinationCoordinates))
             return false;
 
-        _adminLogger.Add(LogType.Teleport, $"{ToPrettyString(user):user} used linked teleporter {ToPrettyString(ent):teleport enter} and teleported {ToPrettyString(target):target} to {ToPrettyString(ent.Comp.LinkedEntity):teleport exit}");
+        _adminLogger.Add(LogType.Teleport, $"{ToPrettyString(user):user} used linked teleporter {ToPrettyString(ent):teleport enter} and teleported {ToPrettyString(target):target} to {ToPrettyString(ent.Comp.LinkedTeleporter):teleport exit}");
         return true;
     }
 }

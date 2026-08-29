@@ -58,7 +58,7 @@ public abstract partial class SharedAutoLinkingTeleportSystem : EntitySystem
 
     private void OnTeleportUseAttempt(Entity<AutoLinkingTeleportComponent> ent, ref TeleportUseAttemptEvent args)
     {
-        if (ent.Comp.LinkedEntity != null)
+        if (ent.Comp.LinkedTeleporter != null)
             return;
 
         _popup.PopupPredicted(
@@ -73,7 +73,7 @@ public abstract partial class SharedAutoLinkingTeleportSystem : EntitySystem
 
     private void OnExamined(Entity<AutoLinkingTeleportComponent> ent, ref ExaminedEvent args)
     {
-        if (ent.Comp.LinkedEntity != null)
+        if (ent.Comp.LinkedTeleporter != null)
             args.PushMarkup(Loc.GetString("auto-linking-teleport-has-destination"));
         else
             args.PushMarkup(Loc.GetString("auto-linking-teleport-no-destination"));
@@ -81,7 +81,7 @@ public abstract partial class SharedAutoLinkingTeleportSystem : EntitySystem
 
     private bool TryGetDestination(Entity<AutoLinkingTeleportComponent> ent, out EntityUid destination)
     {
-        destination = ent.Comp.LinkedEntity ?? EntityUid.Invalid;
+        destination = ent.Comp.LinkedTeleporter ?? EntityUid.Invalid;
 
         if (!Exists(destination))
             return false;
@@ -103,10 +103,10 @@ public abstract partial class SharedAutoLinkingTeleportSystem : EntitySystem
 
     protected virtual void UpdateVisuals(Entity<AutoLinkingTeleportComponent> ent)
     {
-        _appearance.SetData(ent, AutoLinkingTeleportVisuals.Linked, ent.Comp.LinkedEntity != null);
+        _appearance.SetData(ent, AutoLinkingTeleportVisuals.Linked, ent.Comp.LinkedTeleporter != null);
 
         if (_lights.TryGetLight(ent.Owner, out var light))
-            _lights.SetEnabled(ent.Owner, ent.Comp.LinkedEntity != null, light);
+            _lights.SetEnabled(ent.Owner, ent.Comp.LinkedTeleporter != null, light);
 
         Dirty(ent);
     }

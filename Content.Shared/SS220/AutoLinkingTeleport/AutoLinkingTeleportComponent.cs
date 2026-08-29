@@ -16,7 +16,7 @@ public sealed partial class AutoLinkingTeleportComponent : Component
     ///     The linked destination teleporter.
     /// </summary>
     [ViewVariables, AutoNetworkedField]
-    public EntityUid? LinkedEntity;
+    public EntityUid? LinkedTeleporter;
 
     /// <summary>
     ///     Filter used when searching for an unlinked teleport candidate.
