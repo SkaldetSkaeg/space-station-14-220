@@ -15,13 +15,13 @@ public sealed partial class TeleportationChasmFallingComponent : Component
     /// <summary>
     ///     Teleporter that caused the target to start falling.
     /// </summary>
-    public EntityUid? Teleporter;
+    public EntityUid? SourceTeleporter;
 
     /// <summary>
     ///     Time it should take for the falling animation (scaling down) to complete.
     /// </summary>
     [DataField]
-    public TimeSpan AnimationTime = TimeSpan.FromSeconds(1.5f);
+    public TimeSpan FallAnimationDuration = TimeSpan.FromSeconds(1.5f);
 
     /// <summary>
     ///     Time between starting and completing the fall.
@@ -46,5 +46,5 @@ public sealed partial class TeleportationChasmFallingComponent : Component
     /// <summary>
     ///     Whether to delete the entity instead of teleporting it.
     /// </summary>
-    public bool DeleteInsteadOfTeleport = false;
+    public bool DeleteInsteadOfTeleport;
 }

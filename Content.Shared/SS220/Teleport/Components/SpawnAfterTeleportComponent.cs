@@ -8,7 +8,7 @@ namespace Content.Shared.SS220.Teleport.Components;
 ///     Spawns an entity at the target's arrival location after teleportation.
 /// </summary>
 [RegisterComponent]
-public sealed partial class SpawnOnTeleportedComponent : Component
+public sealed partial class SpawnAfterTeleportComponent : Component
 {
     /// <summary>
     ///     The entity to spawn.

@@ -14,12 +14,12 @@
   - type: Physics
     bodyType: Static
   - type: CollisionTeleportTrigger
-    teleporterFixtureId: portal
-    deleteWhitelist:
+    triggerFixtureId: portal
+    deleteTargetWhitelist:
       components:
       - Explosive
       - ProjectileGrenade
-  - type: RandomPoweredLightTeleport
+  - type: TeleportToRandomPoweredLight
   - type: Fixtures
     fixtures:
       left:

@@ -6,4 +6,4 @@ namespace Content.Server.SS220.Teleport.Components;
 ///     Teleports targets to a random powered light on the primary station.
 /// </summary>
 [RegisterComponent]
-public sealed partial class RandomPoweredLightTeleportComponent : Component;
+public sealed partial class TeleportToRandomPoweredLightComponent : Component;

@@ -22,11 +22,11 @@ public sealed partial class RandomTeleportSystem : EntitySystem
     {
         base.Initialize();
 
-        SubscribeLocalEvent<RandomTeleportComponent, TeleportTargetEvent>(OnTeleportTarget);
-        SubscribeLocalEvent<RandomTeleportComponent, GhostTeleportTargetEvent>(OnGhostTeleportTarget);
+        SubscribeLocalEvent<RandomTeleportComponent, TeleportRequestEvent>(OnTeleportRequest);
+        SubscribeLocalEvent<RandomTeleportComponent, GhostTeleportRequestEvent>(OnGhostTeleportRequest);
     }
 
-    private void OnTeleportTarget(Entity<RandomTeleportComponent> ent, ref TeleportTargetEvent args)
+    private void OnTeleportRequest(Entity<RandomTeleportComponent> ent, ref TeleportRequestEvent args)
     {
         if (args.Handled)
             return;
@@ -37,7 +37,7 @@ public sealed partial class RandomTeleportSystem : EntitySystem
         args.Handled = true;
     }
 
-    private void OnGhostTeleportTarget(Entity<RandomTeleportComponent> ent, ref GhostTeleportTargetEvent args)
+    private void OnGhostTeleportRequest(Entity<RandomTeleportComponent> ent, ref GhostTeleportRequestEvent args)
     {
         if (args.Handled)
             return;
@@ -67,11 +67,17 @@ public sealed partial class RandomTeleportSystem : EntitySystem
     {
         destinationCoordinates = EntityCoordinates.Invalid;
 
-        if (ent.Comp.DestinationComponent is null)
+        if (ent.Comp.DestinationComponentName is null)
+        {
+            Log.Error($"RandomTeleport on {ToPrettyString(ent)} has no destination component configured");
             return false;
+        }
 
-        if (!_componentFactory.TryGetRegistration(ent.Comp.DestinationComponent, out var registration))
+        if (!_componentFactory.TryGetRegistration(ent.Comp.DestinationComponentName, out var registration))
+        {
+            Log.Error($"RandomTeleport on {ToPrettyString(ent)} has unknown destination component {ent.Comp.DestinationComponentName}");
             return false;
+        }
 
         var validDestinations = new List<EntityCoordinates>();
 
@@ -92,7 +98,10 @@ public sealed partial class RandomTeleportSystem : EntitySystem
         }
 
         if (validDestinations.Count == 0)
+        {
+            Log.Warning($"RandomTeleport on {ToPrettyString(ent)} found no valid destinations with component {ent.Comp.DestinationComponentName}");
             return false;
+        }
 
         destinationCoordinates = _random.Pick(validDestinations);
         return true;

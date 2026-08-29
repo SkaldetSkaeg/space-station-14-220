@@ -2,13 +2,13 @@
 
 using Content.Shared.Administration.Logs;
 using Content.Shared.Database;
-using Content.Shared.SS220.SelfLinkedTeleport;
+using Content.Shared.SS220.AutoLinkingTeleport;
 using Content.Shared.Whitelist;
 using Robust.Shared.Map;
 
-namespace Content.Server.SS220.SelfLinkedTeleport;
+namespace Content.Server.SS220.AutoLinkingTeleport;
 
-public sealed partial class SelfLinkedTeleportSystem : SharedSelfLinkedTeleportSystem
+public sealed partial class AutoLinkingTeleportSystem : SharedAutoLinkingTeleportSystem
 {
     [Dependency] private EntityWhitelistSystem _whitelist = default!;
     [Dependency] private ISharedAdminLogManager _adminLogger = default!;
@@ -17,21 +17,21 @@ public sealed partial class SelfLinkedTeleportSystem : SharedSelfLinkedTeleportS
     {
         base.Initialize();
 
-        SubscribeLocalEvent<SelfLinkedTeleportComponent, MapInitEvent>(OnMapInit);
-        SubscribeLocalEvent<SelfLinkedTeleportComponent, ComponentRemove>(OnRemove);
+        SubscribeLocalEvent<AutoLinkingTeleportComponent, MapInitEvent>(OnMapInit);
+        SubscribeLocalEvent<AutoLinkingTeleportComponent, ComponentRemove>(OnRemove);
     }
 
-    private void OnMapInit(Entity<SelfLinkedTeleportComponent> ent, ref MapInitEvent args)
+    private void OnMapInit(Entity<AutoLinkingTeleportComponent> ent, ref MapInitEvent args)
     {
         TryFindNewLink(ent);
     }
 
-    private void OnRemove(Entity<SelfLinkedTeleportComponent> ent, ref ComponentRemove args)
+    private void OnRemove(Entity<AutoLinkingTeleportComponent> ent, ref ComponentRemove args)
     {
         if (ent.Comp.LinkedEntity is not { } linkedTeleporter)
             return;
 
-        if (TryComp<SelfLinkedTeleportComponent>(linkedTeleporter, out var linkedTeleporterComp))
+        if (TryComp<AutoLinkingTeleportComponent>(linkedTeleporter, out var linkedTeleporterComp))
         {
             linkedTeleporterComp.LinkedEntity = null;
             TryFindNewLink((linkedTeleporter, linkedTeleporterComp));
@@ -41,14 +41,14 @@ public sealed partial class SelfLinkedTeleportSystem : SharedSelfLinkedTeleportS
         UpdateVisuals(ent);
     }
 
-    private bool TryFindNewLink(Entity<SelfLinkedTeleportComponent> ent)
+    private bool TryFindNewLink(Entity<AutoLinkingTeleportComponent> ent)
     {
         if (ent.Comp.LinkedEntity != null)
             return false;
 
         UpdateVisuals(ent);
 
-        var query = EntityQueryEnumerator<SelfLinkedTeleportComponent>();
+        var query = EntityQueryEnumerator<AutoLinkingTeleportComponent>();
         while (query.MoveNext(out var candidate, out var candidateComp))
         {
             if (candidate == ent.Owner)
@@ -84,7 +84,7 @@ public sealed partial class SelfLinkedTeleportSystem : SharedSelfLinkedTeleportS
     }
 
     protected override bool TryTeleport(
-        Entity<SelfLinkedTeleportComponent> ent,
+        Entity<AutoLinkingTeleportComponent> ent,
         EntityUid target,
         EntityUid user,
         EntityCoordinates destinationCoordinates)

@@ -6,4 +6,4 @@ namespace Content.Server.SS220.RandomTeleport;
 ///     Marks an entity as a possible destination for random teleportation.
 /// </summary>
 [RegisterComponent]
-public sealed partial class RandomTeleportTargetComponent : Component { }
+public sealed partial class RandomTeleportDestinationComponent : Component { }

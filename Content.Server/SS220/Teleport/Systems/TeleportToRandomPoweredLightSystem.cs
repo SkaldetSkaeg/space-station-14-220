@@ -14,7 +14,7 @@ using Robust.Shared.Utility;
 
 namespace Content.Server.SS220.Teleport.Systems;
 
-public sealed partial class RandomPoweredLightTeleportSystem : EntitySystem
+public sealed partial class TeleportToRandomPoweredLightSystem : EntitySystem
 {
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private SharedStationSystem _station = default!;
@@ -26,33 +26,33 @@ public sealed partial class RandomPoweredLightTeleportSystem : EntitySystem
     {
         base.Initialize();
 
-        SubscribeLocalEvent<RandomPoweredLightTeleportComponent, TeleportTargetEvent>(OnTeleportTarget);
-        SubscribeLocalEvent<RandomPoweredLightTeleportComponent, GhostTeleportTargetEvent>(OnGhostTeleportTarget);
+        SubscribeLocalEvent<TeleportToRandomPoweredLightComponent, TeleportRequestEvent>(OnTeleportRequest);
+        SubscribeLocalEvent<TeleportToRandomPoweredLightComponent, GhostTeleportRequestEvent>(OnGhostTeleportRequest);
     }
 
-    private void OnTeleportTarget(Entity<RandomPoweredLightTeleportComponent> ent, ref TeleportTargetEvent args)
+    private void OnTeleportRequest(Entity<TeleportToRandomPoweredLightComponent> ent, ref TeleportRequestEvent args)
     {
         if (args.Handled)
             return;
 
-        if (!TryTeleportToRandomLocation(ent, args.Target))
+        if (!TryTeleportToDestination(ent, args.Target))
             return;
 
         args.Handled = true;
     }
 
-    private void OnGhostTeleportTarget(Entity<RandomPoweredLightTeleportComponent> ent, ref GhostTeleportTargetEvent args)
+    private void OnGhostTeleportRequest(Entity<TeleportToRandomPoweredLightComponent> ent, ref GhostTeleportRequestEvent args)
     {
         if (args.Handled)
             return;
 
-        if (!TryTeleportGhostToRandomLocation(args.Target))
+        if (!TryTeleportGhostToDestination(args.Target))
             return;
 
         args.Handled = true;
     }
 
-    private bool TryTeleportToRandomLocation(EntityUid teleporter, EntityUid target)
+    private bool TryTeleportToDestination(EntityUid teleporter, EntityUid target)
     {
         if (!TryGetDestination(target, out var destinationCoordinates, out var destinationType))
             return false;
@@ -67,7 +67,7 @@ public sealed partial class RandomPoweredLightTeleportSystem : EntitySystem
         return true;
     }
 
-    private bool TryTeleportGhostToRandomLocation(EntityUid target)
+    private bool TryTeleportGhostToDestination(EntityUid target)
     {
         if (!TryGetDestination(target, out var destinationCoordinates, out var destinationType))
             return false;
@@ -89,7 +89,7 @@ public sealed partial class RandomPoweredLightTeleportSystem : EntitySystem
     {
         if (_station.GetStations().FirstOrNull() is not { } station)
         {
-            Log.Warning($"RandomPoweredLightTeleport found no available stations for {ToPrettyString(target)}");
+            Log.Warning($"TeleportToRandomPoweredLight found no available stations for {ToPrettyString(target)}");
             return TryGetFallbackDestination(target, out destinationCoordinates, out destinationType);
         }
 
@@ -112,7 +112,7 @@ public sealed partial class RandomPoweredLightTeleportSystem : EntitySystem
 
         if (validDestinations.Count == 0)
         {
-            Log.Warning($"RandomPoweredLightTeleport found no valid powered lights for {ToPrettyString(target)}");
+            Log.Warning($"TeleportToRandomPoweredLight found no valid powered lights for {ToPrettyString(target)}");
             return TryGetFallbackDestination(target, out destinationCoordinates, out destinationType);
         }
 
@@ -128,7 +128,7 @@ public sealed partial class RandomPoweredLightTeleportSystem : EntitySystem
     {
         if (!_map.MapExists(_gameTicker.DefaultMap))
         {
-            Log.Error($"RandomPoweredLightTeleport couldn't teleport {ToPrettyString(target)} because the default map doesn't exist");
+            Log.Error($"TeleportToRandomPoweredLight couldn't teleport {ToPrettyString(target)} because the default map doesn't exist");
             destinationCoordinates = EntityCoordinates.Invalid;
             destinationType = default;
             return false;
@@ -137,7 +137,7 @@ public sealed partial class RandomPoweredLightTeleportSystem : EntitySystem
         var mapUid = _map.GetMapOrInvalid(_gameTicker.DefaultMap);
         if (TerminatingOrDeleted(mapUid))
         {
-            Log.Error($"RandomPoweredLightTeleport couldn't teleport {ToPrettyString(target)} because the default map is terminating or deleted");
+            Log.Error($"TeleportToRandomPoweredLight couldn't teleport {ToPrettyString(target)} because the default map is terminating or deleted");
             destinationCoordinates = EntityCoordinates.Invalid;
             destinationType = default;
             return false;
@@ -149,7 +149,7 @@ public sealed partial class RandomPoweredLightTeleportSystem : EntitySystem
             return true;
         }
 
-        Log.Warning($"RandomPoweredLightTeleport couldn't find an observer spawn point on the default map and will use the map origin");
+        Log.Warning($"TeleportToRandomPoweredLight couldn't find an observer spawn point on the default map and will use the map origin");
 
         destinationCoordinates = new EntityCoordinates(mapUid, Vector2.Zero);
         destinationType = TeleportDestinationType.MapOrigin;
@@ -161,10 +161,10 @@ public sealed partial class RandomPoweredLightTeleportSystem : EntitySystem
         switch (destinationType)
         {
             case TeleportDestinationType.ObserverSpawn:
-                Log.Error($"RandomPoweredLightTeleport couldn't teleport {ToPrettyString(target)} to an observer spawn point");
+                Log.Error($"TeleportToRandomPoweredLight couldn't teleport {ToPrettyString(target)} to an observer spawn point");
                 break;
             case TeleportDestinationType.MapOrigin:
-                Log.Error($"RandomPoweredLightTeleport couldn't teleport {ToPrettyString(target)} to the default map origin");
+                Log.Error($"TeleportToRandomPoweredLight couldn't teleport {ToPrettyString(target)} to the default map origin");
                 break;
         }
     }
@@ -174,10 +174,10 @@ public sealed partial class RandomPoweredLightTeleportSystem : EntitySystem
         switch (destinationType)
         {
             case TeleportDestinationType.ObserverSpawn:
-                Log.Warning($"RandomPoweredLightTeleport teleported {ToPrettyString(target)} to an observer spawn point on the default map");
+                Log.Warning($"TeleportToRandomPoweredLight teleported {ToPrettyString(target)} to an observer spawn point on the default map");
                 break;
             case TeleportDestinationType.MapOrigin:
-                Log.Warning($"RandomPoweredLightTeleport teleported {ToPrettyString(target)} to the default map origin");
+                Log.Warning($"TeleportToRandomPoweredLight teleported {ToPrettyString(target)} to the default map origin");
                 break;
         }
     }

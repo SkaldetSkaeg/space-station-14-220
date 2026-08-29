@@ -5,7 +5,7 @@ using Robust.Shared.Audio;
 namespace Content.Shared.SS220.Teleport.Components;
 
 /// <summary>
-///     Plays sounds at the target's departure and arrival locations after a successful teleport.
+///     Plays sounds at the target's departure and arrival locations during teleportation.
 /// </summary>
 [RegisterComponent]
 public sealed partial class TeleportSoundComponent : Component

@@ -10,7 +10,7 @@ using Robust.Shared.Network;
 
 namespace Content.Shared.SS220.Teleport.Systems;
 
-public sealed partial class AltVerbTeleportSystem : EntitySystem
+public sealed partial class AltVerbTeleportTriggerSystem : EntitySystem
 {
     [Dependency] private EntityWhitelistSystem _whitelist = default!;
     [Dependency] private SharedDoAfterSystem _doAfter = default!;
@@ -22,11 +22,11 @@ public sealed partial class AltVerbTeleportSystem : EntitySystem
     {
         base.Initialize();
 
-        SubscribeLocalEvent<AltVerbTeleportComponent, GetVerbsEvent<AlternativeVerb>>(OnGetAlternativeVerb);
-        SubscribeLocalEvent<AltVerbTeleportComponent, AltVerbTeleportDoAfterEvent>(OnAltVerbTeleportDoAfter);
+        SubscribeLocalEvent<AltVerbTeleportTriggerComponent, GetVerbsEvent<AlternativeVerb>>(OnGetAlternativeVerb);
+        SubscribeLocalEvent<AltVerbTeleportTriggerComponent, AltVerbTeleportDoAfterEvent>(OnAltVerbTeleportDoAfter);
     }
 
-    private void OnGetAlternativeVerb(Entity<AltVerbTeleportComponent> ent, ref GetVerbsEvent<AlternativeVerb> args)
+    private void OnGetAlternativeVerb(Entity<AltVerbTeleportTriggerComponent> ent, ref GetVerbsEvent<AlternativeVerb> args)
     {
         if (!args.CanAccess)
             return;
@@ -52,7 +52,7 @@ public sealed partial class AltVerbTeleportSystem : EntitySystem
         });
     }
 
-    private bool TryStartTeleport(Entity<AltVerbTeleportComponent> ent, EntityUid user)
+    private bool TryStartTeleport(Entity<AltVerbTeleportTriggerComponent> ent, EntityUid user)
     {
         if (_hands.GetActiveItem(user) != ent.Owner)
             return false;
@@ -73,7 +73,7 @@ public sealed partial class AltVerbTeleportSystem : EntitySystem
             return false;
 
         if (ent.Comp.TeleportDoAfterTime is null)
-            return TrySendTeleporting(ent, user);
+            return TryRequestTeleport(ent, user);
 
         var teleportDoAfter = new DoAfterArgs(EntityManager, user, ent.Comp.TeleportDoAfterTime.Value, new AltVerbTeleportDoAfterEvent(), eventTarget: ent, target: user)
         {
@@ -97,7 +97,7 @@ public sealed partial class AltVerbTeleportSystem : EntitySystem
         return true;
     }
 
-    private bool IsUserAllowed(Entity<AltVerbTeleportComponent> ent, EntityUid user)
+    private bool IsUserAllowed(Entity<AltVerbTeleportTriggerComponent> ent, EntityUid user)
     {
         if (_whitelist.IsWhitelistFail(ent.Comp.UserWhitelist, user))
             return false;
@@ -108,7 +108,7 @@ public sealed partial class AltVerbTeleportSystem : EntitySystem
         return true;
     }
 
-    private void ShowWhitelistRejectedPopup(Entity<AltVerbTeleportComponent> ent, EntityUid user)
+    private void ShowWhitelistRejectedPopup(Entity<AltVerbTeleportTriggerComponent> ent, EntityUid user)
     {
         if (ent.Comp.WhitelistRejectedLoc is not { } rejectedLoc)
             return;
@@ -121,7 +121,7 @@ public sealed partial class AltVerbTeleportSystem : EntitySystem
             PopupType.MediumCaution);
     }
 
-    private void OnAltVerbTeleportDoAfter(Entity<AltVerbTeleportComponent> ent, ref AltVerbTeleportDoAfterEvent args)
+    private void OnAltVerbTeleportDoAfter(Entity<AltVerbTeleportTriggerComponent> ent, ref AltVerbTeleportDoAfterEvent args)
     {
         if (args.Cancelled)
             return;
@@ -132,19 +132,19 @@ public sealed partial class AltVerbTeleportSystem : EntitySystem
         if (_hands.GetActiveItem(args.User) != ent.Owner)
             return;
 
-        if (TrySendTeleporting(ent, target))
+        if (TryRequestTeleport(ent, target))
             return;
 
         if (_net.IsClient)
             return;
 
-        Log.Error($"AltVerbTeleport on {ToPrettyString(ent)} couldn't teleport {ToPrettyString(target)} because no teleport implementation handled the request");
+        Log.Error($"AltVerbTeleportTrigger on {ToPrettyString(ent)} couldn't teleport {ToPrettyString(target)} because no teleport implementation handled the request");
     }
 
-    private bool TrySendTeleporting(Entity<AltVerbTeleportComponent> ent, EntityUid user)
+    private bool TryRequestTeleport(Entity<AltVerbTeleportTriggerComponent> ent, EntityUid user)
     {
-        var teleportEvent = new TeleportTargetEvent(user, user);
-        RaiseLocalEvent(ent, ref teleportEvent);
-        return teleportEvent.Handled;
+        var request = new TeleportRequestEvent(user, user);
+        RaiseLocalEvent(ent, ref request);
+        return request.Handled;
     }
 }

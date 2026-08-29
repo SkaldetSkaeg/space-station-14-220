@@ -6,38 +6,38 @@ using Content.Shared.Whitelist;
 namespace Content.Shared.SS220.Teleport.Components;
 
 /// <summary>
-///     Used when you need to teleport not through contact, but through DragDrop or Verb
+///     Requests teleportation through a verb or drag-and-drop interaction.
 /// </summary>
 [RegisterComponent]
-public sealed partial class InteractionTeleportComponent : Component
+public sealed partial class InteractionTeleportTriggerComponent : Component
 {
     /// <summary>
-    ///     Which entities can be teleported
+    ///     Entities allowed to be teleported.
     /// </summary>
     [DataField]
     public EntityWhitelist? TargetWhitelist;
 
     /// <summary>
-    ///     Which entities can't be teleported
+    ///     Entities prevented from being teleported.
     /// </summary>
     [DataField]
     public EntityWhitelist? TargetBlacklist;
 
     /// <summary>
-    ///     Message when whitelisting is rejected
+    ///     Message shown when the target does not pass the whitelist.
     /// </summary>
     [DataField]
     public LocId? WhitelistRejectedLoc;
 
     /// <summary>
-    ///     How long we are entering teleport
+    ///     Time required to enter the teleporter.
     ///     Null when teleportation should be immediate.
     /// </summary>
     [DataField]
     public TimeSpan? TeleportDoAfterTime;
 
     /// <summary>
-    ///     The amount of damage required to interrupt a DoAfter of the teleport
+    ///     Damage required to interrupt the teleport DoAfter.
     /// </summary>
     [DataField]
     public FixedPoint2? DamageThreshold;

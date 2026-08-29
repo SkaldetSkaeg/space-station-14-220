@@ -29,7 +29,7 @@
     damage:
       types:
         Slash: 10
-  - type: AltVerbTeleport
+  - type: AltVerbTeleportTrigger
     verbText: void-key-teleport-verb
     userWhitelist:
       components:
@@ -38,18 +38,18 @@
       components:
       - VoidBlocker
   - type: RandomTeleport
-    destinationComponent: "RandomTeleportTarget"
+    destinationComponentName: "RandomTeleportDestination"
     destinationWhitelist:
       tags:
-      - VoidTeleporationTarget
-  - type: PolymorphTeleportTarget
-    polymorphEnt: VoidKeyCameraPoly
-  - type: DeleteOnTeleported
+      - VoidTeleportDestination
+  - type: PolymorphAfterTeleport
+    polymorphPrototype: VoidKeyCameraPoly
+  - type: DeleteTeleporterOnUse
     deleteSound:
       path: /Audio/Effects/glass_smash.ogg
   - type: SpawnBeforeTeleport
     spawnPrototype: TeleportVanishEffect
-  - type: AfterTeleportStatusEffect
+  - type: StatusEffectsAfterTeleport
     effects:
       StatusEffectVoidBlocker: 600
 
@@ -71,7 +71,7 @@
     lifetime: 12
   - type: SpawnOnDespawn
     prototype: VoidPortalClosed
-  - type: InteractionTeleport
+  - type: InteractionTeleportTrigger
     teleportDoAfterTime: 2
     damageThreshold: 7
     targetWhitelist:
@@ -79,14 +79,14 @@
       - CultYogg
       - MiGo
   - type: RandomTeleport
-    destinationComponent: "RandomTeleportTarget"
+    destinationComponentName: "RandomTeleportDestination"
     destinationWhitelist:
       tags:
-      - VoidTeleporationTarget
-  - type: PolymorphTeleportTarget
-    polymorphEnt: VoidKeyCameraPoly
+      - VoidTeleportDestination
+  - type: PolymorphAfterTeleport
+    polymorphPrototype: VoidKeyCameraPoly
 
-#Animation entities for a better immersions
+# Animation entities for better immersion.
 - type: entity
   id: VoidPortalSpawn
   suffix: CultYogg
@@ -115,7 +115,7 @@
     layers:
     - state: portal_close
       shader: unshaded
-  # spawn animation lasts 1.2 seconds, but somehow its get +0.1 wtf
+  # The close animation lasts 1.2 seconds, but a 1.1 second lifetime keeps it visually synchronized.
   - type: TimedDespawn
     lifetime: 1.1
 

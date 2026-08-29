@@ -26,11 +26,11 @@
         - MiGo
 
 - type: entity
-  id: BaseSelfLinkedPortalCult
+  id: BaseAutoLinkingPortalCult
   parent: BaseStructure
   suffix: CultYogg
   abstract: true
-  name: self linked portal
+  name: auto-linking portal
   description: Transports you to a linked destination!
   components:
   - type: Transform
@@ -50,7 +50,7 @@
         layer:
         - WallLayer
         hard: false
-  - type: InteractionTeleport
+  - type: InteractionTeleportTrigger
     teleportDoAfterTime: 2
     damageThreshold: 7
     targetWhitelist:
@@ -58,4 +58,4 @@
       - CultYogg
       - MiGo
     whitelistRejectedLoc: cult-yogg-teleport-user-whitelist-rejection
-  - type: SelfLinkedTeleport
+  - type: AutoLinkingTeleport

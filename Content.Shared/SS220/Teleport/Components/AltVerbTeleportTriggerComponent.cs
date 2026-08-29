@@ -6,10 +6,10 @@ using Content.Shared.Whitelist;
 namespace Content.Shared.SS220.Teleport.Components;
 
 /// <summary>
-///     Used when you need to teleport through AltVerb
+///     Requests teleportation when the user activates an alternative verb while holding the teleporter in their active hand.
 /// </summary>
 [RegisterComponent]
-public sealed partial class AltVerbTeleportComponent : Component
+public sealed partial class AltVerbTeleportTriggerComponent : Component
 {
     /// <summary>
     ///     Text displayed for the alternative-use verb.
@@ -18,32 +18,32 @@ public sealed partial class AltVerbTeleportComponent : Component
     public LocId VerbText = "teleport-use-verb";
 
     /// <summary>
-    ///     Which entities can use teleportation
+    ///     Entities allowed to use the teleporter.
     /// </summary>
     [DataField]
     public EntityWhitelist? UserWhitelist;
 
     /// <summary>
-    ///     Which entities can't use teleportation
+    ///     Entities prevented from using the teleporter.
     /// </summary>
     [DataField]
     public EntityWhitelist? UserBlacklist;
 
     /// <summary>
-    ///     Message when whitelisting is rejected
+    ///     Message shown when the user does not pass the whitelist.
     /// </summary>
     [DataField]
     public LocId? WhitelistRejectedLoc;
 
     /// <summary>
-    ///     How long we are entering teleport
+    ///     Time required to enter the teleporter.
     ///     Null when teleportation should be immediate.
     /// </summary>
     [DataField]
     public TimeSpan? TeleportDoAfterTime;
 
     /// <summary>
-    ///     The amount of damage required to interrupt a DoAfter of the teleport
+    ///     Damage required to interrupt the teleport DoAfter.
     /// </summary>
     [DataField]
     public FixedPoint2? DamageThreshold;

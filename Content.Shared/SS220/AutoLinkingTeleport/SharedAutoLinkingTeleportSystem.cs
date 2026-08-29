@@ -6,9 +6,9 @@ using Content.Shared.SS220.Teleport;
 using Content.Shared.SS220.Teleport.Systems;
 using Robust.Shared.Map;
 
-namespace Content.Shared.SS220.SelfLinkedTeleport;
+namespace Content.Shared.SS220.AutoLinkingTeleport;
 
-public abstract partial class SharedSelfLinkedTeleportSystem : EntitySystem
+public abstract partial class SharedAutoLinkingTeleportSystem : EntitySystem
 {
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private SharedAppearanceSystem _appearance = default!;
@@ -19,13 +19,13 @@ public abstract partial class SharedSelfLinkedTeleportSystem : EntitySystem
     {
         base.Initialize();
 
-        SubscribeLocalEvent<SelfLinkedTeleportComponent, TeleportTargetEvent>(OnTeleportTarget);
-        SubscribeLocalEvent<SelfLinkedTeleportComponent, GhostTeleportTargetEvent>(OnGhostTeleportTarget);
-        SubscribeLocalEvent<SelfLinkedTeleportComponent, TeleportUseAttemptEvent>(OnTeleportUseAttempt);
-        SubscribeLocalEvent<SelfLinkedTeleportComponent, ExaminedEvent>(OnExamined);
+        SubscribeLocalEvent<AutoLinkingTeleportComponent, TeleportRequestEvent>(OnTeleportRequest);
+        SubscribeLocalEvent<AutoLinkingTeleportComponent, GhostTeleportRequestEvent>(OnGhostTeleportRequest);
+        SubscribeLocalEvent<AutoLinkingTeleportComponent, TeleportUseAttemptEvent>(OnTeleportUseAttempt);
+        SubscribeLocalEvent<AutoLinkingTeleportComponent, ExaminedEvent>(OnExamined);
     }
 
-    private void OnTeleportTarget(Entity<SelfLinkedTeleportComponent> ent, ref TeleportTargetEvent args)
+    private void OnTeleportRequest(Entity<AutoLinkingTeleportComponent> ent, ref TeleportRequestEvent args)
     {
         if (args.Handled)
             return;
@@ -41,7 +41,7 @@ public abstract partial class SharedSelfLinkedTeleportSystem : EntitySystem
         args.Handled = true;
     }
 
-    private void OnGhostTeleportTarget(Entity<SelfLinkedTeleportComponent> ent, ref GhostTeleportTargetEvent args)
+    private void OnGhostTeleportRequest(Entity<AutoLinkingTeleportComponent> ent, ref GhostTeleportRequestEvent args)
     {
         if (args.Handled)
             return;
@@ -56,13 +56,13 @@ public abstract partial class SharedSelfLinkedTeleportSystem : EntitySystem
         args.Handled = true;
     }
 
-    private void OnTeleportUseAttempt(Entity<SelfLinkedTeleportComponent> ent, ref TeleportUseAttemptEvent args)
+    private void OnTeleportUseAttempt(Entity<AutoLinkingTeleportComponent> ent, ref TeleportUseAttemptEvent args)
     {
         if (ent.Comp.LinkedEntity != null)
             return;
 
         _popup.PopupPredicted(
-            Loc.GetString("linked-teleport-no-exit"),
+            Loc.GetString("auto-linking-teleport-no-destination"),
             null,
             ent,
             args.User,
@@ -71,15 +71,15 @@ public abstract partial class SharedSelfLinkedTeleportSystem : EntitySystem
         args.Cancelled = true;
     }
 
-    private void OnExamined(Entity<SelfLinkedTeleportComponent> ent, ref ExaminedEvent args)
+    private void OnExamined(Entity<AutoLinkingTeleportComponent> ent, ref ExaminedEvent args)
     {
         if (ent.Comp.LinkedEntity != null)
-            args.PushMarkup(Loc.GetString("linked-teleport-has-link"));
+            args.PushMarkup(Loc.GetString("auto-linking-teleport-has-destination"));
         else
-            args.PushMarkup(Loc.GetString("linked-teleport-no-exit"));
+            args.PushMarkup(Loc.GetString("auto-linking-teleport-no-destination"));
     }
 
-    private bool TryGetDestination(Entity<SelfLinkedTeleportComponent> ent, out EntityUid destination)
+    private bool TryGetDestination(Entity<AutoLinkingTeleportComponent> ent, out EntityUid destination)
     {
         destination = ent.Comp.LinkedEntity ?? EntityUid.Invalid;
 
@@ -93,7 +93,7 @@ public abstract partial class SharedSelfLinkedTeleportSystem : EntitySystem
     }
 
     protected virtual bool TryTeleport(
-        Entity<SelfLinkedTeleportComponent> ent,
+        Entity<AutoLinkingTeleportComponent> ent,
         EntityUid target,
         EntityUid user,
         EntityCoordinates destinationCoordinates)
@@ -101,9 +101,9 @@ public abstract partial class SharedSelfLinkedTeleportSystem : EntitySystem
         return _teleport.TryTeleport(ent, target, destinationCoordinates);
     }
 
-    protected virtual void UpdateVisuals(Entity<SelfLinkedTeleportComponent> ent)
+    protected virtual void UpdateVisuals(Entity<AutoLinkingTeleportComponent> ent)
     {
-        _appearance.SetData(ent, SelfLinkedVisuals.State, ent.Comp.LinkedEntity != null);
+        _appearance.SetData(ent, AutoLinkingTeleportVisuals.Linked, ent.Comp.LinkedEntity != null);
 
         if (_lights.TryGetLight(ent.Owner, out var light))
             _lights.SetEnabled(ent.Owner, ent.Comp.LinkedEntity != null, light);

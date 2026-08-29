@@ -14,11 +14,11 @@ public sealed partial class TeleportSoundSystem : EntitySystem
     {
         base.Initialize();
 
-        SubscribeLocalEvent<TeleportSoundComponent, BeforeTeleportTargetEvent>(OnBeforeTeleport);
+        SubscribeLocalEvent<TeleportSoundComponent, BeforeTeleportEvent>(OnBeforeTeleport);
         SubscribeLocalEvent<TeleportSoundComponent, TargetTeleportedEvent>(OnTargetTeleported);
     }
 
-    private void OnBeforeTeleport(Entity<TeleportSoundComponent> ent, ref BeforeTeleportTargetEvent args)
+    private void OnBeforeTeleport(Entity<TeleportSoundComponent> ent, ref BeforeTeleportEvent args)
     {
         if (ent.Comp.DepartureSound is not { } sound)
             return;

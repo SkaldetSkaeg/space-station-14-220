@@ -29,8 +29,8 @@ public sealed partial class SharedTeleportSystem : EntitySystem
         if (!destination.IsValid(EntityManager))
             return false;
 
-        var beforeTeleportEvent = new BeforeTeleportTargetEvent(target);
-        RaiseLocalEvent(teleporter, ref beforeTeleportEvent);
+        var beforeTeleport = new BeforeTeleportEvent(target);
+        RaiseLocalEvent(teleporter, ref beforeTeleport);
 
         StopPullingRelationships(target);
 
@@ -39,8 +39,8 @@ public sealed partial class SharedTeleportSystem : EntitySystem
         var targetTeleportedEvent = new TargetTeleportedEvent(target);
         RaiseLocalEvent(teleporter, ref targetTeleportedEvent);
 
-        var afterTeleportedEvent = new AfterTeleportedEvent(teleporter);
-        RaiseLocalEvent(target, ref afterTeleportedEvent);
+        var teleportedEvent = new TeleportedEvent(teleporter);
+        RaiseLocalEvent(target, ref teleportedEvent);
 
         return true;
     }

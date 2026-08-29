@@ -4,16 +4,16 @@ using Content.Shared.Whitelist;
 using Robust.Shared.GameStates;
 using Robust.Shared.Serialization;
 
-namespace Content.Shared.SS220.SelfLinkedTeleport;
+namespace Content.Shared.SS220.AutoLinkingTeleport;
 
 /// <summary>
-/// This component allows you to create a teleport side that will look for the second side when the component is initialized.
+///     Automatically links this teleporter with an available matching teleporter.
 /// </summary>
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
-public sealed partial class SelfLinkedTeleportComponent : Component
+public sealed partial class AutoLinkingTeleportComponent : Component
 {
     /// <summary>
-    ///     The entity to which or from which the teleport will be performed
+    ///     The linked destination teleporter.
     /// </summary>
     [ViewVariables, AutoNetworkedField]
     public EntityUid? LinkedEntity;
@@ -33,7 +33,7 @@ public sealed partial class SelfLinkedTeleportComponent : Component
 }
 
 [Serializable, NetSerializable]
-public enum SelfLinkedVisuals : byte
+public enum AutoLinkingTeleportVisuals : byte
 {
-    State
+    Linked
 }

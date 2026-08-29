@@ -14,11 +14,11 @@ public sealed partial class CollisionTeleportTriggerComponent : Component
     ///     Fixture that triggers teleportation. Any fixture can trigger it when not specified.
     /// </summary>
     [DataField]
-    public string? TeleporterFixtureId;
+    public string? TriggerFixtureId;
 
     /// <summary>
     ///     Entities matching this whitelist are deleted instead of teleported.
     /// </summary>
     [DataField]
-    public EntityWhitelist? DeleteWhitelist;
+    public EntityWhitelist? DeleteTargetWhitelist;
 }

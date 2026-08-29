@@ -28,7 +28,7 @@ public sealed partial class TeleportationChasmSystem : SharedTeleportationChasmS
                 continue;
             }
 
-            if (chasmFalling.Teleporter is not { } teleporter)
+            if (chasmFalling.SourceTeleporter is not { } teleporter)
             {
                 Log.Error($"TeleportationChasm couldn't teleport {ToPrettyString(uid)} because the teleporter was not specified");
                 QueueDel(uid);
@@ -42,10 +42,10 @@ public sealed partial class TeleportationChasmSystem : SharedTeleportationChasmS
                 continue;
             }
 
-            var teleportEvent = new TeleportTargetEvent(uid, uid);
-            RaiseLocalEvent(teleporter, ref teleportEvent);
+            var request = new TeleportRequestEvent(uid, uid);
+            RaiseLocalEvent(teleporter, ref request);
 
-            if (!teleportEvent.Handled)
+            if (!request.Handled)
             {
                 Log.Error($"TeleportationChasm couldn't teleport {ToPrettyString(uid)} because no teleport implementation handled the request");
                 QueueDel(uid);

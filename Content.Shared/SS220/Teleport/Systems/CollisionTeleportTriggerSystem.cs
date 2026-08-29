@@ -21,14 +21,14 @@ public sealed partial class CollisionTeleportTriggerSystem : EntitySystem
 
     private void OnStartCollide(Entity<CollisionTeleportTriggerComponent> ent, ref StartCollideEvent args)
     {
-        if (ent.Comp.TeleporterFixtureId is { } fixtureId && args.OurFixtureId != fixtureId)
+        if (ent.Comp.TriggerFixtureId is { } fixtureId && args.OurFixtureId != fixtureId)
             return;
 
         if (!args.OtherFixture.Hard)
             return;
 
         var target = args.OtherEntity;
-        if (_whitelist.IsWhitelistPass(ent.Comp.DeleteWhitelist, target))
+        if (_whitelist.IsWhitelistPass(ent.Comp.DeleteTargetWhitelist, target))
         {
             PredictedQueueDel(target);
             return;
@@ -40,10 +40,10 @@ public sealed partial class CollisionTeleportTriggerSystem : EntitySystem
         if (attemptEvent.Cancelled)
             return;
 
-        var teleportEvent = new TeleportTargetEvent(target, target);
-        RaiseLocalEvent(ent, ref teleportEvent);
+        var request = new TeleportRequestEvent(target, target);
+        RaiseLocalEvent(ent, ref request);
 
-        if (teleportEvent.Handled)
+        if (request.Handled)
             return;
 
         if (_net.IsClient)

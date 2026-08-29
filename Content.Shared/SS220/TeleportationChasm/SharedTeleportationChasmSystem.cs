@@ -42,7 +42,7 @@ public abstract partial class SharedTeleportationChasmSystem : EntitySystem
     {
         var falling = AddComp<TeleportationChasmFallingComponent>(target);
 
-        falling.Teleporter = ent.Owner;
+        falling.SourceTeleporter = ent.Owner;
 
         falling.FallEndTime = _timing.CurTime + falling.FallDuration;
         _blocker.UpdateCanMove(target);
@@ -50,7 +50,7 @@ public abstract partial class SharedTeleportationChasmSystem : EntitySystem
         if (playSound)
             _audio.PlayPredicted(ent.Comp.FallingSound, ent, target);
 
-        if (_whitelistSystem.IsWhitelistPass(ent.Comp.DeleteWhitelist, target))
+        if (_whitelistSystem.IsWhitelistPass(ent.Comp.DeleteTargetWhitelist, target))
             falling.DeleteInsteadOfTeleport = true;
     }
 

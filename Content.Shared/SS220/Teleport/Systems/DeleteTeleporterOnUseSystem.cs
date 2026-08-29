@@ -5,7 +5,7 @@ using Robust.Shared.Audio.Systems;
 
 namespace Content.Shared.SS220.Teleport.Systems;
 
-public sealed partial class DeleteOnTeleportedSystem : EntitySystem
+public sealed partial class DeleteTeleporterOnUseSystem : EntitySystem
 {
     [Dependency] private SharedAudioSystem _audio = default!;
 
@@ -13,10 +13,10 @@ public sealed partial class DeleteOnTeleportedSystem : EntitySystem
     {
         base.Initialize();
 
-        SubscribeLocalEvent<DeleteOnTeleportedComponent, TargetTeleportedEvent>(OnTargetTeleported);
+        SubscribeLocalEvent<DeleteTeleporterOnUseComponent, TargetTeleportedEvent>(OnTargetTeleported);
     }
 
-    private void OnTargetTeleported(Entity<DeleteOnTeleportedComponent> ent, ref TargetTeleportedEvent args)
+    private void OnTargetTeleported(Entity<DeleteTeleporterOnUseComponent> ent, ref TargetTeleportedEvent args)
     {
         ent.Comp.RemainingUses--;
 

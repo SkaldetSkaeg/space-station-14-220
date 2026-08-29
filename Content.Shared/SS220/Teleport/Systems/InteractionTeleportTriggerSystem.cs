@@ -12,7 +12,7 @@ using Robust.Shared.Utility;
 
 namespace Content.Shared.SS220.Teleport.Systems;
 
-public sealed partial class InteractionTeleportSystem : EntitySystem
+public sealed partial class InteractionTeleportTriggerSystem : EntitySystem
 {
     [Dependency] private EntityWhitelistSystem _whitelist = default!;
     [Dependency] private SharedDoAfterSystem _doAfter = default!;
@@ -23,14 +23,14 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
     {
         base.Initialize();
 
-        SubscribeLocalEvent<InteractionTeleportComponent, GetVerbsEvent<Verb>>(OnGetVerb);
-        SubscribeLocalEvent<InteractionTeleportComponent, GetVerbsEvent<AlternativeVerb>>(OnGetGhostVerb);
-        SubscribeLocalEvent<InteractionTeleportComponent, CanDropTargetEvent>(OnCanDropTarget);
-        SubscribeLocalEvent<InteractionTeleportComponent, DragDropTargetEvent>(OnDragDropTarget);
-        SubscribeLocalEvent<InteractionTeleportComponent, InteractionTeleportDoAfterEvent>(OnTeleportDoAfter);
+        SubscribeLocalEvent<InteractionTeleportTriggerComponent, GetVerbsEvent<Verb>>(OnGetVerb);
+        SubscribeLocalEvent<InteractionTeleportTriggerComponent, GetVerbsEvent<AlternativeVerb>>(OnGetGhostVerb);
+        SubscribeLocalEvent<InteractionTeleportTriggerComponent, CanDropTargetEvent>(OnCanDropTarget);
+        SubscribeLocalEvent<InteractionTeleportTriggerComponent, DragDropTargetEvent>(OnDragDropTarget);
+        SubscribeLocalEvent<InteractionTeleportTriggerComponent, InteractionTeleportDoAfterEvent>(OnTeleportDoAfter);
     }
 
-    private void OnGetVerb(Entity<InteractionTeleportComponent> ent, ref GetVerbsEvent<Verb> args)
+    private void OnGetVerb(Entity<InteractionTeleportTriggerComponent> ent, ref GetVerbsEvent<Verb> args)
     {
         if (!args.CanAccess)
             return;
@@ -50,7 +50,7 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
         });
     }
 
-    private void OnGetGhostVerb(Entity<InteractionTeleportComponent> ent, ref GetVerbsEvent<AlternativeVerb> args)
+    private void OnGetGhostVerb(Entity<InteractionTeleportTriggerComponent> ent, ref GetVerbsEvent<AlternativeVerb> args)
     {
         if (!args.CanAccess)
             return;
@@ -64,11 +64,11 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
             Priority = 11,
             Text = Loc.GetString("portal-component-ghost-traverse"),
             Icon = new SpriteSpecifier.Texture(new("/Textures/Interface/VerbIcons/open.svg.192dpi.png")),
-            Act = () => TrySendGhostTeleporting(ent, ghost)
+            Act = () => TryRequestGhostTeleport(ent, ghost)
         });
     }
 
-    private void OnCanDropTarget(Entity<InteractionTeleportComponent> ent, ref CanDropTargetEvent args)
+    private void OnCanDropTarget(Entity<InteractionTeleportTriggerComponent> ent, ref CanDropTargetEvent args)
     {
         if (args.Handled)
             return;
@@ -77,7 +77,7 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
         args.CanDrop = IsTargetAllowed(ent, args.Dragged);
     }
 
-    private void OnDragDropTarget(Entity<InteractionTeleportComponent> ent, ref DragDropTargetEvent args)
+    private void OnDragDropTarget(Entity<InteractionTeleportTriggerComponent> ent, ref DragDropTargetEvent args)
     {
         if (args.Handled)
             return;
@@ -88,7 +88,7 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
         args.Handled = true;
     }
 
-    private bool IsTargetAllowed(Entity<InteractionTeleportComponent> ent, EntityUid target)
+    private bool IsTargetAllowed(Entity<InteractionTeleportTriggerComponent> ent, EntityUid target)
     {
         if (_whitelist.IsWhitelistFail(ent.Comp.TargetWhitelist, target))
             return false;
@@ -99,7 +99,7 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
         return true;
     }
 
-    private bool TryStartTeleport(Entity<InteractionTeleportComponent> ent, EntityUid target, EntityUid user)
+    private bool TryStartTeleport(Entity<InteractionTeleportTriggerComponent> ent, EntityUid target, EntityUid user)
     {
         if (_whitelist.IsWhitelistFail(ent.Comp.TargetWhitelist, target))
         {
@@ -117,7 +117,7 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
             return false;
 
         if (ent.Comp.TeleportDoAfterTime is null)
-            return TrySendTeleporting(ent, target, user);
+            return TryRequestTeleport(ent, target, user);
 
         var teleportDoAfter = new DoAfterArgs(EntityManager, user, ent.Comp.TeleportDoAfterTime.Value, new InteractionTeleportDoAfterEvent(), ent, target)
         {
@@ -142,7 +142,7 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
     }
 
     private void ShowWhitelistRejectedPopup(
-        Entity<InteractionTeleportComponent> ent,
+        Entity<InteractionTeleportTriggerComponent> ent,
         EntityUid user)
     {
         if (ent.Comp.WhitelistRejectedLoc is not { } rejectedLoc)
@@ -156,7 +156,7 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
             PopupType.MediumCaution);
     }
 
-    private void OnTeleportDoAfter(Entity<InteractionTeleportComponent> ent, ref InteractionTeleportDoAfterEvent args)
+    private void OnTeleportDoAfter(Entity<InteractionTeleportTriggerComponent> ent, ref InteractionTeleportDoAfterEvent args)
     {
         if (args.Cancelled)
             return;
@@ -164,29 +164,29 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
         if (args.Target == null)
             return;
 
-        if (TrySendTeleporting(ent, args.Target.Value, args.User))
+        if (TryRequestTeleport(ent, args.Target.Value, args.User))
             return;
 
         if (_net.IsClient)
             return;
 
-        Log.Error($"InteractionTeleport on {ToPrettyString(ent)} couldn't teleport {ToPrettyString(args.Target.Value)} because no teleport implementation handled the request");
+        Log.Error($"InteractionTeleportTrigger on {ToPrettyString(ent)} couldn't teleport {ToPrettyString(args.Target.Value)} because no teleport implementation handled the request");
     }
 
-    private bool TrySendTeleporting(Entity<InteractionTeleportComponent> ent, EntityUid target, EntityUid user)
+    private bool TryRequestTeleport(Entity<InteractionTeleportTriggerComponent> ent, EntityUid target, EntityUid user)
     {
-        var teleportEvent = new TeleportTargetEvent(target, user);
-        RaiseLocalEvent(ent, ref teleportEvent);
-        return teleportEvent.Handled;
+        var request = new TeleportRequestEvent(target, user);
+        RaiseLocalEvent(ent, ref request);
+        return request.Handled;
     }
 
-    private bool TrySendGhostTeleporting(Entity<InteractionTeleportComponent> ent, EntityUid ghost)
+    private bool TryRequestGhostTeleport(Entity<InteractionTeleportTriggerComponent> ent, EntityUid ghost)
     {
         if (!HasComp<GhostComponent>(ghost))
             return false;
 
-        var teleportEvent = new GhostTeleportTargetEvent(ghost);
-        RaiseLocalEvent(ent, ref teleportEvent);
-        return teleportEvent.Handled;
+        var request = new GhostTeleportRequestEvent(ghost);
+        RaiseLocalEvent(ent, ref request);
+        return request.Handled;
     }
 }
