@@ -5,6 +5,13 @@
   setPreference: true
   objective: roles-antag-rev-head-objective
   guides: [ Revolutionaries ]
+  #SS220 Add antags playtime trackers begin
+  playTimeTracker: AntagHeadRev
+  antagColor: CornflowerBlue
+  #SS220 Add antags playtime trackers end
+  requirements:
+  - !type:OverallPlaytimeRequirement
+    time: 1h
 
 - type: antag
   id: Rev

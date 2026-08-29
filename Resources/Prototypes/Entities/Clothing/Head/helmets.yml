@@ -1,17 +1,24 @@
 #These are intentionally all very mediocre as locational damage does not exist yet. Without it, armor values will stack in a way that makes it really god damn hard to determine how effective something is, along with making players extremely tanky.
 #When it DOES exist, the values here should be totally reworked - probably just port them from SS13.
 
-#Basic Helmet (Security Helmet)
 - type: entity
   parent: ClothingHeadBase
-  id: ClothingHeadHelmetBasic
-  name: helmet
-  description: Standard security gear. Protects the head from impacts.
+  id: ClothingHeadHelmetBase
+  abstract: true
   components:
-  - type: Sprite
-    sprite: Clothing/Head/Helmets/security.rsi
-  - type: Clothing
-    sprite: Clothing/Head/Helmets/security.rsi
+  - type: Tag
+    tags:
+    - WhitelistChameleon
+  - type: HideLayerClothing
+    layers:
+      HeadTop : HEAD
+      HeadSide : HEAD
+
+- type: entity
+  parent: ClothingHeadHelmetBase
+  id: ClothingHeadHelmetArmoredBase
+  abstract: true
+  components:
   - type: Armor #Values seem to let the user survive one extra hit if attacked consistently.
     modifiers:
       coefficients:
@@ -19,18 +26,35 @@
         Slash: 0.9
         Piercing: 0.9
         Heat: 0.9
+
+#Basic Helmet (Security Helmet)
+- type: entity
+  parent: [ClothingHeadHelmetArmoredBase, BaseSecurityContraband]
+  id: ClothingHeadHelmetBasic
+  name: helmet
+  description: Standard security gear. Protects the head from impacts.
+  components:
+  - type: EmitSoundOnLand ##new sound_drop effect, add MIXnikita
+    sound:
+      path: /Audio/SS220/Effects/Drop/clothing_head_helmedeva.ogg
+      params:
+        volume: 2
+  - type: Sprite
+    sprite: Clothing/Head/Helmets/security.rsi
+  - type: Clothing
+    sprite: Clothing/Head/Helmets/security.rsi
   - type: Tag
     tags:
     - WhitelistChameleon
-    - Kangaroo
+    - Kangaroo #SS220-ghost-roles
+    - SecurityHelmet
   - type: HideLayerClothing
-    slots:
-    - HeadTop
-    - HeadSide
+    layers:
+      Hair: HEAD
 
 #Mercenary Helmet
 - type: entity
-  parent: ClothingHeadHelmetBasic
+  parent: [ ClothingHeadHelmetArmoredBase, BaseMajorContraband ]
   id: ClothingHeadHelmetMerc
   name: mercenary helmet
   description: The combat helmet is commonly used by mercenaries, is strong, light and smells like gunpowder and the jungle.
@@ -39,10 +63,13 @@
     sprite: Clothing/Head/Helmets/merc_helmet.rsi
   - type: Clothing
     sprite: Clothing/Head/Helmets/merc_helmet.rsi
+  - type: HideLayerClothing
+    layers:
+      Hair: HEAD
 
 #SWAT Helmet
 - type: entity
-  parent: ClothingHeadBase
+  parent: [ClothingHeadHelmetBase, BaseSecurityContraband]
   id: ClothingHeadHelmetSwat
   name: SWAT helmet
   description: An extremely robust helmet, commonly used by paramilitary forces. This one has the Nanotrasen logo emblazoned on the top.
@@ -52,16 +79,21 @@
   - type: Clothing
     sprite: Clothing/Head/Helmets/swat.rsi
   - type: Armor #This is intentionally not spaceproof, when the time comes to port the values from SS13 this should be buffed from what it was.
+  #SS220 new armor begin
     modifiers:
       coefficients:
-        Blunt: 0.80
-        Slash: 0.80
-        Piercing: 0.80
-        Heat: 0.80
-        Radiation: 0.80
+        Blunt: 0.85
+        Slash: 0.85
+        Piercing: 0.85
+        Heat: 0.9
+        Radiation: 0.9
         Caustic: 0.95
   - type: ExplosionResistance
-    damageCoefficient: 0.75
+    damageCoefficient: 0.9
+  #SS220 new armor end
+  - type: HideLayerClothing
+    layers:
+      Hair: HEAD
 
 #Syndicate SWAT Helmet
 - type: entity
@@ -75,10 +107,13 @@
     sprite: Clothing/Head/Helmets/swat_syndicate.rsi
   - type: Clothing
     sprite: Clothing/Head/Helmets/swat_syndicate.rsi
+  - type: HideLayerClothing
+    layers:
+      Hair: HEAD
 
 #Light Riot Helmet
 - type: entity
-  parent: ClothingHeadBase
+  parent: [ClothingHeadHelmetBase, BaseSecurityContraband]
   id: ClothingHeadHelmetRiot
   name: light riot helmet
   description: It's a helmet specifically designed to protect against close range attacks.
@@ -94,6 +129,9 @@
         Blunt: 0.8
         Slash: 0.8
         Piercing: 0.95
+  - type: HideLayerClothing
+    layers:
+      Hair: HEAD
 
 #Bombsuit Helmet
 - type: entity
@@ -116,11 +154,9 @@
         Slash: 0.95
         Piercing: 0.95
   - type: HideLayerClothing
-    slots:
-    - Hair
-    - Snout
-    - HeadTop
-    - HeadSide
+    layers:
+      Hair: HEAD
+      Snout: HEAD
 
 #Janitorial Bombsuit Helmet
 - type: entity
@@ -128,16 +164,19 @@
   id: ClothingHeadHelmetJanitorBombSuit
   name: janitorial bombsuit helmet
   description: A heavy helmet designed to withstand explosions formed from reactions between chemicals.
-  suffix: DO NOT MAP
+  categories: [ DoNotMap ]
   components:
   - type: Sprite
     sprite: Clothing/Head/Helmets/janitor_bombsuit.rsi
   - type: Clothing
     sprite: Clothing/Head/Helmets/janitor_bombsuit.rsi
+  - type: HideLayerClothing
+    layers:
+      Hair: HEAD
 
 #Cult Helmet
 - type: entity
-  parent: ClothingHeadBase
+  parent: [ClothingHeadHelmetBase, BaseMajorContraband]
   id: ClothingHeadHelmetCult
   name: cult helmet
   description: A robust, evil-looking cult helmet.
@@ -154,47 +193,103 @@
         Slash: 0.8
         Piercing: 0.9
         Heat: 0.9
+  - type: HideLayerClothing
+    layers:
+      Hair: HEAD
 
 #Space Ninja Helmet
 - type: entity
-  parent: ClothingHeadEVAHelmetBase
+  parent: [ClothingHeadEVAHelmetBase]
   id: ClothingHeadHelmetSpaceNinja
   name: space ninja helmet
   description: What may appear to be a simple black garment is in fact a highly sophisticated nano-weave helmet. Standard issue ninja gear.
   components:
   - type: Sprite
-    sprite: Clothing/Head/Helmets/spaceninja.rsi
+    sprite: SS220/Clothing/Head/Helmets/spaceninja.rsi # SS220 Ninja Resprite
+    # SS220 Ninja Resprite Begin
+    layers:
+    - state: icon
+    - state: icon-flash
+      visible: false
+      map: [ "light" ]
+    # SS220 Ninja Resprite End
   - type: Clothing
-    sprite: Clothing/Head/Helmets/spaceninja.rsi
+    sprite: SS220/Clothing/Head/Helmets/spaceninja.rsi # SS220 Ninja Resprite
+    equippedPrefix: off # SS220 Ninja Resprite
   - type: Tag
     tags:
     - WhitelistChameleon
   - type: IngestionBlocker
   - type: IdentityBlocker
   - type: HideLayerClothing
-    slots:
-    - Hair
-    - Snout
-    - HeadTop
-    - HeadSide
+    layers:
+      Hair: HEAD
+      Snout: HEAD
+    # SS220 Ninja Resprite Begin
+  - type: LocateAi
+  - type: ToggleableVisuals
+    spriteLayer: light
+  - type: ItemTogglePointLight
+  - type: PointLight
+    enabled: false
+    color: "#21a52e"
+    radius: 4.5
+    energy: 3
+    mask: /Textures/Effects/LightMasks/cone.png
+    autoRot: true
+    netsync: false
+  - type: Appearance
+  - type: HandheldLight
+    addPrefix: false
+    blinkingBehaviourId: blinking
+    radiatingBehaviourId: radiating
+  - type: LightBehaviour
+    behaviours:
+    - !type:FadeBehaviour
+      id: radiating
+      interpolate: Linear
+      maxDuration: 2.0
+      startValue: 3.0
+      endValue: 2.0
+      isLooped: true
+      reverseWhenFinished: true
+    - !type:PulseBehaviour
+      id: blinking
+      interpolate: Nearest
+      maxDuration: 1.0
+      startValue: 0.1
+      endValue: 2.0
+      isLooped: true
+  - type: Battery
+    maxCharge: 600
+    startingCharge: 600
+  - type: BatterySelfRecharger
+    autoRechargeRate: 2
+  - type: NeedleProtection
+    # SS220 Ninja Resprite End
 
-#Templar Helmet
+#Knight Helmet
 - type: entity
-  parent: ClothingHeadBase
+  parent: ClothingHeadHelmetBase
   id: ClothingHeadHelmetTemplar
-  name: templar helmet
-  description: DEUS VULT!
+  name: knight helmet
+  description: Decorative helmet fashioned to resemble the knights of old.
   components:
   - type: Sprite
     sprite: Clothing/Head/Helmets/templar.rsi
   - type: Clothing
     sprite: Clothing/Head/Helmets/templar.rsi
+  - type: Item
+    storedRotation: 0
   - type: IngestionBlocker
   - type: IdentityBlocker
+  - type: HideLayerClothing
+    layers:
+      Hair: HEAD
 
 #Thunderdome Helmet
 - type: entity
-  parent: ClothingHeadBase
+  parent: ClothingHeadHelmetBase
   id: ClothingHeadHelmetThunderdome
   name: thunderdome helmet
   description: Let the battle commence!
@@ -203,10 +298,13 @@
     sprite: Clothing/Head/Helmets/thunderdome.rsi
   - type: Clothing
     sprite: Clothing/Head/Helmets/thunderdome.rsi
+  - type: HideLayerClothing
+    layers:
+      Hair: HEAD
 
 #Wizard Helmet
 - type: entity
-  parent: ClothingHeadBase
+  parent: ClothingHeadHelmetBase
   id: ClothingHeadHelmetWizardHelm
   name: wizard helm
   description: Strange-looking helmet that most certainly belongs to a real magic user.
@@ -217,6 +315,9 @@
     sprite: Clothing/Head/Helmets/wizardhelm.rsi
   - type: IngestionBlocker
   - type: IdentityBlocker
+  - type: HideLayerClothing
+    layers:
+      Hair: HEAD
 
 #Fire Helmet
 - type: entity
@@ -232,35 +333,36 @@
     quickEquip: true
   - type: IngestionBlocker
   - type: TemperatureProtection
-    coefficient: 0.005
+    heatingCoefficient: 0.5
+    coolingCoefficient: 0.8
   - type: FireProtection
     reduction: 0.15 # not fully sealed so less protection
   - type: IdentityBlocker
   - type: Tag
     tags:
     - WhitelistChameleon
+    - FireHelmet
   - type: HideLayerClothing
-    slots:
-    - Hair
-    - Snout
-    - HeadTop
-    - HeadSide
+    layers:
+      Hair: HEAD
+      Snout: HEAD
 
 #Atmos Fire Helmet
 - type: entity
-  parent: ClothingHeadLightBase
+  parent: [ClothingHeadLightBase]
   id: ClothingHeadHelmetAtmosFire
   name: atmos fire helmet
   description: An atmos fire helmet, able to keep the user cool in any situation.
   components:
   - type: Sprite
-    sprite: Clothing/Head/Helmets/atmos_firehelmet.rsi
+    sprite: SS220/Clothing/Head/Helmets/atmos_firehelmet.rsi #SS220 atmos firesuit resprite
   - type: Clothing
-    sprite: Clothing/Head/Helmets/atmos_firehelmet.rsi
+    sprite: SS220/Clothing/Head/Helmets/atmos_firehelmet.rsi #SS220 atmos firesuit resprite
     quickEquip: true
   - type: IngestionBlocker
   - type: TemperatureProtection
-    coefficient: 0.005
+    heatingCoefficient: 0.3
+    coolingCoefficient: 0.8
   - type: FireProtection
     reduction: 0.2
   - type: PressureProtection
@@ -270,17 +372,16 @@
   - type: Tag
     tags:
     - WhitelistChameleon
+    - FireHelmet
   - type: HideLayerClothing
-    slots:
-    - Hair
-    - Snout
-    - HeadTop
-    - HeadSide
+    layers:
+      Hair: HEAD
+      Snout: HEAD
   - type: BreathMask
 
 #Chitinous Helmet
 - type: entity
-  parent: ClothingHeadBase
+  parent: [ ClothingHeadHelmetBase, BaseMajorContraband]
   id: ClothingHeadHelmetLing
   name: chitinous helmet
   description: An all-consuming chitinous mass of armor.
@@ -296,11 +397,14 @@
         Slash: 0.5
         Piercing: 0.5
         Heat: 0.9
+  - type: HideLayerClothing
+    layers:
+      Hair: HEAD
 
 #ERT HELMETS
 #ERT Leader Helmet
 - type: entity
-  parent: ClothingHeadHelmetBasic
+  parent: [ BaseCentcommContraband, ClothingHeadHelmetArmoredBase ]
   id: ClothingHeadHelmetERTLeader
   name: ERT leader helmet
   description: An in-atmosphere helmet worn by the leader of a Nanotrasen Emergency Response Team. Has blue highlights.
@@ -309,10 +413,13 @@
     sprite: Clothing/Head/Helmets/ert_leader.rsi
   - type: Clothing
     sprite: Clothing/Head/Helmets/ert_leader.rsi
+  - type: HideLayerClothing
+    layers:
+      Hair: HEAD
 
 #ERT Security Helmet
 - type: entity
-  parent: ClothingHeadHelmetBasic
+  parent: ClothingHeadHelmetERTLeader
   id: ClothingHeadHelmetERTSecurity
   name: ERT security helmet
   description: An in-atmosphere helmet worn by security members of the Nanotrasen Emergency Response Team. Has red highlights.
@@ -321,10 +428,13 @@
     sprite: Clothing/Head/Helmets/ert_security.rsi
   - type: Clothing
     sprite: Clothing/Head/Helmets/ert_security.rsi
+  - type: HideLayerClothing
+    layers:
+      Hair: HEAD
 
 #ERT Medic Helmet
 - type: entity
-  parent: ClothingHeadHelmetBasic
+  parent: ClothingHeadHelmetERTLeader
   id: ClothingHeadHelmetERTMedic
   name: ERT medic helmet
   description: An in-atmosphere helmet worn by medical members of the Nanotrasen Emergency Response Team. Has white highlights.
@@ -333,10 +443,13 @@
     sprite: Clothing/Head/Helmets/ert_medic.rsi
   - type: Clothing
     sprite: Clothing/Head/Helmets/ert_medic.rsi
+  - type: HideLayerClothing
+    layers:
+      Hair: HEAD
 
 #ERT Engineer Helmet
 - type: entity
-  parent: ClothingHeadHelmetBasic
+  parent: ClothingHeadHelmetERTLeader
   id: ClothingHeadHelmetERTEngineer
   name: ERT engineer helmet
   description: An in-atmosphere helmet worn by engineering members of the Nanotrasen Emergency Response Team. Has orange highlights.
@@ -345,10 +458,13 @@
     sprite: Clothing/Head/Helmets/ert_engineer.rsi
   - type: Clothing
     sprite: Clothing/Head/Helmets/ert_engineer.rsi
+  - type: HideLayerClothing
+    layers:
+      Hair: HEAD
 
 #ERT Janitor Helmet
 - type: entity
-  parent: ClothingHeadHelmetBasic
+  parent: ClothingHeadHelmetERTLeader
   id: ClothingHeadHelmetERTJanitor
   name: ERT janitor helmet
   description: An in-atmosphere helmet worn by janitorial members of the Nanotrasen Emergency Response Team. Has dark purple highlights.
@@ -357,17 +473,22 @@
     sprite: Clothing/Head/Helmets/ert_janitor.rsi
   - type: Clothing
     sprite: Clothing/Head/Helmets/ert_janitor.rsi
+  - type: HideLayerClothing
+    layers:
+      Hair: HEAD
 
 - type: entity
-  parent: ClothingHeadHelmetBasic
+  parent: [ ClothingHeadHelmetBase ]
   id: ClothingHeadHelmetRaid
   name: syndicate raid helmet
   description: An armored helmet for use with the syndicate raid suit. Very stylish.
   components:
   - type: Sprite
-    sprite: Clothing/Head/Helmets/syndie-raid.rsi
+    # sprite: Clothing/Head/Helmets/syndie-raid.rsi #ss220 raid suit resprite
+    sprite: SS220/Clothing/Head/Helmets/syndie-raid-helmet.rsi #ss220 raid suit resprite
   - type: Clothing
-    sprite: Clothing/Head/Helmets/syndie-raid.rsi
+    # sprite: Clothing/Head/Helmets/syndie-raid.rsi #ss220 raid suit resprite
+    sprite: SS220/Clothing/Head/Helmets/syndie-raid-helmet.rsi #ss220 raid suit resprite
   - type: Armor
     modifiers: #There's gotta be SOME reason to use this over other helmets.
       coefficients:
@@ -375,10 +496,27 @@
         Slash: 0.85
         Piercing: 0.85
         Heat: 0.85
+  #ss220 raid suit rework begin
+        Radiation: 0.85
+        Caustic: 0.95
+  - type: ExplosionResistance
+    damageCoefficient: 0.75
+  #suit offers best protection against cold and flames with this helmet
+  #if you pair with SWAT helmet, it will defend a bit better, but less fire/cold protected
+  - type: FireProtection
+    reduction: 0.15
+  - type: TemperatureProtection
+    heatingCoefficient: 0.2
+    coolingCoefficient: 0.2
+  #ss220 raid suit rework end
+  - type: HideLayerClothing
+    layers:
+      Hair: HEAD
 
 #Bone Helmet
+#No need to hide the hair on this one
 - type: entity
-  parent: ClothingHeadHelmetBasic
+  parent: [ ClothingHeadHelmetArmoredBase, BaseMinorContraband ]
   id: ClothingHeadHelmetBone
   name: bone helmet
   description: Cool-looking helmet made of skull of your enemies.
@@ -391,8 +529,9 @@
     graph: BoneHelmet
     node: helmet
 
+#Ironclad II Helmet
 - type: entity
-  parent: ClothingHeadHelmetBasic
+  parent: [ ClothingHeadHelmetArmoredBase, BaseMinorContraband ]
   id: ClothingHeadHelmetPodWars
   name: ironclad II helmet
   description: An ironclad II helmet, a relic of the pod wars.
@@ -401,3 +540,125 @@
     sprite: Clothing/Head/Helmets/podwars_helmet.rsi
   - type: Clothing
     sprite: Clothing/Head/Helmets/podwars_helmet.rsi
+  - type: HideLayerClothing
+    layers:
+      Hair: HEAD
+
+#Justice Helmet
+- type: entity
+  parent: ClothingHeadHelmetBasic
+  id: ClothingHeadHelmetJustice
+  name: justice helm
+  description: Advanced security gear. Protects the station from ne'er-do-wells.
+  components:
+  - type: Sprite
+    sprite: Clothing/Head/Helmets/justice.rsi
+    layers:
+      - state: icon
+      - state: icon-light
+        visible: false
+        shader: unshaded
+        map: [ "light" ]
+  - type: Appearance
+  - type: Clothing
+    sprite: Clothing/Head/Helmets/justice.rsi
+    equippedPrefix: off
+  - type: ItemToggle
+    predictable: false # issues between ToggleCellDraw and ItemToggleActiveSound
+    onUse: false
+    soundActivate:
+      path: /Audio/Items/flashlight_on.ogg
+    soundDeactivate:
+      path: /Audio/Items/flashlight_off.ogg
+    soundFailToActivate:
+      path: /Audio/Machines/button.ogg
+  - type: ItemToggleActiveSound
+    activeSound:
+      path: /Audio/Effects/Vehicle/policesiren.ogg
+      params:
+        volume: -4
+  - type: UseDelay
+    delay: 1.0
+  - type: ToggleClothing
+    action: ActionToggleJusticeHelm
+    mustEquip: false
+  - type: ItemTogglePointLight
+  - type: ToggleableVisuals
+    spriteLayer: light
+    clothingVisuals:
+      head:
+      - state: on-equipped-HELMET
+        shader: unshaded
+  - type: PointLight
+    enabled: false
+    radius: 1.4
+    energy: 2.5
+    color: red
+    netsync: false
+    mask: /Textures/Effects/LightMasks/double_cone.png
+  - type: RotatingLight
+    speed: 360
+  - type: PowerCellSlot
+    cellSlotId: cell_slot
+  - type: ContainerContainer
+    containers:
+      cell_slot: !type:ContainerSlot
+  - type: ItemSlots
+    slots:
+      cell_slot:
+        name: power-cell-slot-component-slot-name-default
+        startingItem: PowerCellSmall
+  - type: PowerCellDraw
+    drawRate: 2
+  - type: ToggleCellDraw
+  - type: Construction
+    graph: HelmetJustice
+    node: helmet
+  - type: HideLayerClothing
+    layers:
+      Hair: HEAD
+
+- type: entity
+  parent: ClothingHeadHelmetJustice
+  id: ClothingHeadHelmetJusticeEmpty
+  suffix: Empty
+  components:
+  - type: ItemSlots
+    slots:
+      cell_slot:
+        name: power-cell-slot-component-slot-name-default
+  - type: HideLayerClothing
+    layers:
+      Hair: HEAD
+
+- type: entity
+  parent: BaseAction
+  id: ActionToggleJusticeHelm
+  name: Toggle Justice Helm
+  description: Toggles the justice helm on and off.
+  components:
+  - type: Action
+    useDelay: 1
+    itemIconStyle: BigItem
+  - type: InstantAction
+    event: !type:ToggleActionEvent
+
+#card helmet
+- type: entity
+  parent: ClothingHeadHelmetBase
+  id: CardHelmet
+  name: cardboard helmet
+  description: A medieval helmet built from cardboard.
+  components:
+  - type: Sprite
+    sprite: Clothing/Head/Helmets/card_helmet.rsi
+  - type: Clothing
+    sprite: Clothing/Head/Helmets/card_helmet.rsi
+  - type: IngestionBlocker
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.95
+  - type: Construction
+    graph: cardHelmet
+    node: cardhelmet

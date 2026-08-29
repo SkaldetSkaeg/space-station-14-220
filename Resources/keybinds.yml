@@ -163,6 +163,10 @@ binds:
 - function: SwapHands
   type: State
   key: X
+- function: SwapHandsReverse
+  type: State
+  key: X
+  mod1: Shift
 - function: MoveStoredItem
   type: State
   key: MouseLeft
@@ -180,13 +184,24 @@ binds:
 - function: ActivateItemInHand
   type: State
   key: Z
+#SS220 shield rework begin
+- function: ToggleActiveBlocking
+  type: State
+  key: B
+  mod1: Shift
+#SS220 shield rework end
 - function: AltActivateItemInHand
   type: State
   key: Z
   mod1: Alt
 - function: OpenCharacterMenu
   type: State
-  key: C
+  key: U
+  # SS220-experience-update
+- function: OpenExperienceViewerMenu
+  type: State
+  key: O
+  # SS220-experience-update
 - function: OpenEmotesMenu
   type: State
   key: Y
@@ -251,6 +266,24 @@ binds:
   type: State
   key: E
   mod1: Shift
+  #SS220-SmartEquipNeck begin
+- function: SmartEquipNeck
+  type: State
+  key: H
+  mod1: Shift
+  #SS220-SmartEquipNeck end
+- function: SmartEquipPocket1
+  type: State
+  key: F
+  mod1: Shift
+- function: SmartEquipPocket2
+  type: State
+  key: G
+  mod1: Shift
+- function: SmartEquipSuitStorage
+  type: State
+  key: H
+  mod1: Shift
 - function: OpenBackpack
   type: State
   key: V
@@ -265,10 +298,28 @@ binds:
   type: State
   key: v
   mod1: Alt
+- function: InspectServerComponent
+  type: State
+  key: b
+  mod1: Alt
+- function: InspectClientComponent
+  type: State
+  key: c
+  mod1: Alt
 - function: MouseMiddle
   type: State
   key: MouseMiddle
   canFocus: true
+- function: RotateObjectClockwise
+  type: State
+  key: R
+- function: RotateObjectCounterclockwise
+  type: State
+  key: R
+  mod1: Shift
+- function: FlipObject
+  type: State
+  key: F
 - function: TextCursorLeft
   type: State
   key: Left
@@ -489,15 +540,19 @@ binds:
 - function: ArcadeUp
   type: State
   key: Up
+  priority: -1
 - function: ArcadeDown
   type: State
   key: Down
+  priority: -1
 - function: ArcadeLeft
   type: State
   key: Left
+  priority: -1
 - function: ArcadeRight
   type: State
   key: Right
+  priority: -1
 - function: Arcade1
   type: State
   key: Space
@@ -507,6 +562,9 @@ binds:
 - function: Arcade3
   type: State
   key: Z
+- function: ToggleKnockdown
+  type: State
+  key: C
 - function: OpenAbilitiesMenu
   type: State
   key: K
@@ -540,6 +598,46 @@ binds:
 - function: Hotbar9
   type: State
   key: Num9
+- function: HotbarShift0
+  type: State
+  key: Num0
+  mod1: Shift
+- function: HotbarShift1
+  type: State
+  key: Num1
+  mod1: Shift
+- function: HotbarShift2
+  type: State
+  key: Num2
+  mod1: Shift
+- function: HotbarShift3
+  type: State
+  key: Num3
+  mod1: Shift
+- function: HotbarShift4
+  type: State
+  key: Num4
+  mod1: Shift
+- function: HotbarShift5
+  type: State
+  key: Num5
+  mod1: Shift
+- function: HotbarShift6
+  type: State
+  key: Num6
+  mod1: Shift
+- function: HotbarShift7
+  type: State
+  key: Num7
+  mod1: Shift
+- function: HotbarShift8
+  type: State
+  key: Num8
+  mod1: Shift
+- function: HotbarShift9
+  type: State
+  key: Num9
+  mod1: Shift
 - function: MappingUnselect
   type: State
   key: MouseRight
@@ -570,3 +668,78 @@ binds:
   type: State
   key: MouseRight
   canFocus: true
+# SS220 Calculator begin
+- function: CalculatorType0
+  type: State
+  key: NumpadNum0
+- function: CalculatorType1
+  type: State
+  key: NumpadNum1
+- function: CalculatorType2
+  type: State
+  key: NumpadNum2
+- function: CalculatorType3
+  type: State
+  key: NumpadNum3
+- function: CalculatorType4
+  type: State
+  key: NumpadNum4
+- function: CalculatorType5
+  type: State
+  key: NumpadNum5
+- function: CalculatorType6
+  type: State
+  key: NumpadNum6
+- function: CalculatorType7
+  type: State
+  key: NumpadNum7
+- function: CalculatorType8
+  type: State
+  key: NumpadNum8
+- function: CalculatorType9
+  type: State
+  key: NumpadNum9
+- function: CalculatorTypeDot
+  type: State
+  key: NumpadDecimal
+- function: CalculatorTypeAdd
+  type: State
+  key: NumpadAdd
+- function: CalculatorTypeSubtract
+  type: State
+  key: NumpadSubtract
+- function: CalculatorTypeMultiply
+  type: State
+  key: NumpadMultiply
+- function: CalculatorTypeDivide
+  type: State
+  key: NumpadDivide
+- function: CalculatorEnter
+  type: State
+  key: NumpadEnter
+- function: CalculatorClear
+  type: State
+  key: Delete
+# SS220 Calculator end
+# SS220 ItemOffer bind begin
+- function: ItemOffer
+  type: State
+  key: R
+  mod1: Shift
+# SS220 ItemOffer bind end
+# SS220 resist fire bind begin
+- function: ResistFire
+  type: State
+  key: B
+# SS220 resist fire bind end
+# SS220 add pinnable ui func start
+- function: PinUI
+  type: State
+  key: P
+  mod1: Alt
+# SS220 add pinnable ui func end
+# SS220 add additional control for shuttle start
+- function: FireShuttle
+  type: State
+  key: Space
+# SS220 add additional control for shuttle end

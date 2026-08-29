@@ -7,12 +7,46 @@
   id: MobCorgiIan
   description: Favorite pet corgi.
   components:
+  #SS220 languages revive begin
+  - type: Language
+    availableLanguages:
+  #SS220 Animalistic languages fix begin
+    - id: Doggish
+      canSpeak: true
+    - id: Feline
+      canSpeak: false
+    - id: Mousey
+      canSpeak: false
+    - id: Monkey
+      canSpeak: false
+    - id: Reptilian
+      canSpeak: false
+    - id: Piggish
+      canSpeak: false
+  #SS220 Animalistic languages fix end
+    - id: Galactic
+      canSpeak: false
+  #SS220 languages revive end
   - type: Sprite
     drawdepth: Mobs
     sprite: Mobs/Pets/corgi.rsi
     layers:
     - map: ["enum.DamageStateVisualLayers.Base"]
       state: ian
+  - type: Inventory
+    speciesId: dog
+    templateId: petAdvanced
+    displacements:
+      head:
+        sizeMaps:
+          32:
+            sprite: Mobs/Pets/displacements.rsi
+            state: corgi_head_displacement
+      eyes:
+        sizeMaps:
+          32:
+            sprite: Mobs/Pets/displacements.rsi
+            state: corgi_eyes_displacement
   - type: DamageStateVisuals
     states:
       Alive:
@@ -34,6 +68,7 @@
     tags:
     - CannotSuicide
     - VimPilot
+    - Ian
   - type: StealTarget
     stealGroup: AnimalIan
 
@@ -43,6 +78,26 @@
   id: MobCorgiIanOld
   description: Still the favorite pet corgi. Love his wheels.
   components:
+  #SS220 languages revive begin
+  - type: Language
+    availableLanguages:
+  #SS220 Animalistic languages fix begin
+    - id: Doggish
+      canSpeak: true
+    - id: Feline
+      canSpeak: false
+    - id: Mousey
+      canSpeak: false
+    - id: Monkey
+      canSpeak: false
+    - id: Reptilian
+      canSpeak: false
+    - id: Piggish
+      canSpeak: false
+  #SS220 Animalistic languages fix end
+    - id: Galactic
+      canSpeak: false
+  #SS220 languages revive end
   - type: Sprite
     layers:
     - map: ["enum.DamageStateVisualLayers.Base"]
@@ -68,6 +123,26 @@
   id: MobCorgiLisa
   description: Ian's favorite corgi.
   components:
+  #SS220 languages revive begin
+  - type: Language
+    availableLanguages:
+  #SS220 Animalistic languages fix begin
+    - id: Doggish
+      canSpeak: true
+    - id: Feline
+      canSpeak: false
+    - id: Mousey
+      canSpeak: false
+    - id: Monkey
+      canSpeak: false
+    - id: Reptilian
+      canSpeak: false
+    - id: Piggish
+      canSpeak: false
+  #SS220 Animalistic languages fix end
+    - id: Galactic
+      canSpeak: false
+  #SS220 languages revive end
   - type: Sprite
     layers:
     - map: ["enum.DamageStateVisualLayers.Base"]
@@ -84,6 +159,43 @@
     attributes:
       proper: true
       gender: female
+  - type: Inventory
+    speciesId: dog
+    templateId: petAdvanced
+    displacements:
+      head:
+        sizeMaps:
+          32:
+            sprite: Mobs/Pets/displacements.rsi
+            state: lisa_head_displacement
+      eyes:
+        sizeMaps:
+          32:
+            sprite: Mobs/Pets/displacements.rsi
+            state: corgi_eyes_displacement
+
+- type: entity
+  name: real mouse
+  parent: MobCorgiIan
+  id: MobCorgiMouse
+  description: It's 100% a real hungry mouse.
+  components:
+  - type: Sprite
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: real_mouse
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: real_mouse
+      Critical:
+        Base: real_mouse_dead
+      Dead:
+        Base: real_mouse_dead
+  - type: Grammar
+    attributes:
+      proper: true
+      gender: female
 
 - type: entity
   name: Puppy Ian
@@ -95,6 +207,26 @@
     attributes:
       proper: true
       gender: male
+  #SS220 languages revive begin
+  - type: Language
+    availableLanguages:
+  #SS220 Animalistic languages fix begin
+    - id: Doggish
+      canSpeak: true
+    - id: Feline
+      canSpeak: false
+    - id: Mousey
+      canSpeak: false
+    - id: Monkey
+      canSpeak: false
+    - id: Reptilian
+      canSpeak: false
+    - id: Piggish
+      canSpeak: false
+  #SS220 Animalistic languages fix end
+    - id: Galactic
+      canSpeak: false
+  #SS220 languages revive end
   - type: Butcherable # A puppy? You monster...
     spawned:
     - id: FoodMeatCorgi
@@ -105,16 +237,53 @@
 
 - type: entity
   name: Runtime
-  parent: MobCat
+  parent: [ MobCat, MobLyingDownOnEntity ] #SS220 Add lying down on entity
   id: MobCatRuntime
   description: Professional mouse hunter. Escape artist.
   components:
+  #SS220 Add lying down on entity begin
+  - type: Sprite
+    drawdepth: Mobs
+    sprite: Mobs/Pets/cat.rsi
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: cat
+    - map: ["enum.LyingVisuals.LyingDown"]
+      state: cat_rest
+      visible: false
+  - type: LyingDownOnBuckledEntity
+    offset: -0.1, 0
+  #SS220 Add lying down on entity end
   - type: NpcFactionMember
     factions:
       - PetsNT
+  #ss220 fix start
+    addFriendlyFactions:
+      - SimpleHostile
+  #ss220 fix end
   - type: HTN
     rootTask:
       task: SimpleHostileCompound
+  #SS220 languages revive begin
+  - type: Language
+    availableLanguages:
+  #SS220 Animalistic languages fix begin
+    - id: Feline
+      canSpeak: true
+    - id: Doggish
+      canSpeak: false
+    - id: Mousey
+      canSpeak: false
+    - id: Monkey
+      canSpeak: false
+    - id: Reptilian
+      canSpeak: false
+    - id: Piggish
+      canSpeak: false
+  #SS220 Animalistic languages fix end
+    - id: Galactic
+      canSpeak: false
+  #SS220 languages revive end
   - type: Grammar
     attributes:
       proper: true
@@ -139,6 +308,26 @@
     attributes:
       proper: true
       gender: male
+  #SS220 languages revive begin
+  - type: Language
+    availableLanguages:
+  #SS220 Animalistic languages fix begin
+    - id: Feline
+      canSpeak: true
+    - id: Monkey
+      canSpeak: false
+    - id: Mousey
+      canSpeak: false
+    - id: Doggish
+      canSpeak: false
+    - id: Reptilian
+      canSpeak: false
+    - id: Piggish
+      canSpeak: false
+  #SS220 Animalistic languages fix end
+    - id: Galactic
+      canSpeak: false
+  #SS220 languages revive end
   - type: Tag
     tags:
     - CannotSuicide
@@ -166,6 +355,26 @@
   - type: Grammar
     attributes:
       gender: male
+  #SS220 languages revive begin
+  - type: Language
+    availableLanguages:
+  #SS220 Animalistic languages fix begin
+    - id: Feline
+      canSpeak: true
+    - id: Monkey
+      canSpeak: false
+    - id: Mousey
+      canSpeak: false
+    - id: Doggish
+      canSpeak: false
+    - id: Reptilian
+      canSpeak: false
+    - id: Piggish
+      canSpeak: false
+  #SS220 Animalistic languages fix end
+    - id: Galactic
+      canSpeak: false
+  #SS220 languages revive end
   - type: Tag
     tags:
     - CannotSuicide
@@ -183,6 +392,26 @@
     attributes:
       proper: true
       gender: male
+  #SS220 languages revive begin
+  - type: Language
+    availableLanguages:
+  #SS220 Animalistic languages fix begin
+    - id: Feline
+      canSpeak: true
+    - id: Monkey
+      canSpeak: false
+    - id: Mousey
+      canSpeak: false
+    - id: Doggish
+      canSpeak: false
+    - id: Reptilian
+      canSpeak: false
+    - id: Piggish
+      canSpeak: false
+  #SS220 Animalistic languages fix end
+    - id: Galactic
+      canSpeak: false
+  #SS220 languages revive end
   - type: Tag
     tags:
     - CannotSuicide
@@ -190,7 +419,7 @@
 
 - type: entity
   name: Bingus
-  parent: [SimpleMobBase, StripableInventoryBase]
+  parent: [SimpleMobBase, StripableInventoryBase, MobLyingDownOnEntity] #SS220 Add lying down on entity
   id: MobBingus
   description: Bingus my beloved...
   components:
@@ -200,6 +429,33 @@
     layers:
     - map: ["enum.DamageStateVisualLayers.Base"]
       state: bingus
+    #SS220 Add lying down on entity begin
+    - map: ["enum.LyingVisuals.LyingDown"]
+      state: bingus_rest
+      visible: false
+  - type: LyingDownOnBuckledEntity
+    offset: -0.1, 0
+    #SS220 Add lying down on entity end
+  #SS220 languages revive begin
+  - type: Language
+    availableLanguages:
+  #SS220 Animalistic languages fix begin
+    - id: Feline
+      canSpeak: true
+    - id: Monkey
+      canSpeak: false
+    - id: Mousey
+      canSpeak: false
+    - id: Doggish
+      canSpeak: false
+    - id: Reptilian
+      canSpeak: false
+    - id: Piggish
+      canSpeak: false
+  #SS220 Animalistic languages fix end
+    - id: Galactic
+      canSpeak: false
+  #SS220 languages revive end
   - type: Physics
   # 220 cat-emotes start
   - type: Speech
@@ -254,8 +510,10 @@
     tags:
     - CannotSuicide
     - VimPilot
+  #SS220 Animalistic languages fix begin
   - type: ReplacementAccent
     accent: cat
+  #SS220 Animalistic languages fix end
   - type: StealTarget
     stealGroup: AnimalNamedCat
 
@@ -271,6 +529,30 @@
     layers:
     - map: ["enum.DamageStateVisualLayers.Base"]
       state: mcgriff
+    - map: [ "head" ]
+    - map: [ "eyes" ]
+  #SS220 languages revive begin
+  - type: Language
+    availableLanguages:
+  #SS220 Animalistic languages begin
+    - id: Doggish
+      canSpeak: true
+      #SS220 Animalistic languages fix begin
+    - id: Feline
+      canSpeak: false
+    - id: Monkey
+      canSpeak: false
+    - id: Mousey
+      canSpeak: false
+    - id: Reptilian
+      canSpeak: false
+    - id: Piggish
+      canSpeak: false
+  #SS220 Animalistic languages fix end
+  #SS220 Animalistic languages end
+    - id: Galactic
+      canSpeak: false
+  #SS220 languages revive end
   - type: Physics
   - type: Fixtures
     fixtures:
@@ -285,7 +567,18 @@
         - MobLayer
   - type: Inventory
     speciesId: puppy
-    templateId: pet
+    templateId: petAdvanced
+    displacements:
+      head:
+        sizeMaps:
+          32:
+            sprite: Mobs/Pets/displacements.rsi
+            state: mcgriff_head_displacement
+      eyes:
+        sizeMaps:
+          32:
+            sprite: Mobs/Pets/displacements.rsi
+            state: mcgriff_eyes_displacement
   - type: DamageStateVisuals
     states:
       Alive:
@@ -298,8 +591,10 @@
     spawned:
     - id: FoodMeat
       amount: 2
+  #SS220 Animalistic languages fix begin
   - type: ReplacementAccent
     accent: dog
+  #SS220 Animalistic languages fix end
   - type: InteractionPopup
     successChance: 0.5
     interactSuccessString: petting-success-dog
@@ -311,12 +606,16 @@
     attributes:
       proper: true
       gender: male
+  - type: Speech
+    speechVerb: Canine
+    speechSounds: Dog
   - type: Tag
     tags:
     - CannotSuicide
     - VimPilot
   - type: StealTarget
     stealGroup: AnimalMcGriff
+  - type: MessyDrinker
 
 - type: entity
   name: Paperwork
@@ -338,6 +637,26 @@
         Base: paperwork_dead
       Dead:
         Base: paperwork_dead
+  #SS220 languages revive begin
+  - type: Language
+    availableLanguages:
+    - id: Galactic
+      canSpeak: false
+  #SS220 languages revive end
+  #SS220 Animalistic languages fix begin
+    - id: Feline
+      canSpeak: false
+    - id: Monkey
+      canSpeak: false
+    - id: Mousey
+      canSpeak: false
+    - id: Doggish
+      canSpeak: false
+    - id: Reptilian
+      canSpeak: false
+    - id: Piggish
+      canSpeak: false
+  #SS220 Animalistic languages fix end
   - type: Butcherable
     spawned:
     - id: FoodMeat
@@ -364,6 +683,26 @@
     layers:
     - map: ["enum.DamageStateVisualLayers.Base"]
       state: walter
+  #SS220 languages revive begin
+  - type: Language
+    availableLanguages:
+  #SS220 Animalistic languages fix begin
+    - id: Doggish
+      canSpeak: true
+    - id: Feline
+      canSpeak: false
+    - id: Monkey
+      canSpeak: false
+    - id: Mousey
+      canSpeak: false
+    - id: Reptilian
+      canSpeak: false
+    - id: Piggish
+      canSpeak: false
+  #SS220 Animalistic languages fix end
+    - id: Galactic
+      canSpeak: false
+  #SS220 languages revive end
   - type: Physics
   - type: Fixtures
     fixtures:
@@ -391,8 +730,10 @@
     spawned:
     - id: FoodMeat
       amount: 3
+  #SS220 Animalistic languages fix begin
   - type: ReplacementAccent
     accent: dog
+  #SS220 Animalistic languages fix end
   - type: InteractionPopup
     successChance: 0.7
     interactSuccessString: petting-success-dog
@@ -410,6 +751,10 @@
     - VimPilot
   - type: StealTarget
     stealGroup: AnimalWalter
+  - type: Speech
+    speechVerb: Canine
+    speechSounds: Dog
+  - type: MessyDrinker
 
 - type: entity
   name: Morty
@@ -428,6 +773,26 @@
     attributes:
       proper: true
       gender: male
+  #SS220 languages revive begin
+  - type: Language
+    availableLanguages:
+    - id: Galactic
+      canSpeak: false
+  #SS220 languages revive end
+  #SS220 Animalistic languages fix begin
+    - id: Feline
+      canSpeak: false
+    - id: Monkey
+      canSpeak: false
+    - id: Mousey
+      canSpeak: false
+    - id: Doggish
+      canSpeak: false
+    - id: Reptilian
+      canSpeak: false
+    - id: Piggish
+      canSpeak: false
+  #SS220 Animalistic languages fix end
   - type: Tag
     tags:
     - CannotSuicide
@@ -464,6 +829,26 @@
     attributes:
       proper: true
       gender: female
+  #SS220 languages revive begin
+  - type: Language
+    availableLanguages:
+    - id: Galactic
+      canSpeak: false
+  #SS220 languages revive end
+  #SS220 Animalistic languages fix begin
+    - id: Feline
+      canSpeak: false
+    - id: Monkey
+      canSpeak: false
+    - id: Mousey
+      canSpeak: false
+    - id: Doggish
+      canSpeak: false
+    - id: Reptilian
+      canSpeak: false
+    - id: Piggish
+      canSpeak: false
+  #SS220 Animalistic languages fix end
   - type: Sprite
     drawdepth: Mobs
     sprite: Mobs/Animals/possum.rsi
@@ -494,6 +879,28 @@
     attributes:
       proper: true
       gender: female
+  #SS220 languages revive begin
+  - type: Language
+    availableLanguages:
+    - id: Galactic
+      canSpeak: false
+    - id: Tradeband #Cause cargo dep
+      canSpeak: false
+  #SS220 languages revive end
+  #SS220 Animalistic languages fix begin
+    - id: Feline
+      canSpeak: false
+    - id: Monkey
+      canSpeak: false
+    - id: Mousey
+      canSpeak: false
+    - id: Doggish
+      canSpeak: false
+    - id: Reptilian
+      canSpeak: false
+    - id: Piggish
+      canSpeak: false
+  #SS220 Animalistic languages fix end
   - type: Tag
     tags:
     - CannotSuicide
@@ -516,6 +923,26 @@
     attributes:
       proper: true
       gender: male
+  #SS220 languages revive begin
+  - type: Language
+    availableLanguages:
+  ##SS220 Animalistic languages fix begin
+    - id: Piggish
+      canSpeak: true
+    - id: Mousey
+      canSpeak: false
+    - id: Doggish
+      canSpeak: false
+    - id: Feline
+      canSpeak: false
+    - id: Reptilian
+      canSpeak: false
+    - id: Monkey
+      canSpeak: false
+  ##SS220 Animalistic languages fix end
+    - id: Galactic
+      canSpeak: false
+  #SS220 languages revive end
   - type: Tag
     tags:
     - CannotSuicide
@@ -540,6 +967,28 @@
       amount: 3
     - id: Telecrystal5
       amount: 1
+  #SS220 languages revive begin
+  - type: Language
+    availableLanguages:
+    - id: Galactic
+      canSpeak: false
+    - id: Canilunzt #Vulp gagaga
+      canSpeak: false
+  #SS220 languages revive end
+  #SS220 Animalistic languages fix begin
+    - id: Feline
+      canSpeak: false
+    - id: Monkey
+      canSpeak: false
+    - id: Mousey
+      canSpeak: false
+    - id: Doggish
+      canSpeak: true
+    - id: Reptilian
+      canSpeak: false
+    - id: Piggish
+      canSpeak: false
+  #SS220 Animalistic languages fix end
   - type: Grammar
     attributes:
       proper: true
@@ -570,6 +1019,26 @@
     noMovementLayers:
       movement:
         state: hamster-0
+  #SS220 languages revive begin
+  - type: Language
+    availableLanguages:
+  #SS220 Animalistic languages fix begin
+    - id: Mousey
+      canSpeak: true
+    - id: Feline
+      canSpeak: false
+    - id: Monkey
+      canSpeak: false
+    - id: Doggish
+      canSpeak: false
+    - id: Reptilian
+      canSpeak: false
+    - id: Piggish
+      canSpeak: false
+  #SS220 Animalistic languages fix end
+    - id: Galactic
+      canSpeak: false
+  #SS220 languages revive end
   - type: GhostRole
     makeSentient: true
     allowSpeech: true
@@ -599,6 +1068,26 @@
     - Hamster
     - VimPilot
     - ChefPilot
+  - type: FlavorProfile
+    flavors:
+    - meaty
+    - sadness
+
+- type: entity
+  parent: MobHamsterHamlet
+  id: MobHamsterHamletSlippery
+  suffix: Slippery
+  components:
+  - type: Slippery
+  - type: StepTrigger
+    requiredTriggeredSpeed: 1
+  - type: TriggerOnStepTrigger
+  - type: GibOnTrigger
+  - type: EmitSoundOnTrigger
+    sound:
+      path: "/Audio/Animals/mouse_squeak.ogg"
+    positional: true
+    predicted: true
 
 - type: entity
   name: Shiva
@@ -613,6 +1102,30 @@
     interactSuccessSpawn: EffectHearts
     interactSuccessSound:
       path: /Audio/Animals/snake_hiss.ogg
+  #SS220 languages revive begin
+  - type: Language
+    availableLanguages:
+  #SS220 Animalistic languages fix begin
+    - id: SpiderTongue
+      canSpeak: true
+    - id: Feline
+      canSpeak: false
+    - id: Monkey
+      canSpeak: false
+    - id: Mousey
+      canSpeak: false
+    - id: Doggish
+      canSpeak: false
+    - id: Reptilian
+      canSpeak: false
+    - id: Piggish
+      canSpeak: false
+  #SS220 Animalistic languages fix end
+    - id: Galactic
+      canSpeak: false
+    - id: Arati
+      canSpeak: false
+  #SS220 languages revive end
   - type: NpcFactionMember
     factions:
       - PetsNT
@@ -652,6 +1165,8 @@
       types:
         Piercing: 8
         Poison: 8
+  - type: Spider
+    spawnsWebsAsNonPlayer: false
   - type: Grammar
     attributes:
       proper: true
@@ -682,6 +1197,22 @@
     attributes:
       proper: true
       gender: female
+  #SS220 languages revive begin
+  - type: Language
+    availableLanguages:
+    - id: Galactic
+      canSpeak: false
+    - id: Feline
+      canSpeak: false
+    - id: Mousey
+      canSpeak: false
+    - id: Doggish
+      canSpeak: false
+    - id: Reptilian
+      canSpeak: false
+    - id: Piggish
+      canSpeak: false
+  #SS220 languages revive end
   - type: Tag
     tags:
     - CannotSuicide
@@ -699,7 +1230,7 @@
 - type: entity
   name: Smile
   id: MobSlimesPet
-  parent: MobAdultSlimes
+  parent: [MobAdultSlimes, StripableInventoryBase]
   description: This masterpiece has gone through thousands of experiments. But it is the sweetest creature in the world. Smile Slime!
   components:
   - type: Sprite
@@ -709,15 +1240,43 @@
     - map: [ "enum.DamageStateVisualLayers.BaseUnshaded" ]
       state: aslime-_3
       shader: unshaded
+    - map: [ "head" ]
+  #SS220 languages revive begin
+  - type: Language
+    availableLanguages:
+    - id: Bubblish
+      canSpeak: true
+    - id: Galactic
+      canSpeak: false
+    - id: Feline
+      canSpeak: false
+    - id: Monkey
+      canSpeak: false
+    - id: Mousey
+      canSpeak: false
+    - id: Doggish
+      canSpeak: false
+    - id: Reptilian
+      canSpeak: false
+    - id: Piggish
+      canSpeak: false
+  #SS220 languages revive end
+  - type: Inventory
+    speciesId: slime
+    templateId: head
+    displacements:
+      head:
+        sizeMaps:
+          32:
+            sprite: Mobs/Pets/Smile/smile_displacement.rsi
+            state: head
   - type: MobThresholds
     thresholds:
       0: Alive
       200: Dead
   - type: FootstepModifier
     footstepSoundCollection:
-      path: /Audio/Effects/Footsteps/slime1.ogg
-      params:
-        volume: -6
+      collection: FootstepSlime
   - type: Tag
     tags:
     - FootstepSound
@@ -745,6 +1304,7 @@
         Bloodloss:
           -0.8
   - type: Temperature
+  - type: TemperatureDamage
     heatDamageThreshold: 800
     coldDamageThreshold: 0
   - type: MeleeWeapon
@@ -754,15 +1314,15 @@
         Caustic: 1
   - type: MultiHandedItem
   - type: Item
+    sprite: Mobs/Pets/Smile/smile.rsi
     size: Huge
-  - type: SentienceTarget
-    flavorKind: station-event-random-sentience-flavor-slime
   - type: MobPrice
     price: 3000 # it is a truly valuable creature
   - type: GhostRole
     name: ghost-role-information-smile-name
     description: ghost-role-information-smile-description
     rules: ghost-role-information-nonantagonist-rules
+    raffle: null
   - type: Grammar
     attributes:
       proper: true
@@ -783,6 +1343,26 @@
     description: ghost-role-information-punpun-description
     rules: ghost-role-information-nonantagonist-rules
   - type: GhostTakeoverAvailable
+  #SS220 languages revive begin
+  - type: Language
+    availableLanguages:
+  #SS220 Animalistic languages fix begin
+    - id: Monkey
+      canSpeak: true
+    - id: Feline
+      canSpeak: false
+    - id: Mousey
+      canSpeak: false
+    - id: Doggish
+      canSpeak: false
+    - id: Reptilian
+      canSpeak: false
+    - id: Piggish
+      canSpeak: false
+  #SS220 Animalistic languages fix end
+    - id: Galactic
+      canSpeak: false
+  #SS220 languages revive end
   - type: Butcherable
     butcheringType: Spike
     spawned:
@@ -795,6 +1375,7 @@
     - CannotSuicide
     - DoorBumpOpener
     - VimPilot
+    - AnomalyHost
   - type: Loadout
     prototypes: [ MobMonkeyGear ]
   - type: Grammar
@@ -808,19 +1389,39 @@
   id: MobCrabAtmos
   description: The noble and stalwart defender of Atmosia. Viva!
   components:
-#  - type: GhostRole
-#    prob: 1
-#    makeSentient: true
-#    allowSpeech: true
-#    allowMovement: true
-#    name: ghost-role-information-tropico-name
-#    description: ghost-role-information-tropico-description
-#    rules: ghost-role-information-nonantagonist-rules
-#  - type: GhostTakeoverAvailable
+  #ss220 tropico available for ghost role start
+  - type: GhostRole
+    prob: 1
+    makeSentient: true
+    allowSpeech: true
+    allowMovement: true
+    name: ghost-role-information-tropico-name
+    description: ghost-role-information-tropico-description
+    rules: ghost-role-information-nonantagonist-rules
+  - type: GhostTakeoverAvailable
+  #ss220 tropico available for ghost role end
   - type: Tag
     tags:
     - VimPilot
     - CannotSuicide
+  #SS220 languages revive begin
+  - type: Language
+    availableLanguages:
+    - id: Galactic
+      canSpeak: false
+    - id: Feline
+      canSpeak: false
+    - id: Monkey
+      canSpeak: false
+    - id: Mousey
+      canSpeak: false
+    - id: Doggish
+      canSpeak: false
+    - id: Reptilian
+      canSpeak: false
+    - id: Piggish
+      canSpeak: false
+  #SS220 languages revive end
   - type: Grammar
     attributes:
       proper: true
@@ -829,29 +1430,20 @@
   - type: StealTarget
     stealGroup: AnimalTropico
 
-# SS220 AVD pet begin
 - type: entity
-  name: Rocket
-  parent: MobCatSpace
-  id: MobSpaceCatPet
-  description: Feline pet, prepared for the worst.
+  name: Polly the parrot
+  parent: MobParrotBase
+  id: MobPollyParrot
+  description: An expert in quantum cracker theory
   components:
-  - type: Fixtures
-    fixtures:
-      fix1:
-        shape:
-          !type:PhysShapeCircle
-          radius: 0.35
-        density: 40
-        mask:
-        - MobMask
-        layer:
-        - MobLayer
+  - type: Vocalizer
+    maxVocalizeInterval: 240 # polly is chattier
+  - type: RadioVocalizer
+    radioAttemptChance: 0.8 # polly wants to share with the world
   - type: Grammar
     attributes:
+      proper: true
       gender: male
-  - type: Tag
-    tags:
-    - CannotSuicide
-    - VimPilot
-# SS220 AVD pet end
+  - type: Loadout
+    prototypes: [ MobPollyGear ]
+

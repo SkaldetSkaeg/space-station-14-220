@@ -65,16 +65,16 @@
   id: JobERTSecurity
 
 - type: playTimeTracker
+  id: JobDeathSquad
+
+- type: playTimeTracker
+  id: JobCBURN
+
+- type: playTimeTracker
   id: JobHeadOfPersonnel
 
 - type: playTimeTracker
   id: JobHeadOfSecurity
-
-- type: playTimeTracker
-  id: JobSecurityPilot
-
-- type: playTimeTracker
-  id: JobBrigmedic
 
 - type: playTimeTracker
   id: JobJanitor
@@ -134,6 +134,9 @@
   id: JobServiceWorker
 
 - type: playTimeTracker
+  id: JobStationAi
+
+- type: playTimeTracker
   id: JobStationEngineer
 
 - type: playTimeTracker
@@ -144,12 +147,3 @@
 
 - type: playTimeTracker
   id: JobWarden
-
-- type: playTimeTracker
-  id: JobBoxer
-
-- type: playTimeTracker
-  id: JobZookeeper
-
-- type: playTimeTracker
-  id: JobBlueShield

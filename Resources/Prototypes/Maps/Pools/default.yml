@@ -1,18 +1,15 @@
 - type: gameMapPool
   id: DefaultMapPool
   maps:
-  - Atlas
   - Bagel
   - Box
-  - Cluster
-  - Core
+  - Elkridge
   - Fland
   - Marathon
-  - Meta
   - Oasis
-  - Omega
-  - Origin
-  - Saltern
   - Packed
+  - Plasma
   - Reach
-  - Train
+  - Exo
+  - Snowball
+  - Serpentcrest

@@ -13,3 +13,15 @@ ent-DoorElectronicsUsspMedical = { ent-DoorElectronicsUssp }
 ent-DoorElectronicsUsspEngineering = { ent-DoorElectronicsUssp }
     .suffix = СССП, Закрыт, Инженерный
     .desc = { ent-DoorElectronics.desc }
+
+ent-DoorElectronicsMagistrate = { ent-DoorElectronics }
+    .suffix = Магистрат, Закрыт
+    .desc = { ent-DoorElectronics.desc }
+
+ent-DoorElectronicsBlueshield = { ent-DoorElectronics }
+    .suffix = ОСЩ, Закрыт
+    .desc = { ent-DoorElectronics.desc }
+
+ent-DoorElectronicsNanoTrasenRepresentative = { ent-DoorElectronics }
+    .suffix = Представитель НТ, Закрыт
+    .desc = { ent-DoorElectronics.desc }

@@ -1,3 +1,5 @@
+# © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
+
 # Chef Time
 - type: loadoutEffectGroup
   id: ChefSenior
@@ -7,6 +9,11 @@
       !type:RoleTimeRequirement
       role: JobChef
       time: 900000 #250 часов, форма для самых лучших
+  sponsorTierLoadoutEffects:
+  - !type:GroupLoadoutEffect
+    proto: SeniorDevTeamTier
+  - !type:GroupLoadoutEffect
+    proto: AdministratorSponsorTier
 
 # Head
 - type: loadout
@@ -81,7 +88,6 @@
     jumpsuit: ClothingUniformJumpskirtChefNanotrasen
 
 # Outer clothing
-
 - type: loadout
   id: ChefJacketWhite
   equipment:
@@ -106,7 +112,6 @@
     outerClothing: ClothingOuterJacketChefNanotrasen
 
 # Belt
-
 - type: loadout
   id: ChefBeltApronWhite
   equipment:

@@ -1,0 +1,121 @@
+# SS220 bard loadout
+- type: loadoutEffectGroup
+  id: DangerCoat
+  effects:
+  - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:RoleTimeRequirement
+      role: JobMusician
+      time: 144000 # 40 hrs
+  sponsorTierLoadoutEffects:
+  - !type:GroupLoadoutEffect
+    proto: SeniorDevTeamTier
+  - !type:GroupLoadoutEffect
+    proto: AdministratorSponsorTier
+# Bard Time
+
+- type: loadoutEffectGroup
+  id: MusicianBard
+  effects:
+  - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:RoleTimeRequirement
+      role: JobMusician
+      time: 108000 #30 часов
+  sponsorTierLoadoutEffects:
+  - !type:GroupLoadoutEffect
+    proto: SeniorDevTeamTier
+  - !type:GroupLoadoutEffect
+    proto: AdministratorSponsorTier
+
+- type: loadoutEffectGroup
+  id: MusicianEveningDress
+  effects:
+  - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:RoleTimeRequirement
+      role: JobMusician
+      time: 18000 #5 часов
+  sponsorTierLoadoutEffects:
+  - !type:GroupLoadoutEffect
+    proto: SeniorDevTeamTier
+  - !type:GroupLoadoutEffect
+    proto: AdministratorSponsorTier
+
+- type: loadoutEffectGroup
+  id: DeadAnarchistCoat
+  effects:
+  - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:RoleTimeRequirement
+      role: JobMusician
+      time: 46800 # 13 hrs
+  sponsorTierLoadoutEffects:
+  - !type:GroupLoadoutEffect
+    proto: SeniorDevTeamTier
+  - !type:GroupLoadoutEffect
+    proto: AdministratorSponsorTier
+# Head
+
+- type: loadout
+  id: BardHead
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: MusicianBard
+  equipment:
+    head: ClothingHeadHatBeretBard
+
+# Jumpsuit
+
+- type: loadout
+  id: BardUniform
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: MusicianBard
+  equipment:
+    jumpsuit: ClothingUniformJumpsuitBard
+
+- type: loadout
+  id: EveningDress
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: MusicianEveningDress
+  equipment:
+    jumpsuit: ClothingUniformEveningDressMusician
+  
+# Outer clothing
+
+- type: loadout
+  id: BardApron
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: MusicianBard
+  equipment:
+    outerClothing: ClothingOuterApronBard
+
+# Shoes
+
+- type: loadout
+  id: BardShoes
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: MusicianBard
+  equipment:
+    shoes: ClothingShoesBootsBard
+
+# Outer
+- type: loadout
+  id: DangerCoat
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: DangerCoat
+  equipment:
+    outerClothing: ClothingOuterCoatDanger
+
+- type: loadout
+  id: DeadAnarchistCoat
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: DeadAnarchistCoat
+  equipment:
+    outerClothing: ClothingOuterCoatDeadAnarchist

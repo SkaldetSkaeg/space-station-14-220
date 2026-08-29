@@ -6,7 +6,31 @@
     requirement:
       !type:RoleTimeRequirement
       role: JobPassenger
-      time: 36000 #10 hrs, silly reward for people who play passenger a lot
+      time: 10h # silly reward for people who play passenger a lot
+  # SS220-sponsor-tier-begin
+  sponsorTierLoadoutEffects:
+  - !type:GroupLoadoutEffect
+    proto: SeniorDevTeamTier
+  - !type:GroupLoadoutEffect
+    proto: AdministratorSponsorTier
+  # SS220-sponsor-tier-end
+
+# Head of Greytide (for grey mantle)
+- type: loadoutEffectGroup
+  id: MasterGrey
+  effects:
+  - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:RoleTimeRequirement
+      role: JobPassenger
+      time: 20h # fun mantle for the most experienced greytiders
+  # SS220-sponsor-tier-begin
+  sponsorTierLoadoutEffects:
+  - !type:GroupLoadoutEffect
+    proto: SeniorDevTeamTier
+  - !type:GroupLoadoutEffect
+    proto: AdministratorSponsorTier
+  # SS220-sponsor-tier-end
 
 # Face
 - type: loadout
@@ -38,6 +62,15 @@
   equipment:
     jumpsuit: ClothingUniformColorRainbow
 
+# Rainbow Jumpskirt
+- type: loadout
+  id: RainbowJumpskirt
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: GreyTider
+  equipment:
+    jumpsuit: ClothingUniformJumpskirtColorRainbow
+
 # Ancient
 - type: loadout
   id: AncientJumpsuit
@@ -46,6 +79,20 @@
     proto: GreyTider
   equipment:
     jumpsuit: ClothingUniformJumpsuitAncient
+
+# Neck
+- type: loadout
+  id: Mantle
+  equipment:
+    neck: ClothingNeckMantle
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: MasterGrey
+
+- type: startingGear
+  id: Mantle
+  equipment:
+    neck: ClothingNeckMantle
 
 # Back
 - type: loadout

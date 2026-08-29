@@ -7,6 +7,12 @@
   - type: EmitSoundOnLand
     sound:
       path: /Audio/Items/wirecutter_drop.ogg
+  # SS220-construction-skill-begin
+  - type: LearningOnDoAfterEndWith
+    progress:
+      Construction:
+        baseLearning: 0.02
+  # SS220-construction-skill-end
   - type: Tag
     tags:
     - PlantSampleTaker
@@ -53,6 +59,12 @@
   - type: EmitSoundOnLand
     sound:
       path: /Audio/Items/screwdriver_drop.ogg
+  # SS220-construction-skill-begin
+  - type: LearningOnDoAfterEndWith
+    progress:
+      Construction:
+        baseLearning: 0.02
+  # SS220-construction-skill-end
   - type: Tag
     tags:
     - Screwdriver
@@ -71,6 +83,7 @@
     damage:
       types:
         Piercing: 6
+    angle: 0 #SS220-piercing screwdriver
     soundHit:
       path: "/Audio/Weapons/bladeslice.ogg"
   - type: Tool
@@ -87,6 +100,18 @@
       Steel: 100
   - type: StaticPrice
     price: 30
+# SS220 Throwable Changes begin
+  - type: LandAtCursor
+  - type: ThrowingAngle
+    angle: 270
+  - type: EmbeddableProjectile
+    sound: /Audio/Weapons/star_hit.ogg
+    offset: -0.15,0.0
+  - type: DamageOtherOnHit
+    damage:
+      types:
+        Piercing: 5
+# SS220 Throwable Changes end
 
 - type: entity
   name: wrench
@@ -98,6 +123,12 @@
   - type: EmitSoundOnLand
     sound:
       path: /Audio/Items/wrench_drop.ogg
+  # SS220-construction-skill-begin
+  - type: LearningOnDoAfterEndWith
+    progress:
+      Construction:
+        baseLearning: 0.02
+  # SS220-construction-skill-end
   - type: Tag
     tags:
     - Wrench
@@ -127,77 +158,9 @@
       Steel: 100
   - type: StaticPrice
     price: 22
-
-- type: entity
-  name: crowbar
-  parent: BaseItem
-  id: Crowbar
-  description: A multipurpose tool to pry open doors and fight interdimensional invaders.
-  components:
-  - type: EmitSoundOnLand
-    sound:
-      path: /Audio/Items/crowbar_drop.ogg
-  - type: Tag
-    tags:
-    - Crowbar
-  - type: Sprite
-    sprite: Objects/Tools/crowbar.rsi
-    state: icon
-  - type: Item
-    sprite: Objects/Tools/crowbar.rsi
-    size: Small
-    storedSprite:
-      sprite: Objects/Tools/crowbar.rsi
-      state: storage
-  # start 220 crowbar on belt
-  - type: Clothing
-    sprite: Objects/Tools/crowbar.rsi
-    quickEquip: false
-    slots:
-      - Belt
-  # end 220 crowbar on belt
-  - type: MeleeWeapon
-    wideAnimationRotation: -135
-    damage:
-      types:
-        Blunt: 8
-    soundHit:
-      collection: MetalThud
-  # ss220 crowbar Damage on hit start
-  - type: DamageOtherOnHit
-    damage:
-      types:
-        Blunt: 6
-   # ss220 crowbar Damage on hit end    
-  - type: Tool
-    qualities:
-      - Prying
-    useSound:
-      path: /Audio/Items/crowbar.ogg
-  - type: ToolTileCompatible
-  - type: PhysicalComposition
-    materialComposition:
-      Steel: 100
-  - type: StaticPrice
-    price: 22
-  - type: Prying
-
-- type: entity
-  parent: Crowbar
-  id: CrowbarRed
-  name: emergency crowbar
-  components:
-  - type: Tag
-    tags:
-    - Crowbar
-    - CrowbarRed
-  - type: Sprite
-    state: red-icon
-  - type: Item
-    heldPrefix: red
-    storedSprite:
-      sprite: Objects/Tools/crowbar.rsi
-      state: red-storage
+  - type: GuideHelp
+    guides:
+    - Construction
 
 - type: entity
   name: multitool
@@ -208,6 +171,12 @@
   - type: EmitSoundOnLand
     sound:
       path: /Audio/Items/multitool_drop.ogg
+  # SS220-construction-skill-begin
+  - type: LearningOnDoAfterEndWith
+    progress:
+      Construction:
+        baseLearning: 0.02
+  # SS220-construction-skill-end
   - type: Sprite
     sprite: Objects/Tools/multitool.rsi
     layers:
@@ -246,6 +215,12 @@
       Plastic: 100
   - type: StaticPrice
     price: 56
+  - type: GuideHelp
+    guides:
+    - Networking
+    - WirePanels
+    - Airlocks
+    - InspectingPower
 
 - type: entity
   name: network configurator
@@ -296,7 +271,7 @@
       price: 56
     - type: GuideHelp
       guides:
-      - NetworkConfigurator
+      - Networking
 
 #Power tools
 #Later on these should switch probably switch damage when changing the tool behavior.
@@ -306,6 +281,12 @@
   id: PowerDrill
   description: A simple powered hand drill.
   components:
+  # SS220-construction-skill-begin
+  - type: LearningOnDoAfterEndWith
+    progress:
+      Construction:
+        baseLearning: 0.02
+  # SS220-construction-skill-end
   - type: Tag
     tags:
     - Powerdrill
@@ -356,13 +337,20 @@
 
 - type: entity
   id: RCD
-  parent: BaseItem
+  parent: [ BaseItem]
   name: RCD
   description: The rapid construction device can be used to quickly place and remove various station structures and fixtures. Requires compressed matter to function.
   components:
+  # SS220-construction-skill-begin
+  - type: LearningOnDoAfterEndWith
+    progress:
+      Construction:
+        baseLearning: 0.01
+  # SS220-construction-skill-end
   - type: RCD
     availablePrototypes:
     - WallSolid
+    - WallReinforced # ss220 rcd upd
     - FloorSteel
     - Plating
     - Catwalk
@@ -381,10 +369,23 @@
     - HVCable
     - CableTerminal
     - Deconstruct
+  # ss220 rcd upd bgn
+    - StraightPipe
+    - PipeFourway
+    - PipeTjunction
+    - PipeBend
+    - PassiveVent
+    - AirVent
+    - Scrubber
+    - DisposalPipe
+    - DisposalTrunk
+    - DisposalJunction
+    - DisposalJunctionFlipped
+    - DisposalYJunction
+    - DisposalBend
+  # ss220 rcd upd end
   - type: LimitedCharges
     maxCharges: 30
-    charges: 30
-  - type: UseDelay
   - type: Sprite
     sprite: Objects/Tools/rcd.rsi
     state: icon
@@ -400,12 +401,13 @@
       Steel: 600
       Plastic: 100
   - type: StaticPrice
-    price: 100
+    price: 110
   - type: UserInterface
     interfaces:
       enum.RcdUiKey.Key:
         type: RCDMenuBoundUserInterface
   - type: ActivatableUI
+    inHandsOnly: true
     key: enum.RcdUiKey.Key
 
 - type: entity
@@ -414,20 +416,19 @@
   suffix: Empty
   components:
   - type: LimitedCharges
-    charges: 0
+    lastCharges: -1
 
 - type: entity
   id: RCDRecharging
   parent: RCD
   name: experimental RCD
-  description: A bluespace-enhanced rapid construction device that passively generates its own compressed matter.
+  description: Cyborg-mounted Rapid Construction Device which creates compressed matter on the fly using an internal fabricator.
   suffix: AutoRecharge
   components:
   - type: LimitedCharges
-    maxCharges: 20
-    charges: 20
+    maxCharges: 30 # rcd upd
   - type: AutoRecharge
-    rechargeDuration: 10
+    rechargeDuration: 5 # rcd upd
 
 - type: entity
   id: RCDExperimental
@@ -471,6 +472,12 @@
   - type: Item
     sprite: Objects/Tools/omnitool.rsi
     size: Normal
+  # SS220-construction-skill-begin
+  - type: LearningOnDoAfterEndWith
+    progress:
+      Construction:
+        baseLearning: 0.01
+  # SS220-construction-skill-end
   - type: Tag
     tags:
     - Multitool
@@ -551,6 +558,12 @@
   - type: StaticPrice
     price: 25
   - type: Shovel
+# SS220 Throwable Changes begin
+  - type: DamageOtherOnHit
+    damage:
+      types:
+        Blunt: 10
+# SS220 Throwable Changes end
 
 - type: entity
   parent: BaseItem
@@ -564,11 +577,16 @@
   - type: Item
     sprite: Objects/Tools/rolling_pin.rsi
     size: Small
+    storedRotation: -45
   - type: Clothing
     sprite: Objects/Tools/rolling_pin.rsi
     quickEquip: false
     slots:
     - Belt
+  # SS220 rolling pin damage and sound tweaks begin
+  - type: StaminaDamageOnHit
+    damage: 16
+  # SS220 rolling pin damage and sound tweaks end
   - type: MeleeWeapon
     soundHit: !type:SoundCollectionSpecifier # SS220 Sounds
       collection: BatonHit
@@ -576,7 +594,6 @@
     damage:
       types:
         Blunt: 7
-        Stamina: 16
   - type: Tool
     qualities:
     - Rolling
@@ -586,3 +603,14 @@
   - type: Tag
     tags:
     - RollingPin
+  - type: Construction
+    graph: WoodenRollingPin
+    node: rollingpin
+# SS220 Throwable Changes begin
+  - type: StaminaDamageOnCollide
+    damage: 13.5
+  - type: DamageOtherOnHit
+    damage:
+      types:
+        Blunt: 5.5
+# SS220 Throwable Changes end

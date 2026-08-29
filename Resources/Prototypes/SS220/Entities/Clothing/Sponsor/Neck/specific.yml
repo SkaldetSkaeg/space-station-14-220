@@ -1,0 +1,41 @@
+# © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
+
+# Венец
+- type: entity
+  parent: ClothingSponsorNeckBase
+  id: ClothingSponsorNeckWreath
+  name: rose wreath
+  description: A long neck wreath woven from beautiful flowers.
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/Neck/Misc/neck-wreath.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/Neck/Misc/neck-wreath.rsi
+
+# Деревня дураков
+- type: entity
+  parent: ClothingSponsorNeckBase
+  id: ClothingSponsorScarfMuzhik
+  name: muzhik's scarf
+  description: Long and narrow for comfortable moonshine drinking.
+  suffix: Шлёпа
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/Neck/Scarfs/muzhik.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/Neck/Scarfs/muzhik.rsi
+  - type: Item
+    storedRotation: -90
+
+# Джужутсу
+- type: entity
+  parent: ClothingSponsorNeckBase
+  id: ClothingSponsorTieJujutsuShlepa
+  name: office worker's tie
+  description: U r my SPECIAL.
+  suffix: Шлёпа
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/Neck/Misc/nanamitie.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/Neck/Misc/nanamitie.rsi

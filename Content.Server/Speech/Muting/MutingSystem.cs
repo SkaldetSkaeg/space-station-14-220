@@ -1,8 +1,7 @@
-using Content.Server.Abilities.Mime;
-using Content.Server.Chat.Systems;
 using Content.Server.Popups;
-using Content.Server.Speech.Components;
 using Content.Server.Speech.EntitySystems;
+using Content.Shared.Abilities.Mime;
+using Content.Shared.Chat;
 using Content.Shared.Chat.Prototypes;
 using Content.Shared.Puppet;
 using Content.Shared.Speech;
@@ -18,9 +17,8 @@ namespace Content.Server.Speech.Muting
         {
             base.Initialize();
             SubscribeLocalEvent<MutedComponent, SpeakAttemptEvent>(OnSpeakAttempt);
-            SubscribeLocalEvent<MutedComponent, EmoteEvent>(OnEmote, before: new[] { typeof(VocalSystem) });
+            SubscribeLocalEvent<MutedComponent, EmoteEvent>(OnEmote, before: new[] { typeof(VocalSystem), typeof(MumbleAccentSystem) });
             SubscribeLocalEvent<MutedComponent, ScreamActionEvent>(OnScreamAction, before: new[] { typeof(VocalSystem) });
-            SubscribeLocalEvent<SleepingComponent, ScreamActionEvent>(OnScreamActionSleeping, before: new[] { typeof(VocalSystem) }); //ss220 fixSleep
         }
 
         private void OnEmote(EntityUid uid, MutedComponent component, ref EmoteEvent args)
@@ -60,14 +58,5 @@ namespace Content.Server.Speech.Muting
 
             args.Cancel();
         }
-        //ss220 fixSleep
-        private void OnScreamActionSleeping(EntityUid uid, SleepingComponent component, ScreamActionEvent args)
-        {
-            if (args.Handled)
-                return;
-            _popupSystem.PopupEntity(Loc.GetString("Вы крепко спите."), uid, uid);
-            args.Handled = true;
-        }
-        //ss220 fixSleep end
     }
 }

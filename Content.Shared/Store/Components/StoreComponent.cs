@@ -1,8 +1,8 @@
 using Content.Shared.FixedPoint;
+using Content.Shared.NPC.Prototypes;
 using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
-using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype;
 
 namespace Content.Shared.Store.Components;
 
@@ -38,23 +38,30 @@ public sealed partial class StoreComponent : Component
     public HashSet<ProtoId<CurrencyPrototype>> CurrencyWhitelist = new();
 
     /// <summary>
-    /// The person who "owns" the store/account. Used if you want the listings to be fixed
+    /// The expected Faction to use this store. (Optional)
+    /// Used to increase the severity of the admin log upon purchase if the purchaser is not a member of one of the listed factions.
+    /// </summary>
+    [DataField]
+    public HashSet<ProtoId<NpcFactionPrototype>>? ExpectedFaction = new ();
+
+    /// <summary>
+    /// The person/mind who "owns" the store/account. Used if you want the listings to be fixed
     /// regardless of who activated it. I.E. role specific items for uplinks.
     /// </summary>
-    [ViewVariables(VVAccess.ReadWrite)]
+    [DataField]
     public EntityUid? AccountOwner = null;
 
     /// <summary>
-    /// All listings, including those that aren't available to the buyer
+    /// Cached list of listings items with modifiers.
     /// </summary>
     [DataField]
-    public HashSet<ListingData> Listings = new();
+    public HashSet<ListingDataWithCostModifiers> FullListingsCatalog = new();
 
     /// <summary>
     /// All available listings from the last time that it was checked.
     /// </summary>
     [ViewVariables]
-    public HashSet<ListingData> LastAvailableListings = new();
+    public HashSet<ListingDataWithCostModifiers> LastAvailableListings = new();
 
     /// <summary>
     ///     All current entities bought from this shop. Useful for keeping track of refunds and upgrades.
@@ -87,6 +94,18 @@ public sealed partial class StoreComponent : Component
     [DataField]
     public EntityUid? StartingMap;
 
+    //SS220-insert-currency-doafter begin
+    /// <summary>
+    /// How much time needed for inserting currency.
+    /// If null, then the insertion is instant.
+    /// </summary>
+    [ViewVariables, DataField]
+    public TimeSpan? CurrencyInsertTime;
+    //SS220-insert-currency-doafter end
+    // ss220 dynamics
+    [DataField]
+    public bool UseDynamicPrices = false;
+    // ss220 dynamics
     #region audio
     /// <summary>
     /// The sound played to the buyer when a purchase is succesfully made.

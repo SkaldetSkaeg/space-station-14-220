@@ -13,9 +13,10 @@ cmd-ban-hint-duration-2 = 1 день
 cmd-ban-hint-duration-3 = 3 дня
 cmd-ban-hint-duration-4 = 1 неделя
 cmd-ban-hint-duration-5 = 2 недели
+cmd-ban-hint-severity = [тяжесть]
 cmd-ban-hint-post-ban = [discord уведомление]
 cmd-ban-hint-post-ban-true = отправить
-cmd-ban-hint-post-ban-false = не отправлять 
+cmd-ban-hint-post-ban-false = не отправлять
 # ban panel
 cmd-banpanel-desc = Открыть панель банов
 cmd-banpanel-help = Использование: banpanel [имя или guid игрока]
@@ -26,6 +27,7 @@ cmd-ban-hint-duration-6 = 1 месяц
 cmd-banlist-desc = Список активных банов пользователя.
 cmd-banlist-help = Использование: banlist <name or user ID>
 cmd-banlist-empty = Нет активных банов у пользователя { $user }
+cmd-banlist-hint = <name/user ID>
 cmd-banlistF-hint = <name/user ID>
 cmd-ban_exemption_update-desc = Установить исключение на типы банов игрока.
 cmd-ban_exemption_update-help =
@@ -77,3 +79,13 @@ ban-panel-post-ban-info = Опубликовать информацию о ба�
 server-ban-string-never = никогда
 server-ban-string-no-pii = { $admin } установил серверный бан { $severity } тяжести, который истечёт { $expires } у { $name } с причиной: { $reason }
 cmd-ban_exemption_get-arg-player = <player>
+# Kick on ban
+ban-kick-reason = Вы были забанены
+
+cmd-ban-invalid-stated-round = ${statedround} не является допустимым номером раунда!
+
+cmd-ban-hint-stated-round = [раунд нарушения]
+
+ban-panel-stated-round = Раунд нарушения:
+
+ban-panel-expiry-error = ошибка

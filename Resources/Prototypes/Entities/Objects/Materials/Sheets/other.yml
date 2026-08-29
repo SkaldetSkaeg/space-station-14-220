@@ -12,6 +12,7 @@
   - type: Tag
     tags:
     - Sheet
+    - ConstructionMaterial
   - type: Damageable
     damageContainer: Inorganic
   - type: Destructible
@@ -90,6 +91,12 @@
     - plasma
     - plasma_2
     - plasma_3
+  # ss220-experience-begin
+  - type: LearningOnDoAfterEndWith
+    progress:
+      Construction:
+        baseLearning: 0.05
+  # ss220-experience-end
   - type: Sprite
     state: plasma_3
     layers:
@@ -107,9 +114,16 @@
         - ReagentId: Plasma
           Quantity: 10
         canReact: false
-  - type: Tag
-    tags:
-    - Sheet
+
+- type: entity
+  parent: SheetPlasma
+  id: SheetPlasma10
+  suffix: 10
+  components:
+  - type: Sprite
+    state: plasma
+  - type: Stack
+    count: 10
 
 - type: entity
   parent: SheetPlasma
@@ -132,6 +146,7 @@
     tags:
     - Plastic
     - Sheet
+    - ConstructionMaterial
   - type: Material
   - type: PhysicalComposition
     materialComposition:
@@ -143,6 +158,12 @@
     - plastic
     - plastic_2
     - plastic_3
+  # ss220-experience-begin
+  - type: LearningOnDoAfterEndWith
+    progress:
+      Construction:
+        baseLearning: 0.04
+  # ss220-experience-end
   - type: Sprite
     state: plastic_3
     layers:
@@ -186,13 +207,13 @@
     count: 1
 
 - type: entity
-  parent: [SheetOtherBase, FoodBase]
+  parent: [SheetOtherBase, EdibleBase]
   id: SheetUranium
   name: uranium
   suffix: Full
   components:
   - type: Material
-  - type: Food
+  - type: Edible
     transferAmount: 10
   - type: BadFood
   - type: PhysicalComposition
@@ -205,6 +226,12 @@
     - uranium
     - uranium_2
     - uranium_3
+  # ss220-experience-begin
+  - type: LearningOnDoAfterEndWith
+    progress:
+      Construction:
+        baseLearning: 0.09
+  # ss220-experience-end
   - type: Sprite
     state: uranium_3
     layers:
@@ -259,6 +286,12 @@
         - meat
         - meat_2
         - meat_3
+    # ss220-experience-begin
+    - type: LearningOnDoAfterEndWith
+      progress:
+        Construction:
+          baseLearning: 0.04
+    # ss220-experience-end
     - type: Item
       sprite: Objects/Materials/Sheets/meaterial.rsi
       heldPrefix: meat

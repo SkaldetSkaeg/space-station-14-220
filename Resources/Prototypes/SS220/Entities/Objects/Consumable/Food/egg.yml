@@ -2,16 +2,17 @@
 - type: entity
   parent: Eggshells
   id: EggshellsSpider
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   name: eggshells
   description: You're walkin' on 'em bud.
-  suffix: FraG 
+  suffix: FraG
   components:
   - type: Sprite
     sprite: Objects/Consumable/Food/egg.rsi
-    state: eggshells
-    shader: unshaded
-    color: gray     
+    color: gray
+    layers:
+    - state: eggshells
+      shader: unshaded
   - type: SolutionContainerManager
     solutions:
       food:

@@ -1,0 +1,124 @@
+# © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
+
+# Тайлер Дёргал
+- type: entity
+  parent: ClothingSponsorUniformBase
+  id: ClothingSponsorTylerUnder
+  name: mosaic jumpsuit
+  description: It looks complicated.
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/Uniform/Jumpsuit/tyler.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/Uniform/Jumpsuit/tyler.rsi
+
+# Во все тяжкие
+- type: entity
+  parent: ClothingSponsorUniformBase
+  id: ClothingSponsorWaltuhInnerShirt
+  name: pale shirt
+  description: You are just an ordinary family man.
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/Uniform/Jumpsuit/waltuh.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/Uniform/Jumpsuit/waltuh.rsi
+
+# Золотой клоун
+- type: entity
+  parent: ClothingSponsorUniformBase
+  id: ClothingSponsorGoldClownSuit
+  name: golden clown suit
+  description: Ooo, shiny!
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/Uniform/Jumpsuit/goldclownsuit.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/Uniform/Jumpsuit/goldclownsuit.rsi
+
+# Мафиозник
+- type: entity
+  parent: ClothingSponsorUniformBase
+  id: ClothingSponsorMafiaSuit
+  name: wonderful person's suit
+  description: Pink and stylish.
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/Uniform/Jumpsuit/mafiasuit.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/Uniform/Jumpsuit/mafiasuit.rsi
+
+- type: entity
+  parent: ClothingSponsorUniformBase
+  id: ClothingSponsorMafiaBlackSuit
+  name: dark wonderful person's suit
+  description: Dark and stylish.
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/Uniform/Jumpsuit/mafiasuit_black.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/Uniform/Jumpsuit/mafiasuit_black.rsi
+
+# Пивовазавр
+- type: entity
+  parent: ClothingSponsorUniformBase
+  id: ClothingSponsorPivozavr
+  name: '"Pivozavr" t-shirt'
+  description: Beer begins its journey from the era of dinosaurs, didn't you know?
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/Uniform/Jumpsuit/pivozavr.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/Uniform/Jumpsuit/pivozavr.rsi
+
+# Деревня дурачков
+- type: entity
+  parent: ClothingSponsorUniformBase
+  id: ClothingUniformJumpsuitMuzhik
+  name: muzhik's uniform
+  description: Smells like moonshine.
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/Uniform/Jumpsuit/muzhik.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/Uniform/Jumpsuit/muzhik.rsi
+
+- type: entity
+  parent: ClothingSponsorUniformBase
+  id: ClothingUniformJumpsuitMoryak
+  name: sailor's suit
+  description: Mime sailor shirt for conquering the vast ocean (of moonshine).
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/Uniform/Jumpsuit/moryachok.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/Uniform/Jumpsuit/moryachok.rsi
+
+# Джужутсу
+- type: entity
+  parent: ClothingSponsorUniformBase
+  id: ClothingUniformJumpsuitJujutsuShlepa
+  name: office worker's shirt
+  description: A shirt soaked in the scent of Malaysia. It wafts of fatigue, maybe you should take a break?
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/Uniform/Jumpsuit/nanamijumpsuit.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/Uniform/Jumpsuit/nanamijumpsuit.rsi
+
+# Кожевенник
+- type: entity
+  parent: ClothingSponsorUniformBase
+  id: ClothingUniformJumpsuitJabroniOutfit
+  name: leather suit
+  description: Buddy, I think you got the wrong station.
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/Uniform/Jumpsuit/jabroni.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/Uniform/Jumpsuit/jabroni.rsi
+  - type: SpecialSounds
+  - type: Vocal
+    sounds:
+      Male: MaleGachi
+      Unsexed: MaleGachi

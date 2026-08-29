@@ -20,5 +20,15 @@ namespace Content.Server.Shuttles.Components
         /// </summary>
         [ViewVariables(VVAccess.ReadWrite), DataField("whitelistSpecific")]
         public List<EntityUid> FTLWhitelist = new List<EntityUid>();
+
+        // SS220 Cruise-Control begin
+        [DataField, ViewVariables]
+        public EntityUid? CruiseControlTarget;
+        // SS220 Cruise-Control end
+
+        // SS220 add additional control for shuttle start
+        [DataField]
+        public bool CanControlShuttle = true;
+        // SS220 add additional control for shuttle end
     }
 }

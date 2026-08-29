@@ -1,0 +1,7 @@
+- type: construction
+  id: envelope
+  graph: envelope
+  startNode: start
+  targetNode: envelope
+  category: construction-category-misc
+  objectType: Item

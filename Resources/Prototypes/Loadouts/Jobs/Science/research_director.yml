@@ -1,12 +1,35 @@
-# Head
+# For mantles
+- type: loadoutEffectGroup
+  id: MasterRD
+  effects:
+  - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:RoleTimeRequirement
+      role: JobResearchDirector
+      time: 20h
+  # SS220-sponsor-tier-begin
+  sponsorTierLoadoutEffects:
+  - !type:GroupLoadoutEffect
+    proto: SeniorDevTeamTier
+  - !type:GroupLoadoutEffect
+    proto: AdministratorSponsorTier
+  # SS220-sponsor-tier-end
 
+# Head
 - type: loadout
   id: ResearchDirectorBeret
   startingGear: ScientificBeret
 
 # Neck
-
 - type: loadout
+  id: ResearchDirectorMantle
+  equipment:
+    neck: ClothingNeckMantleRD
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: MasterRD
+
+- type: startingGear
   id: ResearchDirectorMantle
   equipment:
     neck: ClothingNeckMantleRD
@@ -37,3 +60,10 @@
   id: ResearchDirectorWintercoat
   equipment:
     outerClothing: ClothingOuterWinterRD
+
+#SS220-RD-New-Loadout-begin
+- type: loadout
+  id: RnDPDA
+  equipment:
+    id: RnDPDA
+#SS220-RD-New-Loadout-end

@@ -1,3 +1,5 @@
+# If you add a new trait, make sure to add the corresponding component to the whitelist in \Resources\Prototypes\Entities\Mobs\Player\clone.yml so it gets copied to clones correctly!
+
 # Free
 
 - type: trait
@@ -12,8 +14,15 @@
     - type: LizardAccent
     - type: MothAccent
     - type: OwOAccent #SS220
-    - type: ReplacementAccent
-      accent: dwarf
+  # SS220 Fix Dwarf Accentless
+  #  - type: ReplacementAccent
+  #    accent: scottish
+  # SS220 Fix Dwarf Accentless
+  #SS220-Vox accent Begin
+    - type: TajaranAccent
+    - type: VoxAccent
+  #SS220-Vox accent End
+    - type: DwarfAccent # SS220 Fix Dwarf Accentless
 
 # 1 Cost
 
@@ -24,36 +33,34 @@
   category: SpeechTraits
   cost: 1
   components:
-    - type: SouthernAccent
+  - type: SouthernAccent
 
 - type: trait
-  id: PirateAccent
-  name: trait-pirate-accent-name
-  description: trait-pirate-accent-desc
+  id: GermanAccent
+  name: trait-german-name
+  description: trait-german-desc
   category: SpeechTraits
   cost: 1
   components:
-    - type: PirateAccent
+  - type: GermanAccent
 
 - type: trait
-  id: CowboyAccent
-  name: trait-cowboy-name
-  description: trait-cowboy-desc
+  id: FrenchAccent
+  name: trait-french-name
+  description: trait-french-desc
   category: SpeechTraits
   cost: 1
   components:
-    - type: ReplacementAccent
-      accent: cowboy
+  - type: FrenchAccent
 
 - type: trait
-  id: ItalianAccent
-  name: trait-italian-name
-  description: trait-italian-desc
+  id: SpanishAccent
+  name: trait-spanish-name
+  description: trait-spanish-desc
   category: SpeechTraits
   cost: 1
   components:
-    - type: ReplacementAccent
-      accent: italian
+  - type: SpanishAccent
 
 - type: trait
   id: Liar
@@ -62,8 +69,21 @@
   category: SpeechTraits
   cost: 1
   components:
-    - type: ReplacementAccent
-      accent: liar
+  #SS220 Accent system begin
+  #- type: ReplacementAccent
+  #  accent: liar
+  - type: LiarAccent
+  #SS220 Accent system end
+
+- type: trait
+  id: ScottishAccent
+  name: trait-scottish-name
+  description: trait-scottish-desc
+  category: SpeechTraits
+  cost: 1
+  components:
+  - type: ReplacementAccent
+    accent: scottish
 
 # 2 Cost
 
@@ -74,11 +94,11 @@
   category: SpeechTraits
   cost: 2
   components:
-    - type: StutteringAccent
-      matchRandomProb: 0.1
-      fourRandomProb: 0
-      threeRandomProb: 0
-      cutRandomProb: 0
+  - type: StutteringAccent
+    matchRandomProb: 0.1
+    fourRandomProb: 0
+    threeRandomProb: 0
+    cutRandomProb: 0
 
 - type: trait
   id: FrontalLisp
@@ -87,4 +107,4 @@
   category: SpeechTraits
   cost: 2
   components:
-    - type: FrontalLisp
+  - type: FrontalLisp

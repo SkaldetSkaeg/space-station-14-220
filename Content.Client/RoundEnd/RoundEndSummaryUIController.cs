@@ -13,7 +13,7 @@ namespace Content.Client.RoundEnd;
 public sealed class RoundEndSummaryUIController : UIController,
     IOnSystemLoaded<ClientGameTicker>
 {
-    [Dependency] private readonly IInputManager _input = default!;
+    // [Dependency] private readonly IInputManager _input = default!; // SS220 Round End Titles
 
     private RoundEndSummaryWindow? _window;
 
@@ -45,7 +45,8 @@ public sealed class RoundEndSummaryUIController : UIController,
 
     public void OnSystemLoaded(ClientGameTicker system)
     {
-        _input.SetInputCommand(ContentKeyFunctions.ToggleRoundEndSummaryWindow,
-            InputCmdHandler.FromDelegate(ToggleScoreboardWindow));
+        // SS220 Round End Titles (this should not override our re-implementation's bind)
+        //_input.SetInputCommand(ContentKeyFunctions.ToggleRoundEndSummaryWindow,
+        //    InputCmdHandler.FromDelegate(ToggleScoreboardWindow));
     }
 }

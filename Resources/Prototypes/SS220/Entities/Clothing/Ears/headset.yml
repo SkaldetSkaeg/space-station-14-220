@@ -1,0 +1,178 @@
+- type: entity
+  parent: ClothingHeadsetAlt
+  id: ClothingHeadsetAltLaw
+  name: full-size headset of the Law Department
+  description: It is used by representatives of the law.
+  components:
+  - type: ContainerFill
+    containers:
+      key_slots:
+      - EncryptionKeyLaw
+      - EncryptionKeySecurity
+      - EncryptionKeyCommon
+  - type: Sprite
+    sprite: SS220/Clothing/Ears/Headsets/law.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Ears/Headsets/law.rsi
+
+- type: entity
+  parent: ClothingHeadset
+  id: ClothingHeadsetLaw
+  name: headset of the Law Department
+  description: It is used by representatives of the law.
+  components:
+  - type: ContainerFill
+    containers:
+      key_slots:
+      - EncryptionKeyLaw
+      - EncryptionKeySecurity
+      - EncryptionKeyCommon
+  - type: Sprite
+    sprite: SS220/Clothing/Ears/Headsets/law.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Ears/Headsets/law.rsi
+
+- type: entity
+  parent:  ClothingHeadsetAltLaw
+  id: ClothingHeadsetAltMagistrate
+  name: full-size headset of the Magistrate
+  description: It is used by representatives of the magistrate.
+  components:
+  - type: ContainerFill
+    containers:
+      key_slots:
+      - EncryptionKeyLaw
+      - EncryptionKeySecurity
+      - EncryptionKeyCommon
+      - EncryptionKeyCommand
+
+- type: entity
+  parent: ClothingHeadsetLaw
+  id: ClothingHeadsetMagistrate
+  name: headset of the Magistrate
+  description: It is used by representatives of the magistrate.
+  components:
+  - type: ContainerFill
+    containers:
+      key_slots:
+      - EncryptionKeyLaw
+      - EncryptionKeySecurity
+      - EncryptionKeyCommon
+      - EncryptionKeyCommand
+
+- type: entity
+  parent:  ClothingHeadsetAltLaw
+  id: ClothingHeadsetAltNanoTrasenRepresentative
+  name: full-size headset of the NanoTrasen Representative
+  description: It is used by representatives of the NanoTrasen.
+  components:
+  - type: ContainerFill
+    containers:
+      key_slots:
+      - EncryptionKeyLaw
+      - EncryptionKeySecurity
+      - EncryptionKeyCommon
+      - EncryptionKeyCommand
+
+- type: entity
+  parent: ClothingHeadsetLaw
+  id: ClothingHeadsetNanoTrasenRepresentative
+  name: headset of the NanoTrasen Representative
+  description: It is used by representatives of the NanoTrasen.
+  components:
+  - type: ContainerFill
+    containers:
+      key_slots:
+      - EncryptionKeyLaw
+      - EncryptionKeySecurity
+      - EncryptionKeyCommon
+      - EncryptionKeyCommand
+
+- type: entity
+  parent: ClothingHeadsetAltLaw
+  id: ClothingHeadsetAltIAA
+  name: full-size headset of the iaa
+  description: A headset for internal affairs agent to hear the captain's last words.
+  components:
+    - type: ContainerFill
+      containers:
+        key_slots:
+        - EncryptionKeyLaw
+        - EncryptionKeySecurity
+        - EncryptionKeyCommon
+        - EncryptionKeyCommand
+
+- type: entity
+  parent: ClothingHeadsetAlt
+  id: ClothingHeadsetAltCaptain
+  name: full-size headset of the Captain
+  description: It is used by representatives of the law.
+  components:
+  - type: ContainerFill
+    containers:
+      key_slots:
+      - EncryptionKeyStationMaster
+      - EncryptionKeyLaw
+  - type: Sprite
+    sprite: SS220/Clothing/Ears/Headsets/captain.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Ears/Headsets/captain.rsi
+
+- type: entity
+  parent: ClothingHeadset
+  id: ClothingHeadsetCaptain
+  name: headset of the Captain
+  description: The captain's headset, which has the encryption keys of the command and the legal department.
+  components:
+  - type: ContainerFill
+    containers:
+      key_slots:
+      - EncryptionKeyStationMaster
+      - EncryptionKeyLaw
+  - type: Sprite
+    sprite: SS220/Clothing/Ears/Headsets/captain.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Ears/Headsets/captain.rsi
+
+- type: entity
+  parent: ClothingHeadset
+  id: ClothingHeadsetBlueShield
+  name: full-size headset of the blueshield
+  description: An impeccable headset for the blue shield.
+  components:
+  - type: ContainerFill
+    containers:
+      key_slots:
+      - EncryptionKeyStationMaster
+  - type: Sprite
+    sprite: SS220/Clothing/Ears/Headsets/blueshield.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Ears/Headsets/blueshield.rsi
+
+- type: entity
+  parent: ClothingHeadset
+  id: ClothingHeadsetRedWings
+  name: full-size headset of the RedWings Squad
+  description: An impeccable headset for the RedWings operators.
+  components:
+  - type: ContainerFill
+    containers:
+      key_slots:
+      - EncryptionKeyInterdyne
+      - EncryptionKeyCommon
+  - type: Sprite
+    sprite: SS220/Clothing/Ears/Headsets/redwings.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Ears/Headsets/redwings.rsi
+
+- type: entity
+  parent: ClothingHeadset
+  id: ClothingHeadsetPrisoner
+  name: prisoner headset
+  description: Scratched headset of the brig prisoner.
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Ears/Headsets/prisoner.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Ears/Headsets/prisoner.rsi
+

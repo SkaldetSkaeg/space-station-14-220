@@ -1,0 +1,143 @@
+#Svarshik's missing mags
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: SpeedLoaderLightRifle
+  result: SpeedLoaderLightRifle
+  materials:
+    Steel: 75
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: MagazineBoxCaselessRifle
+  result: MagazineBoxCaselessRifle
+  materials:
+    Steel: 600
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: MagazineMagnumEmpty
+  result: MagazineMagnumEmpty
+  materials:
+    Steel: 60
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: MagazineMagnum
+  result: MagazineMagnum
+  materials:
+    Steel: 200
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: MagazineMagnumIncendiary
+  result: MagazineMagnumIncendiary
+  materials:
+    Steel: 180
+    Plastic: 25
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: MagazineMagnumUranium
+  result: MagazineMagnumUranium
+  materials:
+    Steel: 60
+    Plastic: 150
+    Uranium: 120
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: MagazinePistolHighCapacityEmpty
+  result: MagazinePistolHighCapacityEmpty
+  materials:
+    Steel: 30
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: MagazinePistolHighCapacity
+  result: MagazinePistolHighCapacity
+  materials:
+    Steel: 240
+
+- type: latheRecipe
+  id: WeaponTaser
+  result: WeaponTaser
+  completetime: 5
+  materials:
+    Steel: 700
+    Plastic: 300
+    Gold: 250
+    Silver: 500
+
+- type: latheRecipe
+  id: WeaponLaserSMG
+  result: WeaponLaserSMG
+  completetime: 5
+  materials:
+    Steel: 2000
+    Plastic: 1000
+    Gold: 500
+    Plasma: 1000
+
+- type: latheRecipe
+  id: LaserSMGPowerCell
+  result: LaserSMGPowerCell
+  completetime: 5
+  materials:
+    Steel: 300
+    Glass: 200
+    Plastic: 300
+    Gold: 50
+
+- type: latheRecipe
+  id: RiotLaserShield
+  result: RiotLaserShieldAlt
+  completetime: 5
+  materials:
+    Steel: 900
+    Plastic: 300
+
+- type: latheRecipe
+  id: RiotBulletShield
+  result: RiotBulletShieldAlt
+  completetime: 5
+  materials:
+    Steel: 900
+    Plastic: 300
+    Uranium: 700
+
+- type: latheRecipe
+  id: WeaponSniperCompact
+  result: WeaponSniperCompact
+  completetime: 5
+  materials:
+    Steel: 2500
+    Glass: 100
+    Plastic: 300
+    Gold: 200
+    Silver: 200
+
+- type: latheRecipe
+  parent: [ BaseGoldCircuitboardRecipe, BaseMachineRecipeCategory ]
+  id: ShuttleGunMLGSWCircuitboard
+  result: ShuttleGunMLGSWCircuitboard
+  completetime: 12
+
+- type: latheRecipe
+  id: WeaponEnergyTurretSecurityMachineCircuitboard
+  result: WeaponEnergyTurretSecurityMachineCircuitboard
+  completetime: 5
+  materials:
+    Glass: 400
+    Gold: 400
+    Silver: 400
+    Plasma: 200
+
+- type: latheRecipe
+  id: WeaponEnergyTurretSecurityControlPanelElectronics
+  result: WeaponEnergyTurretSecurityControlPanelElectronics
+  completetime: 5
+  materials:
+    Glass: 400
+    Gold: 400
+    Silver: 400
+    Plasma: 200

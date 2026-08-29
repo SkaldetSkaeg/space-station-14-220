@@ -1,22 +1,52 @@
+# Job Time
+- type: loadoutEffectGroup
+  id: SeniorResearcherAssociateProfessor
+  effects:
+  - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:RoleTimeRequirement
+      role: JobSeniorResearcher
+      time: 72000 # 20 hrs
+  sponsorTierLoadoutEffects:
+  - !type:GroupLoadoutEffect
+    proto: SeniorDevTeamTier
+  - !type:GroupLoadoutEffect
+    proto: AdministratorSponsorTier
+
 # Head
 - type: loadout
   id: HatSeniorSciensist
   equipment:
     head: ClothingHeadHatBeretRND
-    
+
 # Jumpsuit
 - type: loadout
   id: SeniorSciensistJumpsuit
   equipment:
     jumpsuit: ClothingUniformJumpsuitSeniorResearcher
-    
-# Jumpskirt
+
 - type: loadout
   id: SeniorSciensistJumpskirt
   equipment:
     jumpsuit: ClothingUniformJumpskirtSeniorResearcher
-    
-# Lab
+
+- type: loadout
+  id: SeniorSciensistJumpsuitAssociateProfessor
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: SeniorResearcherAssociateProfessor
+  equipment:
+    jumpsuit: ClothingUniformJumpsuitAssociateProfessor
+
+- type: loadout
+  id: SeniorSciensistJumpskirtAssociateProfessor
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: SeniorResearcherAssociateProfessor
+  equipment:
+    jumpsuit: ClothingUniformJumpskirtAssociateProfessor
+
+# Outer
 - type: loadout
   id: SeniorSciensistLabCoat
   equipment:

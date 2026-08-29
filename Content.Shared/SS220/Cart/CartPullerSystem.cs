@@ -2,16 +2,14 @@
 
 using Content.Shared.Verbs;
 using Content.Shared.SS220.Cart.Components;
-using Content.Shared.DragDrop;
-using Content.Shared.Interaction;
 using Content.Shared.Movement.Pulling.Components;
 
 namespace Content.Shared.SS220.Cart;
 
 public sealed partial class CartPullerSystem : EntitySystem
 {
-    [Dependency] private readonly CartSystem _cart = default!;
-    //[Dependency] private readonly SharedInteractionSystem _interaction = default!; Used for drag&drop
+    [Dependency] private CartSystem _cart = default!;
+    //[Dependency] private SharedInteractionSystem _interaction = default!; Used for drag&drop
 
     public override void Initialize()
     {
@@ -125,12 +123,12 @@ public sealed partial class CartPullerSystem : EntitySystem
     private void OnDeattachCart(EntityUid uid, CartPullerComponent component, ref CartDeattachEvent args)
     {
         component.AttachedCart = null;
-        Dirty(component);
+        Dirty(uid, component);
     }
 
     private void OnAttachCart(EntityUid uid, CartPullerComponent component, ref CartAttachEvent args)
     {
         component.AttachedCart = args.Attaching;
-        Dirty(component);
+        Dirty(uid, component);
     }
 }

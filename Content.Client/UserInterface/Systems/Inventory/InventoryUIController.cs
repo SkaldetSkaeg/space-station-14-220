@@ -13,6 +13,7 @@ using Content.Shared.Containers.ItemSlots;
 using Content.Shared.Hands.Components;
 using Content.Shared.Input;
 using Content.Shared.Inventory.VirtualItem;
+using Content.Shared.SS220.StuckOnEquip;
 using Content.Shared.Storage;
 using Robust.Client.GameObjects;
 using Robust.Client.UserInterface;
@@ -34,6 +35,7 @@ public sealed class InventoryUIController : UIController, IOnStateEntered<Gamepl
     [UISystemDependency] private readonly ClientInventorySystem _inventorySystem = default!;
     [UISystemDependency] private readonly HandsSystem _handsSystem = default!;
     [UISystemDependency] private readonly ContainerSystem _container = default!;
+    [UISystemDependency] private readonly SpriteSystem _sprite = default!;
 
     private EntityUid? _playerUid;
     private InventorySlotsComponent? _playerInventory;
@@ -146,7 +148,7 @@ public sealed class InventoryUIController : UIController, IOnStateEntered<Gamepl
             if (!container.TryGetButton(data.SlotName, out var button))
             {
                 button = CreateSlotButton(data);
-                container.AddButton(button);
+                container.TryAddButton(button);
             }
 
             var showStorage = _entities.HasComponent<StorageComponent>(data.HeldEntity);
@@ -192,8 +194,6 @@ public sealed class InventoryUIController : UIController, IOnStateEntered<Gamepl
                 });
             }
         }
-
-        return;
 
         int GetIndex(Vector2i position)
         {
@@ -242,7 +242,7 @@ public sealed class InventoryUIController : UIController, IOnStateEntered<Gamepl
     {
         if (_inventoryHotbar == null)
         {
-            Logger.Warning("Tried to toggle inventory bar when none are assigned");
+            Log.Warning("Tried to toggle inventory bar when none are assigned");
             return;
         }
 
@@ -328,9 +328,8 @@ public sealed class InventoryUIController : UIController, IOnStateEntered<Gamepl
         var player = _playerUid;
 
         if (!control.MouseIsHovering ||
-            _playerInventory == null ||
-            !_entities.TryGetComponent<HandsComponent>(player, out var hands) ||
-            hands.ActiveHandEntity is not { } held ||
+            player == null ||
+            !_handsSystem.TryGetActiveItem(player.Value, out var held) ||
             !_entities.TryGetComponent(held, out SpriteComponent? sprite) ||
             !_inventorySystem.TryGetSlotContainer(player.Value, control.SlotName, out var container, out var slotDef))
         {
@@ -341,12 +340,12 @@ public sealed class InventoryUIController : UIController, IOnStateEntered<Gamepl
         // Set green / red overlay at 50% transparency
         var hoverEntity = _entities.SpawnEntity("hoverentity", MapCoordinates.Nullspace);
         var hoverSprite = _entities.GetComponent<SpriteComponent>(hoverEntity);
-        var fits = _inventorySystem.CanEquip(player.Value, held, control.SlotName, out _, slotDef) &&
-                   _container.CanInsert(held, container);
+        var fits = _inventorySystem.CanEquip(player.Value, held.Value, control.SlotName, out _, slotDef) &&
+                   _container.CanInsert(held.Value, container);
 
         if (!fits && _entities.TryGetComponent<StorageComponent>(container.ContainedEntity, out var storage))
         {
-            fits = _entities.System<StorageSystem>().CanInsert(container.ContainedEntity.Value, held, out _, storage);
+            fits = _entities.System<StorageSystem>().CanInsert(container.ContainedEntity.Value, held.Value, out _, storage);
         }
         else if (!fits && _entities.TryGetComponent<ItemSlotsComponent>(container.ContainedEntity, out var itemSlots))
         {
@@ -356,15 +355,15 @@ public sealed class InventoryUIController : UIController, IOnStateEntered<Gamepl
                 if (!slot.InsertOnInteract)
                     continue;
 
-                if (!itemSlotsSys.CanInsert(container.ContainedEntity.Value, held, null, slot))
+                if (!itemSlotsSys.CanInsert(container.ContainedEntity.Value, held.Value, null, slot))
                     continue;
                 fits = true;
                 break;
             }
         }
 
-        hoverSprite.CopyFrom(sprite);
-        hoverSprite.Color = fits ? new Color(0, 255, 0, 127) : new Color(255, 0, 0, 127);
+        _sprite.CopySprite((held.Value, sprite), (hoverEntity, hoverSprite));
+        _sprite.SetColor((hoverEntity, hoverSprite), fits ? new Color(0, 255, 0, 127) : new Color(255, 0, 0, 127));
 
         control.HoverSpriteView.SetEntity(hoverEntity);
     }
@@ -375,7 +374,7 @@ public sealed class InventoryUIController : UIController, IOnStateEntered<Gamepl
             return;
 
         var button = CreateSlotButton(data);
-        slotGroup.AddButton(button);
+        slotGroup.TryAddButton(button);
     }
 
     private void RemoveSlot(SlotData data)
@@ -383,7 +382,7 @@ public sealed class InventoryUIController : UIController, IOnStateEntered<Gamepl
         if (!_slotGroups.TryGetValue(data.SlotGroup, out var slotGroup))
             return;
 
-        slotGroup.RemoveButton(data.SlotName);
+        slotGroup.TryRemoveButton(data.SlotName, out _);
     }
 
     public void ReloadSlots()
@@ -399,6 +398,9 @@ public sealed class InventoryUIController : UIController, IOnStateEntered<Gamepl
         foreach (var slotData in clientInv.SlotData.Values)
         {
             AddSlot(slotData);
+
+            if (_inventoryButton != null)
+                _inventoryButton.Visible = true;
         }
 
         UpdateInventoryHotbar(_playerInventory);
@@ -406,6 +408,9 @@ public sealed class InventoryUIController : UIController, IOnStateEntered<Gamepl
 
     private void UnloadSlots()
     {
+        if (_inventoryButton != null)
+            _inventoryButton.Visible = false;
+
         _playerUid = null;
         _playerInventory = null;
         foreach (var slotGroup in _slotGroups.Values)
@@ -440,6 +445,17 @@ public sealed class InventoryUIController : UIController, IOnStateEntered<Gamepl
             button.Blocked = false;
             button.StorageButton.Visible = showStorage;
         }
+        //ss220 StuckOnEquip begin
+        if (_entities.TryGetComponent(entity, out StuckOnEquipComponent? _))
+        {
+            button.SetEntity(entity);
+            button.StuckOnEquip = true;
+        }
+        else if (button.StuckOnEquip)
+        {
+            button.StuckOnEquip = false;
+        }
+        //ss220 StuckOnEquip end
     }
 
     public bool RegisterSlotGroupContainer(ItemSlotButtonContainer slotContainer)

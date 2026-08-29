@@ -1,0 +1,22 @@
+# Плащи
+# Требуется соблюдать порядок. Порядок:
+# Плащи для игроков -> Разработчиков -> Администрации и Модерации -> Ст. разработка ->
+# -> Ст. администрация и модерация -> Проект менеджер, Гл. администратор, Банда
+- type: loadoutGroup
+  id: SponsorNeck
+  name: loadout-group-sponsor-cloak
+  minLimit: 0
+  maxLimit: 1
+  loadouts:
+  - ParadiseNeck
+  - CoderNeck
+  - MapperNeck
+  - SpriterNeck
+  - TrackerExpertNeck
+  - WikiEditorsNeck
+  - LorovedsNeck
+  - MentorNeck
+  - AdministratorNeck
+  - ModeratorNeck
+  - HeadDeveloperNeck
+

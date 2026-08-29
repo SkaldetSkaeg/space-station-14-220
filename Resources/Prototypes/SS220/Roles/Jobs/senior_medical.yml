@@ -14,19 +14,40 @@
       department: Medical
       time: 216000 # 60 hrs
   startingGear: SeniorPhysicianGear
+  experienceDefinition: SeniorPhysicianRoleExperience
   icon: "JobIconSeniorPhysician"
   supervisors: job-supervisors-cmo
   access:
   - Medical
   - Maintenance
   - Chemistry
+  special:
+  - !type:AddComponentSpecial
+    components:
+    - type: MentorRole
+      teachInfo:
+        Medicine:
+          multiplier: 1.5
+          maxBuffSkillLevel: 3
+        Anatomy:
+          multiplier: 1.5
+          maxBuffSkillLevel: 3
 
 - type: startingGear
   id: SeniorPhysicianGear
   equipment:
     id: SeniorPhysicianPDA
     ears: ClothingHeadsetMedical
-    belt: ClothingBeltMedicalFilled
   storage:
     back:
-    - BoxSurvivalMedical
+    - FilledSurgeryMedkit
+
+- type: chameleonOutfit
+  id: SeniorPhysicianChameleonOutfit
+  job: SeniorPhysician
+  equipment:
+    head: ClothingHeadHatBeretMedic
+    eyes: ClothingEyesHudMedical
+    mask: ClothingMaskSterile
+    outerClothing: ClothingOuterCoatLab
+    gloves: ClothingHandsGlovesLatex

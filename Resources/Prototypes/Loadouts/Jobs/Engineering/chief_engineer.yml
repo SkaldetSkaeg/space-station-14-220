@@ -1,3 +1,20 @@
+# For mantles
+- type: loadoutEffectGroup
+  id: MasterCE
+  effects:
+  - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:RoleTimeRequirement
+      role: JobChiefEngineer
+      time: 20h
+  # SS220-sponsor-tier-begin
+  sponsorTierLoadoutEffects:
+  - !type:GroupLoadoutEffect
+    proto: SeniorDevTeamTier
+  - !type:GroupLoadoutEffect
+    proto: AdministratorSponsorTier
+  # SS220-sponsor-tier-end
+
 # Jumpsuit
 - type: loadout
   id: ChiefEngineerJumpsuit
@@ -53,6 +70,14 @@
     neck: ClothingNeckCloakCe
 
 - type: loadout
+  id: ChiefEngineerMantle
+  equipment:
+    neck: ClothingNeckMantleCE
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: MasterCE
+
+- type: startingGear
   id: ChiefEngineerMantle
   equipment:
     neck: ClothingNeckMantleCE

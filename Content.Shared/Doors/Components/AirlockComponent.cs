@@ -1,5 +1,6 @@
 using Content.Shared.DeviceLinking;
 using Content.Shared.Doors.Systems;
+using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype;
 
@@ -25,6 +26,18 @@ public sealed partial class AirlockComponent : Component
     public bool EmergencyAccess = false;
 
     /// <summary>
+    /// Sound to play when the airlock emergency access is turned on.
+    /// </summary>
+    [DataField]
+    public SoundSpecifier EmergencyOnSound = new SoundPathSpecifier("/Audio/Machines/airlock_emergencyon.ogg");
+
+    /// <summary>
+    /// Sound to play when the airlock emergency access is turned off.
+    /// </summary>
+    [DataField]
+    public SoundSpecifier EmergencyOffSound = new SoundPathSpecifier("/Audio/Machines/airlock_emergencyoff.ogg");
+
+    /// <summary>
     /// Pry modifier for a powered airlock.
     /// Most anything that can pry powered has a pry speed bonus,
     /// so this default is closer to 6 effectively on e.g. jaws (9 seconds when applied to other default.)
@@ -48,7 +61,7 @@ public sealed partial class AirlockComponent : Component
     /// <summary>
     /// Whether the airlock should auto close. This value is reset every time the airlock closes.
     /// </summary>
-    [ViewVariables(VVAccess.ReadWrite)]
+    [DataField, AutoNetworkedField]
     public bool AutoClose = true;
 
     /// <summary>
@@ -101,6 +114,13 @@ public sealed partial class AirlockComponent : Component
     /// </summary>
     [DataField]
     public string OpeningPanelSpriteState = "panel_opening";
+
+    /// <summary>
+    /// The sprite state to use for the wire panel when the airlock is open. The
+    /// first frame will be used for when the airlock is closed.
+    /// </summary>
+    [DataField]
+    public string OpenPanelSpriteState = "panel_open";
 
     /// <summary>
     /// The sprite state used to animate the airlock frame when the airlock closes.

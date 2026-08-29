@@ -1,9 +1,11 @@
 using System.Numerics;
 using Content.Server.GameTicking;
-using Content.Server.GameTicking.Rules.Components;
 using Content.Server.Spawners.Components;
+using Content.Shared.EntityTable;
 using Content.Shared.GameTicking.Components;
 using JetBrains.Annotations;
+using Robust.Shared.Map;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 
 namespace Content.Server.Spawners.EntitySystems
@@ -13,7 +15,12 @@ namespace Content.Server.Spawners.EntitySystems
     {
         [Dependency] private readonly IRobustRandom _robustRandom = default!;
         [Dependency] private readonly GameTicker _ticker = default!;
-
+        [Dependency] private readonly EntityTableSystem _entityTable = default!;
+// SS220-prototype-validation-begin
+#if !FULL_RELEASE
+        [Dependency] private IPrototypeManager _prototype = default!;
+#endif
+// SS220-prototype-validation-end
         public override void Initialize()
         {
             base.Initialize();
@@ -21,6 +28,7 @@ namespace Content.Server.Spawners.EntitySystems
             SubscribeLocalEvent<GameRuleStartedEvent>(OnRuleStarted);
             SubscribeLocalEvent<ConditionalSpawnerComponent, MapInitEvent>(OnCondSpawnMapInit);
             SubscribeLocalEvent<RandomSpawnerComponent, MapInitEvent>(OnRandSpawnMapInit);
+            SubscribeLocalEvent<EntityTableSpawnerComponent, MapInitEvent>(OnEntityTableSpawnMapInit);
         }
 
         private void OnCondSpawnMapInit(EntityUid uid, ConditionalSpawnerComponent component, MapInitEvent args)
@@ -30,9 +38,31 @@ namespace Content.Server.Spawners.EntitySystems
 
         private void OnRandSpawnMapInit(EntityUid uid, RandomSpawnerComponent component, MapInitEvent args)
         {
+// SS220-prototype-validation-begin
+#if !FULL_RELEASE
+            foreach (var possibleSpawnId in component.Prototypes)
+            {
+                if (!_prototype.HasIndex<EntityPrototype>(possibleSpawnId))
+                    Log.Error($"Attempted to spawn an entity with an invalid prototype: {possibleSpawnId} in random spawner component of {ToPrettyString(uid)}");
+            }
+
+            foreach (var possibleSpawnId in component.RarePrototypes)
+            {
+                if (!_prototype.HasIndex<EntityPrototype>(possibleSpawnId))
+                    Log.Error($"Attempted to spawn an entity with an invalid prototype: {possibleSpawnId} in random spawner component of {ToPrettyString(uid)}");
+            }
+#endif
+// SS220-prototype-validation-end
             Spawn(uid, component);
             if (component.DeleteSpawnerAfterSpawn)
                 QueueDel(uid);
+        }
+
+        private void OnEntityTableSpawnMapInit(Entity<EntityTableSpawnerComponent> ent, ref MapInitEvent args)
+        {
+            Spawn(ent);
+            if (ent.Comp.DeleteSpawnerAfterSpawn && !TerminatingOrDeleted(ent) && Exists(ent))
+                QueueDel(ent);
         }
 
         private void OnRuleStarted(ref GameRuleStartedEvent args)
@@ -79,14 +109,14 @@ namespace Content.Server.Spawners.EntitySystems
             }
 
             if (!Deleted(uid))
-                EntityManager.SpawnEntity(_robustRandom.Pick(component.Prototypes), Transform(uid).Coordinates);
+                Spawn(_robustRandom.Pick(component.Prototypes), Transform(uid).Coordinates);
         }
 
         private void Spawn(EntityUid uid, RandomSpawnerComponent component)
         {
             if (component.RarePrototypes.Count > 0 && (component.RareChance == 1.0f || _robustRandom.Prob(component.RareChance)))
             {
-                EntityManager.SpawnEntity(_robustRandom.Pick(component.RarePrototypes), Transform(uid).Coordinates);
+                Spawn(_robustRandom.Pick(component.RarePrototypes), Transform(uid).Coordinates);
                 return;
             }
 
@@ -108,7 +138,26 @@ namespace Content.Server.Spawners.EntitySystems
 
             var coordinates = Transform(uid).Coordinates.Offset(new Vector2(xOffset, yOffset));
 
-            EntityManager.SpawnEntity(_robustRandom.Pick(component.Prototypes), coordinates);
+            Spawn(_robustRandom.Pick(component.Prototypes), coordinates);
+        }
+
+        private void Spawn(Entity<EntityTableSpawnerComponent> ent)
+        {
+            if (TerminatingOrDeleted(ent) || !Exists(ent))
+                return;
+
+            var coords = Transform(ent).Coordinates;
+            var offset = ent.Comp.Offset;
+
+            var spawns = _entityTable.GetSpawns(ent.Comp.Table);
+            foreach (var proto in spawns)
+            {
+                var xOffset = _robustRandom.NextFloat(-offset, offset);
+                var yOffset = _robustRandom.NextFloat(-offset, offset);
+                var trueCoords = coords.Offset(new Vector2(xOffset, yOffset));
+
+                SpawnAttachedTo(proto, trueCoords);
+            }
         }
     }
 }

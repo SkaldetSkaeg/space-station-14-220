@@ -1,0 +1,186 @@
+# © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
+
+# Райан Гуслинг
+- type: entity
+  parent: ClothingSponsorOuterStorageBase
+  id: ClothingSponsorWhiteCoat
+  name: signature white jacket
+  description: Hammers are no longer used on NanoTrasen stations.
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/OuterClothing/whitecoat.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/OuterClothing/whitecoat.rsi
+
+# Чёрное пальто
+- type: entity
+  parent: ClothingSponsorOuterStorageBase
+  id: ClothingSponsorBlackCoat
+  name: black coat
+  description: Warm.
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/OuterClothing/blackcoat.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/OuterClothing/blackcoat.rsi
+  - type: TemperatureProtection
+    heatingCoefficient: 1.1
+    coolingCoefficient: 0.1
+
+# Тайно Дёрден
+- type: entity
+  parent: ClothingSponsorOuterStorageBase
+  id: ClothingSponsorTylerRedCoat
+  name: thick red jacket
+  description: Smells like chemistry.
+  components:
+  - type: EntityTableContainerFill
+    containers:
+      storagebase: !type:AllSelector
+        children:
+        - id: SponsorCigPack
+          amount: 1
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/OuterClothing/redcoat.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/OuterClothing/redcoat.rsi
+
+# Плохой хлеб
+- type: entity
+  parent: ClothingSponsorOuterStorageBase
+  id: ClothingSponsorWaltuhOuterShirt
+  name: thick black shirt
+  description: Smells like chemistry.
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/OuterClothing/waltuh.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/OuterClothing/waltuh.rsi
+
+# Данте
+- type: entity
+  parent: ClothingSponsorOuterStorageBase
+  id: ClothingSponsorDante
+  name: cherry cloak
+  description: Hello?
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/OuterClothing/dante.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/OuterClothing/dante.rsi
+
+# Джужутсу
+- type: entity
+  parent: ClothingSponsorOuterStorageBase
+  id: ClothingSponsorCoatJujutsuShlepa
+  name: office worker's jacket
+  description: Don't feel truly valued? Bureaucracy will help you solve this problem!
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/OuterClothing/nanamijacket.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/OuterClothing/nanamijacket.rsi
+
+# 1984
+- type: entity
+  parent: ClothingSponsorOuterStorageBase
+  id: ClothingSponsor1984
+  name: 1984 jacket
+  description: Big Brother is watching you.
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/OuterClothing/1984.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/OuterClothing/1984.rsi
+  - type: TemperatureProtection
+    heatingCoefficient: 1.1
+    coolingCoefficient: 0.1
+
+- type: entity
+  parent: [ ClothingSponsor1984, ClothingOuterCoatHoSTrench ]
+  id: ClothingSponsor1984HoS
+  suffix: Floppa, HoS
+  components:
+  - type: ContainerContainer
+    containers:
+      storagebase: !type:Container
+        ents: []
+      item_radio: !type:ContainerSlot
+
+# CyberPunk
+- type: entity
+  parent: ClothingSponsorOuterStorageBase
+  id: ClothingSponsorSamuraiJacket
+  name: samurai jacket
+  description: Cheap shocking value, consumerism, and a rebellion against the grayness.
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/OuterClothing/Cyberpunk/vbomberjacket.rsi
+    layers:
+    - state: icon
+    - state: icon-unshaded
+      shader: unshaded
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/OuterClothing/Cyberpunk/vbomberjacket.rsi
+    clothingVisuals:
+      outerClothing:
+      - state: equipped-OUTERCLOTHING
+      - state: equipped-OUTERCLOTHING-unshaded
+        shader: unshaded
+  - type: TemperatureProtection
+    heatingCoefficient: 1.1
+    coolingCoefficient: 0.1
+
+- type: entity
+  parent: [ ClothingOuterArmorBasic ]
+  id: ClothingSponsorCyberVestSecurity
+  name: cyber security vest
+  description: Glowing elements don't give you any tactical advantage... but oh, the style!
+  suffix: Шлёпа
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/OuterClothing/Cyberpunk/cybersecarmor.rsi
+    layers:
+    - state: icon
+    - state: icon-unshaded
+      shader: unshaded
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/OuterClothing/Cyberpunk/cybersecarmor.rsi
+    clothingVisuals:
+      outerClothing:
+      - state: equipped-OUTERCLOTHING
+      - state: equipped-OUTERCLOTHING-unshaded
+        shader: unshaded
+
+- type: entity
+  parent: ClothingSponsorSamuraiJacket
+  id: ClothingSponsorCyberJacketMed
+  name: doctor's jacket with cardio device
+  description: A blue jacket with an exclusively cosmetic device. Strike your patients down with style!
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/OuterClothing/Cyberpunk/cybermedsuit.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/OuterClothing/Cyberpunk/cybermedsuit.rsi
+
+- type: entity
+  parent: ClothingSponsorSamuraiJacket
+  id: ClothingSponsorCyberJacketRnD
+  name: scientist's cyber-hoodie
+  description: It's cozy and warm, just don't fall asleep in front of an anomaly. Total comfort for a shut-in.
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/OuterClothing/Cyberpunk/cyberrndsweater.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/OuterClothing/Cyberpunk/cyberrndsweater.rsi
+
+- type: entity
+  parent: ClothingSponsorSamuraiJacket
+  id: ClothingSponsorCyberJacketEng
+  name: engineer's cyber-jacket
+  description: Smooth and durable material, glowing elements in the dark, what else does an engineer need for happiness?
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/OuterClothing/Cyberpunk/cyberengijacket.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/OuterClothing/Cyberpunk/cyberengijacket.rsi

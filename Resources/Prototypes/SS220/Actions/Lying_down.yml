@@ -1,0 +1,12 @@
+- type: entity
+  name: stand up
+  id: ActionStandUp
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Action
+    itemIconStyle: BigAction
+    icon:
+      sprite: Mobs/Pets/cat.rsi
+      state: cat
+  - type: InstantAction
+    event: !type:StandUpActionEvent

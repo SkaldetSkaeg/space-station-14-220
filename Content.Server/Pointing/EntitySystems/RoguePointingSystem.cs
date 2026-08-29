@@ -2,6 +2,7 @@ using Content.Server.Explosion.EntitySystems;
 using Content.Server.Pointing.Components;
 using Content.Shared.Pointing.Components;
 using JetBrains.Annotations;
+using Robust.Shared.Map;
 using Robust.Shared.Random;
 
 namespace Content.Server.Pointing.EntitySystems
@@ -12,16 +13,23 @@ namespace Content.Server.Pointing.EntitySystems
         [Dependency] private readonly IRobustRandom _random = default!;
         [Dependency] private readonly ExplosionSystem _explosion = default!;
         [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
+        [Dependency] private readonly SharedTransformSystem _transformSystem = default!;
 
         private EntityUid? RandomNearbyPlayer(EntityUid uid, RoguePointingArrowComponent? component = null, TransformComponent? transform = null)
         {
             if (!Resolve(uid, ref component, ref transform))
                 return null;
 
+            var arrowMapPos = _transformSystem.GetMapCoordinates(uid); // SS220 Fix PointingArrowAngering range
             var targets = new List<Entity<PointingArrowAngeringComponent>>();
             var query = EntityQueryEnumerator<PointingArrowAngeringComponent>();
             while (query.MoveNext(out var angeringUid, out var angeringComp))
             {
+                // SS220 Fix PointingArrowAngering range begin
+                if (!ValidTarget(uid, (angeringUid, angeringComp), arrowMapPos))
+                    continue;
+                // SS220 Fix PointingArrowAngering range end
+
                 targets.Add((angeringUid, angeringComp));
             }
 
@@ -31,7 +39,7 @@ namespace Content.Server.Pointing.EntitySystems
             var angering = _random.Pick(targets);
             angering.Comp.RemainingAnger -= 1;
             if (angering.Comp.RemainingAnger <= 0)
-                RemComp<PointingArrowAngeringComponent>(uid);
+                RemComp<PointingArrowAngeringComponent>(angering);
 
             return angering.Owner;
         }
@@ -59,34 +67,35 @@ namespace Content.Server.Pointing.EntitySystems
             {
                 component.Chasing ??= RandomNearbyPlayer(uid, component, transform);
 
-                if (component.Chasing is not {Valid: true} chasing || Deleted(chasing))
+                if (component.Chasing is not {Valid: true} chasing || !ValidTarget(uid, chasing) /* SS220 Fix PointingArrowAngering range */)
                 {
-                    EntityManager.QueueDeleteEntity(uid);
+                    QueueDel(uid);
                     continue;
                 }
 
                 component.TurningDelay -= frameTime;
+                var (transformPos, transformRot) = _transformSystem.GetWorldPositionRotation(transform);
 
                 if (component.TurningDelay > 0)
                 {
-                    var difference = Comp<TransformComponent>(chasing).WorldPosition - transform.WorldPosition;
+                    var difference = _transformSystem.GetWorldPosition(chasing) - transformPos;
                     var angle = difference.ToAngle();
                     var adjusted = angle.Degrees + 90;
                     var newAngle = Angle.FromDegrees(adjusted);
 
-                    transform.WorldRotation = newAngle;
+                    _transformSystem.SetWorldRotation(transform, newAngle);
 
                     UpdateAppearance(uid, component, transform);
                     continue;
                 }
 
-                transform.WorldRotation += Angle.FromDegrees(20);
+                _transformSystem.SetWorldRotation(transform, transformRot + Angle.FromDegrees(20));
 
                 UpdateAppearance(uid, component, transform);
 
-                var toChased = Comp<TransformComponent>(chasing).WorldPosition - transform.WorldPosition;
+                var toChased = _transformSystem.GetWorldPosition(chasing) - transformPos;
 
-                transform.WorldPosition += toChased * frameTime * component.ChasingSpeed;
+                _transformSystem.SetWorldPosition((uid, transform), transformPos + (toChased * frameTime * component.ChasingSpeed));
 
                 component.ChasingTime -= frameTime;
 
@@ -97,8 +106,30 @@ namespace Content.Server.Pointing.EntitySystems
 
 
                 _explosion.QueueExplosion(uid, ExplosionSystem.DefaultExplosionPrototypeId, 50, 3, 10);
-                EntityManager.QueueDeleteEntity(uid);
+                QueueDel(uid);
             }
         }
+
+        // SS220 Fix PointingArrowAngering range begin
+        private bool ValidTarget(EntityUid arrow, Entity<PointingArrowAngeringComponent?> target, MapCoordinates? arrowMapPos = null)
+        {
+            if (Deleted(target))
+                return false;
+
+            if (!Resolve(target, ref target.Comp))
+                return false;
+
+            arrowMapPos ??= _transformSystem.GetMapCoordinates(arrow);
+            var targetMapPos = _transformSystem.GetMapCoordinates(target);
+            if (arrowMapPos.Value.MapId != targetMapPos.MapId)
+                return false;
+
+            var delta = arrowMapPos.Value.Position - targetMapPos.Position;
+            if (delta.LengthSquared() > target.Comp.MaxRange * target.Comp.MaxRange)
+                return false;
+
+            return true;
+        }
+        // SS220 Fix PointingArrowAngering range end
     }
 }

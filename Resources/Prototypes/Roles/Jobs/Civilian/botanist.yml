@@ -8,6 +8,7 @@
       department: Civilian
       time: 18000 # SS220-RoleTime
   startingGear: BotanistGear
+  experienceDefinition: BotanistRoleExperience # SS220-experience
   icon: "JobIconBotanist"
   supervisors: job-supervisors-hop
   access:
@@ -17,14 +18,29 @@
   extendedAccess:
   - Kitchen
   - Bar
+  special:
+  - !type:GiveItemOnHolidaySpecial
+    holiday: FourTwenty
+    prototype: CannabisSeeds
 
 - type: startingGear
   id: BotanistGear
   equipment:
-    shoes: ClothingShoesColorBrown
+    #shoes: ClothingShoesColorBrown #SS220 to do druid loadout
     id: BotanistPDA
     ears: ClothingHeadsetService
-    belt: ClothingBeltPlantFilled
+    #belt: ClothingBeltPlantFilled #SS220 to do druid loadout
   #storage:
     #back:
     #- Stuff
+
+- type: chameleonOutfit
+  id: BotanistChameleonOutfit
+  job: Botanist
+  equipment:
+    head: ClothingHeadBandBotany
+    eyes: ClothingEyesGlassesCheapSunglasses
+    mask: ClothingMaskBreath
+    neck: ClothingNeckScarfStripedGreen
+    outerClothing: ClothingOuterApronBotanist
+    gloves: ClothingHandsGlovesLeather

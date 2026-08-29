@@ -1,4 +1,4 @@
-# Turtleneck Time
+# Job Time
 - type: loadoutEffectGroup
   id: SalvageSpecialistTurtleneck
   effects:
@@ -7,8 +7,12 @@
       !type:RoleTimeRequirement
       role: JobSalvageSpecialist
       time: 108000 # 30 hrs
+  sponsorTierLoadoutEffects:
+  - !type:GroupLoadoutEffect
+    proto: SeniorDevTeamTier
+  - !type:GroupLoadoutEffect
+    proto: AdministratorSponsorTier
 
-# Flannel Salvage Time
 - type: loadoutEffectGroup
   id: UniformJumpsuitFlannelSalvage
   effects:
@@ -16,7 +20,26 @@
     requirement:
       !type:RoleTimeRequirement
       role: JobSalvageSpecialist
+      time: 180000 # 50 hrs
+  sponsorTierLoadoutEffects:
+  - !type:GroupLoadoutEffect
+    proto: SeniorDevTeamTier
+  - !type:GroupLoadoutEffect
+    proto: AdministratorSponsorTier
+
+- type: loadoutEffectGroup
+  id: UniformExpeditor
+  effects:
+  - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:RoleTimeRequirement
+      role: JobSalvageSpecialist
       time: 252000 # 70 hrs
+  sponsorTierLoadoutEffects:
+  - !type:GroupLoadoutEffect
+    proto: SeniorDevTeamTier
+  - !type:GroupLoadoutEffect
+    proto: AdministratorSponsorTier
 
 # Jumpsuit
 - type: loadout
@@ -40,6 +63,14 @@
   equipment:
     jumpsuit: ClothingUniformJumpsuitFlannelSalvage
 
+- type: loadout
+  id: ClothingUniformJumpsuitExpeditor
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: UniformExpeditor
+  equipment:
+    jumpsuit: ClothingUniformJumpsuitExpeditor
+
 # Head
 - type: loadout
   id: ClothingHeadHatSalvage
@@ -55,3 +86,11 @@
   id: ClothingHeadHatHardhatViolet
   equipment:
     head: ClothingHeadHatHardhatViolet
+
+- type: loadout
+  id: ClothingHeadBeretSalvageSpecialist
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: UniformExpeditor
+  equipment:
+    head: ClothingHeadBeretSalvageSpecialist

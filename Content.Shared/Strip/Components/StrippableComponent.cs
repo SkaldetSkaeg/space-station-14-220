@@ -39,10 +39,19 @@ namespace Content.Shared.Strip.Components
         public TimeSpan Additive = TimeSpan.Zero;
         public bool Stealth = stealth;
 
-        public TimeSpan Time => TimeSpan.FromSeconds(MathF.Max(InitialTime.Seconds * Multiplier + Additive.Seconds, 0f));
+        public TimeSpan Time => TimeSpan.FromTicks(Math.Max((InitialTime * Multiplier + Additive).Ticks, 0));
 
         public SlotFlags TargetSlots { get; } = SlotFlags.GLOVES;
     }
+
+    /// <summary>
+    ///     Used to modify strip times. Raised directed at the item being stripped.
+    /// </summary>
+    /// <remarks>
+    ///     This is also used by some stripping related interactions, i.e., interactions with items that are currently equipped by another player.
+    /// </remarks>
+    [ByRefEvent]
+    public sealed class BeforeItemStrippedEvent(TimeSpan initialTime, bool stealth = false) : BaseBeforeStripEvent(initialTime, stealth);
 
     /// <summary>
     ///     Used to modify strip times. Raised directed at the user.

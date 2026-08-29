@@ -3,135 +3,163 @@
   parent: Dresser
   suffix: Filled, Captain
   components:
-  - type: StorageFill
-    contents:
-      - id: ClothingHeadHatCaptain
-      - id: ClothingHeadBeretCap #SS220 CapBeret
-      - id: ClothingNeckCloakCap
-      - id: ClothingNeckCloakCapFormal
-      - id: ClothingUniformJumpsuitCapFormal
-      - id: ClothingUniformJumpskirtCapFormalDress
-      - id: ClothingHandsGlovesCaptain
-      # Corvax-Resprite-Start
-      - id: ClothingHeadCaptainHat
-      - id: ClothingOuterCoatCaptain
-      - id: ClothingHeadCaptainCap #SS220 Captain's Cap tweak
-      # Corvax-Resprite-End
-      - id: ClothingNeckMantleCap
-      - id: ClothingOuterWinterCap
+  - type: EntityTableContainerFill
+    containers:
+      storagebase: !type:AllSelector
+        children:
+        - id: ClothingHeadHatCaptain
+        - id: ClothingHeadHatCapcap
+        - id: ClothingHeadBeretCap #SS220 CapBeret
+        - id: ClothingUniformJumpsuitCapFormal
+        - id: ClothingUniformJumpskirtCapFormalDress
+        - id: ClothingHandsGlovesCaptain
+        - id: ClothingOuterWinterCap
+        - id: ClothingNeckCloakCap
+        # Corvax-Resprite-Start
+        - id: ClothingHeadCaptainHat
+        - id: ClothingOuterCoatCaptain
+        - id: ClothingHeadCaptainCap #SS220 Captain's Cap tweak
+        # Corvax-Resprite-End
 
 - type: entity
   id: DresserChiefEngineerFilled
   parent: Dresser
   suffix: Filled, Chief Engineer
   components:
-  - type: StorageFill
-    contents:
-      - id: ClothingNeckMantleCE
-      - id: ClothingUniformJumpsuitChiefEngineerTurtle
-      - id: ClothingUniformJumpskirtChiefEngineerTurtle
-      - id: ClothingNeckCloakCe
-      - id: ClothingHeadHatBeretEngineering
-      - id: ClothingOuterWinterCE
-      - id: ClothingOuterCoatCEFormalDress #SS220-FormalDress
-      - id: ClothingHeadHatBeretCE #SS220-CEBeret
+  - type: EntityTableContainerFill
+    containers:
+      storagebase: !type:AllSelector
+        children:
+        - id: ClothingUniformJumpsuitChiefEngineerTurtle
+        - id: ClothingUniformJumpskirtChiefEngineerTurtle
+        - id: ClothingHeadHatBeretEngineering
+        - id: ClothingOuterWinterCE
+#        - id: ClothingNeckCloakCe #SS220-cloak-dress-tweak
+        - id: ClothingOuterCoatCEFormalDress #SS220-FormalDress
+        - id: ClothingHeadHatBeretCE #SS220-CEBeret
 
 - type: entity
   id: DresserChiefMedicalOfficerFilled
   parent: Dresser
   suffix: Filled, Chief Medical Officer
   components:
-  - type: StorageFill
-    contents:
-      - id: ClothingNeckMantleCMO
-      - id: ClothingCloakCmo
-      - id: ClothingOuterCoatLabCmo
-      - id: ClothingUniformJumpsuitCMOTurtle
-      - id: ClothingUniformJumpskirtCMOTurtle
-      - id: ClothingHeadHatBeretCmo
-      - id: ClothingHeadMirror
-      - id: ClothingEyesGlasses
-      - id: ClothingOuterWinterCMO
-      - id: ClothingOuterCoatCMOFormalDress #SS220-FormalDress
+  - type: EntityTableContainerFill
+    containers:
+      storagebase: !type:AllSelector
+        children:
+        - id: ClothingOuterCoatLabCmo
+        - id: ClothingUniformJumpsuitCMOTurtle
+        - id: ClothingUniformJumpskirtCMOTurtle
+        - id: ClothingHeadHatBeretCmo
+        - id: ClothingHeadMirror
+        - id: ClothingEyesGlasses
+        - id: ClothingOuterWinterCMO
+#        - id: ClothingCloakCmo #SS220-cloak-dress-tweak
+        - id: ClothingOuterCoatCMOFormalDress #SS220-FormalDress
 
 - type: entity
   id: DresserHeadOfPersonnelFilled
   parent: Dresser
   suffix: Filled, Head Of Personnel
   components:
-  - type: StorageFill
-    contents:
-      - id: ClothingNeckMantleHOP
-      - id: ClothingNeckCloakHop
-      - id: ClothingHeadHatHopcap
-      - id: ClothingOuterWinterHoP
-      - id: ClothingEyesGlasses
-      - id: ClothingOuterCoatHoPFormalDress #SS220-FormalDress
+  - type: EntityTableContainerFill
+    containers:
+      storagebase: !type:AllSelector
+        children:
+        - id: ClothingHeadHatHopcap
+        - id: ClothingOuterWinterHoP
+        - id: ClothingEyesGlasses
+#        - id: ClothingNeckCloakHop #SS220-cloak-dress-tweak
+        - id: ClothingOuterCoatHoPFormalDress #SS220-FormalDress
 
 - type: entity
   id: DresserHeadOfSecurityFilled
   parent: Dresser
   suffix: Filled, Head Of Security
   components:
-  - type: StorageFill
-    contents:
-      - id: ClothingNeckMantleHOS
-      - id: ClothingHeadHatBeretHoS
-      - id: ClothingHeadHatHoshat
-      - id: ClothingNeckCloakHos
-      - id: ClothingUniformJumpskirtHoSAlt
-      - id: ClothingUniformJumpsuitHoSAlt
-      - id: ClothingUniformJumpskirtHosFormal
-      - id: ClothingUniformJumpsuitHosFormal
-      - id: ClothingHeadHatCapHoS # Corvax-SecFashion
-      - id: ClothingOuterCoatHoSGreatcoat # Corvax-Resprite
-      - id: ClothingMaskNeckGaiter
-      - id: ClothingOuterWinterHoS
-      - id: ClothingHeadBigCapHoS # SS220-FreedomHoSCap
+  #SS220 bigger dresser start
+  - type: Storage
+    grid:
+    - 0,0,7,8
+    maxItemSize: Large
+  #SS220 bigger dresser end
+  - type: EntityTableContainerFill
+    containers:
+      storagebase: !type:AllSelector
+        children:
+        - id: ClothingHeadHatBeretHoS
+        - id: ClothingHeadHatHoshat
+        - id: ClothingMaskNeckGaiter
+        - id: ClothingUniformJumpskirtHoSAlt
+        - id: ClothingUniformJumpsuitHoSAlt
+        - id: ClothingUniformJumpskirtHosFormal
+#        - id: ClothingUniformJumpsuitHosFormal #SS220 Formal coat for HoS
+        - id: ClothingOuterWinterHoS
+#        - id: ClothingNeckCloakHos #SS220-cloak-dress-tweak
+        - id: ClothingHeadHatCapHoS # Corvax-SecFashion
+        - id: ClothingOuterCoatHoSGreatcoat # Corvax-Resprite
+        - id: ClothingOuterCoatHoSbomber # SS220-NewBomberForHos
+        - id: ClothingHeadBigCapHoS # SS220-FreedomHoSCap
+        - id: ClothingOuterCoatHosFormal #SS220 Formal coat for HoS
 
 - type: entity
   id: DresserQuarterMasterFilled
   parent: Dresser
   suffix: Filled, Quarter Master
   components:
-  - type: StorageFill
-    contents:
-      - id: ClothingNeckCloakQm
-      - id: ClothingHeadHatBeretQM
-#      - id: ClothingUniformJumpsuitQMFormal #SS220-Fashion
-      - id: ClothingUniformJumpsuitQMTurtleneck
-      - id: ClothingUniformJumpskirtQMTurtleneck
-      - id: ClothingHandsGlovesColorBrown
-      - id: ClothingNeckMantleQM
-      - id: ClothingOuterWinterQM
-      - id: ClothingOuterCoatQM #SS220-Fashion
+  - type: EntityTableContainerFill
+    containers:
+      storagebase: !type:AllSelector
+        children:
+        - id: ClothingHeadHatBeretQM
+#        - id: ClothingUniformJumpsuitQMFormal #SS220-Fashion
+        - id: ClothingUniformJumpsuitQMTurtleneck
+        - id: ClothingUniformJumpskirtQMTurtleneck
+        - id: ClothingHandsGlovesColorBrown
+        - id: ClothingOuterWinterQM
+#        - id: ClothingNeckCloakQm #SS220-cloak-dress-tweak
+        - id: ClothingOuterCoatQM #SS220-Fashion
 
 - type: entity
   id: DresserResearchDirectorFilled
   parent: Dresser
   suffix: Filled, Research Director
   components:
-  - type: StorageFill
-    contents:
-      - id: ClothingNeckMantleRD
-      - id: ClothingNeckCloakRd
-      - id: ClothingHeadHatBeretRND
-      - id: ClothingHandsGlovesColorPurple
-      - id: ClothingEyesGlasses
-      - id: ClothingOuterWinterRD
-      - id: ClothingOuterCoatRDFormalDress #SS220-FormalDress
+  - type: EntityTableContainerFill
+    containers:
+      storagebase: !type:AllSelector
+        children:
+        - id: ClothingHeadHatBeretRND
+        - id: ClothingHandsGlovesColorPurple
+        - id: ClothingEyesGlasses
+        - id: ClothingOuterWinterRD
+        - id: ClothingOuterCoatRD
+#        - id: ClothingNeckCloakRd #SS220-cloak-dress-tweak
+        - id: ClothingOuterCoatRDFormalDress #SS220-FormalDress
 
 - type: entity
   id: DresserWardenFilled
   parent: Dresser
   suffix: Filled, Warden
   components:
-  - type: StorageFill
-    contents:
-      - id: ClothingHeadHatWarden
-      - id: ClothingHeadHatBeretWarden
-      - id: ClothingHeadHatCapWardenAlt # Corvax-SecFashion
-      - id: ClothingOuterCoatWarden #SS220-MinorTweaks start
-      - id: ClothingOuterCoatWardenAlt
-      - id: ClothingOuterWinterWarden
-      - id: ClothingEyesGlassesSunglasses #SS220-MinorTweaks end
+  #SS220 bigger dresser start
+  - type: Storage
+    grid:
+    - 0,0,7,8
+    maxItemSize: Large
+  #SS220 bigger dresser end
+  - type: EntityTableContainerFill
+    containers:
+      storagebase: !type:AllSelector
+        children:
+        - id: ClothingHeadHatWarden
+        - id: ClothingHeadHatBeretWarden
+        - id: ClothingUniformJumpskirtWarden
+        - id: ClothingUniformJumpsuitWarden
+        - id: ClothingHeadHatCapWardenAlt # Corvax-SecFashion
+        #SS220-MinorTweaks start
+        - id: ClothingOuterCoatWarden
+        - id: ClothingOuterCoatWardenAlt
+        - id: ClothingOuterWinterWarden
+        - id: ClothingEyesGlassesSunglasses
+        #SS220-MinorTweaks end

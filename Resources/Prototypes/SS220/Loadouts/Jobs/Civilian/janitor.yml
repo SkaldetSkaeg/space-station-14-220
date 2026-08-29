@@ -7,6 +7,42 @@
       !type:RoleTimeRequirement
       role: JobJanitor
       time: 108000 # 30 hrs
+  sponsorTierLoadoutEffects:
+  - !type:GroupLoadoutEffect
+    proto: SeniorDevTeamTier
+  - !type:GroupLoadoutEffect
+    proto: AdministratorSponsorTier
+
+# Janitor Time2
+- type: loadoutEffectGroup
+  id: JanitorOrange
+  effects:
+  - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:RoleTimeRequirement
+      role: JobJanitor
+      time: 180000 # 50 hrs
+  sponsorTierLoadoutEffects:
+  - !type:GroupLoadoutEffect
+    proto: SeniorDevTeamTier
+  - !type:GroupLoadoutEffect
+    proto: AdministratorSponsorTier
+
+ # Janitor Time3
+- type: loadoutEffectGroup
+  id: JanitorJR
+  effects:
+  - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:RoleTimeRequirement
+      role: JobJanitor
+      time: 252000 # 70 hrs
+  sponsorTierLoadoutEffects:
+  - !type:GroupLoadoutEffect
+    proto: SeniorDevTeamTier
+  - !type:GroupLoadoutEffect
+    proto: AdministratorSponsorTier
+
 
 # Jumpsuit
 - type: loadout
@@ -16,3 +52,186 @@
     proto: JanitorControl
   equipment:
     jumpsuit: ClothingUniformJumpsuitJanitorBlue
+
+- type: loadout
+  id: JanitorOrangeJumpsuit
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: JanitorOrange
+  equipment:
+    jumpsuit: ClothingUniformJumpsuitOrangeJanitor
+
+- type: loadout
+  id: JanitorJRJumpsuit
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: JanitorJR
+  equipment:
+    jumpsuit: ClothingUniformJumpsuitJanitorJR
+
+#Shoes
+- type: loadout
+  id: JanitorOrangeShoes
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: JanitorOrange
+  equipment:
+    shoes: ClothingShoesOrangeGaloshes
+
+- type: loadout
+  id: JanitorGaloshes
+  equipment:
+    shoes: ClothingShoesGaloshes
+
+- type: loadout
+  id: ShoesColorPurple
+  equipment:
+    shoes: ClothingShoesColorPurple
+
+- type: loadout
+  id: JanitorJRShoes
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: JanitorJR
+  equipment:
+    shoes: ClothingShoesJanitorJR
+
+- type: loadout
+  id: JanitorJRBoots
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: JanitorJR
+  equipment:
+    shoes: ClothingBootsJanitorJR
+
+#Equipment
+- type: loadout
+  id: JRMopItem
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: JanitorJR
+  storage:
+    back: 
+    - JRMopItem
+
+- type: loadout
+  id: SoapJR
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: JanitorJR
+  storage:
+    back: 
+    - SoapJR
+
+#PDA
+- type: loadout
+  id: JanitorJRPDA
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: JanitorJR
+  equipment:
+    id: JanitorJRPDA
+
+- type: loadout
+  id: JanitorPDA
+  equipment:
+    id: JanitorPDA
+
+#Backpack
+- type: loadout
+  id: ClothingBackpackJanitorJR
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: JanitorJR
+  equipment:
+    back: ClothingBackpackJanitorJR
+
+- type: loadout
+  id: ClothingBackpackJanitorJRDuffel
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: JanitorJR
+  equipment:
+    back: ClothingBackpackJanitorJRDuffel
+
+- type: loadout
+  id: ClothingBackpackJanitorJRSatchel
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: JanitorJR
+  equipment:
+    back: ClothingBackpackJanitorJRSatchel
+
+#Head
+- type: loadout
+  id: JanitorOrangeHat
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: JanitorOrange
+  equipment:
+    head: ClothingHeadHatOrangeJanitor
+
+- type: loadout
+  id: JanitorJRHat
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: JanitorJR
+  equipment:
+    head: ClothingHeadHatHardhatJanitorJR
+
+- type: loadout
+  id: JanitorJRSoft
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: JanitorJR
+  equipment:
+    head: ClothingHeadHatJanitorJR
+
+#gloves
+- type: loadout
+  id: JanitorOrangeGloves
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: JanitorOrange
+  equipment:
+    gloves: ClothingHandsGlovesOrangeJanitor
+
+- type: loadout
+  id: JanitorJRGloves
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: JanitorOrange
+  equipment:
+    gloves: ClothingHandsGlovesJanitorJR
+
+#belt
+- type: loadout
+  id: JanitorBaseBelt
+  equipment:
+    belt: ClothingBeltJanitorFilled
+
+- type: loadout
+  id: JanitorJRBelt
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: JanitorJR
+  equipment:
+    belt: ClothingBeltJanitorJRFilled
+ 
+ #Outer clothing
+- type: loadout
+  id: ClothingOuterWinterJanitorJR
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: JanitorJR
+  equipment:
+    outerClothing: ClothingOuterWinterJanitorJR
+
+- type: loadout
+  id: ClothingOuterCoatJanitorJRBomber
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: JanitorJR
+  equipment:
+    outerClothing: ClothingOuterCoatJanitorJRBomber
+

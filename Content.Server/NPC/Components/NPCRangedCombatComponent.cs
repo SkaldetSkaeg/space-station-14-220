@@ -1,4 +1,5 @@
 using Content.Server.NPC.Systems;
+using Content.Shared.Physics;
 using Robust.Shared.Audio;
 
 namespace Content.Server.NPC.Components;
@@ -41,6 +42,13 @@ public sealed partial class NPCRangedCombatComponent : Component
     public bool TargetInLOS = false;
 
     /// <summary>
+    /// If true, only opaque objects will block line of sight.
+    /// </summary>
+    [ViewVariables(VVAccess.ReadWrite)]
+    // ReSharper disable once InconsistentNaming
+    public bool UseOpaqueForLOSChecks = false;
+
+    /// <summary>
     /// Delay after target is in LOS before we start shooting.
     /// </summary>
     [ViewVariables(VVAccess.ReadWrite)]
@@ -54,4 +62,9 @@ public sealed partial class NPCRangedCombatComponent : Component
     /// </summary>
     [ViewVariables(VVAccess.ReadWrite)]
     public SoundSpecifier? SoundTargetInLOS;
+
+    //SS220 Change laser turrets AI begin
+    [ViewVariables(VVAccess.ReadWrite)]
+    public CollisionGroup? CollisionGroup;
+    //SS220 Change laser turrets AI end
 }

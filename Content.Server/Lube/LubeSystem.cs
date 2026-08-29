@@ -1,15 +1,15 @@
 using Content.Server.Administration.Logs;
-using Content.Server.Chemistry.Containers.EntitySystems;
 using Content.Shared.Database;
-using Content.Shared.Glue;
+using Content.Shared.Doors.Components;
 using Content.Shared.IdentityManagement;
 using Content.Shared.Interaction;
 using Content.Shared.Item;
 using Content.Shared.Lube;
+using Content.Shared.SS220.Doors;
 using Content.Shared.Nutrition.EntitySystems;
 using Content.Shared.Popups;
 using Content.Shared.Verbs;
-using Robust.Shared.Audio;
+using Content.Shared.Chemistry.EntitySystems;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Random;
 
@@ -19,7 +19,7 @@ public sealed class LubeSystem : EntitySystem
 {
     [Dependency] private readonly SharedAudioSystem _audio = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly SolutionContainerSystem _solutionContainer = default!;
+    [Dependency] private readonly SharedSolutionContainerSystem _solutionContainer = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly IAdminLogManager _adminLogger = default!;
     [Dependency] private readonly OpenableSystem _openable = default!;
@@ -65,6 +65,11 @@ public sealed class LubeSystem : EntitySystem
 
     private bool TryLube(Entity<LubeComponent> entity, EntityUid target, EntityUid actor)
     {
+        // SS220 Add door lubrication (begin)
+        if (HasComp<DoorComponent>(target))
+            return TryLubeDoor(entity, target, actor);
+        // SS220 Add door lubrication (end)
+
         if (HasComp<LubedComponent>(target) || !HasComp<ItemComponent>(target))
         {
             _popup.PopupEntity(Loc.GetString("lube-failure", ("target", Identity.Entity(target, EntityManager))), actor, actor, PopupType.Medium);
@@ -88,4 +93,32 @@ public sealed class LubeSystem : EntitySystem
         _popup.PopupEntity(Loc.GetString("lube-failure", ("target", Identity.Entity(target, EntityManager))), actor, actor, PopupType.Medium);
         return false;
     }
+
+    // SS220 Add door lubrication (begin)
+    private bool TryLubeDoor(Entity<LubeComponent> entity, EntityUid target, EntityUid actor)
+    {
+        if (!HasComp<DoorComponent>(target))
+        {
+            _popup.PopupEntity(Loc.GetString("lube-failure", ("target", Identity.Entity(target, EntityManager))), actor, actor, PopupType.Medium);
+            return false;
+        }
+
+        if (_solutionContainer.TryGetSolution(entity.Owner, entity.Comp.Solution, out _, out var solution))
+        {
+            var quantity = solution.RemoveReagent(entity.Comp.Reagent, entity.Comp.Consumption);
+            if (quantity > 0)
+            {
+                var lubed = EnsureComp<DoorLubedComponent>(target);
+                lubed.SilentUsesLeft += _random.Next(entity.Comp.MinSlips * quantity.Int(), entity.Comp.MaxSlips * quantity.Int());
+                Dirty(target, lubed);
+                _adminLogger.Add(LogType.Action, LogImpact.Medium, $"{ToPrettyString(actor):actor} lubed {ToPrettyString(target):subject} with {ToPrettyString(entity.Owner):tool}");
+                _audio.PlayPvs(entity.Comp.Squeeze, entity.Owner);
+                _popup.PopupEntity(Loc.GetString("lube-success", ("target", Identity.Entity(target, EntityManager))), actor, actor, PopupType.Medium);
+                return true;
+            }
+        }
+        _popup.PopupEntity(Loc.GetString("lube-failure", ("target", Identity.Entity(target, EntityManager))), actor, actor, PopupType.Medium);
+        return false;
+    }
+    // SS220 Add door lubrication (end)
 }

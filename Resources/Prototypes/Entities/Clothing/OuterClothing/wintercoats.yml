@@ -9,7 +9,8 @@
   - type: Clothing
     sprite: Clothing/OuterClothing/WinterCoats/coat.rsi
   - type: TemperatureProtection
-    coefficient: 0.1
+    heatingCoefficient: 1.1
+    coolingCoefficient: 0.1
   - type: Item
     size: Normal
   - type: Armor
@@ -18,7 +19,9 @@
         Slash: 0.95
         Heat: 0.90
     priceMultiplier: 0
-  - type: Food
+  - type: ZombificationResistance
+    zombificationResistanceCoefficient: 0.55
+  - type: Edible
     requiresSpecialDigestion: true
   - type: SolutionContainerManager
     solutions:
@@ -30,9 +33,15 @@
   - type: Tag
     tags:
     - ClothMade
+    - Recyclable
     - WhitelistChameleon
   - type: StaticPrice
     price: 50
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-grey
+#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingOuterWinterCoat
@@ -48,6 +57,16 @@
       toggleable-clothing: !type:ContainerSlot {}
       storagebase: !type:Container
         ents: []
+      item_radio: !type:ContainerSlot #ss220 handheld radio on outer clothing
+      #ss220 handheld radio on outer clothing start
+  - type: ItemSlots
+    slots:
+      item_radio:
+        name: clothing-outer-radio-handheld
+        whitelist:
+          tags:
+          - Radio
+  #ss220 handheld radio on outer clothing end
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
@@ -70,7 +89,12 @@
       outerClothing:
       - state: ATMOS-equipped-OUTERCLOTHING
   - type: ToggleableClothing
-    clothingPrototype: ClothingHeadHatHoodWinterEngineer
+    clothingPrototype: ClothingHeadHatHoodWinterAtmos # SS220 hood resprite
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-light-blue
+#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
@@ -94,9 +118,14 @@
       - state: BAR-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterBartender
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-white
+#SS220 Micro_fibers end
 
 - type: entity
-  parent: ClothingOuterWinterCoatToggleable
+  parent: [ClothingOuterWinterCoatToggleable]
   id: ClothingOuterWinterCap
   name: captain's winter coat
   components:
@@ -117,6 +146,11 @@
       - state: CAP-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterCaptain
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-blue
+#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
@@ -140,9 +174,14 @@
       - state: CARGO-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterCargo
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-yellow
+#SS220 Micro_fibers end
 
 - type: entity
-  parent: ClothingOuterWinterCoatToggleable
+  parent: [ClothingOuterWinterCoatToggleable]
   id: ClothingOuterWinterCE
   name: chief engineer's winter coat
   components:
@@ -163,12 +202,17 @@
       - state: CE-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterCE
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-white
+#SS220 Micro_fibers end
 
 - type: entity
-  parent: ClothingOuterWinterCoatToggleable
+  parent: [ ClothingOuterWinterCoatToggleable]
   id: ClothingOuterWinterCentcom
-  name: CentCom winter coat
-  categories: [ HideSpawnMenu ] #SS220-new-centcomm
+  name: CentComm winter coat
+  categories: [ HideSpawnMenu ] #SS220 New CentCom
   components:
   - type: Sprite
     sprite: Clothing/OuterClothing/WinterCoats/coat.rsi
@@ -187,9 +231,14 @@
       - state: CENTCOM-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterCentcom
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-green
+#SS220 Micro_fibers end
 
 - type: entity
-  parent: ClothingOuterWinterCoat
+  parent: ClothingOuterWinterCoatToggleable # SS220 new hood
   id: ClothingOuterWinterChef
   name: chef's freezer coat
   description: A coat specifically designed for work inside cold storage, sorely needed by cold-blooded lizard chefs.
@@ -209,6 +258,15 @@
     clothingVisuals:
       outerClothing:
       - state: CHEF-equipped-OUTERCLOTHING
+# SS220 new hood start
+  - type: ToggleableClothing
+    clothingPrototype: ClothingHeadHatHoodWinterChef
+# SS220 new hood end
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-white
+#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
@@ -239,9 +297,14 @@
     priceMultiplier: 0.15
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterChem
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-light-blue
+#SS220 Micro_fibers end
 
 - type: entity
-  parent: ClothingOuterWinterCoatToggleable
+  parent: [ClothingOuterWinterCoatToggleable]
   id: ClothingOuterWinterCMO
   name: chief medical officer's winter coat
   components:
@@ -269,6 +332,11 @@
     priceMultiplier: 0.15
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterCMO
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-light-blue
+#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingOuterWinterCoat
@@ -279,6 +347,11 @@
     sprite: Clothing/OuterClothing/WinterCoats/coatclown.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/WinterCoats/coatclown.rsi
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-red
+#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
@@ -302,6 +375,11 @@
       - state: ENGI-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterEngineer
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-orange
+#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
@@ -331,10 +409,15 @@
         Caustic: 0.9
     priceMultiplier: 0.15
   - type: ToggleableClothing
-    clothingPrototype: ClothingHeadHatHoodWinterSci
+    clothingPrototype: ClothingHeadHatHoodWinterGen # SS220 hood resprite
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-white
+#SS220 Micro_fibers end
 
 - type: entity
-  parent: ClothingOuterWinterCoatToggleable
+  parent: [ClothingOuterWinterCoatToggleable]
   id: ClothingOuterWinterHoP
   name: head of personnel's winter coat
   components:
@@ -355,7 +438,11 @@
       - state: HOP-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterHOP
-
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-blue
+#SS220 Micro_fibers end
 
 ##########################################################
 - type: entity
@@ -370,10 +457,21 @@
     sprite: Clothing/OuterClothing/WinterCoats/coathosarmored.rsi
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterHOS
+  #SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-reinforced-synthetic-fur
+    microFiberColor: micro-fibers-gray
+  #SS220 Micro_fibers end
+  - type: ContainerContainer
+    containers:
+      toggleable-clothing: !type:ContainerSlot { }
+      item_radio: !type:ContainerSlot { } # ss220 add radio slot
+      storagebase: !type:Container
+        ents: [ ]
 ##########################################################
 
 - type: entity
-  parent: ClothingOuterWinterCoatToggleable
+  parent: [ClothingOuterWinterCoatToggleable]
   id: ClothingOuterWinterHoSUnarmored
   name: head of security's winter coat
   description: A sturdy coat, a warm coat, but not an armored coat.
@@ -395,6 +493,11 @@
       - state: HOS-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterHOS
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-gray
+#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
@@ -418,6 +521,11 @@
       - state: HYDRO-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterHydro
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-green
+#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
@@ -433,7 +541,7 @@
       left:
       - state: JANI-inhand-left
       right:
-      - state: CHEF-inhand-right
+      - state: JANI-inhand-right # SS220 CHEF-inhand-right -> JANI-inhand-right. it's janitor coat.
   - type: Clothing
     sprite: Clothing/OuterClothing/WinterCoats/coat.rsi
     clothingVisuals:
@@ -448,6 +556,11 @@
     priceMultiplier: 0.15
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterJani
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-purple
+#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
@@ -478,6 +591,11 @@
     priceMultiplier: 0.15
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterMed
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-light-blue
+#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
@@ -501,6 +619,11 @@
       - state: MIME-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterMime
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-white
+#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
@@ -524,6 +647,11 @@
       - state: MINER-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterMiner
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-purple
+#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
@@ -554,9 +682,14 @@
     priceMultiplier: 0.15
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterPara
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-blue
+#SS220 Micro_fibers end
 
 - type: entity
-  parent: ClothingOuterWinterCoatToggleable
+  parent: [ClothingOuterWinterCoatToggleable]
   id: ClothingOuterWinterQM
   name: quartermaster's winter coat
   components:
@@ -577,10 +710,14 @@
       - state: QM-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterQM
-
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-brown
+#SS220 Micro_fibers end
 
 - type: entity
-  parent: ClothingOuterWinterCoatToggleable
+  parent: [ClothingOuterWinterCoatToggleable]
   id: ClothingOuterWinterRD
   name: research director's winter coat
   components:
@@ -608,6 +745,11 @@
     priceMultiplier: 0.15
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterRD
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-white
+#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
@@ -631,7 +773,11 @@
       - state: ROBO-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterRobo
-
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-black
+#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
@@ -662,9 +808,14 @@
     priceMultiplier: 0.15
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterSci
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-white
+#SS220 Micro_fibers end
 
 - type: entity
-  parent: ClothingOuterWinterCoatToggleable
+  parent: [ClothingOuterWinterCoatToggleable, BaseSecurityContraband]
   id: ClothingOuterWinterSec
   name: security winter coat
   components:
@@ -685,6 +836,11 @@
       - state: SEC-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterSec
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-red
+#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
@@ -714,11 +870,16 @@
         Caustic: 0.9
     priceMultiplier: 0.15
   - type: ToggleableClothing
-    clothingPrototype: ClothingHeadHatHoodWinterSci
+    clothingPrototype: ClothingHeadHatHoodWinterViro # SS220 hood resprite
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-green
+#SS220 Micro_fibers end
 
 ################################################################
 - type: entity
-  parent: [ClothingOuterArmorWarden, ClothingOuterWinterCoatToggleable]
+  parent: [ClothingOuterArmorWarden, ClothingOuterWinterCoatToggleable, BaseSecurityContraband]
   id: ClothingOuterWinterWarden
   name: warden's armored winter coat
   description: A sturdy, utilitarian winter coat designed to protect a warden from any brig-bound threats and hypothermic events.
@@ -729,10 +890,21 @@
     sprite: Clothing/OuterClothing/WinterCoats/coatwardenarmored.rsi
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterWarden
+  #SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-reinforced-synthetic-fur
+    microFiberColor: micro-fibers-red
+  #SS220 Micro_fibers end
+  - type: ContainerContainer
+    containers:
+      toggleable-clothing: !type:ContainerSlot { }
+      item_radio: !type:ContainerSlot { } # ss220 add radio slot
+      storagebase: !type:Container
+        ents: [ ]
 ################################################################
 
 - type: entity
-  parent: ClothingOuterWinterCoatToggleable
+  parent: [ClothingOuterWinterCoatToggleable, BaseSecurityContraband]
   id: ClothingOuterWinterWardenUnarmored
   name: warden's winter coat
   description: A sturdy coat, a warm coat, but not an armored coat.
@@ -754,9 +926,14 @@
       - state: WARD-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterWarden
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-red
+#SS220 Micro_fibers end
 
 - type: entity
-  parent: ClothingOuterWinterCoatToggleable
+  parent: [ClothingOuterWinterCoatToggleable]
   id: ClothingOuterWinterSyndieCap
   name: syndicate's winter coat
   description: "The syndicate's winter coat is made of durable fabric, with gilded patterns, and coarse wool."
@@ -777,11 +954,16 @@
       outerClothing:
       - state: SYNDIECAP-equipped-OUTERCLOTHING
   - type: ToggleableClothing
-    clothingPrototype: ClothingHeadHatHoodWinterSyndie
+    clothingPrototype: ClothingHeadHatHoodWinterSyndieCap # SS220 hood resprite
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-black
+#SS220 Micro_fibers end
 
 ##############################################################
 - type: entity
-  parent: ClothingOuterWinterWarden
+  parent: [ BaseSyndicateContraband, ClothingOuterWinterWarden ]
   id: ClothingOuterWinterSyndieCapArmored
   name: syndicate's armored winter coat
   description: "The syndicate's armored winter coat is made of durable fabric, with gilded patterns, and coarse wool."
@@ -791,11 +973,16 @@
   - type: Clothing
     sprite: Clothing/OuterClothing/WinterCoats/syndicate/coatsyndiecaparmored.rsi
   - type: ToggleableClothing
-    clothingPrototype: ClothingHeadHatHoodWinterSyndie
+    clothingPrototype: ClothingHeadHatHoodWinterSyndieCapArmored # SS220 new hood
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-reinforced-synthetic-fur
+    microFiberColor: micro-fibers-black
+#SS220 Micro_fibers end
 ##############################################################
 
 - type: entity
-  parent: ClothingOuterWinterCoatToggleable
+  parent: [ClothingOuterWinterCoatToggleable]
   id: ClothingOuterWinterSyndie
   name: syndicate's winter coat
   description: Insulated winter coat, looks like a merch from "Syndieland".
@@ -817,6 +1004,11 @@
       - state: SYNDIE-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterSyndie
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-wool
+    microFiberColor: micro-fibers-black
+#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingOuterWinterCoat
@@ -828,6 +1020,11 @@
     sprite: Clothing/OuterClothing/WinterCoats/coatnomi.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/WinterCoats/coatnomi.rsi
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-black
+#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
@@ -853,6 +1050,10 @@
   - type: Construction
     graph: WebObjects
     node: coat
+  - type: Butcherable
+    spawned:
+    - id: MaterialWebSilk1
+      amount: 5
   - type: FlavorProfile
     flavors:
       - cobwebs
@@ -867,6 +1068,11 @@
           Quantity: 20
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterWeb
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-spiderweb
+    microFiberColor: micro-fibers-white
+#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
@@ -898,6 +1104,11 @@
       - state: winterbits-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterColorBlack
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-black
+#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
@@ -929,6 +1140,11 @@
       - state: winterbits-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterColorPurple
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-purple
+#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
@@ -960,6 +1176,11 @@
       - state: winterbits-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterColorRed
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-red
+#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
@@ -991,6 +1212,11 @@
       - state: winterbits-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterColorBlue
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-blue
+#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
@@ -1022,6 +1248,11 @@
       - state: winterbits-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterColorBrown
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-brown
+#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
@@ -1053,6 +1284,11 @@
       - state: winterbits-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterColorGray
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-grey
+#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
@@ -1084,6 +1320,11 @@
       - state: winterbits-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterColorGreen
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-green
+#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
@@ -1115,6 +1356,11 @@
       - state: winterbits-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterColorLightBrown
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-light-brown
+#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
@@ -1146,6 +1392,11 @@
       - state: winterbits-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterColorOrange
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-orange
+#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
@@ -1177,6 +1428,11 @@
       - state: winterbits-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterColorWhite
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-white
+#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable
@@ -1208,3 +1464,8 @@
       - state: winterbits-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterColorYellow
+#SS220 Micro_fibers start
+  - type: MicroFiber
+    microFiberMaterial: micro-fibers-synthetic-fur
+    microFiberColor: micro-fibers-yellow
+#SS220 Micro_fibers end

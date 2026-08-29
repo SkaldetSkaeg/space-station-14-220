@@ -2,11 +2,11 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Shared.Roles;
 
-[Prototype("department")]
+[Prototype]
 public sealed partial class DepartmentPrototype : IPrototype
 {
     [IdDataField]
-    public string ID { get; } = string.Empty;
+    public string ID { get; private set; } = string.Empty;
 
     /// <summary>
     /// The name LocId of the department that will be displayed in the various menus.
@@ -52,6 +52,20 @@ public sealed partial class DepartmentPrototype : IPrototype
     /// </summary>
     [DataField]
     public bool EditorHidden;
+
+    // SS220 Round End Titles begin
+    /// <summary>
+    /// Toggles the display of the department in the round end titles.
+    /// </summary>
+    [DataField]
+    public bool RoundEndTitlesHidden;
+
+    /// <summary>
+    /// Optional color that UI may use to make role label readable on dark background.
+    /// </summary>
+    [DataField]
+    public Color? LightColor;
+    // SS220 Round End Titles end
 }
 
 /// <summary>

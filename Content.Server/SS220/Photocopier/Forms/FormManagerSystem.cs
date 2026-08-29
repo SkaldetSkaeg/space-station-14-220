@@ -1,4 +1,4 @@
-﻿// © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
+// © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
 using System.IO;
 using System.Xml.Serialization;
@@ -14,9 +14,10 @@ namespace Content.Server.SS220.Photocopier.Forms;
 /// Deserializes photocopier forms on initialization and caches them for future use.
 /// Used by server to determine what content to print on based client's request.
 /// </summary>
-public sealed class FormManager : EntitySystem
+public sealed partial class FormManager : EntitySystem
 {
-    [Dependency] private readonly IResourceManager _resourceManager = default!;
+    [Dependency] private IResourceManager _resourceManager = default!;
+
     private readonly ISawmill _sawmill = Logger.GetSawmill("form-manager");
 
     /// <summary>
@@ -201,7 +202,7 @@ public sealed class FormManager : EntitySystem
     {
         _sawmill.Debug("Received photocopier forms request from client");
         var response = new PhotocopierFormsMessage(_collections);
-        RaiseNetworkEvent(response, args.SenderSession.ConnectedClient);
+        RaiseNetworkEvent(response, args.SenderSession.Channel);
     }
 }
 

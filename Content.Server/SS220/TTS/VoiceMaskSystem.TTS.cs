@@ -1,4 +1,5 @@
-﻿using Content.Server.SS220.TTS;
+using Content.Server.Speech.Components;
+using Content.Server.SS220.TTS;
 using Content.Shared.VoiceMask;
 
 namespace Content.Server.VoiceMask;
@@ -11,32 +12,27 @@ public partial class VoiceMaskSystem
         SubscribeLocalEvent<VoiceMaskComponent, VoiceMaskChangeVoiceMessage>(OnChangeVoice);
     }
 
-    private void OnSpeakerVoiceTransform(EntityUid uid, VoiceMaskComponent component, TransformSpeakerVoiceEvent args)
+    private void OnSpeakerVoiceTransform(Entity<VoiceMaskComponent> entity, ref TransformSpeakerVoiceEvent args)
     {
-        if (component.Enabled)
-            args.VoiceId = component.VoiceId;
+        args.VoiceId = entity.Comp.VoiceId;
     }
 
-    private void OnChangeVoice(EntityUid uid, VoiceMaskComponent component, VoiceMaskChangeVoiceMessage message)
+    private void OnChangeVoice(Entity<VoiceMaskComponent> ent, ref VoiceMaskChangeVoiceMessage message)
     {
-        component.VoiceId = message.Voice;
+        ent.Comp.VoiceId = message.Voice;
 
         _popupSystem.PopupCursor(Loc.GetString("voice-mask-voice-popup-success"), message.Actor);
 
-        TrySetLastKnownVoice(uid, message.Voice);
+        TrySetLastKnownVoice(message.Actor, message.Voice);
 
-        UpdateUI(uid, component);
+        UpdateUI(ent);
     }
 
     private void TrySetLastKnownVoice(EntityUid maskWearer, string? voiceId)
     {
-        if (!HasComp<VoiceMaskComponent>(maskWearer)
-            || !_inventory.TryGetSlotEntity(maskWearer, MaskSlot, out var maskEntity)
-            || !TryComp<VoiceMaskerComponent>(maskEntity, out var maskComp))
-        {
+        if (!TryComp<VoiceOverrideComponent>(maskWearer, out var comp))
             return;
-        }
 
-        maskComp.LastSetVoice = voiceId;
+        comp.LastSetVoice = voiceId;
     }
 }

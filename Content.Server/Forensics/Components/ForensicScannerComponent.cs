@@ -22,11 +22,24 @@ namespace Content.Server.Forensics
         [ViewVariables(VVAccess.ReadOnly), DataField("fibers")]
         public List<string> Fibers = new();
 
+        //SS220 Micro_fibers start
+        /// </summary>
+        /// A list of backpack and pockets of clothes fibers that the forensic scanner found from the <see cref="ForensicsComponent"/> on an entity.
+        /// <summary>
+        [ViewVariables(VVAccess.ReadOnly), DataField("microFibers")]
+        public List<string> MicroFibers = new();
+        //SS220 Micro_fibers end
         /// <summary>
         /// DNA that the forensic scanner found from the <see cref="DNAComponent"/> on an entity.
         /// </summary>
         [ViewVariables(VVAccess.ReadOnly), DataField("dnas")]
-        public List<string> DNAs = new();
+        public List<string> TouchDNAs = new();
+
+        /// <summary>
+        /// DNA that the forensic scanner found from the solution containers in an entity.
+        /// </summary>
+        [ViewVariables(VVAccess.ReadOnly), DataField]
+        public List<string> SolutionDNAs = new();
 
         /// <summary>
         /// Residue that the forensic scanner found from the <see cref="ForensicsComponent"/> on an entity.

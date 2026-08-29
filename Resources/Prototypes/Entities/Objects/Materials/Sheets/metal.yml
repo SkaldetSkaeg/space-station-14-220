@@ -15,6 +15,7 @@
     tags:
     - Sheet
     - Metal
+    - ConstructionMaterial
   - type: Damageable
     damageContainer: Inorganic
     damageModifierSet: Metallic
@@ -30,6 +31,9 @@
     solutions:
       steel:
         canReact: false
+  - type: GuideHelp
+    guides:
+    - ExpandingRepairingStation
 
 - type: entity
   parent: SheetMetalBase
@@ -48,6 +52,12 @@
     - steel
     - steel_2
     - steel_3
+  # ss220-experience-begin
+  - type: LearningOnDoAfterEndWith
+    progress:
+      Construction:
+        baseLearning: 0.05
+  # ss220-experience-end
   - type: Sprite
     state: steel_3
     layers:
@@ -56,9 +66,11 @@
   - type: Item
     heldPrefix: steel
   - type: Appearance
+  # SS220-steel plating start
   - type: FloorTile
     outputs:
     - Plating
+  # SS220-steel plating ended
   - type: Extractable
     grindableSolutionName: steel
   - type: SolutionContainerManager
@@ -99,15 +111,6 @@
     count: 1
 
 - type: entity
-  parent: SheetSteel
-  id: SheetSteelLingering0
-  suffix: Lingering, 0
-  components:
-  - type: Stack
-    lingering: true
-    count: 0
-
-- type: entity
   parent: SheetMetalBase
   id: SheetBrass
   name: brass
@@ -125,6 +128,12 @@
     - brass
     - brass_2
     - brass_3
+  # ss220-experience-begin
+  - type: LearningOnDoAfterEndWith
+    progress:
+      Construction:
+        baseLearning: 0.09
+  # ss220-experience-end
   - type: Sprite
     state: brass_3
     layers:
@@ -188,6 +197,12 @@
     - plasteel
     - plasteel_2
     - plasteel_3
+  # ss220-experience-begin
+  - type: LearningOnDoAfterEndWith
+    progress:
+      Construction:
+        baseLearning: 0.09
+  # ss220-experience-end
   - type: Sprite
     state: plasteel_3
     layers:
@@ -213,7 +228,7 @@
           Quantity: 0.2
         #SS220 tweak produce lead end
         canReact: false
-      
+
 
 - type: entity
   parent: SheetPlasteel

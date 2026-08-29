@@ -1,0 +1,37 @@
+# Actions
+- type: entity
+  parent: BaseAction
+  id: ActionJumpToCore
+  name: Jump to core
+  description: Sends your eye back to the core.
+  components:
+  - type: Action
+    priority: -9
+    itemIconStyle: BigAction
+    icon:
+      # SS220-resprite start
+      #sprite: Interface/Actions/actions_ai.rsi
+      sprite: SS220/Interface/Actions/actions_ai.rsi
+      state: ai_core
+      # SS220-resprite end
+  - type: InstantAction
+    event: !type:JumpToCoreEvent
+
+- type: entity
+  parent: BaseMentalAction
+  id: ActionAIViewLaws
+  name: View Laws
+  description: View the laws that you must follow.
+  components:
+  - type: Action
+    priority: -3
+    itemIconStyle: NoItem
+    icon:
+      # SS220-resprite start
+      #sprite: SS220/Interface/Actions/actions_ai.rsi
+      sprite: SS220/Interface/Actions/actions_ai.rsi
+      state: state_laws
+      # SS220-resprite end
+    useDelay: 0.5
+  - type: InstantAction
+    event: !type:ToggleLawsScreenEvent

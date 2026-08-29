@@ -12,6 +12,7 @@ using Robust.Server.GameObjects;
 using Robust.Shared.Physics;
 using Robust.Shared.Physics.Components;
 using Robust.Shared.Physics.Events;
+using Robust.Shared.Utility;
 
 namespace Content.Server.Singularity.EntitySystems;
 
@@ -22,6 +23,7 @@ public sealed class ContainmentFieldGeneratorSystem : EntitySystem
     [Dependency] private readonly PhysicsSystem _physics = default!;
     [Dependency] private readonly PopupSystem _popupSystem = default!;
     [Dependency] private readonly SharedPointLightSystem _light = default!;
+    [Dependency] private readonly SharedTransformSystem _transformSystem = default!;
     [Dependency] private readonly TagSystem _tags = default!;
 
     public override void Initialize()
@@ -30,12 +32,13 @@ public sealed class ContainmentFieldGeneratorSystem : EntitySystem
 
         SubscribeLocalEvent<ContainmentFieldGeneratorComponent, StartCollideEvent>(HandleGeneratorCollide);
         SubscribeLocalEvent<ContainmentFieldGeneratorComponent, ExaminedEvent>(OnExamine);
-        SubscribeLocalEvent<ContainmentFieldGeneratorComponent, InteractHandEvent>(OnInteract);
+        SubscribeLocalEvent<ContainmentFieldGeneratorComponent, ActivateInWorldEvent>(OnActivate);
         SubscribeLocalEvent<ContainmentFieldGeneratorComponent, AnchorStateChangedEvent>(OnAnchorChanged);
         SubscribeLocalEvent<ContainmentFieldGeneratorComponent, ReAnchorEvent>(OnReanchorEvent);
         SubscribeLocalEvent<ContainmentFieldGeneratorComponent, UnanchorAttemptEvent>(OnUnanchorAttempt);
         SubscribeLocalEvent<ContainmentFieldGeneratorComponent, ComponentRemove>(OnComponentRemoved);
         SubscribeLocalEvent<ContainmentFieldGeneratorComponent, EventHorizonAttemptConsumeEntityEvent>(PreventBreach);
+        SubscribeLocalEvent<ContainmentFieldGeneratorComponent, MapInitEvent>(OnMapInit);
     }
 
     public override void Update(float frameTime)
@@ -60,6 +63,12 @@ public sealed class ContainmentFieldGeneratorSystem : EntitySystem
 
     #region Events
 
+    private void OnMapInit(Entity<ContainmentFieldGeneratorComponent> generator, ref MapInitEvent args)
+    {
+        if (generator.Comp.Enabled)
+            ChangeFieldVisualizer(generator);
+    }
+
     /// <summary>
     /// A generator receives power from a source colliding with it.
     /// </summary>
@@ -82,7 +91,7 @@ public sealed class ContainmentFieldGeneratorSystem : EntitySystem
             args.PushMarkup(Loc.GetString("comp-containment-off"));
     }
 
-    private void OnInteract(Entity<ContainmentFieldGeneratorComponent> generator, ref InteractHandEvent args)
+    private void OnActivate(Entity<ContainmentFieldGeneratorComponent> generator, ref ActivateInWorldEvent args)
     {
         if (args.Handled)
             return;
@@ -116,7 +125,7 @@ public sealed class ContainmentFieldGeneratorSystem : EntitySystem
     private void OnUnanchorAttempt(EntityUid uid, ContainmentFieldGeneratorComponent component,
         UnanchorAttemptEvent args)
     {
-        if (component.Enabled)
+        if (component.Enabled || component.IsConnected)
         {
             _popupSystem.PopupEntity(Loc.GetString("comp-containment-anchor-warning"), args.User, args.User, PopupType.LargeCaution);
             args.Cancel();
@@ -144,32 +153,63 @@ public sealed class ContainmentFieldGeneratorSystem : EntitySystem
 
     /// <summary>
     /// Deletes the fields and removes the respective connections for the generators.
+    /// If a predicate is provided, only remove fields and connections if the predicate returns true.
     /// </summary>
-    private void RemoveConnections(Entity<ContainmentFieldGeneratorComponent> generator)
+    /// <param name="generator">The field generator component</param>
+    /// <param name="removePredicate">An optional predicate that takes in this generator entity and the other generator entity.
+    /// It should return true if the connection should be removed, and false otherwise.
+    /// If a predicate isn't provided, all connections will be removed.</param>
+    private void RemoveConnections(
+        Entity<ContainmentFieldGeneratorComponent> generator,
+        Func<Entity<ContainmentFieldGeneratorComponent>, Entity<ContainmentFieldGeneratorComponent>, bool>? removePredicate = null)
     {
         var (uid, component) = generator;
-        foreach (var (direction, value) in component.Connections)
+        var anyFieldsRemoved = false;
+
+        foreach (var (direction, (otherGen, fields)) in component.Connections)
         {
-            foreach (var field in value.Item2)
+            if (removePredicate is not null && !removePredicate(generator, otherGen))
+            {
+                // Do not delete a connection only if the provided predicate says not to.
+                continue;
+            }
+
+            anyFieldsRemoved = true;
+
+            foreach (var field in fields)
             {
                 QueueDel(field);
             }
-            value.Item1.Comp.Connections.Remove(direction.GetOpposite());
 
-            if (value.Item1.Comp.Connections.Count == 0) //Change isconnected only if there's no more connections
+            component.Connections.Remove(direction);
+
+            otherGen.Comp.Connections.Remove(direction.GetOpposite());
+
+            if (otherGen.Comp.Connections.Count == 0) //Change isconnected only if there's no more connections
             {
-                value.Item1.Comp.IsConnected = false;
-                ChangeOnLightVisualizer(value.Item1);
+                otherGen.Comp.IsConnected = false;
+                ChangeOnLightVisualizer(otherGen);
             }
 
-            ChangeFieldVisualizer(value.Item1);
+            ChangeFieldVisualizer(otherGen);
         }
-        component.Connections.Clear();
-        component.IsConnected = false;
-        ChangeOnLightVisualizer(generator);
-        ChangeFieldVisualizer(generator);
-        _adminLogger.Add(LogType.FieldGeneration, LogImpact.Medium, $"{ToPrettyString(uid)} lost field connections"); // Ideally LogImpact would depend on if there is a singulo nearby
+
+        if (!anyFieldsRemoved)
+        {
+            // No fields were removed, so no logging or other updates are necessary.
+            return;
+        }
+
         _popupSystem.PopupEntity(Loc.GetString("comp-containment-disconnected"), uid, PopupType.LargeCaution);
+
+        if (component.Connections.Count == 0)
+        {
+            component.IsConnected = false;
+            ChangeOnLightVisualizer(generator);
+        }
+        ChangeFieldVisualizer(generator);
+
+        _adminLogger.Add(LogType.FieldGeneration, LogImpact.Medium, $"{ToPrettyString(uid)} lost field connections"); // Ideally LogImpact would depend on if there is a singulo nearby
     }
 
     #endregion
@@ -190,7 +230,7 @@ public sealed class ContainmentFieldGeneratorSystem : EntitySystem
         if (component.PowerBuffer >= component.PowerMinimum)
         {
             var directions = Enum.GetValues<Direction>().Length;
-            for (int i = 0; i < directions-1; i+=2)
+            for (int i = 0; i < directions - 1; i += 2)
             {
                 var dir = (Direction)i;
 
@@ -211,7 +251,9 @@ public sealed class ContainmentFieldGeneratorSystem : EntitySystem
 
         if (component.PowerBuffer < component.PowerMinimum && component.Connections.Count != 0)
         {
-            RemoveConnections(generator);
+            // Only remove connections if the generators on BOTH sides of the field don't have enough power.
+            // Since we only run this code if we know this gen doesn't have enough power, we only have to check the other gen.
+            RemoveConnections(generator, (_, otherGen) => otherGen.Comp.PowerBuffer < otherGen.Comp.PowerMinimum);
         }
 
         ChangePowerVisualizer(power, generator);
@@ -234,7 +276,7 @@ public sealed class ContainmentFieldGeneratorSystem : EntitySystem
         if (!gen1XForm.Anchored)
             return false;
 
-        var genWorldPosRot = gen1XForm.GetWorldPositionRotation();
+        var genWorldPosRot = _transformSystem.GetWorldPositionRotation(gen1XForm);
         var dirRad = dir.ToAngle() + genWorldPosRot.WorldRotation; //needs to be like this for the raycast to work properly
 
         var ray = new CollisionRay(genWorldPosRot.WorldPosition, dirRad.ToVec(), component.CollisionMask);
@@ -311,7 +353,7 @@ public sealed class ContainmentFieldGeneratorSystem : EntitySystem
             var newField = Spawn(firstGen.Comp.CreatedField, currentCoords);
 
             var fieldXForm = Transform(newField);
-            fieldXForm.AttachParent(firstGen);
+            _transformSystem.SetParent(newField, fieldXForm, firstGen);
             if (dirVec.GetDir() == Direction.East || dirVec.GetDir() == Direction.West)
             {
                 var angle = fieldXForm.LocalPosition.ToAngle();
@@ -384,7 +426,7 @@ public sealed class ContainmentFieldGeneratorSystem : EntitySystem
     {
         _visualizer.SetData(generator, ContainmentFieldGeneratorVisuals.FieldLight, generator.Comp.Connections.Count switch
         {
-            >1 => FieldLevelVisuals.MultipleFields,
+            > 1 => FieldLevelVisuals.MultipleFields,
             1 => FieldLevelVisuals.OneField,
             _ => generator.Comp.Enabled ? FieldLevelVisuals.On : FieldLevelVisuals.NoLevel
         });
@@ -393,6 +435,7 @@ public sealed class ContainmentFieldGeneratorSystem : EntitySystem
     private void ChangeOnLightVisualizer(Entity<ContainmentFieldGeneratorComponent> generator)
     {
         _visualizer.SetData(generator, ContainmentFieldGeneratorVisuals.OnLight, generator.Comp.IsConnected);
+        UpdateConnectionLights(generator);
     }
     #endregion
 

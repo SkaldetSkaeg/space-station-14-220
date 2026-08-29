@@ -5,6 +5,7 @@
   description: A little bit of nature contained in a pot.
   abstract: true
   components:
+  - type: SpriteFade
   - type: Transform
     noRot: true
   - type: InteractionOutline
@@ -21,18 +22,25 @@
         - HighImpassable
   - type: Sprite
     drawdepth: Overdoors
-    offset: "0.0,0.3"
-    sprite: Structures/Furniture/potted_plants.rsi
+    offset: "0.0,0.1" #SS220 PottedUpdate
+    sprite: SS220/Structures/Furniture/PottedPlants/potted_plants.rsi #SS220 Resprite
     noRot: true
-  - type: PottedPlantHide
+  - type: Speech
+    speechVerb: Plant # for pais (In the secret stash)
   - type: SecretStash
-    secretPartName: secret-stash-part-plant
+    tryInsertItemSound: /Audio/Effects/plant_rustle.ogg
+    tryRemoveItemSound: /Audio/Effects/plant_rustle.ogg
+    secretStashName: secret-stash-plant
   - type: ContainerContainer
     containers:
       stash: !type:ContainerSlot {}
   - type: Pullable
+  - type: MultiHandedItem
+  - type: Item
+    sprite: SS220/Structures/Furniture/PottedPlants/potted_plants.rsi #SS220 Resprite
+    size: Huge
   - type: Damageable
-    damageContainer: Inorganic # The pot. Not the plant. Or is it plastic?
+    damageContainer: StructuralInorganic # The pot. Not the plant. Or is it plastic?
   - type: Destructible
     thresholds:
     - trigger:
@@ -116,7 +124,7 @@
   components:
   - type: Sprite
     state: plant-09
-  - type: PointLight
+  - type: PointLight #SS220 PottedUpdate
     radius: 2
     color: "#2cb2e8"
 
@@ -197,6 +205,12 @@
   components:
   - type: Sprite
     state: plant-20
+  #SS220 PottedUpdate begin
+  - type: PointLight
+    radius: 1.5
+    energy: 3
+    color: "#f5c96d"
+  #SS220 PottedUpdate end
 
 - type: entity
   id: PottedPlant21

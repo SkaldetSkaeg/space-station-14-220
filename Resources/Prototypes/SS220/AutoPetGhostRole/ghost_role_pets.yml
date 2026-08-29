@@ -118,6 +118,19 @@
   - type: GhostTakeoverAvailable
 
 - type: entity
+  parent: MobPossumPoppy
+  id: MobPossumPoppyGhostRole
+  suffix: Роль
+  components:
+  - type: GhostRole
+    makeSentient: true
+    allowSpeech: true
+    allowMovement: true
+    name: ghost-role-information-poppy-name
+    description: ghost-role-information-poppy-description
+  - type: GhostTakeoverAvailable
+
+- type: entity
   parent: MobRaccoonMorticia
   id: MobRaccoonMorticiaGhostRole
   suffix: Роль
@@ -197,3 +210,39 @@
     description: ghost-role-information-pet-spacecat-description
   - type: GhostTakeoverAvailable
 # SS220 AVD pet end
+
+- type: entity
+  parent: MobAlbinoCrocodile
+  id: MobStevenCrocodileGhostRole
+  name: steven
+  description: A snow-white crocodile with a golden collar, the personification of luxury and justice, the judge's favorite pet, who loves to chew on case protocols and crunch evidence.
+  suffix: Роль
+  components:
+  - type: Language
+    availableLanguages:
+    - id: Galactic
+      canSpeak: false
+  - type: GhostRole
+    makeSentient: true
+    allowSpeech: true
+    allowMovement: true
+    name: ghost-role-information-pet-steven-name
+    description: ghost-role-information-pet-steven-description
+    job: SecurityPet
+  - type: GhostTakeoverAvailable
+
+- type: entity
+  parent: MobRabbitBnuuy
+  id: MobRabbitBnuuyGhostRole
+  name: bnuuy
+  description: A frisky kid who can't sit still, always rushes into battle, loves carrots, and also likes to arrange a brig race with Roxy.
+  suffix: Role
+  components:
+  - type: GhostRole
+    makeSentient: true
+    allowSpeech: true
+    allowMovement: true
+    name: ghost-role-information-pet-bnuuy-name
+    description: ghost-role-information-pet-bnuuy-description
+    job: SecurityPet
+  - type: GhostTakeoverAvailable

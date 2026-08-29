@@ -5,6 +5,11 @@
   description: This is used to lie in, sleep in or strap on. Resting here provides extremely slow healing.
   components:
   - type: HealOnBuckle
+    #SS220-MicroFixesIPC begin
+    blacklist: 
+      components:
+      - Ipc
+    #SS220-MicroFixesIPC end
     damage:
       types:
         Poison: -0.1
@@ -27,6 +32,7 @@
   - type: Strap
     position: Down
     rotation: -90
+    drawDepth: Items #SS220 Change DrawDepth on buckle
   # Construction has to be before PlaceableSurface or you'll place things onto the entity instead of deconstructing it.
   - type: Construction
     graph: bed
@@ -40,6 +46,12 @@
     damageModifierSet: Metallic
   - type: Destructible
     thresholds:
+    - trigger: # Excess damage, don't spawn entities
+        !type:DamageTrigger
+        damage: 200
+      behaviors:
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
     - trigger:
         !type:DamageTrigger
         damage: 75
@@ -56,6 +68,11 @@
     noRot: true
   - type: Anchorable
   - type: Pullable
+  #SS220 Add lying action begin
+  - type: Tag
+    tags:
+    - Bed
+  #SS220 Add lying action end
 
 
 - type: entity
@@ -67,6 +84,11 @@
   - type: Sprite
     state: bed-MED
   - type: HealOnBuckle
+    #SS220-MicroFixesIPC begin
+    blacklist: 
+      components:
+      - Ipc
+    #SS220-MicroFixesIPC end
     damage:
       types:
         Poison: -0.2
@@ -77,7 +99,7 @@
     node: medicalbed
   - type: GuideHelp
     guides:
-    - Medical Doctor
+    - MedicalDoctor
 
 - type: entity
   parent: Bed
@@ -97,6 +119,15 @@
     damageModifierSet: Wood
   - type: Destructible
     thresholds:
+    - trigger: # Excess damage, don't spawn entities
+        !type:DamageTrigger
+        damage: 200
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WoodDestroy
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
     - trigger:
         !type:DamageTrigger
         damage: 75
@@ -136,6 +167,15 @@
     state: icon
   - type: Destructible
     thresholds:
+    - trigger: # Excess damage, don't spawn entities
+        !type:DamageTrigger
+        damage: 200
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WoodDestroy
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
     - trigger:
         !type:DamageTrigger
         damage: 50
@@ -168,6 +208,12 @@
         Cold: -0.5
   - type: Destructible
     thresholds:
+    - trigger: # Excess damage, don't spawn entities
+        !type:DamageTrigger
+        damage: 200
+      behaviors:
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
     - trigger:
         !type:DamageTrigger
         damage: 75

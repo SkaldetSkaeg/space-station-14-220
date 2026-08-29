@@ -1,6 +1,5 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
-using Content.Shared.Antag;
 using Content.Shared.StatusIcon;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
@@ -19,7 +18,7 @@ public sealed partial class MindSlaveMasterComponent : Component
     [ViewVariables(VVAccess.ReadOnly), AutoNetworkedField]
     public List<EntityUid> EnslavedEntities = new();
 
-    public ProtoId<StatusIconPrototype> StatusIcon { get; set; } = "MindSlaveMasterIcon";
+    public ProtoId<FactionIconPrototype> StatusIcon { get; set; } = "MindSlaveMasterIcon";
 
     public bool IconVisibleToGhost { get; set; } = false;
 }

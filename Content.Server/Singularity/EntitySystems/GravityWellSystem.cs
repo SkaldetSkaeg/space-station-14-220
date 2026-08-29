@@ -2,6 +2,7 @@ using System.Numerics;
 using Content.Server.Singularity.Components;
 using Content.Shared.Atmos.Components;
 using Content.Shared.Ghost;
+using Content.Shared.Physics;
 using Content.Shared.Singularity.EntitySystems;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
@@ -35,13 +36,29 @@ public sealed class GravityWellSystem : SharedGravityWellSystem
     /// </summary>
     public const float MinGravPulseRange = 0.00001f;
 
+    private EntityQuery<GravityWellComponent> _wellQuery;
+    private EntityQuery<MapComponent> _mapQuery;
+    private EntityQuery<MapGridComponent> _gridQuery;
+    private EntityQuery<PhysicsComponent> _physicsQuery;
+
+    private HashSet<EntityUid> _entSet = new();
+
     public override void Initialize()
     {
         base.Initialize();
-        SubscribeLocalEvent<GravityWellComponent, ComponentStartup>(OnGravityWellStartup);
+        _wellQuery = GetEntityQuery<GravityWellComponent>();
+        _mapQuery = GetEntityQuery<MapComponent>();
+        _gridQuery = GetEntityQuery<MapGridComponent>();
+        _physicsQuery = GetEntityQuery<PhysicsComponent>();
+        SubscribeLocalEvent<GravityWellComponent, MapInitEvent>(OnGravityWellMapInit);
 
         var vvHandle = _vvManager.GetTypeHandler<GravityWellComponent>();
         vvHandle.AddPath(nameof(GravityWellComponent.TargetPulsePeriod), (_, comp) => comp.TargetPulsePeriod, SetPulsePeriod);
+    }
+
+    private void OnGravityWellMapInit(Entity<GravityWellComponent> ent, ref MapInitEvent args)
+    {
+        ent.Comp.NextPulseTime = _timing.CurTime + ent.Comp.TargetPulsePeriod;
     }
 
     public override void Shutdown()
@@ -58,13 +75,11 @@ public sealed class GravityWellSystem : SharedGravityWellSystem
     /// <param name="frameTime">The time elapsed since the last set of updates.</param>
     public override void Update(float frameTime)
     {
-        if(!_timing.IsFirstTimePredicted)
-            return;
-
         var query = EntityQueryEnumerator<GravityWellComponent, TransformComponent>();
         while (query.MoveNext(out var uid, out var gravWell, out var xform))
         {
             var curTime = _timing.CurTime;
+
             if (gravWell.NextPulseTime <= curTime)
                 Update(uid, curTime - gravWell.LastPulseTime, gravWell, xform);
         }
@@ -95,8 +110,7 @@ public sealed class GravityWellSystem : SharedGravityWellSystem
         if(!Resolve(uid, ref gravWell))
             return;
 
-        gravWell.LastPulseTime = _timing.CurTime;
-        gravWell.NextPulseTime = gravWell.LastPulseTime + gravWell.TargetPulsePeriod;
+        gravWell.NextPulseTime += gravWell.TargetPulsePeriod;
         if (gravWell.MaxRange < 0.0f || !Resolve(uid, ref xform))
             return;
 
@@ -113,12 +127,12 @@ public sealed class GravityWellSystem : SharedGravityWellSystem
     /// <param name="entity">The entity to check.</param>
     private bool CanGravPulseAffect(EntityUid entity)
     {
-        if (
-            EntityManager.HasComponent<GhostComponent>(entity) ||
-            EntityManager.HasComponent<MapGridComponent>(entity) ||
-            EntityManager.HasComponent<MapComponent>(entity) ||
-            EntityManager.HasComponent<GravityWellComponent>(entity)
-        ) return false;
+        //SS220-gravpull-straps-fix begin
+        if (HasComp<GhostComponent>(entity) || HasComp<MapGridComponent>(entity) ||
+            HasComp<MapComponent>(entity) || HasComp<GravityWellComponent>(entity))
+        {
+            return false;
+        }
 
         // Can't be affected if you're fully buckled up
         // btw looks ugly to me, but it'll work for now
@@ -127,12 +141,23 @@ public sealed class GravityWellSystem : SharedGravityWellSystem
         {
             if (_buckle.IsFastenedSeatbelt(entity, buckleComp))
                 return false;
+
             // Can't be affected if you're handcuffed (like, you're cuffed to the chair???)
             if (TryComp<CuffableComponent>(entity, out var cuffableComp))
                 return cuffableComp.CanStillInteract;
         }
 
-        return true;
+        //SS220-gravpull-straps-fix end
+        if (_physicsQuery.TryComp(entity, out var physics))
+        {
+            if (physics.CollisionLayer == (int) CollisionGroup.GhostImpassable)
+                return false;
+        }
+
+        return !(_gridQuery.HasComp(entity) ||
+                 _mapQuery.HasComp(entity) ||
+                 _wellQuery.HasComp(entity)
+        );
     }
 
     /// <summary>
@@ -197,15 +222,18 @@ public sealed class GravityWellSystem : SharedGravityWellSystem
         if (mapPos == MapCoordinates.Nullspace)
             return; // No gravpulses in nullspace please.
 
+        _entSet.Clear();
         var epicenter = mapPos.Position;
         var minRange2 = MathF.Max(minRange * minRange, MinGravPulseRange); // Cache square value for speed. Also apply a sane minimum value to the minimum value so that div/0s don't happen.
-        var bodyQuery = GetEntityQuery<PhysicsComponent>();
-        var xformQuery = GetEntityQuery<TransformComponent>();
+        _lookup.GetEntitiesInRange(mapPos.MapId,
+            epicenter,
+            maxRange,
+            _entSet,
+            flags: LookupFlags.Dynamic | LookupFlags.Sundries);
 
-        foreach(var entity in _lookup.GetEntitiesInRange(mapPos.MapId, epicenter, maxRange, flags: LookupFlags.Dynamic | LookupFlags.Sundries))
+        foreach (var entity in _entSet)
         {
-            if (!bodyQuery.TryGetComponent(entity, out var physics)
-                || physics.BodyType == BodyType.Static)
+            if (!_physicsQuery.TryGetComponent(entity, out var physics))
             {
                 continue;
             }
@@ -216,7 +244,7 @@ public sealed class GravityWellSystem : SharedGravityWellSystem
             if(!CanGravPulseAffect(entity))
                 continue;
 
-            var displacement = epicenter - _transform.GetWorldPosition(entity, xformQuery);
+            var displacement = epicenter - _transform.GetWorldPosition(entity);
             var distance2 = displacement.LengthSquared();
             if (distance2 < minRange2)
                 continue;
@@ -265,20 +293,4 @@ public sealed class GravityWellSystem : SharedGravityWellSystem
     }
 
     #endregion Getters/Setters
-
-    #region Event Handlers
-
-    /// <summary>
-    /// Resets the pulse timings of the gravity well when the components starts up.
-    /// </summary>
-    /// <param name="uid">The uid of the gravity well to start up.</param>
-    /// <param name="comp">The state of the gravity well to start up.</param>
-    /// <param name="args">The startup prompt arguments.</param>
-    public void OnGravityWellStartup(EntityUid uid, GravityWellComponent comp, ComponentStartup args)
-    {
-        comp.LastPulseTime = _timing.CurTime;
-        comp.NextPulseTime = comp.LastPulseTime + comp.TargetPulsePeriod;
-    }
-
-    #endregion Event Handlers
 }

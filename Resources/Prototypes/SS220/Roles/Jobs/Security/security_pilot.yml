@@ -1,0 +1,52 @@
+- type: job
+  id: SecurityPilot
+  name: пилот СБ
+  description: Ловите преступников на станции, бороздите просторы космоса в поисках... Чего-нибудь.
+  playTimeTracker: JobSecurityPilot
+  requirements:
+    - !type:DepartmentTimeRequirement
+      department: Security
+      time: 54000
+    - !type:SpeciesRequirement
+      inverted: true
+      species:
+      - Felinid
+  startingGear: SecurityPilotGear
+  experienceDefinition: SecurityPilotRoleExperience
+  icon: "JobIconSecurityPilot"
+  supervisors: job-supervisors-hos
+  canBeAntag: false
+  access:
+  - Security
+  - Brig
+  - Maintenance
+  - Service
+  - External
+  special:
+  - !type:AddImplantSpecial
+    implants: [ MindShieldImplant ]
+
+- type: startingGear
+  id: SecurityPilotGear
+  equipment:
+    ears: ClothingHeadsetSecurity
+    id: SecurityPilotPDA #SS220 SD-pda-some-fixes
+    belt: ClothingBeltSecurityFilled
+    gloves: ClothingHandsGlovesCombat
+    pocket1: WeaponPistolMk58
+  storage:
+    back:
+    - Flash
+    - MagazinePistol
+    - MagazinePistol
+    - FlashlightSeclite
+    - DrinkRelaxingPeachCan
+
+- type: chameleonOutfit
+  id: SecurityPilotChameleonOutfit
+  job: SecurityPilot
+  hasMindShield: true
+  equipment:
+    head: ClothingHeadHatBeretSecurity
+    mask: ClothingMaskGasSecurity
+    neck: ClothingBeltHolster

@@ -11,7 +11,12 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using System.Linq;
 using System.Text;
+using Content.Server.Objectives.Commands;
+using Content.Shared.CCVar;
+using Content.Shared.Prototypes;
+using Content.Shared.Roles.Jobs;
 using Robust.Server.Player;
+using Robust.Shared.Configuration;
 using Robust.Shared.Utility;
 
 namespace Content.Server.Objectives;
@@ -23,13 +28,32 @@ public sealed class ObjectivesSystem : SharedObjectivesSystem
     [Dependency] private readonly IPlayerManager _player = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly EmergencyShuttleSystem _emergencyShuttle = default!;
+    [Dependency] private readonly SharedJobSystem _job = default!;
+    [Dependency] private readonly IConfigurationManager _cfg = default!;
+
+    //private IEnumerable<string>? _objectives; // ss220 add custom goals x2
+
+    private bool _showGreentext;
 
     public override void Initialize()
     {
         base.Initialize();
 
         SubscribeLocalEvent<RoundEndTextAppendEvent>(OnRoundEndText);
+
+        Subs.CVar(_cfg, CCVars.GameShowGreentext, value => _showGreentext = value, true);
+
+        //_prototypeManager.PrototypesReloaded += CreateCompletions; // ss220 add custom goals x2
     }
+
+    // ss220 add custom goals x2 start
+    // public override void Shutdown()
+    // {
+    //     base.Shutdown();
+    //
+    //     _prototypeManager.PrototypesReloaded -= CreateCompletions;
+    // }
+    // // ss220 add custom goals x2 end
 
     /// <summary>
     /// Adds objective text for each game rule's players on round end.
@@ -70,6 +94,39 @@ public sealed class ObjectivesSystem : SharedObjectivesSystem
                 summary[prepend.Text] = info.Minds;
             }
         }
+
+        // ss220 add custom goals x2 start
+        var processedMinds = new HashSet<EntityUid>();
+
+        foreach (var mindsList in summaries.Values.SelectMany(agentDict => agentDict.Values))
+        {
+            foreach (var (mindIdInList, _) in mindsList)
+            {
+                processedMinds.Add(mindIdInList);
+            }
+        }
+
+        var mindQuery = EntityQueryEnumerator<MindComponent>();
+
+        while (mindQuery.MoveNext(out var mindId, out var mindComp))
+        {
+            if (processedMinds.Contains(mindId) || mindComp.Objectives.Count == 0)
+                continue;
+
+            var agent = Loc.GetString("free-objective-round-end-agent-name");
+            var name = mindComp.CharacterName ?? Loc.GetString("objective-issuer-unknown");
+
+            if (!summaries.ContainsKey(agent))
+                summaries[agent] = new Dictionary<string, List<(EntityUid, string)>>();
+
+            var summary = summaries[agent];
+
+            if (!summary.ContainsKey(string.Empty))
+                summary[string.Empty] = [];
+
+            summary[string.Empty].Add((mindId, name));
+        }
+        // ss220 add custom goals x2 end
 
         // convert the data into summary text
         foreach (var (agent, summary) in summaries)
@@ -147,22 +204,41 @@ public sealed class ObjectivesSystem : SharedObjectivesSystem
                     totalObjectives++;
 
                     agentSummary.Append("- ");
-                    if (progress > 0.99f)
+                    if (!_showGreentext)
+                    {
+                        agentSummary.AppendLine(objectiveTitle);
+                    }
+                    else if (progress > 0.99f)
                     {
                         agentSummary.AppendLine(Loc.GetString(
                             "objectives-objective-success",
                             ("objective", objectiveTitle),
-                            ("markupColor", "green")
+                            ("progress", progress)
                         ));
                         completedObjectives++;
+                    }
+                    else if (progress <= 0.99f && progress >= 0.5f)
+                    {
+                        agentSummary.AppendLine(Loc.GetString(
+                            "objectives-objective-partial-success",
+                            ("objective", objectiveTitle),
+                            ("progress", progress)
+                        ));
+                    }
+                    else if (progress < 0.5f && progress > 0f)
+                    {
+                        agentSummary.AppendLine(Loc.GetString(
+                            "objectives-objective-partial-failure",
+                            ("objective", objectiveTitle),
+                            ("progress", progress)
+                        ));
                     }
                     else
                     {
                         agentSummary.AppendLine(Loc.GetString(
                             "objectives-objective-fail",
                             ("objective", objectiveTitle),
-                            ("progress", (int) (progress * 100)),
-                            ("markupColor", "red")
+                            ("progress", progress)
                         ));
                     }
                 }
@@ -203,8 +279,10 @@ public sealed class ObjectivesSystem : SharedObjectivesSystem
             var objectives = group.Weights.ShallowClone();
             while (_random.TryPickAndTake(objectives, out var objectiveProto))
             {
-                if (TryCreateObjective((mindId, mind), objectiveProto, out var objective)
-                    && Comp<ObjectiveComponent>(objective.Value).Difficulty <= maxDifficulty)
+                if (!_prototypeManager.Index(objectiveProto).TryGetComponent<ObjectiveComponent>(out var objectiveComp, EntityManager.ComponentFactory))
+                    continue;
+
+                if (objectiveComp.Difficulty <= maxDifficulty && TryCreateObjective((mindId, mind), objectiveProto, out var objective))
                     return objective;
             }
         }
@@ -244,11 +322,44 @@ public sealed class ObjectivesSystem : SharedObjectivesSystem
             _player.TryGetPlayerData(mind.Comp.OriginalOwnerUserId.Value, out var sessionData))
         {
             var username = sessionData.UserName;
-            return Loc.GetString("objectives-player-user-named", ("user", username), ("name", name));
+
+            var nameWithJobMaybe = name;
+            if (_job.MindTryGetJobName(mind, out var jobName))
+                nameWithJobMaybe += ", " + jobName;
+
+            return Loc.GetString("objectives-player-user-named", ("user", username), ("name", nameWithJobMaybe));
         }
 
         return Loc.GetString("objectives-player-named", ("name", name));
     }
+
+
+    // ss220 add custom goals x2 start
+    // private void CreateCompletions(PrototypesReloadedEventArgs unused)
+    // {
+    //     CreateCompletions();
+    // }
+    //
+    // /// <summary>
+    // /// Get all objective prototypes by their IDs.
+    // /// This is used for completions in <see cref="AddObjectiveCommand"/>
+    // /// </summary>
+    // public IEnumerable<string> Objectives()
+    // {
+    //     if (_objectives == null)
+    //         CreateCompletions();
+    //
+    //     return _objectives!;
+    // }
+    //
+    // private void CreateCompletions()
+    // {
+    //     _objectives = _prototypeManager.EnumeratePrototypes<EntityPrototype>()
+    //         .Where(p => p.HasComponent<ObjectiveComponent>())
+    //         .Select(p => p.ID)
+    //         .Order();
+    // }
+    // ss220 add custom goals x2 end
 }
 
 /// <summary>

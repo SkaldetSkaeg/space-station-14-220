@@ -43,7 +43,7 @@ namespace Content.MapRenderer.Painters
             _decals = GetDecals();
         }
 
-        public void Run(Image gridCanvas, EntityUid gridUid, MapGridComponent grid)
+        public void Run(Image gridCanvas, EntityUid gridUid, MapGridComponent grid, Vector2 customOffset = default)
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -56,10 +56,10 @@ namespace Content.MapRenderer.Painters
 
             // Decals are always painted before entities, and are also optional.
             if (_decals.TryGetValue(gridUid, out var decals))
-                _decalPainter.Run(gridCanvas, CollectionsMarshal.AsSpan(decals));
+                _decalPainter.Run(gridCanvas, CollectionsMarshal.AsSpan(decals), customOffset);
 
 
-            _entityPainter.Run(gridCanvas, entities);
+            _entityPainter.Run(gridCanvas, entities, customOffset);
             Console.WriteLine($"{nameof(GridPainter)} painted grid {gridUid} in {(int) stopwatch.Elapsed.TotalMilliseconds} ms");
         }
 
@@ -90,7 +90,14 @@ namespace Content.MapRenderer.Painters
                     var position = transform.LocalPosition;
 
                     var (x, y) = TransformLocalPosition(position, grid);
-                    var data = new EntityData(serverEntity, sprite, x, y);
+                    // SS220 Map Rendering Crash Fix start
+                    //var data = new EntityData(serverEntity, sprite, x, y)
+                    var data = new EntityData(serverEntity, sprite, x, y)
+                    {
+                        MetaData = _sEntityManager.GetComponent<MetaDataComponent>(serverEntity),
+                        LocalPosition = position,
+                    };
+                    // SS220 Map Rendering Crash Fix end
 
                     components.GetOrAdd(transform.GridUid.Value, _ => new List<EntityData>()).Add(data);
                 }

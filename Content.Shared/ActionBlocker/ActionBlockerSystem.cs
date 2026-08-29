@@ -1,7 +1,9 @@
 using Content.Shared.Body.Events;
 using Content.Shared.Emoting;
+using Content.Shared.SS220.AltBlocking;
 using Content.Shared.Hands;
 using Content.Shared.Interaction;
+using Content.Shared.Interaction.Components;
 using Content.Shared.Interaction.Events;
 using Content.Shared.Item;
 using Content.Shared.Movement.Components;
@@ -22,17 +24,11 @@ namespace Content.Shared.ActionBlocker
     {
         [Dependency] private readonly SharedContainerSystem _container = default!;
 
-        public override void Initialize()
-        {
-            base.Initialize();
-            SubscribeLocalEvent<InputMoverComponent, ComponentStartup>(OnMoverStartup);
-        }
+        [Dependency] private readonly EntityQuery<ComplexInteractionComponent> _complexInteractionQuery = default!;
 
-        private void OnMoverStartup(EntityUid uid, InputMoverComponent component, ComponentStartup args)
-        {
-            UpdateCanMove(uid, component);
-        }
-
+        // These two methods should probably both live in SharedMoverController
+        // but they're called in a million places and I'm not doing that
+        // refactor right now.
         public bool CanMove(EntityUid uid, InputMoverComponent? component = null)
         {
             return Resolve(uid, ref component, false) && component.CanMove;
@@ -51,6 +47,15 @@ namespace Content.Shared.ActionBlocker
 
             component.CanMove = !ev.Cancelled;
             return !ev.Cancelled;
+        }
+
+        /// <summary>
+        /// Checks if a given entity is able to do specific complex interactions.
+        /// This is used to gate manipulation to general humanoids. If a mouse shouldn't be able to do something, then it's complex.
+        /// </summary>
+        public bool CanComplexInteract(EntityUid user)
+        {
+            return _complexInteractionQuery.HasComp(user);
         }
 
         /// <summary>
@@ -94,10 +99,16 @@ namespace Content.Shared.ActionBlocker
         /// </remarks>
         public bool CanUseHeldEntity(EntityUid user, EntityUid used)
         {
-            var ev = new UseAttemptEvent(user, used);
-            RaiseLocalEvent(user, ev);
+            var useEv = new UseAttemptEvent(user, used);
+            RaiseLocalEvent(user, useEv);
 
-            return !ev.Cancelled;
+            if (useEv.Cancelled)
+                return false;
+
+            var usedEv = new GettingUsedAttemptEvent(user);
+            RaiseLocalEvent(used, usedEv);
+
+            return !usedEv.Cancelled;
         }
 
 
@@ -146,15 +157,21 @@ namespace Content.Shared.ActionBlocker
             return !ev.Cancelled;
         }
 
-        public bool CanPickup(EntityUid user, EntityUid item)
+        /// <summary>
+        /// Whether a user can pickup the given item.
+        /// </summary>
+        /// <param name="user">The mob trying to pick up the item.</param>
+        /// <param name="item">The item being picked up.</param>
+        /// <param name="showPopup">Whether or not to show a popup to the player telling them why the attempt failed.</param>
+        public bool CanPickup(EntityUid user, EntityUid item, bool showPopup = false)
         {
-            var userEv = new PickupAttemptEvent(user, item);
+            var userEv = new PickupAttemptEvent(user, item, showPopup);
             RaiseLocalEvent(user, userEv);
 
             if (userEv.Cancelled)
                 return false;
 
-            var itemEv = new GettingPickedUpAttemptEvent(user, item);
+            var itemEv = new GettingPickedUpAttemptEvent(user, item, showPopup);
             RaiseLocalEvent(item, itemEv);
 
             return !itemEv.Cancelled;
@@ -174,6 +191,10 @@ namespace Content.Shared.ActionBlocker
             // If target is in a container can we attack
             if (target != null && _container.IsEntityInContainer(target.Value))
             {
+                //SS220 shield rework begin
+                if (TryComp<AltBlockingComponent>(target, out var comp) && comp.User != null)
+                    return true;
+                //SS220 shield rework end
                 return false;
             }
 
@@ -184,7 +205,8 @@ namespace Content.Shared.ActionBlocker
             {
                 var containerEv = new CanAttackFromContainerEvent(uid, target);
                 RaiseLocalEvent(uid, containerEv);
-                return containerEv.CanAttack;
+                if (!containerEv.CanAttack)
+                    return false;
             }
 
             var ev = new AttackAttemptEvent(uid, target, weapon, disarm);

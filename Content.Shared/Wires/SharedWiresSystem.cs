@@ -4,7 +4,10 @@ using Content.Shared.Examine;
 using Content.Shared.Interaction;
 using Content.Shared.Tools.Systems;
 using Content.Shared.UserInterface;
+using Content.Shared.Verbs;
 using Robust.Shared.Audio.Systems;
+using Robust.Shared.Player;
+using Robust.Shared.Utility;
 
 namespace Content.Shared.Wires;
 
@@ -15,6 +18,7 @@ public abstract class SharedWiresSystem : EntitySystem
     [Dependency] protected readonly SharedAppearanceSystem Appearance = default!;
     [Dependency] protected readonly SharedAudioSystem Audio = default!;
     [Dependency] protected readonly SharedToolSystem Tool = default!;
+    [Dependency] protected readonly SharedUserInterfaceSystem UI = default!;
 
     public override void Initialize()
     {
@@ -24,6 +28,7 @@ public abstract class SharedWiresSystem : EntitySystem
         SubscribeLocalEvent<WiresPanelComponent, WirePanelDoAfterEvent>(OnPanelDoAfter);
         SubscribeLocalEvent<WiresPanelComponent, InteractUsingEvent>(OnInteractUsing);
         SubscribeLocalEvent<WiresPanelComponent, ExaminedEvent>(OnExamine);
+        SubscribeLocalEvent<WiresPanelComponent, GetVerbsEvent<AlternativeVerb>>(OnGetVerbs);
 
         SubscribeLocalEvent<ActivatableUIRequiresPanelComponent, ActivatableUIOpenAttemptEvent>(OnAttemptOpenActivatableUI);
         SubscribeLocalEvent<ActivatableUIRequiresPanelComponent, PanelChangedEvent>(OnActivatableUIPanelChanged);
@@ -96,6 +101,32 @@ public abstract class SharedWiresSystem : EntitySystem
         }
     }
 
+    private void OnGetVerbs(Entity<WiresPanelComponent> ent, ref GetVerbsEvent<AlternativeVerb> args)
+    {
+        if (!IsPanelOpen(ent.Owner))
+            return;
+
+        var actor = args.User;
+        var verb = new AlternativeVerb
+        {
+            Text = Loc.GetString("wires-panel-verb-view-panel"),
+            Icon = new SpriteSpecifier.Texture(new ResPath("/Textures/Interface/VerbIcons/screwdriver.png")),
+            Act = () => OpenUserInterface(ent, actor),
+        };
+
+        args.Verbs.Add(verb);
+    }
+
+    public void OpenUserInterface(EntityUid uid, EntityUid actor)
+    {
+        UI.OpenUi(uid, WiresUiKey.Key, actor);
+    }
+
+    public void OpenUserInterface(EntityUid uid, ICommonSession player)
+    {
+        UI.OpenUi(uid, WiresUiKey.Key, player);
+    }
+
     public void ChangePanelVisibility(EntityUid uid, WiresPanelComponent component, bool visible)
     {
         component.Visible = visible;
@@ -130,10 +161,19 @@ public abstract class SharedWiresSystem : EntitySystem
         return !attempt.Cancelled;
     }
 
-    public bool IsPanelOpen(Entity<WiresPanelComponent?> entity)
+    public bool IsPanelOpen(Entity<WiresPanelComponent?> entity, EntityUid? tool = null)
     {
         if (!Resolve(entity, ref entity.Comp, false))
             return true;
+
+        if (tool != null)
+        {
+            var ev = new PanelOverrideEvent();
+            RaiseLocalEvent(tool.Value, ref ev);
+
+            if (ev.Allowed)
+                return true;
+        }
 
         // Listen, i don't know what the fuck this component does. it's stapled on shit for airlocks
         // but it looks like an almost direct duplication of WiresPanelComponent except with a shittier API.
@@ -160,4 +200,13 @@ public abstract class SharedWiresSystem : EntitySystem
 
         _activatableUI.CloseAll(uid);
     }
+}
+
+/// <summary>
+/// Raised directed on a tool to try and override panel visibility.
+/// </summary>
+[ByRefEvent]
+public record struct PanelOverrideEvent()
+{
+    public bool Allowed = true;
 }

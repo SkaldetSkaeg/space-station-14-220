@@ -1,40 +1,55 @@
 using Content.Shared.Access.Systems;
 using Content.Shared.PDA;
 using Content.Shared.SS220.CriminalRecords;
+using Content.Shared.Roles;
 using Content.Shared.StatusIcon;
 using Robust.Shared.GameStates;
-using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype;
+using Robust.Shared.Prototypes;
 
 namespace Content.Shared.Access.Components;
 
 [RegisterComponent, NetworkedComponent]
-[AutoGenerateComponentState]
+[AutoGenerateComponentState(true)]
 [Access(typeof(SharedIdCardSystem), typeof(SharedPdaSystem), typeof(SharedAgentIdCardSystem), Other = AccessPermissions.ReadWrite)]
 public sealed partial class IdCardComponent : Component
 {
-    [DataField("fullName"), ViewVariables(VVAccess.ReadWrite)]
+    [DataField]
     [AutoNetworkedField]
     // FIXME Friends
     public string? FullName;
 
-    [DataField("jobTitle")]
+    [DataField]
     [AutoNetworkedField]
-    [Access(typeof(SharedIdCardSystem), typeof(SharedPdaSystem), typeof(SharedAgentIdCardSystem), Other = AccessPermissions.ReadWrite), ViewVariables(VVAccess.ReadWrite)]
-    public string? JobTitle;
+    [Access(typeof(SharedIdCardSystem), typeof(SharedPdaSystem), typeof(SharedAgentIdCardSystem), Other = AccessPermissions.ReadWrite)]
+    public LocId? JobTitle;
+
+    [DataField]
+    [AutoNetworkedField]
+    private string? _jobTitle;
+
+    [Access(typeof(SharedIdCardSystem), typeof(SharedPdaSystem), typeof(SharedAgentIdCardSystem), Other = AccessPermissions.ReadWriteExecute)]
+    public string? LocalizedJobTitle { set => _jobTitle = value; get => _jobTitle ?? (JobTitle != null ? Loc.GetString(JobTitle) : string.Empty); }
 
     /// <summary>
     /// The state of the job icon rsi.
     /// </summary>
-    [DataField("jobIcon", customTypeSerializer: typeof(PrototypeIdSerializer<StatusIconPrototype>))]
+    [DataField]
     [AutoNetworkedField]
-    public string JobIcon = "JobIconUnknown";
+    public ProtoId<JobIconPrototype> JobIcon = "JobIconUnknown";
 
     /// <summary>
-    /// The unlocalized names of the departments associated with the job
+    /// Holds the job prototype when the ID card has no associated station record
     /// </summary>
-    [DataField("jobDepartments")]
+    [DataField]
     [AutoNetworkedField]
-    public List<LocId> JobDepartments = new();
+    public ProtoId<JobPrototype>? JobPrototype;
+
+    /// <summary>
+    /// The proto IDs of the departments associated with the job
+    /// </summary>
+    [DataField]
+    [AutoNetworkedField]
+    public List<ProtoId<DepartmentPrototype>> JobDepartments = new();
 
     // SS220 Criminal-Records begin
     [DataField, AutoNetworkedField]
@@ -56,7 +71,7 @@ public sealed partial class IdCardComponent : Component
     /// <summary>
     /// Determines if accesses from this card should be logged by <see cref="AccessReaderComponent"/>
     /// </summary>
-    [DataField, ViewVariables(VVAccess.ReadWrite)]
+    [DataField]
     public bool BypassLogging;
 
     [DataField]

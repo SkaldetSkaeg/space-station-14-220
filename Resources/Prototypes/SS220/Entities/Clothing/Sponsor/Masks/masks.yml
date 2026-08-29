@@ -1,0 +1,70 @@
+# © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
+
+# Bad Beard
+- type: entity
+  parent: ClothingSponsorMaskBase
+  id: ClothingSponsorWaltuhBeard
+  name: fake goatee
+  description: The purest product. 99.1%.
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/Mask/beard.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/Mask/beard.rsi
+  - type: Item
+    storedRotation: -90
+
+# Gold Clown
+- type: entity
+  parent: ClothingSponsorMaskBase
+  id: ClothingSponsorGoldClownMask
+  name: golden clown mask
+  description: It looks very heavy.
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/Mask/goldclownmask.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/Mask/goldclownmask.rsi
+  - type: BreathMask
+  - type: IdentityBlocker
+
+# Dallas
+- type: entity
+  parent: ClothingSponsorMaskBase
+  id: ClothingSponsorDallas
+  name: демократическая маска
+  description: Вошли и вышли, дело пяти минут.
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/Mask/dallas.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/Mask/dallas.rsi
+  - type: BreathMask
+  - type: IdentityBlocker
+
+# Fools
+- type: entity
+  parent: ClothingSponsorMaskBase
+  id: ClothingSponsorMaskMuzhik
+  name: muzhik's mask
+  description: There is no better pastime than drinking moonshine with your comrades.
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/Mask/muzhik.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/Mask/muzhik.rsi
+  - type: BreathMask
+  - type: IdentityBlocker
+
+- type: entity
+  parent: ClothingSponsorMaskBase
+  id: ClothingMaskMoryak
+  name: sailor's mask
+  description: Legend has it that the mask smiles at the sight of moonshine.
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/Mask/moryachok.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/Mask/moryachok.rsi
+  - type: BreathMask
+  - type: IdentityBlocker

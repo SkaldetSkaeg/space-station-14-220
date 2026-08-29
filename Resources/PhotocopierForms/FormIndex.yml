@@ -14,12 +14,23 @@
     - /PhotocopierForms/nanotrasen_central_command/main/cc_cmd_dcr_sop.xml
     - /PhotocopierForms/nanotrasen_central_command/main/cc_cmd_dcr_law.xml
     - /PhotocopierForms/nanotrasen_central_command/main/cc_cmd_dcr_arrival.xml
+    - /PhotocopierForms/nanotrasen_central_command/main/cc_cmd_dcr_reply.xml
+    - /PhotocopierForms/nanotrasen_central_command/main/cc_cmd_dcr_hhc.xml
+    - /PhotocopierForms/nanotrasen_central_command/main/cc_cmd_dcr_roi.xml
+    - /PhotocopierForms/nanotrasen_central_command/main/cc_cmd_dcr_ailaw.xml
+    - /PhotocopierForms/nanotrasen_central_command/main/cc_cmd_dcr_uvd.xml
   - Id: blank_сс
     Name: Свободные бланки ЦентКома
     IconPath: /Textures/SS220/DepartmentIcons/Centcom_dep.png
     Forms:
+    - /PhotocopierForms/nanotrasen_central_command/blank/blank_registered_letter_cc.xml
     - /PhotocopierForms/nanotrasen_central_command/blank/blank_regular_cc.xml
     - /PhotocopierForms/nanotrasen_central_command/blank/blank_secure_cc.xml
+  - Id: roundstart
+    Name: Особые документы
+    IconPath: /Textures/SS220/DepartmentIcons/Centcom_dep.png
+    Forms:
+    - /PhotocopierForms/nanotrasen_central_command/roundstart/hos_mindslave_briefing.xml
 - Id: nanotrasen_station
   Groups:
   - Id: goal
@@ -60,7 +71,7 @@
     - /PhotocopierForms/nanotrasen_station/hr/cmd_acwt.xml
   - Id: law
     Name: Юридический отдел
-    Color: "#DD4040FF"
+    Color: "#323ba9FF" #SS220-Law Department
     IconPath: /Textures/SS220/DepartmentIcons/Law_dep.png
     Forms:
     - /PhotocopierForms/nanotrasen_station/law/cmd_comp.xml
@@ -70,7 +81,14 @@
     - /PhotocopierForms/nanotrasen_station/law/sec_sopb_crit.xml
     - /PhotocopierForms/nanotrasen_station/law/sec_vdc.xml
     - /PhotocopierForms/nanotrasen_station/law/sec_vdc_gop.xml
+    - /PhotocopierForms/nanotrasen_station/law/law_exc.xml
+    - /PhotocopierForms/nanotrasen_station/law/law_zap.xml
+    - /PhotocopierForms/nanotrasen_station/law/law_rec.xml
     - /PhotocopierForms/nanotrasen_station/law/law_anonymousdenunciation.xml
+    - /PhotocopierForms/nanotrasen_station/law/law_request.xml #SS220-Law Department
+    - /PhotocopierForms/nanotrasen_station/law/law_pic.xml
+    - /PhotocopierForms/nanotrasen_station/law/law_cc_req.xml
+    - /PhotocopierForms/nanotrasen_station/law/law_hod.xml
   - Id: security
     Name: Служба Безопасности
     Color: "#DD4040FF"
@@ -78,9 +96,9 @@
     Forms:
     - /PhotocopierForms/nanotrasen_station/security/sec_awt.xml
     - /PhotocopierForms/nanotrasen_station/security/sec_dty.xml
-    - /PhotocopierForms/nanotrasen_station/security/sec_exc.xml
     - /PhotocopierForms/nanotrasen_station/security/sec_inw.xml
     - /PhotocopierForms/nanotrasen_station/security/sec_itg.xml
+    - /PhotocopierForms/nanotrasen_station/security/sec_ssl.xml
     - /PhotocopierForms/nanotrasen_station/security/sec_ord_imp.xml
     - /PhotocopierForms/nanotrasen_station/security/sec_pmt.xml
     - /PhotocopierForms/nanotrasen_station/security/sec_rep_itg.xml
@@ -89,6 +107,7 @@
     - /PhotocopierForms/nanotrasen_station/security/sup_ord_wep.xml
     - /PhotocopierForms/nanotrasen_station/security/sec_sitrep.xml
     - /PhotocopierForms/nanotrasen_station/security/sec_prig.xml
+    - /PhotocopierForms/nanotrasen_station/security/sec_den.xml
   - Id: medical
     Name: Медицинский отдел
     Color: "#8585FFFF"
@@ -101,6 +120,7 @@
     - /PhotocopierForms/nanotrasen_station/medical/med_rep_psych.xml
     - /PhotocopierForms/nanotrasen_station/medical/med_rep_psych_tourette.xml
     - /PhotocopierForms/nanotrasen_station/medical/med_sitrep.xml
+    - /PhotocopierForms/nanotrasen_station/medical/med_rep_hhc.xml
   - Id: engineering
     Name: Инженерный отдел
     Color: "#FCA503FF"
@@ -115,10 +135,13 @@
     Color: "#AB2EFFFF"
     IconPath: /Textures/SS220/DepartmentIcons/Sci_dep.png
     Forms:
+    - /PhotocopierForms/nanotrasen_station/science/rnd_sitrep.xml
     - /PhotocopierForms/nanotrasen_station/science/rnd_ord.xml
     - /PhotocopierForms/nanotrasen_station/science/rnd_rnt.xml
     - /PhotocopierForms/nanotrasen_station/science/rnd_rar.xml
     - /PhotocopierForms/nanotrasen_station/science/rnd_ror.xml
+    - /PhotocopierForms/nanotrasen_station/science/rnd_dfct.xml
+    - /PhotocopierForms/nanotrasen_station/science/rnd_dob.xml
   - Id: cargo
     Name: Отдел снабжения
     Color: "#C2904AFF"
@@ -146,6 +169,7 @@
     - /PhotocopierForms/nanotrasen_station/blank/blank_regular_med.xml
     - /PhotocopierForms/nanotrasen_station/blank/blank_regular_sci.xml
     - /PhotocopierForms/nanotrasen_station/blank/blank_regular_sec.xml
+    - /PhotocopierForms/nanotrasen_station/blank/blank_regular_law.xml #SS220-Law Department
 - Id: syndicate
   Groups:
   - Id: syndicate

@@ -1,6 +1,6 @@
 ## Entity
 
-gas-analyzer-component-player-cannot-reach-message = Вы не можете туда достать.
+gas-analyzer-object-out-of-range = Объект покинул зону действия.
 gas-analyzer-shutoff = Газоанализатор выключается.
 
 ## UI
@@ -21,6 +21,7 @@ gas-analyzer-window-temperature-val-text = { $tempK }К ({ $tempC }°C)
 gas-analyzer-window-gas-column-name = Газ
 gas-analyzer-window-molarity-column-name = моль
 gas-analyzer-window-percentage-column-name = %
+gas-analyzer-window-molarity-text = { $mol }
 gas-analyzer-window-percentage-text = { $percentage }
 gas-analyzer-window-molarity-percentage-text = { $gasName }: { $amount } моль ({ $percentage }%)
 # Used for GasEntry.ToString()

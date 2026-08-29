@@ -1,5 +1,3 @@
-chat-emote-name-gasp = удушье
-chat-emote-msg-gasp = задыхается.
 chat-emote-name-critgasp = удушье
 chat-emote-msg-critgasp = задыхается.
 chat-emote-name-meow = мяуканье
@@ -18,3 +16,8 @@ chat-emote-name-giggle = хихиканье
 chat-emote-msg-giggle = хихикает!
 chat-emote-name-hiss = шипение
 chat-emote-msg-hiss = шипит!
+chat-emote-name-mrow = раздражённое мяуканье
+chat-emote-msg-mrow = раздражённо мяукает
+
+chat-emote-name-blood-cough = кровавый кашель
+chat-emote-msg-blood-cough = кашляет с кровью!

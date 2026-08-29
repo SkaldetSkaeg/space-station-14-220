@@ -1,0 +1,18 @@
+# © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
+
+- type: species
+  id: Tajaran
+  name: species-name-tajaran
+  roundStart: true
+  prototype: MobTajaran
+  defaultSkinTone: "#222626"
+  dollPrototype: AppearanceTajaran
+  skinColoration: Hues
+  maleFirstNames: NamesTajaranFirstMale
+  femaleFirstNames: NamesTajaranFirstFemale
+  maleLastNames: NamesTajaranSecondUnisex
+  femaleLastNames: NamesTajaranSecondUnisex
+  buttScanTexture: /Textures/SS220/Interface/Butts/tajaran.png
+  youngAge: 25
+  oldAge: 55
+  maxAge: 70 #some lore moments

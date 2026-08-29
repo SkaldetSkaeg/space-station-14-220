@@ -1,0 +1,50 @@
+- type: job
+  id: Detective
+  name: job-name-detective
+  description: job-description-detective
+  playTimeTracker: JobDetective
+  requirements:
+    - !type:DepartmentTimeRequirement
+      department: Security
+      time: 20h # SS220-RoleTime
+    - !type:SpeciesRequirement #SS220-jobbans begin
+      inverted: true
+      species:
+      - Felinid #SS220-jobbans end
+  startingGear: DetectiveGear
+  experienceDefinition: DetectiveRoleExperience # SS220-experience
+  icon: "JobIconDetective"
+  supervisors: job-supervisors-hos #SS220-Transfer Detective To Security
+  canBeAntag: false #SS220-Transfer Detective To Security
+  access:
+  - Brig
+  - Maintenance
+  - Detective
+#  extendedAccess: #SS220-Transfer Detective To Security
+  - Security
+  - Cryogenics
+  special: #SS220-Transfer Detective To Security begin
+  - !type:AddImplantSpecial
+    implants: [ MindShieldImplant ] #SS220-Transfer Detective To Security end
+
+- type: startingGear
+  id: DetectiveGear
+  equipment:
+    id: DetectivePDA
+    ears: ClothingHeadsetSecurity
+    # neck: ClothingBeltHolsterFilled #SS220 Shoulder holster is now selectable in loadout
+  storage:
+    back:
+    - Flash
+    - ForensicPad
+    - ForensicScanner
+
+- type: chameleonOutfit
+  id: DetectiveChameleonOutfit
+  job: Detective
+  hasMindShield: true
+  equipment:
+    head: ClothingHeadHatFedoraBrown
+    mask: ClothingMaskGasSecurity
+    neck: ClothingNeckTieDet
+    gloves: ClothingHandsGlovesForensic

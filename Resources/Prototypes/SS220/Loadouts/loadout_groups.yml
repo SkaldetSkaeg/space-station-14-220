@@ -1,12 +1,209 @@
-# InternalAffairs
+# © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
-#ss220 iaa fix start
+#! Командование (Начало)
+
+  # Капитан (Начало)
 - type: loadoutGroup
-  id: IAABackpacks
-  name: loadout-group-iaa-backpack
+  id: CaptainGloves
+  name: loadout-group-captain-gloves
+  minLimit: 0
+  loadouts:
+  - CaptainGloves
+  - CaptainWhiteGloves
+
+- type: loadoutGroup
+  id: CAPSiutstorage
+  name: loadout-group-captain-siutstorage
+  minLimit: 0
+  loadouts:
+  - CapOfficerCutlass
+
+- type: loadoutGroup
+  id: CAPHeadset
+  name: loadout-group-cap-headset
+  minLimit: 1
+  loadouts:
+  - CaptainHeadset
+  - CaptainHeadsetAlt
+  # Капитан (Конец)
+
+  # Глава персонала (Начало)
+- type: loadoutGroup
+  id: HoPHeadset
+  name: loadout-group-hop-headset
+  minLimit: 1
+  loadouts:
+  - HoPHeadset
+  - HoPHeadsetAlt
+  # Глава персонала (Конец)
+
+  # Старший Инженер (Начало)
+- type: loadoutGroup
+  id: ChiefEngineerHeadset
+  name: loadout-group-chief-engineer-headset
+  minLimit: 1
+  loadouts:
+  - ChiefEngineerHeadset
+  - ChiefEngineerHeadsetAlt
+  # Старший Инженер (Конец)
+
+  # Главный Врач (Начало)
+- type: loadoutGroup
+  id: ChiefMedicalOfficerHeadset
+  name: loadout-group-chief-medical-officer-headset
+  minLimit: 1
+  loadouts:
+  - ChiefMedicalOfficerHeadset
+  - ChiefMedicalOfficerHeadsetAlt
+  # Главный Врач (Конец)
+
+  # Квартирмейстер (Начало)
+- type: loadoutGroup
+  id: QuartermasterHeadset 
+  name: loadout-group-quartermaster-headset
+  minLimit: 1
+  loadouts:
+  - QuartermasterHeadset
+  - QuartermasterHeadsetAlt
+  # Квартирмейстер (Конец)
+
+  # Научный Руководитель (Начало)
+- type: loadoutGroup
+  id: ResearchDirectorHeadset
+  name: loadout-group-research-director-headset
+  minLimit: 1
+  loadouts:
+  - ResearchDirectorHeadset
+  - ResearchDirectorHeadsetAlt
+  # Научный Руководитель (Конец)
+#! Командование (Конец)
+
+#! Юридический (Начало)
+
+  # НТР
+- type: loadoutGroup
+  id: NanoTrasenRepresentativeHead
+  name: loadout-group-ntr-head
+  minLimit: 0
+  loadouts:
+  - NanoTrasenRepresentativeCap
+  - NanoTrasenRepresentativeTophat
+  - NanoTrasenOfficerBeret
+
+- type: loadoutGroup
+  id: NanoTrasenRepresentativeEyes
+  name: loadout-group-ntr-eyes
+  minLimit: 0
+  loadouts:
+  - EyesHudCommand
+  - GlassesCommand
+  - Glasses
+  - Sunglasses
+  - MagistrateMonocle
+
+- type: loadoutGroup
+  id: NanoTrasenRepresentativeJumpsuit
+  name: loadout-group-ntr-jumpsuit
+  minLimit: 1
+  loadouts:
+  - JumpsuitNTR
+
+- type: loadoutGroup
+  id: NanoTrasenRepresentativeBackpacks
+  name: loadout-group-ntr-backpack
+  hidden: true
   loadouts:
     - IAABackpackLeather
-#ss220 iaa fix end
+
+- type: loadoutGroup
+  id: NanoTrasenRepresentativeTrinket
+  name: loadout-group-ntr-role-trinket
+  hidden: true
+  loadouts:
+    - ExpensiveCane
+
+- type: loadoutGroup
+  id: NanoTrasenRepresentativeOuterClothing
+  name: loadout-group-ntr-outerclothing
+  minLimit: 0
+  loadouts:
+  - NanoTrasenRepresentativeTrench
+  - NanoTrasenRepresentativeFormalCoat
+  - NanoTrasenRepresentativeFormalDress
+
+- type: loadoutGroup
+  id: NanoTrasenRepresentativeHeadset
+  name: loadout-group-ntr-headset
+  minLimit: 1
+  loadouts:
+  - NanoTrasenRepresentativeHeadset
+  - NanoTrasenRepresentativeHeadsetAlt
+
+- type: loadoutGroup
+  id: NanoTrasenRepresentativeGloves
+  name: loadout-group-gloves
+  loadouts:
+  - GlovesWhite
+  - GlovesGray
+  - GlovesBlack
+
+  # Магистрат
+- type: loadoutGroup
+  id: MagistrateHead
+  name: loadout-group-magistrate-head
+  loadouts:
+  - MagistratePwig
+  - MagistrateStreetJudge
+
+- type: loadoutGroup
+  id: MagistrateEyes
+  name: loadout-group-magistrate-eyes
+  loadouts:
+  - GlassesCommand
+  - MagistrateMonocle
+  - EyesHudCommand
+
+- type: loadoutGroup
+  id: MagistrateJumpsuit
+  name: loadout-group-magistrate-jumpsuit
+  loadouts:
+  - LawyerJumpsuit
+  - LawyerJumpskirt
+  - LawyerJumpsuitBlue
+  - LawyerJumpskirtBlue
+  - LawyerJumpsuitGood
+  - LawyerJumpskirtGood
+
+- type: loadoutGroup
+  id: MagistrateOuterClothing
+  name: loadout-group-magistrate-outerclothing
+  hidden: true
+  loadouts:
+  - MagistrateRobesJudge
+
+- type: loadoutGroup
+  id: MagistrateHeadset
+  name: loadout-group-magistrate-headset
+  minLimit: 1
+  loadouts:
+  - MagistrateHeadset
+  - MagistrateHeadsetAlt
+
+  # Агент Внутренних Дел (Начало)
+- type: loadoutGroup
+  id: IAAHead
+  name: loadout-group-iaa-head
+  minLimit: 0
+  loadouts:
+  - BeretIAA
+  - DevilHorns
+
+- type: loadoutGroup
+  id: IAANeck
+  name: loadout-group-iaa-neck
+  loadouts:
+  - LawyerNeck
+  - CloakJujutsuShlepa
 
 - type: loadoutGroup
   id: IAAJumpsuit
@@ -24,44 +221,328 @@
   - LawyerJumpskirtGood
   - JumpsuitNTR
   - JumpsuitTrustedLawyer
+  - JumpsuitJujutsuShlepa
+
+- type: loadoutGroup
+  id: IAAOuterclothing
+  name: loadout-group-iaa-outerclothing
+  minLimit: 0
+  loadouts:
+  - OuterClothingJujutsuShlepa
+  - Outer1984
+
+- type: loadoutGroup
+  id: IAAGlasses
+  minLimit: 0
+  name: loadout-group-iaa-glasses
+  loadouts:
+  - Glasses
+  - GlassesJamjar
+  - GlassesJensen
+  - Sunglasses
+  - GlassesujutsuShlepa
+  - EyesHudCommand
+
+- type: loadoutGroup
+  id: IAABackpacks
+  name: loadout-group-iaa-backpack
+  loadouts:
+    - IAABackpackLeather
+
+- type: loadoutGroup
+  id: IAAHeadset
+  name: loadout-group-iaa-headset
+  minLimit: 1
+  loadouts:
+  - IAAHeadset
+  - IAAHeadsetAlt
+  # Агент Внутренних Дел (Конец)
+
+  # Адвокат (Начало)
+- type: loadoutGroup
+  id: LawyerOuterclothing
+  name: loadout-group-lawyer-outerclothing
+  minLimit: 0
+  loadouts:
+  - OuterClothingJujutsuShlepa
+
+- type: loadoutGroup
+  id: LawyerHead
+  name: loadout-group-lawyer-head
+  minLimit: 0
+  loadouts:
+  - BeretIAA
+  - DevilHorns
+
+- type: loadoutGroup
+  id: LawyerHeadset
+  name: loadout-group-lawyer-headset
+  minLimit: 1
+  loadouts:
+  - LawHeadset
+  - LawHeadsetAlt
+
+- type: loadoutGroup
+  id: LawyerBackpack
+  name: loadout-group-lawyer-backpack
+  minLimit: 1
+  loadouts:
+  - CommonBackpack
+  - CommonSatchel
+  - CommonDuffel
+  - IAABackpackLeather
+  # Адвокат (Конец)
+
+  # Офицер "Синий Щит" (Начало)
+- type: loadoutGroup
+  id: BlueShieldHead
+  name: loadout-group-blueshield-head
+  minLimit: 0
+  loadouts:
+  - BlueshieldBeret
+  - BlueshieldBlueBeret
+  - BlueshieldNavyBlueBeret
+
+- type: loadoutGroup
+  id: BlueShieldGlasses
+  name: loadout-group-blueshield-glasses
+  loadouts:
+  - BlueshieldGlasses
+  - BlueshieldTacticGlasses
+  - BlueshieldBallisticGlasses
+
+- type: loadoutGroup
+  id: BlueShieldMask
+  name: loadout-group-blueshield-mask
+  minLimit: 0
+  loadouts:
+  - MaskBlueshieldGaiter
+  - MaskBlueshieldBalaclava
+
+- type: loadoutGroup
+  id: BlueShieldNeck
+  name: loadout-group-blueshield-neck
+  minLimit: 0
+  loadouts:
+  - CloakCape
+  - CloakCapeBlue
 
 - type: loadoutGroup
   id: BlueShieldJumpsuit
   name: loadout-group-blueshield-jumpsuit
   loadouts:
-  - BlueShieldJumpsuit
-  - BlueShieldJumpsuit2
+  - BlueShieldCombez
+  - BlueShieldJumpsuitOperative
+  - BlueShieldJumpsuitShirt
   - BlueShieldJumpsuitTurtle
+  - BlueShieldJumpsuitTShirt
+  - BlueShieldJumpsuitCombat
 
 - type: loadoutGroup
   id: BlueShieldOuterclothing
   name: loadout-group-blueshield-outerclothing
+  hidden: true
   loadouts:
   - BlueShieldArmorBulletproof
-  - BlueShieldSRTCoat
 
-# Chef
 - type: loadoutGroup
-  id: ChefBeltApron
-  name: loadout-group-chef-belt
+  id: BlueShieldBelt
+  name: loadout-group-blueshield-belt
+  loadouts:
+  - BlueshieldBelt
+  - BlueshieldWebbing
+
+- type: loadoutGroup
+  id: BlueShieldBackpack
+  name: loadout-group-blueshield-backpack
+  hidden: true
+  loadouts:
+  - BlueShieldBackpack
+
+- type: loadoutGroup
+  id: BlueShieldShoes
+  name: loadout-group-blueshield-shoes
+  loadouts:
+  - JackBoots
+  - BlueShieldJackBoots
+  - BlueShieldWinterBoots
+  - CombatBoots
+  # Офицер "Синий Щит" (Конец)
+#! Юридический (Конец)
+
+#! Служба безопасности (Начало)
+
+  # Глава службы безопасности (Начало)
+- type: loadoutGroup
+  id: SecurityHoSSiutstorage
+  name: loadout-group-head-of-security-siutstorage
   minLimit: 0
   loadouts:
-  - ChefBeltApronWhite
-  - ChefBeltApronGreen
-  - ChefBeltApronBlack
-  - ChefBeltApronRed
-  - ChefBeltApronSenior
+  - OfficerCutlass
+  # Глава службы безопасности (Конец)
 
-# Medical
+  # Офицер СБ (Начало)
 - type: loadoutGroup
-  id: PsychologistJumpsuit
-  name: loadout-group-psychologist-jumpsuit
+  id: SecurityMask
+  name: loadout-group-security-mask
+  minLimit: 0
   loadouts:
-  - PsychologistJumpsuit
-  - PsychologistJumpskirt
-  - PsychologistJumpsuitTurtleneck
-  - PsychologistJumpskirtTurtleneck
+  - MaskTacSec
+  - SecTacGasMask
+  - MaskSecBalaclava
 
+- type: loadoutGroup
+  id: SecurityGlasses
+  name: loadout-group-security-glasses
+  minLimit: 0
+  loadouts:
+  - GlassesSecurity
+  - CyberGlassesSecurity
+  - GlassesBallistic
+
+- type: loadoutGroup
+  id: DetectiveSecBackpack
+  name: loadout-group-security-backpack
+  loadouts:
+    - SecurityBackpack
+    - SecuritySatchel
+    - SecurityDuffel
+    - DetectiveNoirSatchel
+
+- type: loadoutGroup
+  id: SecurityGloves
+  name: loadout-group-security-gloves
+  minLimit: 0
+  loadouts:
+  - GlovesSecTactical
+  # Офицер СБ (Конец)
+
+  # Инструктор СБ (Начало)
+- type: loadoutGroup
+  id: SeniorSecJumpsuit
+  name: loadout-group-senior-officer-jumpsuit
+  loadouts:
+  - SeniorSecJumpsuit
+  - SeniorSecJumpskirt
+  # Инструктор СБ (Конец)
+
+  # Пилот (Начало)
+- type: loadoutGroup
+  id: SecurityPilotHead
+  name: loadout-group-security-pilot-head
+  minLimit: 0
+  loadouts:
+  - SecurityHelmet
+  - SecurityBeret
+  - SecurityHat
+  - PilotCapCap
+  - PilotBeret
+  - HelmetTacSec
+
+- type: loadoutGroup
+  id: SecurityPilotOuterClothing
+  name: loadout-group-security-pilot-outerclothing
+  loadouts:
+  - ArmorVest
+  - ArmorVestSlim
+  - SecurityOfficerWintercoat
+  - CoatSecurityOvercoat
+  - SecBomber
+  - VestArmorSec
+  - CyberVestSecurity
+  # Пилот (Конец)
+
+  # Детектив (Начало)
+- type: loadoutGroup
+  id: DetectiveShoes
+  name: loadout-group-detective-shoes
+  loadouts:
+  - JackBoots
+  - SecurityWinterBoots
+  - BootsJackSec
+  - DetectiveShoesBootsLaceup
+
+- type: loadoutGroup
+  id: DetectiveGlasses
+  name: loadout-group-detective-glasses
+  minLimit: 0
+  loadouts:
+  - GlassesSecurity
+  - CyberGlassesSecurity
+  - GlassesBallistic
+  - NoirGlasses
+
+- type: loadoutGroup
+  id: DetectiveNeck
+  name: loadout-group-detective-neck
+  loadouts:
+  - DefaultDetectiveHolster
+  - HolsterLegendaryMarksman
+  - HolsterBlackAngel
+  # Детектив (Конец)
+#! Служба безопасности (Конец)
+
+#! Медицинский отдел (Начало)
+
+  # Ведущий врач (Начало)
+- type: loadoutGroup
+  id: HatSeniorMedical
+  name: loadout-group-senior-medical-head
+  minLimit: 0
+  loadouts:
+  - HatSeniorMedical
+  - CMOMedicalHeadMirror
+
+- type: loadoutGroup
+  id: SeniorMedicalJumpsuit
+  name: loadout-group-senior-medical-jumpsuit
+  loadouts:
+  - SeniorMedicalJumpsuit
+  - SeniorMedicalJumpskirt
+
+- type: loadoutGroup
+  id: SeniorMedicalOuterClothing
+  name: loadout-group-senior-medical-outerclothing
+  minLimit: 0
+  loadouts:
+  - SeniorMedicalLabCoat
+  - MedicalDoctorWintercoat
+  - ChemistWintercoat
+  - CyberJacketMed #SS220-TwoOne-Floppa-Iteration
+
+- type: loadoutGroup
+  id: MedicalsBackpack
+  name: loadout-group-medical-doctor-backpack
+  loadouts:
+  - MedicalDoctorBackpack
+  - MedicalDoctorSatchel
+  - MedicalDoctorDuffel
+
+- type: loadoutGroup
+  id: SeniorShoes
+  name: loadout-group-medical-doctor-shoes
+  loadouts:
+  - MedicalBrownShoes
+  - WhiteShoes
+  - MedicalWinterBoots
+
+- type: loadoutGroup
+  id: MedicalsGloves
+  name: loadout-group-medical-gloves
+  minLimit: 0
+  loadouts:
+  - LatexGloves
+  - NitrileGloves
+
+- type: loadoutGroup
+  id: MedicalsMask
+  name: loadout-group-medical-mask
+  minLimit: 0
+  loadouts:
+  - SterileMask
+  # Ведущий врач (Конец)
+
+  # Бригмедик (Начало)
 - type: loadoutGroup
   id: BrigmedicHead
   name: loadout-group-brigmedic-head
@@ -70,6 +551,14 @@
   - BrigmedicHead
   - SecurityMedicHead
   - SecurityMedicHelmet
+
+- type: loadoutGroup
+  id: BrigmedicGlasses
+  name: loadout-group-brigmedic-glasses
+  minLimit: 0
+  loadouts:
+  - HudMedical
+  - CyberMedVisor
 
 - type: loadoutGroup
   id: BrigmedicMask
@@ -100,6 +589,7 @@
   - BrigmedicVestSecurity
   - BrigmedicCoatLab
   - BrigmedicVestArmorMedSec
+  - CyberJacketMed #SS220-TwoOne-Floppa-Iteration
 
 - type: loadoutGroup
   id: BrigmedicBackpack
@@ -118,41 +608,94 @@
   - MedicalWinterBoots
   - SecMedWinterBoots
 
-# Command
+- type: loadoutGroup
+  id: SurvivalBrigMedic
+  name: loadout-group-survival-brigmedic
+  minLimit: 1
+  hidden: false
+  loadouts:
+  - EmergencyNitrogenBrigmedic
+  - EmergencyNitrogenBrigmedicSponsor
+  - EmergencyOxygenBrigmedic
+  - EmergencyOxygenBrigmedicSponsor
+  - LoadoutSpeciesBrigmedicIpc
+  # Бригмедик (Конец)
+
+  # Врач (Начало)
+- type: loadoutGroup
+  id: MedicalNeck
+  minLimit: 0
+  name: loadout-group-medical-neck
+  loadouts:
+  - WhiteScarf
+  - MedStethoscope
 
 - type: loadoutGroup
-  id: CaptainGloves
-  name: loadout-group-captain-gloves
+  id: MedicalGlasses
+  name: loadout-group-medical-glasses
+  minLimit: 0
   loadouts:
-  - CaptainGloves
-  - CaptainWhiteGloves
+  - Glasses
+  - CyberMedVisor
 
-# Engineering
+- type: loadoutGroup
+  id: MedicalEyewear
+  name: loadout-group-medical-glasses
+  minLimit: 0
+  loadouts:
+  - MedicalHud
+  - MedicalEyePatchHud
+  - CyberMedVisor #SS220 II floppa iteration
+  - Glasses
+  - GlassesJamjar
+  - GlassesJensen
+  # Врач (Конец)
 
+  # Химик (Начало)
+- type: loadoutGroup
+  id: ChemicalGlasses
+  name: loadout-group-chemical-glasses
+  minLimit: 0
+  loadouts:
+  - GlassesChemical
+  - CyberRnDVisor
+  # Химик (Конец)
+
+  # Парамедик (начало)
+- type: loadoutGroup
+  id: ParamedicBelt
+  name: loadout-group-paramedic-belt
+  loadouts:
+  - ParamedicBaseBelt
+  - ParamedInterdyneBelt
+  # Парамедик (конец)
+
+  # Главный врач (Начало)
+- type: loadoutGroup
+  id: ChiefMedicalOfficerGlasses
+  name: loadout-group-chief-medical-officer-eyes
+  loadouts:
+  - MedicalHud
+  - MedicalEyePatchHud
+  - CyberMedVisor
+  - Glasses
+  - CMOCorpGlasses
+  - GlassesJamjar
+  - GlassesJensen
+#! Медицинский отдел (Конец)
+
+#! Инженерный отдел (Начало)
+
+  # Старший инженер (Начало)
 - type: loadoutGroup
   id: ChiefEngineerPDA
   name: loadout-group-chief-engineer-PDA
   loadouts:
   - ChiefEngineerPDA
   - DarkChiefEngineerPDA
+  # Старший инженер (Конец)
 
-
-#senior service
-- type: loadoutGroup
-  id: HatSeniorService
-  name: loadout-group-senior-service-head
-  minLimit: 0
-  loadouts:
-  - HatSeniorService
-
-- type: loadoutGroup
-  id: SeniorServiceJumpsuit
-  name: loadout-group-senior-service-jumpsuit
-  loadouts:
-  - SeniorServiceJumpsuit
-  - SeniorJumpskirtService
-
-# senior engineer
+  # Ведущий инженер (Начало)
 - type: loadoutGroup
   id: HatSeniorEngineer
   name: loadout-group-senior-engineer-head
@@ -176,65 +719,23 @@
   - StationEngineerOuterVest
   - StationEngineerWintercoat
   - AtmosphericTechnicianWintercoat
+  - CyberJacketEngineer #SS220-TwoOne-Floppa-Iteration
+  # Ведущий инженер (Конец)
 
-# Senior Medical
-
+  # Инженер (Начало)
 - type: loadoutGroup
-  id: HatSeniorMedical
-  name: loadout-group-senior-medical-head
+  id: EngineerGlasses
+  name: loadout-group-engineer-glasses
   minLimit: 0
   loadouts:
-  - HatSeniorMedical
-  - CMOMedicalHeadMirror
+  - GlassesEngineer
+  - CyberGlassesEngineer
+  # Инженер (Конец)
+#! Инженерный отдел (Конец)
 
-- type: loadoutGroup
-  id: SeniorMedicalJumpsuit
-  name: loadout-group-senior-medical-jumpsuit
-  loadouts:
-  - SeniorMedicalJumpsuit
-  - SeniorMedicalJumpskirt
+#! Исследовательский отдел (Начало)
 
-- type: loadoutGroup
-  id: SeniorMedicalOuterClothing
-  name: loadout-group-senior-medical-outerclothing
-  minLimit: 0
-  loadouts:
-  - SeniorMedicalLabCoat
-  - MedicalDoctorWintercoat
-  - ChemistWintercoat
-
-- type: loadoutGroup
-  id: MedicalsBackpack
-  name: loadout-group-medical-doctor-backpack
-  loadouts:
-  - MedicalDoctorBackpack
-  - MedicalDoctorSatchel
-  - MedicalDoctorDuffel
-
-- type: loadoutGroup
-  id: SeniorShoes
-  name: loadout-group-medical-doctor-shoes
-  loadouts:
-  - WhiteShoes
-  - MedicalWinterBoots
-
-- type: loadoutGroup
-  id: MedicalsGloves
-  name: loadout-group-medical-gloves
-  minLimit: 0
-  loadouts:
-  - LatexGloves
-  - NitrileGloves
-
-- type: loadoutGroup
-  id: MedicalsMask
-  name: loadout-group-medical-mask
-  minLimit: 0
-  loadouts:
-  - SterileMask
-
-# Senior RND
-
+  # Ведущий учёный (Начало)
 - type: loadoutGroup
   id: HatSeniorSciensist
   name: loadout-group-senior-scientist-head
@@ -248,6 +749,8 @@
   loadouts:
   - SeniorSciensistJumpsuit
   - SeniorSciensistJumpskirt
+  - SeniorSciensistJumpsuitAssociateProfessor #SS220-loadout-academy
+  - SeniorSciensistJumpskirtAssociateProfessor #SS220-loadout-academy
 
 - type: loadoutGroup
   id: SeniorSciensistOuterClothing
@@ -257,41 +760,23 @@
   - SeniorSciensistLabCoat
   - ScienceWintercoat
   - RoboticistWintercoat
+  - CyberJacketRnD #SS220-TwoOne-Floppa-Iteration
+  # Ведущий учёный (Конец)
 
-# Senior Security
-
+  # Учёный (Начало)
 - type: loadoutGroup
-  id: SeniorSecJumpsuit
-  name: loadout-group-senior-officer-jumpsuit
-  loadouts:
-  - SeniorSecJumpsuit
-  - SeniorSecJumpskirt
-
-# Security
-
-  # Глава службы безопасности
-- type: loadoutGroup
-  id: SecurityHoSSiutstorage
-  name: loadout-group-head-of-security-siutstorage
+  id: ScientistGlasses
+  name: loadout-group-scientist-glasses
   minLimit: 0
   loadouts:
-  - OfficerCutlass
+  - Glasses
+  - CyberRnDVisor
+  # Учёный (Конец)
+#! Исследовательский отдел (Конец)
 
-  # Пилот
-- type: loadoutGroup
-  id: SecurityPilotHead
-  name: loadout-group-security-pilot-head
-  minLimit: 0
-  loadouts:
-  - SecurityHelmet
-  - SecurityBeret
-  - SecurityHat
-  - PilotCapCap
+#! Отдел снабжения (Начало)
 
-
-# Cargo
-
-  # Утилизатор
+  # Утилизатор (Начало)
 - type: loadoutGroup
   id: SalvageSpecialistJumpsuit
   name: loadout-group-salvage-specialist-jumpsuit
@@ -299,6 +784,7 @@
   - UniformJumpsuitSalvageSpecialist
   - SalvageSpecialistJumpsuitTurtleneck
   - UniformJumpsuitFlannelSalvage
+  - ClothingUniformJumpsuitExpeditor
 
 - type: loadoutGroup
   id: SalvageSpecialistHead
@@ -308,9 +794,188 @@
   - ClothingHeadHatSalvage
   - ClothingHeadBandSalvage
   - ClothingHeadHatHardhatViolet
+  - ClothingHeadBeretSalvageSpecialist
+  # Утилизатор (Конец)
+#! Отдел снабжения (Конец)
 
-# Wildcards
+#! Сервис (Начало)
 
+  # Сервисный администратор (Начало)
+- type: loadoutGroup
+  id: HatSeniorService
+  name: loadout-group-senior-service-head
+  minLimit: 0
+  loadouts:
+  - HatSeniorService
+  - HatBeretSeniorService
+
+- type: loadoutGroup
+  id: SeniorServiceJumpsuit
+  name: loadout-group-senior-service-jumpsuit
+  loadouts:
+  - SeniorServiceJumpsuit
+  - SeniorJumpskirtService
+  - SeniorServiceJumpsuitDelux
+
+- type: loadoutGroup
+  id: SeniorServiceShoes
+  name: loadout-group-senior-service-shoes
+  loadouts:
+  - ShoesColorBrown
+  - SeniorServiceBootsLaceup
+  # Сервисный администратор (Конец)
+
+  # Шеф-повар (Начало)
+- type: loadoutGroup
+  id: ChefBeltApron
+  name: loadout-group-chef-belt
+  minLimit: 0
+  loadouts:
+  - ChefBeltApronWhite
+  - ChefBeltApronGreen
+  - ChefBeltApronBlack
+  - ChefBeltApronRed
+  - ChefBeltApronSenior
+  # Шеф-повар (Конец)
+
+  # Музыкант (начало)
+- type: loadoutGroup
+  id: MusicianHead
+  name: loadout-group-musician-head
+  minLimit: 0
+  loadouts:
+  - BardHead
+
+- type: loadoutGroup
+  id: MusicianShoes
+  name: loadout-group-musician-shoes
+  # minLimit: 0
+  loadouts:
+  - MusicianBootsLaceup
+  - BardShoes
+  # Музыкант (конец)
+
+  # Ботаник (начало)
+- type: loadoutGroup
+  id: BotanistNeck
+  name: loadout-group-botanist-neck
+  minLimit: 0
+  loadouts:
+  - BotanistDruidAmulet #SS220 druid loadout
+
+- type: loadoutGroup
+  id: BotanistBelt
+  name: loadout-group-botanist-belt
+  loadouts:
+  - BotanistBeltDefoult
+  - BotanistDruidBelt #SS220 druid loadout
+
+- type: loadoutGroup
+  id: BotanistShoes
+  name: loadout-group-botanist-shoes
+  loadouts:
+  - BotanistShoesBrown
+  - BotanistDruidShoes #SS220 druid loadout
+  # Ботаник (конец)
+
+  # Клоун (Начало)
+- type: loadoutGroup
+  id: ClownGloves
+  name: loadout-group-clown-gloves
+  loadouts:
+  - GlovesWhite
+  - GlovesGray
+  - GlovesBlack
+  - GlovesRed
+  - GlovesBlue
+  - GlovesMuzhik
+  # Клоун (Конец)
+
+  # Мим (Начало)
+- type: loadoutGroup
+  id: MimeShoes
+  name: loadout-group-mime-shoes
+  loadouts:
+  - MimeWhiteShoes
+  - MoryakShoes
+  # Мим (Конец)
+
+ # Уборщик (Начало)
+- type: loadoutGroup
+  id: JanitorShoes
+  name: loadout-group-janitor-shoes
+  loadouts:
+  - ShoesColorPurple
+  - JanitorGaloshes
+  - JanitorOrangeShoes
+  - JanitorJRShoes
+  - JanitorJRBoots
+
+- type: loadoutGroup
+  id: JanitorBelt
+  name: loadout-group-janitor-belt
+  loadouts:
+  - JanitorBaseBelt
+  - JanitorJRBelt #SS220-JRBelt
+
+- type: loadoutGroup
+  id: JanitorEquipment
+  name: loadout-group-janitor-equipment
+  minLimit: 0
+  maxLimit: 2
+  loadouts:
+  - JRMopItem
+  - SoapJR
+
+- type: loadoutGroup
+  id: JanitorPDA
+  name: loadout-group-janitor-pda
+  minLimit: 1
+  maxLimit: 1
+  loadouts:
+  - JanitorPDA
+  - JanitorJRPDA
+
+- type: loadoutGroup
+  id: JanitorBackpack
+  name: loadout-group-janitor-backpack
+  loadouts:
+  - CommonBackpack
+  - CommonSatchel
+  - CommonDuffel
+  - ClothingBackpackJanitorJR
+  - ClothingBackpackJanitorJRSatchel
+  - ClothingBackpackJanitorJRDuffel
+
+  # Уборщик (Конец)
+
+ # Сервисный работник (Начало)
+- type: loadoutGroup
+  id: ServiceWorkerJumpsuit
+  name: loadout-group-service-worker-jumpsuit
+  loadouts:
+  - ServiceWorkerWaiter
+  - ServiceWorkerWaitress
+
+  # Сервисный работник (Конец)
+
+  # Библиотекарь (Начало)
+- type: loadoutGroup
+  id: LibrarianEyes
+  name: loadout-group-librarian-eyes
+  loadouts:
+  - Glasses
+  - GlassesJamjar
+  - GlassesJensen
+  - LibrarianMonocle
+  - GlassesCyber
+  # Библиотекарь (Конец)
+
+#! Сервис (Конец)
+
+#! Разное
+
+  # Перчатки
 - type: loadoutGroup
   id: Gloves
   name: loadout-group-gloves
@@ -320,3 +985,31 @@
   - GlovesBlack
   - GlovesRed
   - GlovesBlue
+
+ # Баллон азота воксов
+- type: loadoutGroup
+  id: SurvivalVox
+  name: loadout-group-survival-basic
+  hidden: true
+  loadouts:
+  - LoadoutSpeciesVoxNitrogen
+
+#! Эксклюзивы карт (Начало)
+
+  #Боксер
+- type: loadoutGroup
+  id: BoxerJumpsuit
+  name: loadout-group-boxer-jumpsuit
+  loadouts:
+  - BoxerShorts
+  - BoxerShortsWithTop
+
+- type: loadoutGroup
+  id: BoxerGloves
+  name: loadout-group-boxer-gloves
+  loadouts:
+  - RedBoxingGloves
+  - BlueBoxingGloves
+  - GreenBoxingGloves
+  - YellowBoxingGloves
+#! Эксклюзивы карт (Конец)

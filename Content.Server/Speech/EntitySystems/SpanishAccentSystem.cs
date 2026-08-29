@@ -1,20 +1,29 @@
+using System.Text;
 using Content.Server.Speech.Components;
+using Content.Shared.Speech;
 
 namespace Content.Server.Speech.EntitySystems
 {
     public sealed class SpanishAccentSystem : EntitySystem
     {
-        public override void Initialize()
-        {
-            SubscribeLocalEvent<SpanishAccentComponent, AccentGetEvent>(OnAccent);
-        }
+    [Dependency] private readonly ReplacementAccentSystem _replacement = default!; // SS220 fix spanish accent
 
-        public string Accentuate(string message)
+    public const string SpanishAccentId = "spanish"; // SS220 fix spanish accent
+
+    public override void Initialize()
+    {
+        SubscribeLocalEvent<SpanishAccentComponent, AccentGetEvent>(OnAccent);
+    }
+
+    public string Accentuate(string message)
         {
             // Insert E before every S
             message = InsertS(message);
+
+            message = _replacement.ApplyReplacements(message, SpanishAccentId); // SS220 fix spanish accent
+       
             // If a sentence ends with ?, insert a reverse ? at the beginning of the sentence
-            message = ReplaceQuestionMark(message);
+            message = ReplacePunctuation(message);
             return message;
         }
 
@@ -36,24 +45,32 @@ namespace Content.Server.Speech.EntitySystems
             return msg;
         }
 
-        private string ReplaceQuestionMark(string message)
+        private string ReplacePunctuation(string message)
         {
             var sentences = AccentSystem.SentenceRegex.Split(message);
-            var msg = "";
+            var msg = new StringBuilder();
             foreach (var s in sentences)
             {
-                if (s.EndsWith("?", StringComparison.Ordinal)) // We've got a question => add ¿ to the beginning
+                var toInsert = new StringBuilder();
+                for (var i = s.Length - 1; i >= 0 && "?!‽".Contains(s[i]); i--)
                 {
-                    // Because we don't split by whitespace, we may have some spaces in front of the sentence.
-                    // So we add the symbol before the first non space char
-                    msg += s.Insert(s.Length - s.TrimStart().Length, "¿");
+                    toInsert.Append(s[i] switch
+                    {
+                        '?' => '¿',
+                        '!' => '¡',
+                        '‽' => '⸘',
+                        _ => ' '
+                    });
                 }
-                else
+                if (toInsert.Length == 0)
                 {
-                    msg += s;
+                    msg.Append(s);
+                } else
+                {
+                    msg.Append(s.Insert(s.Length - s.TrimStart().Length, toInsert.ToString()));
                 }
             }
-            return msg;
+            return msg.ToString();
         }
 
         private void OnAccent(EntityUid uid, SpanishAccentComponent component, AccentGetEvent args)

@@ -1,20 +1,20 @@
+using System.Numerics;
 using Content.Client.Administration.Managers;
 using Content.Client.Gameplay;
-using Content.Client.Markers;
 using Content.Client.Sandbox;
+using Content.Client.SS220.MapEditor;
 using Content.Client.SubFloor;
 using Content.Client.UserInterface.Controls;
 using Content.Client.UserInterface.Systems.DecalPlacer;
 using Content.Client.UserInterface.Systems.Sandbox.Windows;
 using Content.Shared.Input;
 using JetBrains.Annotations;
-using Robust.Client.Console;
-using Robust.Client.Debugging;
-using Robust.Client.Graphics;
 using Robust.Client.Input;
+using Robust.Client.Player;
 using Robust.Client.UserInterface;
 using Robust.Client.UserInterface.Controllers;
 using Robust.Client.UserInterface.Controllers.Implementations;
+using Robust.Shared.Console;
 using Robust.Shared.Input.Binding;
 using Robust.Shared.Map;
 using Robust.Shared.Player;
@@ -27,21 +27,18 @@ namespace Content.Client.UserInterface.Systems.Sandbox;
 [UsedImplicitly]
 public sealed class SandboxUIController : UIController, IOnStateChanged<GameplayState>, IOnSystemChanged<SandboxSystem>
 {
-    [Dependency] private readonly IEyeManager _eye = default!;
+    [Dependency] private readonly IConsoleHost _console = default!;
     [Dependency] private readonly IInputManager _input = default!;
-    [Dependency] private readonly ILightManager _light = default!;
     [Dependency] private readonly IClientAdminManager _admin = default!;
+    [Dependency] private readonly IPlayerManager _player = default!;
 
-    [UISystemDependency] private readonly DebugPhysicsSystem _debugPhysics = default!;
-    [UISystemDependency] private readonly MarkerSystem _marker = default!;
     [UISystemDependency] private readonly SandboxSystem _sandbox = default!;
-    [UISystemDependency] private readonly SubFloorHideSystem _subfloorHide = default!;
 
     private SandboxWindow? _window;
 
     // TODO hud refactor cache
     private EntitySpawningUIController EntitySpawningController => UIManager.GetUIController<EntitySpawningUIController>();
-    private TileSpawningUIController TileSpawningController => UIManager.GetUIController<TileSpawningUIController>();
+    private TileSpawningUIController220 TileSpawningController => UIManager.GetUIController<TileSpawningUIController220>(); // SS220 Own tile spawning window
     private DecalPlacerUIController DecalPlacerController => UIManager.GetUIController<DecalPlacerUIController>();
 
     private MenuButton? SandboxButton => UIManager.GetActiveUIWidgetOrNull<MenuBar.Widgets.GameTopMenuBar>()?.SandboxButton;
@@ -104,18 +101,31 @@ public sealed class SandboxUIController : UIController, IOnStateChanged<Gameplay
 
     private void EnsureWindow()
     {
-        if(_window is { Disposed: false })
+        if (_window is { Disposed: false })
             return;
         _window = UIManager.CreateWindow<SandboxWindow>();
+        // Pre-center the window without forcing it to the center every time.
+        _window.OpenCentered();
+        _window.Close();
+
         _window.OnOpen += () => { SandboxButton!.Pressed = true; };
         _window.OnClose += () => { SandboxButton!.Pressed = false; };
-        _window.ToggleLightButton.Pressed = !_light.Enabled;
-        _window.ToggleFovButton.Pressed = !_eye.CurrentEye.DrawFov;
-        _window.ToggleShadowsButton.Pressed = !_light.DrawShadows;
-        _window.ToggleSubfloorButton.Pressed = _subfloorHide.ShowAll;
-        _window.ShowMarkersButton.Pressed = _marker.MarkersVisible;
-        _window.ShowBbButton.Pressed = (_debugPhysics.Flags & PhysicsDebugFlags.Shapes) != 0x0;
 
+        _window.AiOverlayButton.OnPressed += args =>
+        {
+            var player = _player.LocalEntity;
+
+            if (player == null)
+                return;
+
+            var pnent = EntityManager.GetNetEntity(player.Value);
+
+            // Need NetworkedAddComponent but engine PR.
+            if (args.Button.Pressed)
+                _console.ExecuteCommand($"addcomp {pnent.Id} StationAiOverlay");
+            else
+                _console.ExecuteCommand($"rmcomp {pnent.Id} StationAiOverlay");
+        };
         _window.RespawnButton.OnPressed += _ => _sandbox.Respawn();
         _window.SpawnTilesButton.OnPressed += _ => TileSpawningController.ToggleWindow();
         _window.SpawnEntitiesButton.OnPressed += _ => EntitySpawningController.ToggleWindow();
@@ -129,23 +139,7 @@ public sealed class SandboxUIController : UIController, IOnStateChanged<Gameplay
         _window.ToggleSubfloorButton.OnPressed += _ => _sandbox.ToggleSubFloor();
         _window.ShowMarkersButton.OnPressed += _ => _sandbox.ShowMarkers();
         _window.ShowBbButton.OnPressed += _ => _sandbox.ShowBb();
-        _window.MachineLinkingButton.OnPressed += _ => _sandbox.MachineLinking();
-    }
-
-    private void UpdateFovButtomState()
-    {
-        if (_window != null)
-        {
-            _window.ToggleFovButton.Pressed = !_eye.CurrentEye.DrawFov;
-        }
-    }
-
-    private void UpdateLightButtomState()
-    {
-        if (_window != null)
-        {
-            _window.ToggleLightButton.Pressed = !_light.Enabled;
-        }
+        _window.ToggleThermalVisionButton.OnToggled += _ => _sandbox.ToggleThermalVision();
     }
 
     private void CheckSandboxVisibility()
@@ -160,7 +154,7 @@ public sealed class SandboxUIController : UIController, IOnStateChanged<Gameplay
     {
         if (_window != null)
         {
-            _window.Dispose();
+            _window.Close();
             _window = null;
         }
 
@@ -172,26 +166,6 @@ public sealed class SandboxUIController : UIController, IOnStateChanged<Gameplay
         system.SandboxDisabled += CloseAll;
         system.SandboxEnabled += CheckSandboxVisibility;
         system.SandboxDisabled += CheckSandboxVisibility;
-
-        system.PlayerAttached += System_PlayerAttached;
-        system.FovToggled += System_FovToggled;
-        system.LightingToggled += System_LightingToggled;
-    }
-
-    private void System_LightingToggled()
-    {
-        UpdateLightButtomState();
-    }
-
-    private void System_FovToggled()
-    {
-        UpdateFovButtomState();
-    }
-
-    private void System_PlayerAttached()
-    {
-        UpdateFovButtomState();
-        UpdateLightButtomState();
     }
 
     public void OnSystemUnloaded(SandboxSystem system)
@@ -199,10 +173,6 @@ public sealed class SandboxUIController : UIController, IOnStateChanged<Gameplay
         system.SandboxDisabled -= CloseAll;
         system.SandboxEnabled -= CheckSandboxVisibility;
         system.SandboxDisabled -= CheckSandboxVisibility;
-
-        system.PlayerAttached -= System_PlayerAttached;
-        system.FovToggled -= System_FovToggled;
-        system.LightingToggled -= System_LightingToggled;
     }
 
     private void SandboxButtonPressed(ButtonEventArgs args)
@@ -229,7 +199,7 @@ public sealed class SandboxUIController : UIController, IOnStateChanged<Gameplay
         if (_sandbox.SandboxAllowed && _window.IsOpen != true)
         {
             UIManager.ClickSound();
-            _window.OpenCentered();
+            _window.Open();
         }
         else
         {
@@ -237,4 +207,16 @@ public sealed class SandboxUIController : UIController, IOnStateChanged<Gameplay
             _window.Close();
         }
     }
+
+    #region Buttons
+
+    public void SetToggleSubfloors(bool value)
+    {
+        if (_window == null)
+            return;
+
+        _window.ToggleSubfloorButton.Pressed = value;
+    }
+
+    #endregion
 }

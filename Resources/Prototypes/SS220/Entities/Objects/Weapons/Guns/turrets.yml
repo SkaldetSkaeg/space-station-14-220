@@ -1,0 +1,226 @@
+- type: entity
+  parent: BaseStructure
+  id: LaserWeaponTurret
+  name: лазерная турель
+  abstract: true
+  components:
+    - type: Clickable
+    - type: InteractionOutline
+    - type: Actions
+    - type: Fixtures
+      fixtures:
+        fix1:
+          shape:
+            !type:PhysShapeAabb
+            bounds: "-0.45,-0.45,0.45,0.45"
+          density: 60
+          mask:
+            - MachineMask
+          layer:
+            - MachineLayer
+    - type: ContainerContainer
+      containers:
+        ballistic-ammo: !type:Container
+    - type: Sprite
+      sprite: Objects/Weapons/Guns/Turrets/turrets.rsi
+      drawdepth: Mobs
+      layers:
+        - state: syndie_lethal
+    - type: InteractionPopup
+      interactDelay: 0.2
+      successChance: 0.8
+      interactSuccessString: petting-success-generic
+      interactFailureString: petting-failure-generic
+      interactSuccessSound:
+        path: /Audio/Effects/double_beep.ogg
+    - type: CombatMode
+      toggleMouseRotator: false
+    - type: Damageable
+      damageContainer: Inorganic
+    - type: Destructible
+      thresholds:
+        - trigger:
+            !type:DamageTrigger
+            damage: 600
+          behaviors:
+            - !type:DoActsBehavior
+              acts: [ "Destruction" ]
+        - trigger:
+            !type:DamageTrigger
+            damage: 300
+          # TODO: Construction graph
+          behaviors:
+            - !type:DoActsBehavior
+              acts: [ "Destruction" ]
+            - !type:PlaySoundBehavior
+              sound:
+                collection: MetalGlassBreak
+            - !type:SpawnEntitiesBehavior
+              spawn:
+                SheetSteel1:
+                  min: 2
+                  max: 4
+    - type: Gun
+      fireRate: 2.5
+      selectedMode: FullAuto
+      availableModes:
+        - FullAuto
+      soundGunshot:
+        path: /Audio/Weapons/Guns/Gunshots/laser.ogg
+    - type: BatteryAmmoProvider
+      proto: RedLaser
+      fireCost: 1
+    - type: Battery
+      maxCharge: 500
+      startingCharge: 500
+    - type: HTN
+      rootTask:
+        task: LaserTurretCompound
+      blackboard:
+        RotateSpeed: !type:Single
+          5
+        SoundTargetInLOS: !type:SoundPathSpecifier
+          path: /Audio/Effects/double_beep.ogg
+    - type: MouseRotator
+      angleTolerance: 5
+      rotationSpeed: 180
+      simple4DirMode: false
+    - type: NoRotateOnInteract
+    - type: NoRotateOnMove
+    - type: StaticPrice
+      price: 1000
+    - type: Input
+      context: "human"
+
+- type: entity
+  parent: LaserWeaponTurret
+  name: одноразовая лазерная турель
+  id: LaserTurretSyndicate
+  suffix: Syndicate
+  components:
+    - type: NpcFactionMember
+      factions:
+        - Syndicate
+
+- type: entity
+  parent: LaserWeaponTurret
+  id: LaserTurretNanoTrasen
+  suffix: NanoTrasen
+  components:
+  - type: NpcFactionMember
+    factions:
+      - NanoTrasen
+
+- type: entity
+  parent: LaserWeaponTurret
+  id: LaserTurretHostile
+  suffix: Hostile
+  components:
+  - type: NpcFactionMember
+    factions:
+      - SimpleHostile
+
+- type: entity
+  parent: BaseWeaponTurret
+  id: WeaponTurretDeathSquad
+  name: turret
+  description: A turret with an automatic fire system.
+  suffix: DS, Death Squad, Эскадрон Смерти
+  components:
+  - type: NpcFactionMember
+    factions:
+    - DeathSquad
+  - type: Gun
+    fireRate: 6
+    soundGunshot: /Audio/Weapons/Guns/Gunshots/minigun.ogg
+
+- type: entity
+  parent: BaseWeaponTurret
+  id: AirDefenseTurret
+  name: APS "Ouroboros"
+  description: A specialized laser system designed for projectile interception. Ignores organic targets.
+  components:
+  - type: Appearance
+  - type: Sprite
+    sprite: SS220/Objects/Weapons/Guns/Turrets/kaz_uroboros.rsi
+    granularLayersRendering: true
+    layers:
+    - state: support
+      renderingStrategy: NoRotation
+    - state: base
+    - state: power-0
+      map: [ "kaz_battery_body" ]
+      visible: false
+    - state: light_on
+      map: [ "kaz_ammo_light" ]
+      visible: false
+    - state: power-unshaded-0
+      map: [ "enum.GunVisualLayers.MagUnshaded" ]
+      shader: unshaded
+  - type: GenericVisualizer
+    visuals:
+      enum.AirDefenseCellVisuals.HasPowerCell:
+        kaz_battery_body:
+          True: { visible: true }
+          False: { visible: false }
+      enum.AmmoVisuals.HasAmmo:
+        kaz_ammo_light:
+          True: { visible: true }
+          False: { visible: false }
+  - type: MagazineVisuals
+    magState: power
+    steps: 4
+    zeroVisible: true
+  - type: HTN
+    rootTask:
+      task: LaserTurretCompound
+    blackboard:
+      RotateSpeed: !type:Single
+        5
+      SoundTargetInLOS: !type:SoundPathSpecifier
+        path: /Audio/Effects/double_beep.ogg
+  - type: Clickable
+  - type: InteractionOutline
+  - type: Actions
+  - type: AirDefense
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.45,-0.45,0.45,0.45"
+        density: 60
+        mask:
+        - MachineMask
+        layer:
+        - MachineLayer
+      airDefense:
+        shape: !type:PhysShapeCircle
+          radius: 4
+        hard: false
+        mask:
+        - Impassable
+        - MidImpassable
+        - HighImpassable
+        - LowImpassable
+  - type: Gun
+    fireRate: 2
+    soundGunshot:
+      path: /Audio/Weapons/Guns/Gunshots/ship_svalinn.ogg
+  - type: BatteryAmmoProvider
+    proto: AirDefenseLaser
+    fireCost: 62
+  - type: PowerCellSlot
+    cellSlotId: cell_slot
+  - type: ItemSlots
+    slots:
+      cell_slot:
+        name: Magazine
+        insertSound: /Audio/Weapons/Guns/MagIn/batrifle_magin.ogg
+        ejectSound: /Audio/Weapons/Guns/MagOut/batrifle_magout.ogg
+        whitelist:
+          tags:
+          - PowerCage
+  - type: ContainerContainer
+    containers:
+      cell_slot: !type:ContainerSlot

@@ -1,24 +1,24 @@
 using System.Globalization;
-using System.Linq;
 using Content.Server.Chat.Managers;
-using Content.Server.GameTicking;
+using Content.Server.Chat.Systems;
+using Content.Server.Ghost;
 using Content.Server.Hands.Systems;
 using Content.Server.Inventory;
 using Content.Server.Popups;
-using Content.Server.Chat.Systems;
 using Content.Server.Station.Components;
 using Content.Server.Station.Systems;
 using Content.Server.StationRecords;
 using Content.Server.StationRecords.Systems;
-using Content.Shared.StationRecords;
-using Content.Shared.UserInterface;
 using Content.Shared.Access.Systems;
 using Content.Shared.Bed.Cryostorage;
 using Content.Shared.Chat;
 using Content.Shared.Climbing.Systems;
 using Content.Shared.Database;
+using Content.Shared.GameTicking;
 using Content.Shared.Hands.Components;
 using Content.Shared.Mind.Components;
+using Content.Shared.StationRecords;
+using Content.Shared.UserInterface;
 using Robust.Server.Audio;
 using Robust.Server.Containers;
 using Robust.Server.GameObjects;
@@ -29,6 +29,15 @@ using Robust.Shared.Network;
 using Robust.Shared.Player;
 using Content.Server.Forensics;
 using Robust.Shared.Utility;
+using Content.Shared.Roles; // SS220 Cryostorage ghost role fix
+using Content.Server.SS220.Bed.Cryostorage; // SS220 cryo department record
+using Content.Shared.Forensics.Components; //SS220 Cult_hotfix_4
+using Content.Shared.SS220.Containers; //SS220 cryo mobs fix
+using Content.Shared.Body.Systems;
+using Content.Server.Guardian;
+using Content.Shared.Body;
+using Content.Shared.Clothing.Components; //SS220 cryo mobs fix
+
 
 namespace Content.Server.Bed.Cryostorage;
 
@@ -42,7 +51,7 @@ public sealed class CryostorageSystem : SharedCryostorageSystem
     [Dependency] private readonly ChatSystem _chatSystem = default!;
     [Dependency] private readonly ClimbSystem _climb = default!;
     [Dependency] private readonly ContainerSystem _container = default!;
-    [Dependency] private readonly GameTicker _gameTicker = default!;
+    [Dependency] private readonly GhostSystem _ghostSystem = default!;
     [Dependency] private readonly HandsSystem _hands = default!;
     [Dependency] private readonly ServerInventorySystem _inventory = default!;
     [Dependency] private readonly PopupSystem _popup = default!;
@@ -51,6 +60,7 @@ public sealed class CryostorageSystem : SharedCryostorageSystem
     [Dependency] private readonly StationRecordsSystem _stationRecords = default!;
     [Dependency] private readonly TransformSystem _transform = default!;
     [Dependency] private readonly UserInterfaceSystem _ui = default!;
+    [Dependency] private readonly SharedContainerSystemExtensions _containerSystemExtensions = default!; //SS220 Cryo mobs fix
 
     /// <inheritdoc/>
     public override void Initialize()
@@ -100,8 +110,7 @@ public sealed class CryostorageSystem : SharedCryostorageSystem
         EntityUid? entity = null;
         if (args.Type == CryostorageRemoveItemBuiMessage.RemovalType.Hand)
         {
-            if (_hands.TryGetHand(cryoContained, args.Key, out var hand))
-                entity = hand.HeldEntity;
+            entity = _hands.GetHeldItem(cryoContained, args.Key);
         }
         else
         {
@@ -180,6 +189,8 @@ public sealed class CryostorageSystem : SharedCryostorageSystem
         if (!TryComp<CryostorageComponent>(cryostorageEnt, out var cryostorageComponent))
             return;
 
+        _containerSystemExtensions.RemoveEntitiesFromAllContainers<MindContainerComponent>(ent.Owner, [BodyComponent.ContainerID, GuardianHostComponent.GuardianContainerId]); //SS220-cryo-mobs-fix
+
         // if we have a session, we use that to add back in all the job slots the player had.
         if (userId != null)
         {
@@ -214,11 +225,15 @@ public sealed class CryostorageSystem : SharedCryostorageSystem
             if (userId != null && Mind.TryGetMind(userId.Value, out var mind) &&
                 HasComp<CryostorageContainedComponent>(mind.Value.Comp.CurrentEntity))
             {
-                _gameTicker.OnGhostAttempt(mind.Value, false);
+                _ghostSystem.OnGhostAttempt(mind.Value, false);
             }
         }
 
         comp.AllowReEnteringBody = false;
+        //SS220 start Cult_hotfix_4
+        var ev = new BeingCryoDeletedEvent();
+        RaiseLocalEvent(ent, ref ev);
+        //SS220 end Cult_hotfix_4
         _transform.SetParent(ent, PausedMap.Value);
         cryostorageComponent.StoredPlayers.Add(ent);
         Dirty(ent, comp);
@@ -252,9 +267,10 @@ public sealed class CryostorageSystem : SharedCryostorageSystem
             Loc.GetString(
                 "earlyleave-cryo-announcement",
                 ("character", name),
+                ("entity", ent.Owner), // gender things for supporting downstreams with other languages
                 ("job", CultureInfo.CurrentCulture.TextInfo.ToTitleCase(jobName))
             ), Loc.GetString("earlyleave-cryo-sender"),
-            playSound: false
+            playDefaultSound: false
         );
     }
 
@@ -327,15 +343,20 @@ public sealed class CryostorageSystem : SharedCryostorageSystem
         var enumerator = _inventory.GetSlotEnumerator(uid);
         while (enumerator.NextItem(out var item, out var slotDef))
         {
+            // ss220 fix attached item in cryo storage start
+            if (HasComp<AttachedClothingComponent>(item))
+                continue;
+            // ss220 fix attached item in cryo storage end
+
             data.ItemSlots.Add(slotDef.Name, Name(item));
         }
 
         foreach (var hand in _hands.EnumerateHands(uid))
         {
-            if (hand.HeldEntity == null)
+            if (!_hands.TryGetHeldItem(uid, hand, out var heldEntity))
                 continue;
 
-            data.HeldItems.Add(hand.Name, Name(hand.HeldEntity.Value));
+            data.HeldItems.Add(hand, Name(heldEntity.Value));
         }
 
         return data;

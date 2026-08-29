@@ -4,14 +4,9 @@ using Robust.Shared.Serialization;
 
 namespace Content.Shared.SS220.Shlepovend;
 
-public abstract class SharedShlepovendSystem : EntitySystem
+public abstract partial class SharedShlepovendSystem : EntitySystem
 {
-    [Dependency] private readonly IPrototypeManager _prototype = default!;
-
-    public override void Initialize()
-    {
-        base.Initialize();
-    }
+    [Dependency] private IPrototypeManager _prototype = default!;
 
     public ShlepaRewardGroupPrototype? GetHighestTier(SponsorTier[] tiers)
     {
@@ -29,14 +24,18 @@ public abstract class SharedShlepovendSystem : EntitySystem
 
         if (highestAvailableTier == null)
             return null;
+        return GetTierRewardOrDefault(highestAvailableTier.Value);
+    }
 
+    public ShlepaRewardGroupPrototype? GetTierRewardOrDefault(SponsorTier tier)
+    {
         if (!_prototype.TryGetInstances<ShlepaRewardGroupPrototype>(out var protos))
             return null;
 
         // Try to get a role proto with a corresponding enum
         foreach (var (_, proto) in protos)
         {
-            if (proto.RequiredRole is SponsorTier && (SponsorTier) proto.RequiredRole == highestAvailableTier.Value)
+            if (proto.RequiredRole == tier)
                 return proto;
         }
 
@@ -51,7 +50,7 @@ public abstract class SharedShlepovendSystem : EntitySystem
         // Try to get a role proto with a corresponding enum
         foreach (var (_, proto) in protos)
         {
-            if (proto.RequiredRole is SponsorTier && (SponsorTier) proto.RequiredRole == role)
+            if (proto.RequiredRole != null && proto.RequiredRole == role)
                 return true;
         }
 

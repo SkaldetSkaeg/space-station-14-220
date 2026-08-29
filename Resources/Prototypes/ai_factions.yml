@@ -1,12 +1,18 @@
 - type: npcFaction
   id: Dragon
   hostile:
-    - NanoTrasen
-    - Syndicate
-    - Xeno
-    - PetsNT
-    - Zombie
-    - Revolutionary
+  - NanoTrasen
+  - Syndicate
+  - Xeno
+  - PetsNT
+  - Zombie
+  - Revolutionary
+  - AllHostile
+  - Wizard
+  - Xenoborg
+  - DeathSquad #SS220 dq update
+  - SpiderQueen #ss220 spider queen
+  - CultYogg #SS220 CultYogg
 
 - type: npcFaction
   id: NanoTrasen
@@ -16,22 +22,34 @@
   - Xeno
   - Zombie
   - Revolutionary
+  - SpiderQueen #ss220 spider queen
+  - Dragon
+  - AllHostile
+  - Wizard
+  - Xenoborg
 
 - type: npcFaction
   id: Mouse
   hostile:
-    - PetsNT
+  - PetsNT
+  - AllHostile
+  - Wizard
 
 - type: npcFaction
   id: Passive
 
 - type: npcFaction
   id: PetsNT
+  friendly:
+  - NanoTrasen
   hostile:
   - Mouse
   - SimpleHostile
   - Zombie
   - Xeno
+  - SpiderQueen #ss220 spider queen
+  - AllHostile
+  - Dragon
 
 - type: npcFaction
   id: SimpleHostile
@@ -42,6 +60,13 @@
   - PetsNT
   - Zombie
   - Revolutionary
+  - Dragon
+  - Xeno
+  - SpiderQueen #ss220 spider queen
+  - CultYogg #SS220 CultYogg
+  - AllHostile
+  - Wizard
+  - Xenoborg
 
 - type: npcFaction
   id: SimpleNeutral
@@ -50,57 +75,126 @@
   id: Syndicate
   hostile:
   - NanoTrasen
+  - DeathSquad #SS220 dq update
   - SimpleHostile
   - Xeno
   - PetsNT
   - Zombie
+  - SpiderQueen #ss220 spider queen
+  - CultYogg #SS220 CultYogg
+  - Dragon
+  - AllHostile
+  - Wizard
+  - Xenoborg
 
 - type: npcFaction
   id: Xeno
   hostile:
   - NanoTrasen
+  - DeathSquad #SS220 dq update
   - Syndicate
   - Passive
   - PetsNT
   - Zombie
   - Revolutionary
+  - SpiderQueen #ss220 spider queen
+  - CultYogg #SS220 CultYogg
+  - AllHostile
+  - Wizard
+  - Dragon
+  - Xenoborg
 
 - type: npcFaction
   id: Zombie
   hostile:
   - NanoTrasen
+  - DeathSquad #SS220 dq update
   - SimpleNeutral
   - SimpleHostile
   - Syndicate
   - Passive
   - PetsNT
   - Revolutionary
-
-# SS220 AI Mapping Update Begin
-
-- type: npcFaction
-  id: BloodCult
-  hostile:
-  - NanoTrasen
-  - Syndicate
-  - Passive
-  - PetsNT
-  - Zombie
-  - Revolutionary
-
-# SS220 AI Mapping Update End
+  - SpiderQueen #ss220 spider queen
+  - CultYogg #SS220 CultYogg
+  - AllHostile
+  - Wizard
+  - Dragon
+  - Xenoborg
 
 - type: npcFaction
   id: Revolutionary
   hostile:
   - NanoTrasen
+  - DeathSquad #SS220 dq update
   - Zombie
   - SimpleHostile
   - Dragon
-
-# ss220 reaper passive start
+  - SpiderQueen #ss220 spider queen
+  - CultYogg #SS220 CultYogg
+  - AllHostile
+  - Wizard
+  - Xenoborg
 
 - type: npcFaction
-  id: DarkReaperPassive
+  id: AllHostile
+  hostile:
+  - NanoTrasen
+  - Dragon
+  - Mouse
+  - Passive
+  - PetsNT
+  - SimpleHostile
+  - SimpleNeutral
+  - Syndicate
+  - Xeno
+  - Zombie
+  - Revolutionary
+  - Wizard
+  - Xenoborg
+  # SS220 Fractions begin
+  # Regular:
+  - BloodCult
+  - DarkReaperPassive
+  - SpiderQueen
+  - SpiderHostile
+  - DeathSquad
+  - CultYogg
+  # Ebent:
+  - EbentUssp
+  - EbentNanoTrasen
+  - EbentIronSquad
+  # SS220 Fractions end
 
-# ss220 reaper passive end
+- type: npcFaction
+  id: Wizard
+  hostile:
+  - NanoTrasen
+  - Dragon
+  - Mouse
+  - Passive
+  - PetsNT
+  - SimpleHostile
+  - SimpleNeutral
+  - Syndicate
+  - Xeno
+  - Zombie
+  - Revolutionary
+  - AllHostile
+  - Xenoborg
+
+- type: npcFaction
+  id: Xenoborg
+  hostile:
+  # they have brains
+  - NanoTrasen
+  - Syndicate
+  - Zombie
+  - Revolutionary
+  - Wizard
+
+  - Xeno # rivalry
+
+  # cause they are hostile to them
+  - SimpleHostile
+  - AllHostile

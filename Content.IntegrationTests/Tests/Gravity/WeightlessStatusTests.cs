@@ -1,3 +1,4 @@
+using Content.IntegrationTests.Fixtures;
 using Content.Server.Gravity;
 using Content.Shared.Alert;
 using Content.Shared.Gravity;
@@ -8,7 +9,7 @@ namespace Content.IntegrationTests.Tests.Gravity
     [TestFixture]
     [TestOf(typeof(GravitySystem))]
     [TestOf(typeof(GravityGeneratorComponent))]
-    public sealed class WeightlessStatusTests
+    public sealed class WeightlessStatusTests : GameTest
     {
         [TestPrototypes]
         private const string Prototypes = @"
@@ -19,12 +20,16 @@ namespace Content.IntegrationTests.Tests.Gravity
   - type: Alerts
   - type: Physics
     bodyType: Dynamic
+  - type: GravityAffected
 
 - type: entity
   name: WeightlessGravityGeneratorDummy
   id: WeightlessGravityGeneratorDummy
   components:
   - type: GravityGenerator
+  - type: PowerCharge
+    windowTitle: gravity-generator-window-title
+    idlePower: 50
     chargeRate: 1000000000 # Set this really high so it discharges in a single tick.
     activePower: 500
   - type: ApcPowerReceiver
@@ -34,7 +39,7 @@ namespace Content.IntegrationTests.Tests.Gravity
         [Test]
         public async Task WeightlessStatusTest()
         {
-            await using var pair = await PoolManager.GetServerClient();
+            var pair = Pair;
             var server = pair.Server;
 
             var entityManager = server.ResolveDependency<IEntityManager>();
@@ -82,8 +87,6 @@ namespace Content.IntegrationTests.Tests.Gravity
             });
 
             await pair.RunTicksSync(10);
-
-            await pair.CleanReturnAsync();
         }
     }
 }

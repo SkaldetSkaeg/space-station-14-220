@@ -1,4 +1,4 @@
-# Turtleneck Time
+# Job Time
 - type: loadoutEffectGroup
   id: SecurityCadetTurtleneck
   effects:
@@ -7,8 +7,23 @@
       !type:RoleTimeRequirement
       role: JobSecurityCadet
       time: 108000 # 30 hrs
+  sponsorTierLoadoutEffects:
+  - !type:GroupLoadoutEffect
+    proto: SeniorDevTeamTier
+  - !type:GroupLoadoutEffect
+    proto: AdministratorSponsorTier
 
 # Jumpsuit
+- type: loadout
+  id: SecurityGrayJumpsuit
+  equipment:
+    jumpsuit: ClothingUniformJumpsuitSecGrey
+
+- type: loadout
+  id: SecurityGrayJumpskirt
+  equipment:
+    jumpsuit: ClothingUniformJumpskirtSecGrey
+
 - type: loadout
   id: SecurityCadetJumpsuitTurtleneck
   effects:

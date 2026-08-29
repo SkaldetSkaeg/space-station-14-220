@@ -1,3 +1,20 @@
+# For mantles
+- type: loadoutEffectGroup
+  id: MasterQM
+  effects:
+  - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:RoleTimeRequirement
+      role: JobQuartermaster
+      time: 20h
+  # SS220-sponsor-tier-begin
+  sponsorTierLoadoutEffects:
+  - !type:GroupLoadoutEffect
+    proto: SeniorDevTeamTier
+  - !type:GroupLoadoutEffect
+    proto: AdministratorSponsorTier
+  # SS220-sponsor-tier-end
+
 # Jumpsuit
 - type: loadout
   id: QuartermasterJumpsuit
@@ -42,6 +59,14 @@
     neck: ClothingNeckCloakQm
 
 - type: loadout
+  id: QuartermasterMantle
+  equipment:
+    neck: ClothingNeckMantleQM
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: MasterQM
+
+- type: startingGear
   id: QuartermasterMantle
   equipment:
     neck: ClothingNeckMantleQM

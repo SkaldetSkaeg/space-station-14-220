@@ -1,0 +1,35 @@
+- type: entity
+  name: law encryption key box
+  parent: BoxEncryptionKeyPassenger
+  id: BoxEncryptionKeyLaw
+  components:
+  - type: EntityTableContainerFill
+    containers:
+      storagebase: !type:AllSelector
+        children:
+        - id: EncryptionKeyLaw
+          amount: 4
+
+- type: entity
+  id: BoxDnaCopyImplant
+  parent: BoxCardboard
+  components:
+  - type: EntityTableContainerFill
+    containers:
+      storagebase: !type:AllSelector
+        children:
+        - id: PenDnaScrambler
+        - id: DnaCopyImplanter
+        - id: PaperDnaCopyImplanter
+
+- type: entity
+  id: BoxOrigamiKit
+  parent: BoxCardboard
+  components:
+  - type: EntityTableContainerFill
+    containers:
+      storagebase: !type:AllSelector
+        children:
+        - id: OrigamiBook
+        - id: Paper
+          amount: 3

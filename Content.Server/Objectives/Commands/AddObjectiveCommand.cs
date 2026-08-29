@@ -1,56 +1,143 @@
-﻿using Content.Server.Administration;
+﻿using System.Linq;
+using Content.Server.Administration;
+using Content.Server.Chat.Managers;
+using Content.Server.Objectives.Components;
+using Content.Server.Objectives.Systems;
 using Content.Shared.Administration;
+using Content.Shared.Chat;
 using Content.Shared.Mind;
 using Content.Shared.Objectives.Components;
+using Content.Shared.Prototypes;
 using Robust.Server.Player;
 using Robust.Shared.Console;
 using Robust.Shared.Prototypes;
 
-namespace Content.Server.Objectives.Commands
+namespace Content.Server.Objectives.Commands;
+
+[AdminCommand(AdminFlags.Admin)]
+public sealed class AddObjectiveCommand : LocalizedEntityCommands
 {
-    [AdminCommand(AdminFlags.Admin)]
-    public sealed class AddObjectiveCommand : IConsoleCommand
+    [Dependency] private readonly IPlayerManager _players = default!;
+    [Dependency] private readonly IPrototypeManager _prototypes = default!;
+    [Dependency] private readonly SharedMindSystem _mind = default!;
+    [Dependency] private readonly ObjectivesSystem _objectives = default!;
+    // ss220 add custom antag goals start
+    [Dependency] private readonly TargetObjectiveSystem _targetObjective = default!;
+    [Dependency] private readonly StealConditionSystem _steal = default!;
+    [Dependency] private readonly IChatManager _chatManager = default!;
+    // ss220 add custom antag goals end
+
+    public override string Command => "addobjective";
+
+    public override void Execute(IConsoleShell shell, string argStr, string[] args)
     {
-        [Dependency] private readonly IEntityManager _entityManager = default!;
+        // ss220 add custom antag goals start
+        // if (args.Length != 2)
+        // {
+        //     shell.WriteError(Loc.GetString(Loc.GetString("cmd-addobjective-invalid-args")));
+        //     return;
+        // }
+        // ss220 add custom antag goals end
 
-        public string Command => "addobjective";
-        public string Description => "Adds an objective to the player's mind.";
-        public string Help => "addobjective <username> <objectiveID>";
-        public void Execute(IConsoleShell shell, string argStr, string[] args)
+        // ss220 add custom antag goals start
+        if (args.Length < 2)
         {
-            if (args.Length != 2)
-            {
-                shell.WriteLine("Expected exactly 2 arguments.");
-                return;
-            }
+            shell.WriteError(Loc.GetString("cmd-addobjective-invalid-args"));
+            return;
+        }
+        // ss220 add custom antag goals end
 
-            var mgr = IoCManager.Resolve<IPlayerManager>();
-            if (!mgr.TryGetSessionByUsername(args[0], out var data))
-            {
-                shell.WriteLine("Can't find the playerdata.");
-                return;
-            }
+        if (!_players.TryGetSessionByUsername(args[0], out var data))
+        {
+            shell.WriteError(Loc.GetString("cmd-addobjective-player-not-found"));
+            return;
+        }
 
-            var minds = _entityManager.System<SharedMindSystem>();
-            if (!minds.TryGetMind(data, out var mindId, out var mind))
-            {
-                shell.WriteLine("Can't find the mind.");
-                return;
-            }
+        if (!_mind.TryGetMind(data, out var mindId, out var mind))
+        {
+            shell.WriteError(Loc.GetString("cmd-addobjective-mind-not-found"));
+            return;
+        }
 
-            if (!IoCManager.Resolve<IPrototypeManager>()
-                .TryIndex<EntityPrototype>(args[1], out var proto) ||
-                !proto.TryGetComponent<ObjectiveComponent>(out _))
-            {
-                shell.WriteLine($"Can't find matching objective prototype {args[1]}");
-                return;
-            }
+        if (!_prototypes.TryIndex<EntityPrototype>(args[1], out var proto) ||
+            !proto.HasComponent<ObjectiveComponent>())
+        {
+            shell.WriteError(Loc.GetString("cmd-addobjective-objective-not-found", ("obj", args[1])));
+            return;
+        }
 
-            if (!minds.TryAddObjective(mindId, mind, args[1]))
+        // ss220 add custom antag goals start
+        EntityUid? targetEnt = null;
+        EntityPrototype? targetEntProto = null;
+        var force = false;
+
+        if (args.Length >= 3)
+        {
+            if (EntityUid.TryParse(args[2], out var entUid))
+                targetEnt = entUid;
+
+            if (_prototypes.TryIndex(args[2], out var targetProto))
+                targetEntProto = targetProto;
+
+            bool.TryParse(args[2], out force);
+        }
+
+        if (args.Length == 4)
+        {
+            force = bool.Parse(args[3]);
+        }
+
+        if (!_mind.TryAddObjective(mindId, mind, args[1], out var objective, force))
+        {
+            // can fail for other reasons so dont pretend to be right
+            shell.WriteError(Loc.GetString("cmd-addobjective-adding-failed"));
+            return;
+        }
+
+        if (EntityManager.TryGetComponent<TargetObjectiveComponent>(objective, out var targetObj))
+        {
+            if (targetEnt != null)
             {
-                // can fail for other reasons so dont pretend to be right
-                shell.WriteLine("Failed to add the objective. Maybe requirements dont allow that objective to be added.");
+                _targetObjective.SetTarget(objective.Value, targetEnt.Value, targetObj);
+                _targetObjective.ResetEntityName(objective.Value, log: true);
+            }
+            else if (!EntityManager.HasComponent<PickRandomPersonComponent>(objective.Value) || targetObj.Target == null)
+            {
+                _mind.TryRemoveObjective(mindId, mind, objective.Value);
+                return;
             }
         }
+
+        if (EntityManager.TryGetComponent<StealConditionComponent>(objective, out var stealCondition))
+        {
+            if (targetEnt != null)
+                _steal.SetStealTarget(targetEnt.Value, (objective.Value, stealCondition));
+            else if (targetEntProto != null)
+                _steal.SetStealTarget(targetEntProto, (objective.Value, stealCondition));
+            else
+                return;
+        }
+
+        var msg = Loc.GetString("ui-add-objective-chat-manager-announce");
+        var wrappedMessage = Loc.GetString("chat-manager-server-wrap-message", ("message", msg));
+        _chatManager.ChatMessageToOne(ChatChannel.Server, msg, wrappedMessage, default, false, data.Channel, colorOverride: Color.Red);
+        // ss220 add custom antag goals end
+    }
+
+    public override CompletionResult GetCompletion(IConsoleShell shell, string[] args)
+    {
+        if (args.Length == 1)
+        {
+            var options = _players.Sessions.OrderBy(c => c.Name).Select(c => c.Name).ToArray();
+
+            return CompletionResult.FromHintOptions(options, Loc.GetString("cmd-addobjective-player-completion"));
+        }
+
+        if (args.Length != 2)
+            return CompletionResult.Empty;
+
+        return CompletionResult.FromHintOptions(
+            _objectives.Objectives(),
+            Loc.GetString("cmd-add-objective-obj-completion"));
     }
 }

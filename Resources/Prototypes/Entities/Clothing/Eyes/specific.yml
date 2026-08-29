@@ -1,10 +1,11 @@
-﻿- type: entity
-  parent: ClothingEyesBase
-  id: ClothingEyesChameleon # no flash immunity, sorry
+- type: entity
+  parent: [ClothingEyesBase, BaseChameleon]
+  id: ClothingEyesChameleon
   name: sun glasses
   description: Useful both for security and cargonia.
   suffix: Chameleon
   components:
+    - type: FlashImmunity
     - type: Tag
       tags: [] # ignore "WhitelistChameleon" tag
     - type: Sprite
@@ -14,23 +15,13 @@
     - type: ChameleonClothing
       slot: [eyes]
       default: ClothingEyesGlassesSunglasses
-    - type: UserInterface
-      interfaces:
-        enum.ChameleonUiKey.Key:
-          type: ChameleonBoundUserInterface
-# Corvax-HiddenDesc-Start
-    - type: HiddenDescription 
+# SS220-hidden-desc-begin
+    - type: HiddenDescription
       entries:
-      - label: corvax-hidden-desc-Chameleon-syndicate
-        whitelistMind:
-          components:
-            - TraitorRole
-            - NukeOperative
-      - label: corvax-hidden-desc-Chameleon-research
-        jobRequired:
-          - ResearchAssistant
-          - ResearchDirector
-          - Scientist
-          - Borg
-# Corvax-HiddenDesc-End
-
+        SyndicateAgentKnowledge: [ corvax-hidden-desc-Chameleon-syndicate ]
+        ScienceKnowledge: [ corvax-hidden-desc-Chameleon-research ]
+      nameEntries:
+      - [SyndicateAgentKnowledge, null]
+      - [ScienceKnowledge, null]
+      hiddenName: null
+# SS220-hidden-desc-end

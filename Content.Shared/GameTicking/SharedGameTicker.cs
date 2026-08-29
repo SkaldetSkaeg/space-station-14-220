@@ -6,6 +6,8 @@ using Robust.Shared.Serialization;
 using Robust.Shared.Serialization.Markdown.Mapping;
 using Robust.Shared.Serialization.Markdown.Value;
 using Robust.Shared.Timing;
+using Robust.Shared.Audio;
+using Content.Shared.GameTicking.Prototypes;
 
 namespace Content.Shared.GameTicking
 {
@@ -14,11 +16,16 @@ namespace Content.Shared.GameTicking
         [Dependency] private readonly IReplayRecordingManager _replay = default!;
         [Dependency] private readonly IGameTiming _gameTiming = default!;
 
+        /// <summary>
+        ///     A list storing the start times of all game rules that have been started this round.
+        ///     Game rules can be started and stopped at any time, including midround.
+        /// </summary>
+        public abstract IReadOnlyList<(TimeSpan, string)> AllPreviousGameRules { get; }
+
         // See ideally these would be pulled from the job definition or something.
         // But this is easier, and at least it isn't hardcoded.
         //TODO: Move these, they really belong in StationJobsSystem or a cvar.
-        [ValidatePrototypeId<JobPrototype>]
-        public const string FallbackOverflowJob = "Passenger";
+        public static readonly ProtoId<JobPrototype> FallbackOverflowJob = "Passenger";
 
         public const string FallbackOverflowJobName = "job-name-passenger";
 
@@ -41,7 +48,10 @@ namespace Content.Shared.GameTicking
 
         private void OnRecordingStart(MappingDataNode metadata, List<object> events)
         {
-            metadata["roundId"] = new ValueDataNode(RoundId.ToString());
+            if (RoundId != 0)
+            {
+                metadata["roundId"] = new ValueDataNode(RoundId.ToString());
+            }
         }
 
         public TimeSpan RoundDuration()
@@ -86,14 +96,14 @@ namespace Content.Shared.GameTicking
     public sealed class TickerLobbyStatusEvent : EntityEventArgs
     {
         public bool IsRoundStarted { get; }
-        public string? LobbyBackground { get; }
+        public ProtoId<LobbyBackgroundPrototype>? LobbyBackground { get; }
         public bool YouAreReady { get; }
         // UTC.
         public TimeSpan StartTime { get; }
         public TimeSpan RoundStartTimeSpan { get; }
         public bool Paused { get; }
 
-        public TickerLobbyStatusEvent(bool isRoundStarted, string? lobbyBackground, bool youAreReady, TimeSpan startTime, TimeSpan preloadTime, TimeSpan roundStartTimeSpan, bool paused)
+        public TickerLobbyStatusEvent(bool isRoundStarted, ProtoId<LobbyBackgroundPrototype>? lobbyBackground, bool youAreReady, TimeSpan startTime, TimeSpan preloadTime, TimeSpan roundStartTimeSpan, bool paused)
         {
             IsRoundStarted = isRoundStarted;
             LobbyBackground = lobbyBackground;
@@ -107,11 +117,13 @@ namespace Content.Shared.GameTicking
     [Serializable, NetSerializable]
     public sealed class TickerLobbyInfoEvent : EntityEventArgs
     {
+        public int RoundId; // SS220-add-round-id-info-for-client
         public string TextBlob { get; }
 
-        public TickerLobbyInfoEvent(string textBlob)
+        public TickerLobbyInfoEvent(string textBlob, int roundId) // SS220-add-round-id-info-for-client
         {
             TextBlob = textBlob;
+            RoundId = roundId; // SS220-add-round-id-info-for-client
         }
     }
 
@@ -166,10 +178,16 @@ namespace Content.Shared.GameTicking
 
             public string Role;
 
-            [DataField, NonSerialized]
+            // SS220 Round End Titles begin
+            //[DataField, NonSerialized]
+            [DataField]
+            // SS220 Round End Titles end
             public string[] JobPrototypes;
 
-            [DataField, NonSerialized]
+            // SS220 Round End Titles begin
+            //[DataField, NonSerialized]
+            [DataField]
+            // SS220 Round End Titles end
             public string[] AntagPrototypes;
 
             public NetEntity? PlayerNetEntity;
@@ -183,17 +201,34 @@ namespace Content.Shared.GameTicking
             public bool Connected;
         }
 
+        // SS220 Round End Titles begin
+        [Serializable, NetSerializable, DataDefinition]
+        public partial struct RoundEndSponsorInfo
+        {
+            [DataField]
+            public string PlayerOOCName;
+            public SS220.Discord.SponsorTier[] Tiers;
+
+            public RoundEndSponsorInfo(string playerOOCName, SS220.Discord.SponsorTier[] tiers)
+            {
+                PlayerOOCName = playerOOCName;
+                Tiers = tiers;
+            }
+        }
+        // SS220 Round End Titles end
+
         public string GamemodeTitle { get; }
         public string RoundEndText { get; }
         public TimeSpan RoundDuration { get; }
         public int RoundId { get; }
         public int PlayerCount { get; }
         public RoundEndPlayerInfo[] AllPlayersEndInfo { get; }
+        public RoundEndSponsorInfo[] Sponsors { get; } // SS220 Round End Titles
 
         /// <summary>
         /// Sound gets networked due to how entity lifecycle works between client / server and to avoid clipping.
         /// </summary>
-        public string? RestartSound;
+        public ResolvedSoundSpecifier? RestartSound;
 
         public RoundEndMessageEvent(
             string gamemodeTitle,
@@ -202,7 +237,8 @@ namespace Content.Shared.GameTicking
             int roundId,
             int playerCount,
             RoundEndPlayerInfo[] allPlayersEndInfo,
-            string? restartSound)
+            RoundEndSponsorInfo[] sponsors, // SS220 Round End Titles
+            ResolvedSoundSpecifier? restartSound)
         {
             GamemodeTitle = gamemodeTitle;
             RoundEndText = roundEndText;
@@ -210,6 +246,7 @@ namespace Content.Shared.GameTicking
             RoundId = roundId;
             PlayerCount = playerCount;
             AllPlayersEndInfo = allPlayersEndInfo;
+            Sponsors = sponsors; // SS220 Round End Titles
             RestartSound = restartSound;
         }
     }

@@ -1,0 +1,57 @@
+# © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
+
+# CyberPunk
+- type: entity
+  parent: [ ClothingSponsorEyesBaseUnshaded, ClothingEyesGlassesSecurity ]
+  id: ClothingSponsorCyberSecVisor
+  name: security cybervisor
+  description: Despite its menacing appearance, it provides no protection against flashes or paparazzi.
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/Eyes/Hud/CyberPunk/secvisor.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/Eyes/Hud/CyberPunk/secvisor.rsi
+
+- type: entity
+  parent: [ ClothingSponsorEyesBaseUnshaded, ClothingEyesGlassesMeson ]
+  id: ClothingSponsorCyberEngVisor
+  name: cyber-welding goggles
+  description: Their comically large size has somehow managed to increase efficiency by a whopping 0.42%!
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/Eyes/Hud/CyberPunk/engivisor.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/Eyes/Hud/CyberPunk/engivisor.rsi
+
+- type: entity
+  parent: [ ClothingSponsorEyesBaseUnshaded, ClothingEyesHudMedical ]
+  id: ClothingSponsorCyberMedVisor
+  name: medical cybervisor
+  description: For this price, it should show way more than just the patient's condition, but that's just a dream...
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/Eyes/Hud/CyberPunk/medvisor.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/Eyes/Hud/CyberPunk/medvisor.rsi
+
+- type: entity
+  parent: [ ClothingSponsorEyesBaseUnshaded, ClothingEyesGlassesChemical ]
+  id: ClothingSponsorCyberChemVisor
+  name: chemical analysis cybervisor
+  description: To guarantee analytical precision, additional sensors were installed, increasing its overall size. Now, no one can tell by your eyes whether you're awake or asleep.
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/Eyes/Hud/CyberPunk/chemvisor.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/Eyes/Hud/CyberPunk/chemvisor.rsi
+
+- type: entity
+  parent: ClothingSponsorEyesBaseUnshaded
+  id: ClothingSponsorCyberCevVisor
+  name: white visor
+  description: A civilian-grade visor. By using advanced materials, it manages to glow in the dark without the need for electricity.
+  components:
+  - type: Sprite
+    sprite: SS220/Clothing/Sponsor/Eyes/Hud/CyberPunk/civvisor.rsi
+  - type: Clothing
+    sprite: SS220/Clothing/Sponsor/Eyes/Hud/CyberPunk/civvisor.rsi

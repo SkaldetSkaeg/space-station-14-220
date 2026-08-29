@@ -4,8 +4,8 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Shared.SS220.CriminalRecords;
 
-[Prototype("criminalStatus")]
-public sealed class CriminalStatusPrototype : IPrototype
+[Prototype]
+public sealed partial class CriminalStatusPrototype : IPrototype
 {
     [IdDataField]
     public string ID { get; private set; } = default!;
@@ -27,6 +27,6 @@ public sealed class CriminalStatusPrototype : IPrototype
     /// The icon that's displayed on the entity and in the UIs
     /// </summary>
     [DataField]
-    public ProtoId<StatusIconPrototype>? StatusIcon = null;
+    public ProtoId<SecurityIconPrototype>? StatusIcon = null;
 }
 
