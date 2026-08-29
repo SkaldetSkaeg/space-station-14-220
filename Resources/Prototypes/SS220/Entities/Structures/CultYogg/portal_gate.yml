@@ -2,6 +2,7 @@
 
 - type: entity
   id: VoidPortalGate
+  parent: BaseStructure
   suffix: CultYogg
   name: Gates from the void
   description: A gate that allows one to escape beyond the Void.
@@ -20,6 +21,8 @@
       - Explosive
       - ProjectileGrenade
   - type: TeleportToRandomPoweredLight
+  - type: PolymorphAfterTeleport
+    polymorphPrototype: VoidChasmCameraPoly
   - type: Fixtures
     fixtures:
       left:
