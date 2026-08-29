@@ -20,6 +20,7 @@ public abstract partial class SharedSelfLinkedTeleportSystem : EntitySystem
         base.Initialize();
 
         SubscribeLocalEvent<SelfLinkedTeleportComponent, TeleportTargetEvent>(OnTeleportTarget);
+        SubscribeLocalEvent<SelfLinkedTeleportComponent, GhostTeleportTargetEvent>(OnGhostTeleportTarget);
         SubscribeLocalEvent<SelfLinkedTeleportComponent, TeleportUseAttemptEvent>(OnTeleportUseAttempt);
         SubscribeLocalEvent<SelfLinkedTeleportComponent, ExaminedEvent>(OnExamined);
     }
@@ -35,6 +36,21 @@ public abstract partial class SharedSelfLinkedTeleportSystem : EntitySystem
         var destinationCoordinates = Transform(destination).Coordinates;
 
         if (!TryTeleport(ent, args.Target, args.User, destinationCoordinates))
+            return;
+
+        args.Handled = true;
+    }
+
+    private void OnGhostTeleportTarget(Entity<SelfLinkedTeleportComponent> ent, ref GhostTeleportTargetEvent args)
+    {
+        if (args.Handled)
+            return;
+
+        if (!TryGetDestination(ent, out var destination))
+            return;
+
+        var destinationCoordinates = Transform(destination).Coordinates;
+        if (!_teleport.TryTeleportGhost(args.Target, destinationCoordinates))
             return;
 
         args.Handled = true;

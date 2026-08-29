@@ -23,6 +23,7 @@ public sealed partial class RandomTeleportSystem : EntitySystem
         base.Initialize();
 
         SubscribeLocalEvent<RandomTeleportComponent, TeleportTargetEvent>(OnTeleportTarget);
+        SubscribeLocalEvent<RandomTeleportComponent, GhostTeleportTargetEvent>(OnGhostTeleportTarget);
     }
 
     private void OnTeleportTarget(Entity<RandomTeleportComponent> ent, ref TeleportTargetEvent args)
@@ -36,8 +37,36 @@ public sealed partial class RandomTeleportSystem : EntitySystem
         args.Handled = true;
     }
 
+    private void OnGhostTeleportTarget(Entity<RandomTeleportComponent> ent, ref GhostTeleportTargetEvent args)
+    {
+        if (args.Handled)
+            return;
+
+        if (!TryGetDestination(ent, out var destinationCoordinates))
+            return;
+
+        if (!_teleport.TryTeleportGhost(args.Target, destinationCoordinates))
+            return;
+
+        args.Handled = true;
+    }
+
     private bool TryTeleport(Entity<RandomTeleportComponent> ent, EntityUid target, EntityUid user)
     {
+        if (!TryGetDestination(ent, out var destinationCoordinates))
+            return false;
+
+        if (!_teleport.TryTeleport(ent, target, destinationCoordinates))
+            return false;
+
+        _adminLogger.Add(LogType.Teleport, $"{ToPrettyString(user):user} used teleporter {ToPrettyString(ent):teleport} and teleported {ToPrettyString(target):target} to random location");
+        return true;
+    }
+
+    private bool TryGetDestination(Entity<RandomTeleportComponent> ent, out EntityCoordinates destinationCoordinates)
+    {
+        destinationCoordinates = EntityCoordinates.Invalid;
+
         if (ent.Comp.DestinationComponent is null)
             return false;
 
@@ -65,12 +94,7 @@ public sealed partial class RandomTeleportSystem : EntitySystem
         if (validDestinations.Count == 0)
             return false;
 
-        var destinationCoordinates = _random.Pick(validDestinations);
-
-        if (!_teleport.TryTeleport(ent, target, destinationCoordinates))
-            return false;
-
-        _adminLogger.Add(LogType.Teleport, $"{ToPrettyString(user):user} used teleporter {ToPrettyString(ent):teleport} and teleported {ToPrettyString(target):target} to random location");
+        destinationCoordinates = _random.Pick(validDestinations);
         return true;
     }
 }

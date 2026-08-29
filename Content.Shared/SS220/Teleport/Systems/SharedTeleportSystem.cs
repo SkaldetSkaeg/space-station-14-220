@@ -1,5 +1,6 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
+using Content.Shared.Ghost;
 using Content.Shared.Movement.Pulling.Components;
 using Content.Shared.Movement.Pulling.Systems;
 using Robust.Shared.Map;
@@ -41,6 +42,24 @@ public sealed partial class SharedTeleportSystem : EntitySystem
         var afterTeleportedEvent = new AfterTeleportedEvent(teleporter);
         RaiseLocalEvent(target, ref afterTeleportedEvent);
 
+        return true;
+    }
+
+    /// <summary>
+    ///     Teleports an entity without raising teleport lifecycle events or applying their associated effects.
+    /// </summary>
+    public bool TryTeleportGhost(EntityUid target, EntityCoordinates destination)
+    {
+        if (!TryComp<GhostComponent>(target, out _))
+            return false;
+
+        if (TerminatingOrDeleted(target))
+            return false;
+
+        if (!destination.IsValid(EntityManager))
+            return false;
+
+        _transform.SetCoordinates(target, Transform(target), destination);
         return true;
     }
 

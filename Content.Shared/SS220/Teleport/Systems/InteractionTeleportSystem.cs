@@ -2,11 +2,13 @@
 
 using Content.Shared.DoAfter;
 using Content.Shared.DragDrop;
+using Content.Shared.Ghost;
 using Content.Shared.Popups;
 using Content.Shared.SS220.Teleport.Components;
 using Content.Shared.Verbs;
 using Content.Shared.Whitelist;
 using Robust.Shared.Network;
+using Robust.Shared.Utility;
 
 namespace Content.Shared.SS220.Teleport.Systems;
 
@@ -22,6 +24,7 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
         base.Initialize();
 
         SubscribeLocalEvent<InteractionTeleportComponent, GetVerbsEvent<Verb>>(OnGetVerb);
+        SubscribeLocalEvent<InteractionTeleportComponent, GetVerbsEvent<AlternativeVerb>>(OnGetGhostVerb);
         SubscribeLocalEvent<InteractionTeleportComponent, CanDropTargetEvent>(OnCanDropTarget);
         SubscribeLocalEvent<InteractionTeleportComponent, DragDropTargetEvent>(OnDragDropTarget);
         SubscribeLocalEvent<InteractionTeleportComponent, InteractionTeleportDoAfterEvent>(OnTeleportDoAfter);
@@ -44,6 +47,24 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
         {
             Text = Loc.GetString("teleport-use-verb"),
             Act = () => TryStartTeleport(ent, user, user)
+        });
+    }
+
+    private void OnGetGhostVerb(Entity<InteractionTeleportComponent> ent, ref GetVerbsEvent<AlternativeVerb> args)
+    {
+        if (!args.CanAccess)
+            return;
+
+        if (!HasComp<GhostComponent>(args.User))
+            return;
+
+        var ghost = args.User;
+        args.Verbs.Add(new AlternativeVerb
+        {
+            Priority = 11,
+            Text = Loc.GetString("portal-component-ghost-traverse"),
+            Icon = new SpriteSpecifier.Texture(new("/Textures/Interface/VerbIcons/open.svg.192dpi.png")),
+            Act = () => TrySendGhostTeleporting(ent, ghost)
         });
     }
 
@@ -155,6 +176,16 @@ public sealed partial class InteractionTeleportSystem : EntitySystem
     private bool TrySendTeleporting(Entity<InteractionTeleportComponent> ent, EntityUid target, EntityUid user)
     {
         var teleportEvent = new TeleportTargetEvent(target, user);
+        RaiseLocalEvent(ent, ref teleportEvent);
+        return teleportEvent.Handled;
+    }
+
+    private bool TrySendGhostTeleporting(Entity<InteractionTeleportComponent> ent, EntityUid ghost)
+    {
+        if (!HasComp<GhostComponent>(ghost))
+            return false;
+
+        var teleportEvent = new GhostTeleportTargetEvent(ghost);
         RaiseLocalEvent(ent, ref teleportEvent);
         return teleportEvent.Handled;
     }

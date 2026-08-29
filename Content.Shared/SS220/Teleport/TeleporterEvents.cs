@@ -35,6 +35,20 @@ public record struct TeleportTargetEvent(EntityUid Target, EntityUid User)
 }
 
 /// <summary>
+///     Requests teleportation of an observer without raising the regular teleport lifecycle events.
+///     Raised on the teleporter entity.
+/// </summary>
+/// <param name="Target">The observer that should be teleported</param>
+[ByRefEvent, Serializable]
+public record struct GhostTeleportTargetEvent(EntityUid Target)
+{
+    /// <summary>
+    ///     Whether a teleport implementation has successfully handled this request.
+    /// </summary>
+    public bool Handled;
+}
+
+/// <summary>
 ///     Sends information to the teleporter itself that the target entity has been teleported for further postinteractions.
 /// </summary>
 /// <param name="Target">The entity that was teleported</param>
