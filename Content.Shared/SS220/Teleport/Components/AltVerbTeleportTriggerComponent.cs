@@ -15,7 +15,7 @@ public sealed partial class AltVerbTeleportTriggerComponent : Component
     ///     Text displayed for the alternative-use verb.
     /// </summary>
     [DataField]
-    public LocId VerbText = "teleport-use-verb";
+    public LocId VerbText = "teleport-enter-verb";
 
     /// <summary>
     ///     Entities allowed to use the teleporter.

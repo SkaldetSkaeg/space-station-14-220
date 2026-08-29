@@ -57,5 +57,5 @@
       components:
       - CultYogg
       - MiGo
-    whitelistRejectedLoc: cult-yogg-teleport-user-whitelist-rejection
+    whitelistRejectedLoc: cult-yogg-teleport-target-whitelist-rejection
   - type: AutoLinkingTeleport

@@ -45,7 +45,7 @@ public sealed partial class InteractionTeleportTriggerSystem : EntitySystem
 
         args.Verbs.Add(new Verb
         {
-            Text = Loc.GetString("teleport-use-verb"),
+            Text = Loc.GetString("teleport-enter-verb"),
             Act = () => TryStartTeleport(ent, user, user)
         });
     }
@@ -133,7 +133,7 @@ public sealed partial class InteractionTeleportTriggerSystem : EntitySystem
             return false;
 
         _popup.PopupPredicted(
-            Loc.GetString("teleport-user-started"),
+            Loc.GetString("teleport-interaction-started"),
             null,
             user,
             user,

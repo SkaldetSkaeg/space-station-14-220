@@ -89,7 +89,7 @@ public sealed partial class AltVerbTeleportTriggerSystem : EntitySystem
             return false;
 
         _popup.PopupPredicted(
-            Loc.GetString("teleport-user-started"),
+            Loc.GetString("teleport-interaction-started"),
             null,
             user,
             user,
