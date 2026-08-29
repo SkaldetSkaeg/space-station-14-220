@@ -6,6 +6,9 @@
   id: FoodSidiousShroomCult
   description: Mysterious substance that calls for absorption and gag reflex.
   components:
+  - type: HiddenDescription
+    entries:
+      CultYoggKnowledge: [ cult-yogg-fungus-culture-sidious-description ]
   - type: FlavorProfile
     flavors:
       - menacing

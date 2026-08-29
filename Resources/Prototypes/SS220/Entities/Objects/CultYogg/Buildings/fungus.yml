@@ -28,7 +28,15 @@
     layers:
       - sprite: SS220/Structures/CultYogg/fungus_hydroponic.rsi
         state: base
+        map: ["fungusMachineState"]
   - type: Appearance
+  - type: GenericVisualizer
+    visuals:
+      enum.FungusMachineVisuals.State:
+        fungusMachineState:
+          Empty: { state: base }
+          Growing: { state: growing }
+          Grown: { state: grown }
   - type: Destructible
     thresholds:
     - trigger:
@@ -53,17 +61,18 @@
   - type: Transform
   - type: PlantHolderVisuals
   - type: Fungus
+    # Temporary development values: first harvest takes roughly 1-2 minutes.
+    updateDelay: 1
+    cycleDelay: 5
   - type: FungusMachine
-    pack: CondimenttInventory
+    pack: CultYoggFungusInventory
   - type: CultYoggBuilding
     eraseTime: 5
     spawnOnErase:
-      - id: CableMVStack1Live
-        stackAmount: 5
-      - id: CableHVStack1Live
-        stackAmount: 5
+      - id: LivingRootsStack1
+        stackAmount: 10
       - id: SheetTokl1
-        stackAmount: 15
+        stackAmount: 10
   - type: ActivatableUI
     requiresComplex: false
     blockSpectators: true
@@ -81,11 +90,29 @@
     - CultYoggStealthProvidable
 
 - type: fungusMachineInventory
-  id: CondimenttInventory
-  startingInventory:
-    MiGomyceteSeeds: 0
-    CultStrangeFruitSeed: 0
-    NullificationShroomSeeds: 0
-    SidiousShroomSeeds: 0
-    LubroShroomSeeds: 0
-    MikoTrapShroomSeeds: 0
+  id: CultYoggFungusInventory
+  cultures:
+  - id: MiGomyceteSeeds
+    productId: FoodMiGomyceteCult
+    name: seeds-migo-display-name
+    description: cult-yogg-fungus-culture-migo-description
+  - id: CultStrangeFruitSeed
+    productId: ProductStrangeFruitCultYogg
+    name: seeds-strange-fruit-display-name
+    description: cult-yogg-fungus-culture-strange-fruit-description
+  - id: NullificationShroomSeeds
+    productId: FoodNullificationShroomCult
+    name: seeds-null-shroom-display-name
+    description: cult-yogg-fungus-culture-nullification-description
+  - id: SidiousShroomSeeds
+    productId: FoodSidiousShroomCult
+    name: seeds-sidious-shroom-display-name
+    description: cult-yogg-fungus-culture-sidious-description
+  - id: LubroShroomSeeds
+    productId: FoodLubroShroomCult
+    name: seeds-lurbo-shroom-display-name
+    description: cult-yogg-fungus-culture-lubro-description
+  - id: MikoTrapShroomSeeds
+    productId: FoodMikoTrapShroomCult
+    name: seeds-miko-trap-shroom-display-name
+    description: cult-yogg-fungus-culture-miko-trap-description

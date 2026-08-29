@@ -1,8 +1,6 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
 using Content.Shared.SS220.CultYogg.FungusMachine;
-using Robust.Client.UserInterface.Controls;
-using System.Linq;
 using Robust.Client.UserInterface;
 
 namespace Content.Client.SS220.CultYogg.FungusMachine;
@@ -13,27 +11,21 @@ public sealed class FungusMachineBoundUserInterface(EntityUid owner, Enum uiKey)
     private FungusMachineMenu? _menu;
 
     [ViewVariables]
-    private List<FungusMachineInventoryEntry> _cachedInventory = [];
-
-    [ViewVariables]
-    private List<int> _cachedFilteredIndex = [];
+    private FungusMachineInterfaceState? _cachedState;
 
     protected override void Open()
     {
         base.Open();
 
-        var fungusMachineSys = EntMan.System<SharedFungusMachineSystem>();
-
-        _cachedInventory = fungusMachineSys.GetInventory(Owner);
-
         _menu = this.CreateWindow<FungusMachineMenu>();
         _menu.OpenCenteredLeft();
         _menu.Title = EntMan.GetComponent<MetaDataComponent>(Owner).EntityName;
 
-        _menu.OnItemSelected += OnItemSelected;
-        _menu.OnSearchChanged += OnSearchChanged;
+        _menu.OnGrowRequested += OnGrowRequested;
+        _menu.OnHarvestRequested += OnHarvestRequested;
 
-        _menu.Populate(_cachedInventory, out _cachedFilteredIndex);
+        if (_cachedState != null)
+            _menu.UpdateState(_cachedState);
     }
 
     protected override void UpdateState(BoundUserInterfaceState state)
@@ -43,26 +35,17 @@ public sealed class FungusMachineBoundUserInterface(EntityUid owner, Enum uiKey)
         if (state is not FungusMachineInterfaceState newState)
             return;
 
-        _cachedInventory = newState.Inventory;
-
-        _menu?.Populate(_cachedInventory, out _cachedFilteredIndex, _menu.SearchBar.Text);
+        _cachedState = newState;
+        _menu?.UpdateState(newState);
     }
 
-    private void OnItemSelected(ItemList.ItemListSelectedEventArgs args)
+    private void OnGrowRequested(string cultureId)
     {
-        if (_cachedInventory.Count == 0)
-            return;
-
-        var selectedItem = _cachedInventory.ElementAtOrDefault(_cachedFilteredIndex.ElementAtOrDefault(args.ItemIndex));
-
-        if (selectedItem == null)
-            return;
-
-        SendMessage(new FungusSelectedId(selectedItem.Id));
+        SendMessage(new FungusSelectedId(cultureId));
     }
 
-    private void OnSearchChanged(string? filter)
+    private void OnHarvestRequested()
     {
-        _menu?.Populate(_cachedInventory, out _cachedFilteredIndex, filter);
+        SendMessage(new FungusHarvestRequested());
     }
 }

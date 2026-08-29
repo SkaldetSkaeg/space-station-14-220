@@ -3,6 +3,7 @@
 using Content.Shared.Whitelist;
 using Robust.Shared.Containers;
 using Robust.Shared.GameStates;
+using Robust.Shared.Localization;
 using Robust.Shared.Serialization;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype;
 
@@ -50,8 +51,36 @@ public sealed class FungusMachineInventoryEntry
 {
     [ViewVariables(VVAccess.ReadWrite)]
     public string Id;
-    public FungusMachineInventoryEntry( string id, uint amount)
+    public string ProductId;
+    public LocId Name;
+    public LocId Description;
+    public int GrowthStages;
+    public int Yield;
+    public int MaturationCycles;
+    public int ProductionCycles;
+    public int FirstHarvestSeconds;
+    public int RepeatHarvestSeconds;
+    public bool HarvestRepeats;
+
+    public FungusMachineInventoryEntry(string id, string productId, LocId name, LocId description)
     {
         Id = id;
+        ProductId = productId;
+        Name = name;
+        Description = description;
     }
+}
+
+[Serializable, NetSerializable]
+public enum FungusMachineVisuals : byte
+{
+    State,
+}
+
+[Serializable, NetSerializable]
+public enum FungusMachineVisualState : byte
+{
+    Empty,
+    Growing,
+    Grown,
 }

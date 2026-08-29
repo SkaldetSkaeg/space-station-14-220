@@ -51,7 +51,7 @@ public abstract partial class SharedFungusMachineSystem : EntitySystem
         if (!_prototypeManager.TryIndex(component.PackPrototypeId, out FungusMachineInventoryPrototype? packPrototype))
             return;
 
-        AddInventoryFromPrototype(uid, packPrototype.StartingInventory, component);
+        AddInventoryFromPrototype(uid, packPrototype.Cultures, component);
     }
 
     public List<FungusMachineInventoryEntry> GetInventory(EntityUid uid, FungusMachineComponent? component = null)
@@ -62,29 +62,40 @@ public abstract partial class SharedFungusMachineSystem : EntitySystem
         return inventory;
     }
 
-    private void AddInventoryFromPrototype(EntityUid uid, Dictionary<EntProtoId, uint>? entries, FungusMachineComponent? component = null)
+    private void AddInventoryFromPrototype(EntityUid uid, List<FungusMachineCulturePrototype>? entries, FungusMachineComponent? component = null)
     {
         if (!Resolve(uid, ref component) || entries == null)
             return;
 
         var inventory = component.Inventory;
 
-        foreach (var (id, amount) in entries)
+        foreach (var entry in entries)
         {
-            if (!_prototypeManager.HasIndex<EntityPrototype>(id))
+            if (!_prototypeManager.HasIndex<EntityPrototype>(entry.Id))
                 continue;
 
-            var restock = amount;
-            inventory.Add(id, new FungusMachineInventoryEntry(id, restock));
+            inventory.Add(entry.Id,
+                new FungusMachineInventoryEntry(entry.Id, entry.ProductId, entry.Name, entry.Description));
         }
     }
 }
 
 
 [NetSerializable, Serializable]
-public sealed class FungusMachineInterfaceState(List<FungusMachineInventoryEntry> inventory) : BoundUserInterfaceState
+public sealed class FungusMachineInterfaceState(
+    List<FungusMachineInventoryEntry> inventory,
+    string? selectedCultureId,
+    bool harvestReady,
+    float harvestProgress,
+    float secondsUntilHarvest,
+    int yield) : BoundUserInterfaceState
 {
     public List<FungusMachineInventoryEntry> Inventory = inventory;
+    public string? SelectedCultureId = selectedCultureId;
+    public bool HarvestReady = harvestReady;
+    public float HarvestProgress = harvestProgress;
+    public float SecondsUntilHarvest = secondsUntilHarvest;
+    public int Yield = yield;
 }
 
 [Serializable, NetSerializable]
@@ -92,6 +103,9 @@ public sealed class FungusSelectedId(string id) : BoundUserInterfaceMessage
 {
     public readonly string Id = id;
 }
+
+[Serializable, NetSerializable]
+public sealed class FungusHarvestRequested : BoundUserInterfaceMessage;
 
 [Serializable, NetSerializable]
 public enum FungusMachineUiKey

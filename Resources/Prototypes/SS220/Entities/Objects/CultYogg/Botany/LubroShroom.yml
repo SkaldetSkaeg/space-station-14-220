@@ -6,6 +6,9 @@
   id: FoodLubroShroomCult
   description: We didn't understand how to use it, so we just wear it on our feet
   components:
+  - type: HiddenDescription
+    entries:
+      CultYoggKnowledge: [ cult-yogg-fungus-culture-lubro-description ]
   - type: Edible
   - type: Clothing
     sprite: SS220/Objects/CultYogg/Botany/lurbo_shroom.rsi

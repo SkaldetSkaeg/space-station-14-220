@@ -11,6 +11,7 @@ using Content.Shared.Hands.Components;
 using Content.Shared.Interaction;
 using Content.Shared.Popups;
 using Content.Shared.SS220.CultYogg.FungusMachine;
+using Content.Shared.Whitelist;
 using Robust.Server.GameObjects;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
@@ -25,6 +26,8 @@ public sealed partial class FungusSystem : EntitySystem
     [Dependency] private IGameTiming _gameTiming = default!;
     [Dependency] private IPrototypeManager _prototype = default!;
     [Dependency] private HandsSystem _hands = default!;
+    [Dependency] private EntityWhitelistSystem _whitelist = default!;
+    [Dependency] private Content.Server.SS220.CultYogg.FungusMachine.FungusMachineSystem _fungusMachine = default!;
 
     public override void Initialize()
     {
@@ -37,6 +40,7 @@ public sealed partial class FungusSystem : EntitySystem
             subs =>
         {
             subs.Event<FungusSelectedId>(OnUIButton);
+            subs.Event<FungusHarvestRequested>(OnHarvestRequested);
         });
     }
 
@@ -51,15 +55,18 @@ public sealed partial class FungusSystem : EntitySystem
                 continue;
 
             plantHolder.NextUpdate = _gameTiming.CurTime + plantHolder.UpdateDelay;
+            var wasHarvestReady = plantHolder.HarvestReady;
             UpdateFungus(uid, plantHolder);
+
+            if (wasHarvestReady != plantHolder.HarvestReady &&
+                TryComp<FungusMachineComponent>(uid, out var machine))
+                _fungusMachine.UpdateFungusMachineInterfaceState((uid, machine));
         }
     }
 
     /// <summary>
-    /// Method returning the stage of plant germination within the limits specified in Seed.GrowthStages
+    /// Returns the current plant growth stage within the range defined by the seed prototype.
     /// </summary>
-    /// <param name="entity"></param>
-    /// <returns>Current stage number</returns>
     private int GetCurrentGrowthStage(Entity<FungusComponent> entity)
     {
         var (_, component) = entity;
@@ -68,7 +75,7 @@ public sealed partial class FungusSystem : EntitySystem
             return 0;
 
         var result = Math.Max(1, (int) (component.Age * component.Seed.GrowthStages / component.Seed.Maturation));
-        return result > component.Seed.GrowthStages ? component.Seed.GrowthStages : result;
+        return Math.Min(result, component.Seed.GrowthStages);
     }
 
     private void OnExamine(Entity<FungusComponent> entity, ref ExaminedEvent args)
@@ -78,15 +85,26 @@ public sealed partial class FungusSystem : EntitySystem
 
         using (args.PushGroup(nameof(FungusComponent)))
         {
-            args.PushMarkup(entity.Comp.Seed == null
-                ? Loc.GetString("plant-holder-component-nothing-planted-message")
-                : Loc.GetString("plant-holder-component-dead-plant-matter-message"));
+            if (entity.Comp.Seed == null)
+            {
+                args.PushMarkup(Loc.GetString("plant-holder-component-nothing-planted-message"));
+                return;
+            }
+
+            args.PushMarkup(Loc.GetString(
+                "cult-yogg-fungus-examine-growing",
+                ("seedName", Loc.GetString(entity.Comp.Seed.DisplayName))));
+
+            args.PushMarkup(entity.Comp.HarvestReady
+                ? Loc.GetString("cult-yogg-fungus-examine-ready")
+                : Loc.GetString("cult-yogg-fungus-examine-not-ready"));
         }
     }
 
     private void OnInteractHand(Entity<FungusComponent> entity, ref InteractHandEvent args)
     {
-        DoHarvest(entity, args.User, entity.Comp);
+        if (DoHarvest(entity, args.User, entity.Comp) && TryComp<FungusMachineComponent>(entity, out var machine))
+            _fungusMachine.UpdateFungusMachineInterfaceState((entity, machine));
     }
 
     public void UpdateFungus(EntityUid uid, FungusComponent? component = null)
@@ -184,6 +202,7 @@ public sealed partial class FungusSystem : EntitySystem
         component.Age = 0;
         component.LastProduce = 0;
         component.HarvestReady = false;
+        component.SelectedCultureId = null;
 
         UpdateSprite(uid, component);
     }
@@ -203,6 +222,12 @@ public sealed partial class FungusSystem : EntitySystem
         if (args.Actor is not { Valid: true } ent || Deleted(ent))
             return;
 
+        if (_whitelist.IsWhitelistFail(component.UsersWhitelist, ent))
+        {
+            _popup.PopupEntity(Loc.GetString("cult-yogg-fungus-denied-to-use"), uid, ent);
+            return;
+        }
+
         var entry = GetEntry(uid, args.Id, component);
 
         if (entry == null)
@@ -219,6 +244,12 @@ public sealed partial class FungusSystem : EntitySystem
         if (!TryComp(uid, out FungusComponent? fungusComponent))
             return;
 
+        if (fungusComponent.SelectedCultureId == entry.Id)
+        {
+            _popup.PopupEntity(Loc.GetString("cult-yogg-fungus-already-growing"), uid, ent);
+            return;
+        }
+
         if (!proto.TryGetComponent<SeedComponent>("Seed", out var seedComponent))
             return;
 
@@ -229,12 +260,43 @@ public sealed partial class FungusSystem : EntitySystem
                 ("seedName",  Loc.GetString(seed.Name)),
                 ("seedNoun", Loc.GetString(seed.Noun))),
             uid,
+            ent,
             PopupType.Medium);
 
         fungusComponent.Seed = seed;
         fungusComponent.Age = 1;
+        fungusComponent.LastProduce = 1;
+        fungusComponent.HarvestReady = false;
+        fungusComponent.SelectedCultureId = entry.Id;
         fungusComponent.LastCycle = _gameTiming.CurTime;
         UpdateSprite(uid, fungusComponent);
+        _fungusMachine.UpdateFungusMachineInterfaceState(entity);
+    }
+
+    private void OnHarvestRequested(Entity<FungusMachineComponent> entity, ref FungusHarvestRequested args)
+    {
+        var (uid, component) = entity;
+
+        if (args.Actor is not { Valid: true } actor || Deleted(actor))
+            return;
+
+        if (_whitelist.IsWhitelistFail(component.UsersWhitelist, actor))
+        {
+            _popup.PopupEntity(Loc.GetString("cult-yogg-fungus-denied-to-use"), uid, actor);
+            return;
+        }
+
+        if (!TryComp<FungusComponent>(uid, out var fungus))
+            return;
+
+        if (!fungus.HarvestReady)
+        {
+            _popup.PopupEntity(Loc.GetString("cult-yogg-fungus-harvest-not-ready"), uid, actor);
+            return;
+        }
+
+        DoHarvest(uid, actor, fungus);
+        _fungusMachine.UpdateFungusMachineInterfaceState(entity);
     }
 
     public void UpdateSprite(EntityUid uid, FungusComponent? component = null)
@@ -249,26 +311,37 @@ public sealed partial class FungusSystem : EntitySystem
 
         if (component.Seed != null)
         {
+            _appearance.SetData(uid, FungusMachineVisuals.State,
+                component.HarvestReady
+                    ? FungusMachineVisualState.Grown
+                    : FungusMachineVisualState.Growing,
+                app);
+
+            _appearance.SetData(uid, PlantHolderVisuals.PlantRsi, component.Seed.PlantRsi.ToString(), app);
+
             if (component.HarvestReady)
             {
-                _appearance.SetData(uid, PlantHolderVisuals.PlantRsi, component.Seed.PlantRsi.ToString(), app);
                 _appearance.SetData(uid, PlantHolderVisuals.PlantState, "harvest", app);
             }
             else if (component.Age < component.Seed.Maturation)
             {
-                var growthStage = GetCurrentGrowthStage((uid, component));
-                _appearance.SetData(uid, PlantHolderVisuals.PlantRsi, component.Seed.PlantRsi.ToString(), app);
-                _appearance.SetData(uid, PlantHolderVisuals.PlantState, $"stage-{growthStage}", app);
+                _appearance.SetData(uid,
+                    PlantHolderVisuals.PlantState,
+                    $"stage-{GetCurrentGrowthStage((uid, component))}",
+                    app);
                 component.LastProduce = component.Age;
             }
             else
             {
-                _appearance.SetData(uid, PlantHolderVisuals.PlantRsi, component.Seed.PlantRsi.ToString(), app);
-                _appearance.SetData(uid, PlantHolderVisuals.PlantState, $"stage-{component.Seed.GrowthStages}", app);
+                _appearance.SetData(uid,
+                    PlantHolderVisuals.PlantState,
+                    $"stage-{component.Seed.GrowthStages}",
+                    app);
             }
         }
         else
         {
+            _appearance.SetData(uid, FungusMachineVisuals.State, FungusMachineVisualState.Empty, app);
             _appearance.SetData(uid, PlantHolderVisuals.PlantState, "", app);
             _appearance.SetData(uid, PlantHolderVisuals.HealthLight, false, app);
         }

@@ -34,4 +34,10 @@ public sealed partial class FungusComponent : Component
 
     [DataField]
     public SeedData? Seed;
+
+    /// <summary>
+    /// Catalog entry used to plant the current culture. Used for UI state and safe replacement.
+    /// </summary>
+    [DataField]
+    public string? SelectedCultureId;
 }
