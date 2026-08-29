@@ -67,7 +67,7 @@ public sealed partial class RandomTeleportSystem : EntitySystem
 
         var destinationCoordinates = _random.Pick(validDestinations);
 
-        if (!_teleport.TryTeleport(ent, target, user, destinationCoordinates))
+        if (!_teleport.TryTeleport(ent, target, destinationCoordinates))
             return false;
 
         _adminLogger.Add(LogType.Teleport, $"{ToPrettyString(user):user} used teleporter {ToPrettyString(ent):teleport} and teleported {ToPrettyString(target):target} to random location");

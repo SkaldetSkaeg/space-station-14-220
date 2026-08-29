@@ -34,18 +34,18 @@ public sealed partial class RandomPoweredLightTeleportSystem : EntitySystem
         if (args.Handled)
             return;
 
-        if (!TryTeleportToRandomLocation(ent, args.Target, args.User))
+        if (!TryTeleportToRandomLocation(ent, args.Target))
             return;
 
         args.Handled = true;
     }
 
-    private bool TryTeleportToRandomLocation(EntityUid teleporter, EntityUid target, EntityUid user)
+    private bool TryTeleportToRandomLocation(EntityUid teleporter, EntityUid target)
     {
         if (_station.GetStations().FirstOrNull() is not { } station)
         {
             Log.Warning($"RandomPoweredLightTeleport found no available stations for {ToPrettyString(target)}");
-            return TryTeleportToFallback(teleporter, target, user);
+            return TryTeleportToFallback(teleporter, target);
         }
 
         var validDestinations = new List<EntityCoordinates>();
@@ -68,14 +68,14 @@ public sealed partial class RandomPoweredLightTeleportSystem : EntitySystem
         if (validDestinations.Count == 0)
         {
             Log.Warning($"RandomPoweredLightTeleport found no valid powered lights for {ToPrettyString(target)}");
-            return TryTeleportToFallback(teleporter, target, user);
+            return TryTeleportToFallback(teleporter, target);
         }
 
         var destinationCoordinates = _random.Pick(validDestinations);
-        return _teleport.TryTeleport(teleporter, target, user, destinationCoordinates);
+        return _teleport.TryTeleport(teleporter, target, destinationCoordinates);
     }
 
-    private bool TryTeleportToFallback(EntityUid teleporter, EntityUid target, EntityUid user)
+    private bool TryTeleportToFallback(EntityUid teleporter, EntityUid target)
     {
         if (!_map.MapExists(_gameTicker.DefaultMap))
         {
@@ -92,7 +92,7 @@ public sealed partial class RandomPoweredLightTeleportSystem : EntitySystem
 
         if (TryGetObserverSpawnPoint(_gameTicker.DefaultMap, out var observerCoordinates))
         {
-            if (!_teleport.TryTeleport(teleporter, target, user, observerCoordinates))
+            if (!_teleport.TryTeleport(teleporter, target, observerCoordinates))
             {
                 Log.Error($"RandomPoweredLightTeleport couldn't teleport {ToPrettyString(target)} to an observer spawn point");
                 return false;
@@ -105,7 +105,7 @@ public sealed partial class RandomPoweredLightTeleportSystem : EntitySystem
         Log.Warning($"RandomPoweredLightTeleport couldn't find an observer spawn point on the default map and will use the map origin");
 
         var fallbackCoordinates = new EntityCoordinates(mapUid, Vector2.Zero);
-        if (!_teleport.TryTeleport(teleporter, target, user, fallbackCoordinates))
+        if (!_teleport.TryTeleport(teleporter, target, fallbackCoordinates))
         {
             Log.Error($"RandomPoweredLightTeleport couldn't teleport {ToPrettyString(target)} to the default map origin");
             return false;

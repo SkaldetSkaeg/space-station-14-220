@@ -14,7 +14,7 @@ public sealed partial class SharedTeleportSystem : EntitySystem
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private PullingSystem _pulling = default!;
 
-    public bool TryTeleport(EntityUid teleporter, EntityUid target, EntityUid user, EntityCoordinates destination)
+    public bool TryTeleport(EntityUid teleporter, EntityUid target, EntityCoordinates destination)
     {
         if (!Exists(teleporter))
             return false;
@@ -28,7 +28,7 @@ public sealed partial class SharedTeleportSystem : EntitySystem
         if (!destination.IsValid(EntityManager))
             return false;
 
-        var beforeTeleportEvent = new BeforeTeleportTargetEvent(target, user);
+        var beforeTeleportEvent = new BeforeTeleportTargetEvent(target);
         RaiseLocalEvent(teleporter, ref beforeTeleportEvent);
 
         StopPullingRelationships(target);

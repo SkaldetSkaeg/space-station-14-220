@@ -16,9 +16,8 @@ public sealed partial class AltVerbTeleportDoAfterEvent : SimpleDoAfterEvent;
 ///     Raised on teleporter entity.
 /// </summary>
 /// <param name="Target">The entity that is currently teleporting</param>
-/// <param name="User">An entity that interacts with a teleporter</param>
 [ByRefEvent, Serializable]
-public record struct BeforeTeleportTargetEvent(EntityUid Target, EntityUid User);
+public record struct BeforeTeleportTargetEvent(EntityUid Target);
 
 /// <summary>
 ///     Sends information about the completed interaction to other teleport components, which are supposed to perform the teleportation.

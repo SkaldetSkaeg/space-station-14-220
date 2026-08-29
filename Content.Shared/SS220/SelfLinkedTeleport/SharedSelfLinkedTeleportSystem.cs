@@ -82,7 +82,7 @@ public abstract partial class SharedSelfLinkedTeleportSystem : EntitySystem
         EntityUid user,
         EntityCoordinates destinationCoordinates)
     {
-        return _teleport.TryTeleport(ent, target, user, destinationCoordinates);
+        return _teleport.TryTeleport(ent, target, destinationCoordinates);
     }
 
     protected virtual void UpdateVisuals(Entity<SelfLinkedTeleportComponent> ent)
