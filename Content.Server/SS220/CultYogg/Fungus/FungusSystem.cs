@@ -309,41 +309,41 @@ public sealed partial class FungusSystem : EntitySystem
         if (!TryComp<AppearanceComponent>(uid, out var app))
             return;
 
-        if (component.Seed != null)
-        {
-            _appearance.SetData(uid, FungusMachineVisuals.State,
-                component.HarvestReady
-                    ? FungusMachineVisualState.Grown
-                    : FungusMachineVisualState.Growing,
-                app);
-
-            _appearance.SetData(uid, PlantHolderVisuals.PlantRsi, component.Seed.PlantRsi.ToString(), app);
-
-            if (component.HarvestReady)
-            {
-                _appearance.SetData(uid, PlantHolderVisuals.PlantState, "harvest", app);
-            }
-            else if (component.Age < component.Seed.Maturation)
-            {
-                _appearance.SetData(uid,
-                    PlantHolderVisuals.PlantState,
-                    $"stage-{GetCurrentGrowthStage((uid, component))}",
-                    app);
-                component.LastProduce = component.Age;
-            }
-            else
-            {
-                _appearance.SetData(uid,
-                    PlantHolderVisuals.PlantState,
-                    $"stage-{component.Seed.GrowthStages}",
-                    app);
-            }
-        }
-        else
+        if (component.Seed == null)
         {
             _appearance.SetData(uid, FungusMachineVisuals.State, FungusMachineVisualState.Empty, app);
             _appearance.SetData(uid, PlantHolderVisuals.PlantState, "", app);
             _appearance.SetData(uid, PlantHolderVisuals.HealthLight, false, app);
+            return;
         }
+
+        _appearance.SetData(uid, FungusMachineVisuals.State,
+            component.HarvestReady
+                ? FungusMachineVisualState.Grown
+                : FungusMachineVisualState.Growing,
+            app);
+
+        _appearance.SetData(uid, PlantHolderVisuals.PlantRsi, component.Seed.PlantRsi.ToString(), app);
+
+        if (component.HarvestReady)
+        {
+            _appearance.SetData(uid, PlantHolderVisuals.PlantState, "harvest", app);
+            return;
+        }
+
+        if (component.Age < component.Seed.Maturation)
+        {
+            _appearance.SetData(uid,
+                PlantHolderVisuals.PlantState,
+                $"stage-{GetCurrentGrowthStage((uid, component))}",
+                app);
+            component.LastProduce = component.Age;
+            return;
+        }
+
+        _appearance.SetData(uid,
+            PlantHolderVisuals.PlantState,
+            $"stage-{component.Seed.GrowthStages}",
+            app);
     }
 }
