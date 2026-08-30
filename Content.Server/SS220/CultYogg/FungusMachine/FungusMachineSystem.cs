@@ -53,20 +53,17 @@ public sealed partial class FungusMachineSystem : SharedFungusMachineSystem
             inventory,
             fungus?.Seed == null ? null : fungus.SelectedCultureId,
             fungus?.Seed != null && fungus.HarvestReady,
-            harvest.Progress,
-            harvest.SecondsUntilHarvest,
+            harvest.EndTime,
+            harvest.Duration,
             fungus?.Seed?.Yield ?? 0);
 
         _userInterfaceSystem.SetUiState(ent.Owner, FungusMachineUiKey.Key, state);
     }
 
-    private (float Progress, float SecondsUntilHarvest) GetHarvestTiming(FungusComponent? fungus)
+    private (TimeSpan EndTime, TimeSpan Duration) GetHarvestTiming(FungusComponent? fungus)
     {
-        if (fungus?.Seed == null)
-            return (0f, 0f);
-
-        if (fungus.HarvestReady)
-            return (1f, 0f);
+        if (fungus?.Seed == null || fungus.HarvestReady)
+            return (TimeSpan.Zero, TimeSpan.Zero);
 
         var firstHarvest = fungus.LastProduce < fungus.Seed.Maturation;
         var cycleStartAge = firstHarvest ? 1 : fungus.LastProduce;
@@ -80,9 +77,9 @@ public sealed partial class FungusMachineSystem : SharedFungusMachineSystem
             fungus.CycleDelay.TotalSeconds);
 
         return (
-            Math.Clamp(fungus.Age - cycleStartAge, 0, totalCycles) / totalCycles,
-            (float) Math.Max(0,
-                Math.Max(0, targetAge - fungus.Age) * fungus.CycleDelay.TotalSeconds - currentCycleElapsed));
+            _gameTiming.CurTime + TimeSpan.FromSeconds(Math.Max(0,
+                Math.Max(0, targetAge - fungus.Age) * fungus.CycleDelay.TotalSeconds - currentCycleElapsed)),
+            TimeSpan.FromSeconds(totalCycles * fungus.CycleDelay.TotalSeconds));
     }
 
     private void PopulateGrowthInformation(

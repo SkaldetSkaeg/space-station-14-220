@@ -17,12 +17,10 @@ namespace Content.Client.SS220.CultYogg.FungusMachine;
 public sealed partial class FungusMachineMenu : FancyWindow
 {
     [Dependency] private IPrototypeManager _prototypeManager = default!;
+    [Dependency] private IGameTiming _gameTiming = default!;
 
     private FungusMachineInterfaceState? _state;
     private string? _pendingCultureId;
-    private float? _secondsUntilHarvest;
-    private float _harvestProgress;
-    private float _harvestDurationSeconds;
     private int _displayedSeconds = -1;
     private int _displayedGrowthStage = -1;
 
@@ -102,41 +100,29 @@ public sealed partial class FungusMachineMenu : FancyWindow
     private void UpdateCurrentCulture(FungusMachineInterfaceState state)
     {
         var current = GetEntry(state.SelectedCultureId);
+        CurrentCultureName.Text = Loc.GetString(current?.Name ?? "cult-yogg-fungus-ui-empty");
+        CurrentYield.Text = current == null
+            ? string.Empty
+            : Loc.GetString("cult-yogg-fungus-ui-yield", ("yield", state.Yield));
+        HarvestButton.Disabled = current == null || !state.HarvestReady;
+        RebuildGrowthStages(current?.GrowthStages ?? 0);
+
         if (current == null)
         {
-            _secondsUntilHarvest = null;
-            CurrentCultureName.Text = Loc.GetString("cult-yogg-fungus-ui-empty");
             CurrentStatus.Text = Loc.GetString("cult-yogg-fungus-ui-select-culture");
             CurrentTiming.Text = string.Empty;
-            CurrentYield.Text = string.Empty;
-            RebuildGrowthStages(0);
-            _harvestProgress = 0;
-            _harvestDurationSeconds = 0;
-            HarvestButton.Disabled = true;
             return;
         }
 
-        CurrentCultureName.Text = Loc.GetString(current.Name);
-        RebuildGrowthStages(current.GrowthStages);
-        _harvestProgress = Math.Clamp(state.HarvestProgress, 0, 1);
-        var remainingProgress = 1 - _harvestProgress;
-        _harvestDurationSeconds = remainingProgress > 0 && state.SecondsUntilHarvest > 0
-            ? state.SecondsUntilHarvest / remainingProgress
-            : 0;
-        UpdateGrowthStages(_harvestProgress, state.HarvestReady);
-        CurrentYield.Text = Loc.GetString("cult-yogg-fungus-ui-yield", ("yield", state.Yield));
-        HarvestButton.Disabled = !state.HarvestReady;
-
         if (state.HarvestReady)
         {
-            _secondsUntilHarvest = null;
             CurrentStatus.Text = Loc.GetString("cult-yogg-fungus-ui-ready");
             CurrentTiming.Text = Loc.GetString("cult-yogg-fungus-ui-ready-hint");
+            UpdateGrowthStages(1);
             return;
         }
 
         CurrentStatus.Text = Loc.GetString("cult-yogg-fungus-ui-growing");
-        _secondsUntilHarvest = state.SecondsUntilHarvest;
         _displayedSeconds = -1;
         UpdateCountdown();
     }
@@ -144,16 +130,6 @@ public sealed partial class FungusMachineMenu : FancyWindow
     protected override void FrameUpdate(FrameEventArgs args)
     {
         base.FrameUpdate(args);
-
-        if (_secondsUntilHarvest == null)
-            return;
-
-        _secondsUntilHarvest = Math.Max(0, _secondsUntilHarvest.Value - args.DeltaSeconds);
-        if (_harvestDurationSeconds > 0)
-        {
-            _harvestProgress = Math.Min(1, _harvestProgress + args.DeltaSeconds / _harvestDurationSeconds);
-            UpdateGrowthStages(_harvestProgress, false);
-        }
 
         UpdateCountdown();
     }
@@ -176,11 +152,9 @@ public sealed partial class FungusMachineMenu : FancyWindow
         }
     }
 
-    private void UpdateGrowthStages(float progress, bool harvestReady)
+    private void UpdateGrowthStages(double progress)
     {
-        var activeStages = harvestReady
-            ? GrowthStages.ChildCount
-            : Math.Clamp((int) MathF.Ceiling(progress * GrowthStages.ChildCount), 0, GrowthStages.ChildCount);
+        var activeStages = Math.Clamp((int) Math.Ceiling(progress * GrowthStages.ChildCount), 0, GrowthStages.ChildCount);
 
         if (_displayedGrowthStage == activeStages)
             return;
@@ -194,7 +168,15 @@ public sealed partial class FungusMachineMenu : FancyWindow
 
     private void UpdateCountdown()
     {
-        var displayedSeconds = Math.Max(0, (int) MathF.Ceiling(_secondsUntilHarvest.GetValueOrDefault()));
+        if (_state == null || _state.HarvestReady || GetEntry(_state.SelectedCultureId) == null)
+            return;
+
+        var secondsUntilHarvest = Math.Max(0, (_state.HarvestEndTime - _gameTiming.CurTime).TotalSeconds);
+        UpdateGrowthStages(_state.HarvestDuration > TimeSpan.Zero
+            ? 1 - secondsUntilHarvest / _state.HarvestDuration.TotalSeconds
+            : 0);
+
+        var displayedSeconds = (int) Math.Ceiling(secondsUntilHarvest);
         if (_displayedSeconds == displayedSeconds)
             return;
 

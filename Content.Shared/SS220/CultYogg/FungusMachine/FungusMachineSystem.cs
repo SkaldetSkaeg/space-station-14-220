@@ -86,15 +86,15 @@ public sealed class FungusMachineInterfaceState(
     List<FungusMachineInventoryEntry> inventory,
     string? selectedCultureId,
     bool harvestReady,
-    float harvestProgress,
-    float secondsUntilHarvest,
+    TimeSpan harvestEndTime,
+    TimeSpan harvestDuration,
     int yield) : BoundUserInterfaceState
 {
     public List<FungusMachineInventoryEntry> Inventory = inventory;
     public string? SelectedCultureId = selectedCultureId;
     public bool HarvestReady = harvestReady;
-    public float HarvestProgress = harvestProgress;
-    public float SecondsUntilHarvest = secondsUntilHarvest;
+    public TimeSpan HarvestEndTime = harvestEndTime;
+    public TimeSpan HarvestDuration = harvestDuration;
     public int Yield = yield;
 }
 
