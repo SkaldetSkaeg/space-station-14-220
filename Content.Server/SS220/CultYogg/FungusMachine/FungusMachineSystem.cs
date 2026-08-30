@@ -44,56 +44,45 @@ public sealed partial class FungusMachineSystem : SharedFungusMachineSystem
 
     public void UpdateFungusMachineInterfaceState(Entity<FungusMachineComponent> ent)
     {
-        string? selectedCultureId = null;
-        var harvestReady = false;
-        var harvestProgress = 0f;
-        var secondsUntilHarvest = 0f;
-        var yield = 0;
-
-        if (TryComp<FungusComponent>(ent, out var fungus) && fungus.Seed != null)
-        {
-            selectedCultureId = fungus.SelectedCultureId;
-            harvestReady = fungus.HarvestReady;
-            yield = fungus.Seed.Yield;
-
-            if (harvestReady)
-            {
-                harvestProgress = 1f;
-            }
-            else
-            {
-                var firstHarvest = fungus.LastProduce < fungus.Seed.Maturation;
-                var cycleStartAge = firstHarvest ? 1 : fungus.LastProduce;
-                var targetAge = firstHarvest
-                    ? fungus.Seed.Maturation + fungus.Seed.Production
-                    : fungus.LastProduce + fungus.Seed.Production + 1;
-                var totalCycles = Math.Max(1, targetAge - cycleStartAge);
-                var completedCycles = Math.Clamp(fungus.Age - cycleStartAge, 0, totalCycles);
-                harvestProgress = (float) completedCycles / totalCycles;
-
-                var remainingCycles = Math.Max(0, targetAge - fungus.Age);
-                var currentCycleElapsed = Math.Clamp(
-                    (_gameTiming.CurTime - fungus.LastCycle).TotalSeconds,
-                    0,
-                    fungus.CycleDelay.TotalSeconds);
-                secondsUntilHarvest = (float) Math.Max(
-                    0,
-                    remainingCycles * fungus.CycleDelay.TotalSeconds - currentCycleElapsed);
-            }
-        }
-
+        TryComp<FungusComponent>(ent, out var fungus);
         var inventory = GetInventory(ent);
         PopulateGrowthInformation(inventory, fungus?.CycleDelay ?? TimeSpan.FromSeconds(15));
 
+        var harvest = GetHarvestTiming(fungus);
         var state = new FungusMachineInterfaceState(
             inventory,
-            selectedCultureId,
-            harvestReady,
-            harvestProgress,
-            secondsUntilHarvest,
-            yield);
+            fungus?.Seed == null ? null : fungus.SelectedCultureId,
+            fungus?.Seed != null && fungus.HarvestReady,
+            harvest.Progress,
+            harvest.SecondsUntilHarvest,
+            fungus?.Seed?.Yield ?? 0);
 
         _userInterfaceSystem.SetUiState(ent.Owner, FungusMachineUiKey.Key, state);
+    }
+
+    private (float Progress, float SecondsUntilHarvest) GetHarvestTiming(FungusComponent? fungus)
+    {
+        if (fungus?.Seed == null)
+            return (0f, 0f);
+
+        if (fungus.HarvestReady)
+            return (1f, 0f);
+
+        var firstHarvest = fungus.LastProduce < fungus.Seed.Maturation;
+        var cycleStartAge = firstHarvest ? 1 : fungus.LastProduce;
+        var targetAge = firstHarvest
+            ? fungus.Seed.Maturation + fungus.Seed.Production
+            : fungus.LastProduce + fungus.Seed.Production + 1;
+        var totalCycles = Math.Max(1, targetAge - cycleStartAge);
+        var currentCycleElapsed = Math.Clamp(
+            (_gameTiming.CurTime - fungus.LastCycle).TotalSeconds,
+            0,
+            fungus.CycleDelay.TotalSeconds);
+
+        return (
+            Math.Clamp(fungus.Age - cycleStartAge, 0, totalCycles) / totalCycles,
+            (float) Math.Max(0,
+                Math.Max(0, targetAge - fungus.Age) * fungus.CycleDelay.TotalSeconds - currentCycleElapsed));
     }
 
     private void PopulateGrowthInformation(
