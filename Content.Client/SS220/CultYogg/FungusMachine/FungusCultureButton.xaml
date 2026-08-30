@@ -1,0 +1,10 @@
+<!-- © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt -->
+<Button xmlns="https://spacestation14.io"
+        HorizontalExpand="True" VerticalExpand="True" ToggleMode="True" MinSize="0 172">
+    <BoxContainer Orientation="Vertical" HorizontalExpand="True" VerticalExpand="True" Margin="6 8">
+        <TextureRect Name="PlantIcon" MinSize="96 96" TextureScale="3 3"
+                     Stretch="KeepAspectCentered" HorizontalAlignment="Center" MouseFilter="Pass" />
+        <RichTextLabel Name="CultureName" HorizontalAlignment="Center" VerticalAlignment="Center"
+                       MinHeight="34" Margin="0 6 0 0" />
+    </BoxContainer>
+</Button>
