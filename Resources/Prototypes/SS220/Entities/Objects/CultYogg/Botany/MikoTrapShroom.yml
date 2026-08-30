@@ -6,7 +6,7 @@
   components:
     - type: HiddenDescription
       entries:
-        CultYoggKnowledge: [ cult-yogg-fungus-culture-miko-trap-description ]
+        CultYoggKnowledge: [ hidden-desc-FoodMikoTrapShroomCult-cultyogg ]
     - type: Sprite
       sprite: SS220/Objects/CultYogg/Botany/miko_trap_shroom.rsi
       layers:

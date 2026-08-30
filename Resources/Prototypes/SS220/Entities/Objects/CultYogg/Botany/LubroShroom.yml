@@ -8,7 +8,7 @@
   components:
   - type: HiddenDescription
     entries:
-      CultYoggKnowledge: [ cult-yogg-fungus-culture-lubro-description ]
+      CultYoggKnowledge: [ hidden-desc-FoodLubroShroomCult-cultyogg ]
   - type: Edible
   - type: Clothing
     sprite: SS220/Objects/CultYogg/Botany/lurbo_shroom.rsi

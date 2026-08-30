@@ -21,13 +21,6 @@ cult-yogg-fungus-ui-growth-details = Первый урожай: { $firstHarvest 
     Урожайность: { $yield }
 cult-yogg-fungus-ui-no-repeat-harvest = отсутствует
 
-cult-yogg-fungus-culture-migo-description = Используется для обращения новых культистов и возвышения в Ми-Го.
-cult-yogg-fungus-culture-strange-fruit-description = При использовании разрастается в дружественную культу кудзу.
-cult-yogg-fungus-culture-nullification-description = Отменяет возвышение и помогает сбросить приросшие живые предметы.
-cult-yogg-fungus-culture-sidious-description = Содержит большой запас воды и питательных веществ.
-cult-yogg-fungus-culture-lubro-description = Можно носить как нескользящую живую обувь; немного замедляет владельца.
-cult-yogg-fungus-culture-miko-trap-description = Скрытая ядовитая ловушка; культ одновременно поддерживает не более шести вооружённых ловушек.
-
 cult-yogg-fungus-examine-growing = Здесь растёт [color=green]{ $seedName }[/color].
 cult-yogg-fungus-examine-ready = [color=green]Урожай готов к сбору.[/color]
 cult-yogg-fungus-examine-not-ready = Урожай ещё не созрел.

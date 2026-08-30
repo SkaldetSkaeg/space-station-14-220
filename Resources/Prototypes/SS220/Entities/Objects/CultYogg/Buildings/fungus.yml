@@ -95,24 +95,24 @@
   - id: MiGomyceteSeeds
     productId: FoodMiGomyceteCult
     name: seeds-migo-display-name
-    description: cult-yogg-fungus-culture-migo-description
+    description: hidden-desc-FoodMiGomyceteCult-cultyogg
   - id: CultStrangeFruitSeed
     productId: ProductStrangeFruitCultYogg
     name: seeds-strange-fruit-display-name
-    description: cult-yogg-fungus-culture-strange-fruit-description
+    description: hidden-desc-ProductStrangeFruitCultYogg-cultyogg
   - id: NullificationShroomSeeds
     productId: FoodNullificationShroomCult
     name: seeds-null-shroom-display-name
-    description: cult-yogg-fungus-culture-nullification-description
+    description: hidden-desc-FoodNullificationShroomCult-cultyogg
   - id: SidiousShroomSeeds
     productId: FoodSidiousShroomCult
     name: seeds-sidious-shroom-display-name
-    description: cult-yogg-fungus-culture-sidious-description
+    description: hidden-desc-FoodSidiousShroomCult-cultyogg
   - id: LubroShroomSeeds
     productId: FoodLubroShroomCult
     name: seeds-lurbo-shroom-display-name
-    description: cult-yogg-fungus-culture-lubro-description
+    description: hidden-desc-FoodLubroShroomCult-cultyogg
   - id: MikoTrapShroomSeeds
     productId: FoodMikoTrapShroomCult
     name: seeds-miko-trap-shroom-display-name
-    description: cult-yogg-fungus-culture-miko-trap-description
+    description: hidden-desc-FoodMikoTrapShroomCult-cultyogg

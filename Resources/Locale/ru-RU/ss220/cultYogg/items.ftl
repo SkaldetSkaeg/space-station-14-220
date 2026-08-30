@@ -36,6 +36,7 @@ ent-CultStrangeFruitSeed = Семена странного фрукта
     .desc = Семена крайне агрессивной кудзы, из-за формы ошибочно называемой фруктом.
 ent-ProductStrangeFruitCultYogg = Странный фрукт
     .desc = Кажется, внутри него переплетены тысячи стеблей...
+hidden-desc-ProductStrangeFruitCultYogg-cultyogg = При использовании разрастается в дружественную культу кудзу.
 ent-StrangeKudzu = Странная кудза
     .desc = Главная странность в различии реакции от входящего.
 ent-SedativeStingCultYogg = Усыпляющее жало

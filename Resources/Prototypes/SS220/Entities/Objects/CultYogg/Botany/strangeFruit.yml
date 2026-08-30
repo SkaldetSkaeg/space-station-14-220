@@ -8,7 +8,7 @@
   components:
   - type: HiddenDescription
     entries:
-      CultYoggKnowledge: [ cult-yogg-fungus-culture-strange-fruit-description ]
+      CultYoggKnowledge: [ hidden-desc-ProductStrangeFruitCultYogg-cultyogg ]
   - type: Sprite
     sprite: SS220/Objects/CultYogg/Botany/strangefruit.rsi
     state: icon

@@ -8,7 +8,7 @@
   components:
   - type: HiddenDescription
     entries:
-      CultYoggKnowledge: [ cult-yogg-fungus-culture-nullification-description ]
+      CultYoggKnowledge: [ hidden-desc-FoodNullificationShroomCult-cultyogg ]
   - type: FlavorProfile
     flavors:
       - menacing
