@@ -40,14 +40,11 @@ public sealed partial class FungusMachineMenu : FancyWindow
 
     public void UpdateState(FungusMachineInterfaceState state)
     {
-        var catalogChanged = _state == null ||
-                             !_state.Inventory.Select(entry => entry.Id)
-                                 .SequenceEqual(state.Inventory.Select(entry => entry.Id));
+        if (_state == null ||
+            !_state.Inventory.Select(entry => entry.Id).SequenceEqual(state.Inventory.Select(entry => entry.Id)))
+            RebuildCatalog(state.Inventory);
 
         _state = state;
-
-        if (catalogChanged)
-            RebuildCatalog(state.Inventory);
 
         if (GetEntry(_pendingCultureId) == null)
             _pendingCultureId = state.SelectedCultureId ?? state.Inventory.FirstOrDefault()?.Id;
@@ -83,18 +80,16 @@ public sealed partial class FungusMachineMenu : FancyWindow
     {
         var entry = GetEntry(_pendingCultureId);
 
-        SelectedCultureName.Text = entry == null
-            ? Loc.GetString("cult-yogg-fungus-ui-no-selection")
-            : Loc.GetString(entry.Name);
+        SelectedCultureName.Text = Loc.GetString(entry?.Name ?? "cult-yogg-fungus-ui-no-selection");
         SelectedCultureDescription.SetMessage(entry == null ? string.Empty : FormatGrowthDetails(entry));
 
         var replacesCulture = entry != null &&
                               _state?.SelectedCultureId != null &&
                               _state.SelectedCultureId != _pendingCultureId;
         ReplaceWarning.Visible = replacesCulture;
-        GrowButton.Text = replacesCulture
-            ? Loc.GetString("cult-yogg-fungus-ui-replace")
-            : Loc.GetString("cult-yogg-fungus-ui-grow");
+        GrowButton.Text = Loc.GetString(replacesCulture
+            ? "cult-yogg-fungus-ui-replace"
+            : "cult-yogg-fungus-ui-grow");
         GrowButton.Disabled = entry == null || _pendingCultureId == _state?.SelectedCultureId;
 
         foreach (FungusCultureButton button in FungusContents.Children)
@@ -224,7 +219,8 @@ public sealed partial class FungusMachineMenu : FancyWindow
 
     private static string FormatTime(int seconds)
     {
-        return $"{seconds / 60}:{seconds % 60:00}";
+        var duration = TimeSpan.FromSeconds(seconds);
+        return $"{(int) duration.TotalMinutes}:{duration.Seconds:00}";
     }
 
     private static string FormatGrowthDetails(FungusMachineInventoryEntry entry)
