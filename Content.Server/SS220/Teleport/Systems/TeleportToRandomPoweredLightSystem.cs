@@ -93,6 +93,8 @@ public sealed partial class TeleportToRandomPoweredLightSystem : EntitySystem
             return TryGetFallbackDestination(target, out destinationCoordinates, out destinationType);
         }
 
+        // Intentionally do not filter by power, enabled state, or lamp integrity:
+        // disabling or destroying lights must not let players control the teleport destination.
         var validDestinations = new List<EntityCoordinates>();
         var query = EntityQueryEnumerator<PoweredLightComponent, TransformComponent>();
 
