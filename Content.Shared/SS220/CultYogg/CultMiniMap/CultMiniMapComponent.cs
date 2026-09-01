@@ -25,6 +25,31 @@ public sealed partial class CultMiniMapComponent : Component
     public float SelfScale = 1.2f;
 
     /// <summary>
+    /// Only map owners with the same channel receive each other's pings.
+    /// </summary>
+    [DataField]
+    public string PingChannel = "cult-yogg";
+
+    [DataField]
+    public SpriteSpecifier PingIcon =
+        new SpriteSpecifier.Texture(new ResPath("/Textures/Interface/NavMap/beveled_circle.png"));
+
+    [DataField]
+    public Color PingColor = Color.DeepSkyBlue;
+
+    [DataField]
+    public float PingScale = 1.2f;
+
+    [DataField]
+    public float PingDuration = 8f;
+
+    [DataField]
+    public float PingCooldown = 3f;
+
+    [DataField]
+    public int MaxActivePings = 8;
+
+    /// <summary>
     /// Components visible on this owner's map. The first matching rule supplies the marker.
     /// These server-side settings are sent to the owner through the UI state.
     /// </summary>
@@ -39,7 +64,84 @@ public sealed partial class CultMiniMapComponent : Component
             Color = Color.Gold,
         },
         new() { Component = "CultYogg", Label = "cult-mini-map-cultist", Color = Color.Violet },
+        new()
+        {
+            Component = "CultYoggBuilding",
+            Label = "cult-mini-map-wall",
+            Prototypes = new List<EntProtoId> { "WallCultYogg" },
+            MarkerType = CultMiniMapMarkerType.Wall,
+            Color = Color.Red,
+            ShowInList = false,
+            ShowHealth = false,
+        },
+        new()
+        {
+            Component = "CultYoggBuilding",
+            Label = "cult-mini-map-secret-door",
+            Prototypes = new List<EntProtoId> { "CultYoggDoor" },
+            MarkerType = CultMiniMapMarkerType.SecretDoor,
+            Color = Color.Red,
+            ShowInList = false,
+            ShowHealth = false,
+        },
+        new()
+        {
+            Component = "CultYoggBuilding",
+            Label = "cult-mini-map-airlock",
+            Prototypes = new List<EntProtoId> { "CultYoggAirlock" },
+            MarkerType = CultMiniMapMarkerType.Airlock,
+            Color = Color.Red,
+            ShowInList = false,
+            ShowHealth = false,
+        },
+        BuildingIconRule("CultYoggPod", "cult-mini-map-pod",
+            new SpriteSpecifier.Texture(new ResPath("/Textures/SS220/Interface/NavMap/cult_pod.png"))),
+        BuildingIconRule("CultYoggFungusHydroponic", "cult-mini-map-fungus",
+            new SpriteSpecifier.Texture(new ResPath("/Textures/SS220/Interface/NavMap/cult_fungus.png"))),
+        BuildingIconRule("CultYoggAltar", "cult-mini-map-altar",
+            new SpriteSpecifier.Texture(new ResPath("/Textures/SS220/Interface/NavMap/cult_altar.png"))),
+        BuildingIconRule("CultYoggPond", "cult-mini-map-pond",
+            new SpriteSpecifier.Texture(new ResPath("/Textures/SS220/Interface/NavMap/cult_pond.png"))),
+        new()
+        {
+            Component = "SelfLinkedTeleport",
+            Label = "cult-mini-map-teleporter",
+            Prototypes = new List<EntProtoId> { "VoidTeleportEnter", "VoidTeleportExit" },
+            Icon = new SpriteSpecifier.Texture(new ResPath("/Textures/SS220/Interface/NavMap/cult_gate.png")),
+            Color = Color.Red,
+            Scale = 0.65f,
+            ShowInList = false,
+            ShowHealth = false,
+        },
+        new()
+        {
+            Component = "CultYoggBuilding",
+            Label = "cult-mini-map-building",
+            Icon = new SpriteSpecifier.Texture(new ResPath("/Textures/Interface/NavMap/beveled_square.png")),
+            Color = Color.Orange,
+            Scale = 0.8f,
+            ShowInList = false,
+            ShowHealth = false,
+        },
     };
+
+    private static CultMiniMapTrackedComponent BuildingIconRule(
+        EntProtoId prototype,
+        LocId label,
+        SpriteSpecifier icon)
+    {
+        return new CultMiniMapTrackedComponent
+        {
+            Component = "CultYoggBuilding",
+            Label = label,
+            Prototypes = new List<EntProtoId> { prototype },
+            Icon = icon,
+            Color = Color.Red,
+            Scale = 0.65f,
+            ShowInList = false,
+            ShowHealth = false,
+        };
+    }
 
     [ViewVariables]
     public EntProtoId MiniMapAction = "ActionCultMiniMap";
@@ -56,6 +158,12 @@ public sealed partial class CultMiniMapTrackedComponent
     /// </summary>
     [DataField(required: true, customTypeSerializer: typeof(ComponentNameSerializer))]
     public string Component = string.Empty;
+
+    /// <summary>
+    /// Optional entity prototype filter. An empty list matches every entity with <see cref="Component"/>.
+    /// </summary>
+    [DataField]
+    public List<EntProtoId> Prototypes = new();
 
     /// <summary>
     /// Optional localization key for the type shown in the list. Defaults to the component name.
@@ -77,6 +185,24 @@ public sealed partial class CultMiniMapTrackedComponent
     /// </summary>
     [DataField]
     public float Scale = 1f;
+
+    /// <summary>
+    /// How the marker is drawn. Wall and airlock use map-scaled vector geometry instead of <see cref="Icon"/>.
+    /// </summary>
+    [DataField]
+    public CultMiniMapMarkerType MarkerType = CultMiniMapMarkerType.Icon;
+
+    /// <summary>
+    /// Whether matching entities appear in the side list. They remain visible on the map when disabled.
+    /// </summary>
+    [DataField]
+    public bool ShowInList = true;
+
+    /// <summary>
+    /// Whether health is collected and shown for matching entities.
+    /// </summary>
+    [DataField]
+    public bool ShowHealth = true;
 }
 
 public sealed partial class CultMiniMapActionEvent : InstantActionEvent

@@ -11,6 +11,13 @@ components:
   selfIcon: /Textures/Interface/NavMap/beveled_star.png
   selfColor: Cyan
   selfScale: 1.2
+  pingChannel: cult-yogg
+  pingIcon: /Textures/Interface/NavMap/beveled_circle.png
+  pingColor: DeepSkyBlue
+  pingScale: 1.2
+  pingDuration: 8
+  pingCooldown: 3
+  maxActivePings: 8
   trackedComponents:
   - component: MiGo
     label: cult-mini-map-migo
@@ -22,6 +29,30 @@ components:
     icon: /Textures/Interface/NavMap/beveled_diamond.png
     color: Violet
     scale: 0.8
+  - component: CultYoggBuilding
+    prototypes:
+    - WallCultYogg
+    label: cult-mini-map-wall
+    markerType: Wall
+    color: Red
+    showInList: false
+    showHealth: false
+  - component: CultYoggBuilding
+    prototypes:
+    - CultYoggDoor
+    label: cult-mini-map-secret-door
+    markerType: SecretDoor
+    color: Red
+    showInList: false
+    showHealth: false
+  - component: CultYoggBuilding
+    prototypes:
+    - CultYoggAirlock
+    label: cult-mini-map-airlock
+    markerType: Airlock
+    color: Red
+    showInList: false
+    showHealth: false
 ```
 
 Значение `component` — зарегистрированное имя компонента без суффикса `Component`.
@@ -35,13 +66,41 @@ components:
 Даже если владелец подходит под одно из `trackedComponents`, второй раз в этой
 секции он не появится.
 
+## Общие метки
+
+Кнопка «Поставить метку» включает режим пинга. Следующий короткий клик по карте
+создаёт яркую точку с двумя расходящимися затухающими кольцами; перетаскивание карты
+пинг не создаёт. Постоянной подписи автора нет, чтобы длинные имена персонажей не
+перекрывали карту. Метка
+сразу передаётся всем владельцам открытой миникарты с тем же `pingChannel`. На другой
+карте она не отображается. Координата привязана к гриду, поэтому движется вместе с
+шаттлом.
+
+| Поле | Назначение | По умолчанию |
+| --- | --- | --- |
+| `pingChannel` | Канал получателей; разные каналы изолированы | `cult-yogg` |
+| `pingIcon` | PNG или RSI первого кадра | `beveled_circle.png` |
+| `pingColor` | Цвет точки и колец | `DeepSkyBlue` |
+| `pingScale` | Размер значка на карте | `1.2` |
+| `pingDuration` | Время жизни в секундах | `8` |
+| `pingCooldown` | Минимальный интервал отправителя в секундах | `3` |
+| `maxActivePings` | Максимум меток в канале; удаляются самые старые | `8` |
+
+Сервер принимает пинг только от владельца открытого интерфейса, проверяет текущий
+грид, конечность и попадание координат в границы грида, кулдаун и лимит. Клиентские
+координаты напрямую не рассылаются без этой проверки.
+
 | Поле правила | Назначение | По умолчанию |
 | --- | --- | --- |
 | `component` | Компонент отслеживаемой сущности | Обязательно |
+| `prototypes` | Необязательный список прототипов; пустой список принимает всех носителей компонента | `[]` |
 | `label` | Ключ локализации типа в списке и поиске | Имя компонента |
 | `icon` | Путь к PNG или RSI со `state` | `beveled_circle.png` |
 | `color` | Цвет, умножаемый на цвета текстуры | `White` |
 | `scale` | Множитель размера значка на карте | `1` |
+| `markerType` | Способ отрисовки: `Icon`, `Wall`, `SecretDoor` или `Airlock` | `Icon` |
+| `showInList` | Показывать сущность в правом списке и счётчике | `true` |
+| `showHealth` | Получать и показывать состояние здоровья | `true` |
 
 Для более сложного значка можно указать RSI:
 
@@ -68,8 +127,20 @@ components:
 `beveled_circle.png`, `beveled_triangle.png`, `beveled_square.png`,
 `beveled_diamond.png`, `beveled_star.png`, `beveled_hexagon.png`.
 
+`Wall`, `SecretDoor` и `Airlock` игнорируют `icon` и `scale`: они рисуют масштабируемую вместе с
+картой векторную геометрию. `SecretDoor` остаётся частью стенового контура, но
+получает вторую диагональ и выглядит как красный тайл с `X`. Цвет задаётся тем же полем
+`color`. Фильтр `prototypes` позволяет нескольким правилам использовать один
+компонент, но по-разному оформлять конкретные типы. Поэтому более узкие правила
+нужно ставить выше общего запасного правила: как и раньше, побеждает первое
+совпадение.
+
 Без `trackedComponents` сохраняются стандартные правила: `MiGo` — золотой силуэт,
-`CultYogg` — фиолетовый круг, с приоритетом `MiGo`. Явный список заменяет эти
+`CultYogg` — фиолетовый круг, с приоритетом `MiGo`; завершённые стены и шлюзы
+культа получают красную геометрию обычной стены или шлюза, а капсула,
+грибница, алтарь, пруд и врата — собственные стилизованные PNG-иконки. Все постройки видны только
+на карте, без здоровья и строки в правом списке. Неизвестный новый тип с
+`CultYoggBuilding` отображается запасным оранжевым квадратом. Явный список заменяет эти
 настройки целиком; `trackedComponents: []` отображает только владельца. Изменение настроек
 одного владельца не влияет на карты остальных. Стандартные правила для всех
 автоматически получающих способность участников заданы в

@@ -15,6 +15,8 @@ public sealed class CultMiniMapBoundUserInterface(EntityUid owner, Enum uiKey) :
         base.Open();
 
         _menu = this.CreateWindow<CultMiniMapWindow>();
+        _menu.PingRequested += coordinates =>
+            SendMessage(new CultMiniMapPingMessage(EntMan.GetNetCoordinates(coordinates)));
     }
 
     protected override void UpdateState(BoundUserInterfaceState state)

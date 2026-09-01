@@ -13,6 +13,7 @@ using Robust.Client.Graphics;
 using Robust.Client.UserInterface;
 using Robust.Client.UserInterface.Controls;
 using Robust.Client.UserInterface.XAML;
+using Robust.Shared.Map;
 using Robust.Shared.Utility;
 
 namespace Content.Client.SS220.CultYogg.CultMiniMap;
@@ -28,6 +29,8 @@ public sealed partial class CultMiniMapWindow : FancyWindow
     private NetEntity _owner;
     private NetEntity? _selected;
 
+    public event Action<EntityCoordinates>? PingRequested;
+
     public CultMiniMapWindow()
     {
         RobustXamlLoader.Load(this);
@@ -35,6 +38,12 @@ public sealed partial class CultMiniMapWindow : FancyWindow
 
         SearchLineEdit.OnTextChanged += _ => RefreshMembers();
         NavMap.TrackedEntitySelectedAction += SelectMember;
+        NavMap.PingRequestedAction += OnPingRequested;
+        PingButton.OnPressed += _ =>
+        {
+            NavMap.PingMode = !NavMap.PingMode;
+            UpdatePingButton();
+        };
     }
 
     public void UpdateState(CultMiniMapState state, NetEntity owner)
@@ -54,8 +63,14 @@ public sealed partial class CultMiniMapWindow : FancyWindow
 
         NavMap.Visible = grid != null;
         NoMapLabel.Visible = grid == null;
+        PingButton.Disabled = grid == null;
+        if (grid == null)
+            NavMap.PingMode = false;
+        UpdatePingButton();
+        UpdatePings(state.Pings);
         StationName.Text = grid == null ? Loc.GetString("cult-mini-map-no-grid") : state.GridName;
-        MemberCount.Text = Loc.GetString("cult-mini-map-count", ("count", _members.Count));
+        MemberCount.Text = Loc.GetString("cult-mini-map-count",
+            ("count", _members.Count(member => member.Marker.ShowInList)));
 
         if (!_members.Any(member => member.Entity == _selected && member.Coordinates != null))
             _selected = null;
@@ -63,18 +78,54 @@ public sealed partial class CultMiniMapWindow : FancyWindow
         RefreshMembers();
     }
 
+    private void OnPingRequested(EntityCoordinates coordinates)
+    {
+        UpdatePingButton();
+        PingRequested?.Invoke(coordinates);
+    }
+
+    private void UpdatePingButton()
+    {
+        PingButton.Text = Loc.GetString(NavMap.PingMode
+            ? "cult-mini-map-ping-armed"
+            : "cult-mini-map-ping-button");
+        if (NavMap.PingMode)
+            PingButton.AddStyleClass(StyleClass.Positive);
+        else
+            PingButton.RemoveStyleClass(StyleClass.Positive);
+    }
+
+    private void UpdatePings(IEnumerable<CultMiniMapPing> pings)
+    {
+        NavMap.Pings.Clear();
+        foreach (var ping in pings)
+        {
+            var coordinates = _entities.GetCoordinates(ping.Coordinates);
+            if (!coordinates.IsValid(_entities))
+                continue;
+
+            NavMap.Pings[ping.Id] = new CultMiniMapPingBlip(
+                ping.Id,
+                coordinates,
+                GetTexture(ping.Icon),
+                ping.Color,
+                ping.Scale);
+        }
+    }
+
     private void RefreshMembers()
     {
         MembersTable.RemoveAllChildren();
         _buttons.Clear();
         NavMap.TrackedEntities.Clear();
+        NavMap.StructureMarkers.Clear();
         NavMap.LocalizedNames.Clear();
 
         // Map markers are independent of the text filter and menu grouping.
         foreach (var member in _members)
             AddMapMarker(member);
 
-        var visibleMembers = _members.Where(MatchesSearch).ToList();
+        var visibleMembers = _members.Where(member => member.Marker.ShowInList && MatchesSearch(member)).ToList();
         var self = visibleMembers.FirstOrDefault(member => member.Entity == _owner);
         if (self != null)
             AddMemberSection(self.Marker, new[] { self });
@@ -104,13 +155,26 @@ public sealed partial class CultMiniMapWindow : FancyWindow
             return;
 
         var role = GetMarkerLabel(member.Marker);
+        if (member.Marker.MarkerType != CultMiniMapMarkerType.Icon)
+        {
+            NavMap.StructureMarkers[member.Entity] = new CultMiniMapStructureBlip(
+                coordinates.Value,
+                member.Marker.MarkerType,
+                member.Marker.Color,
+                member.Rotation);
+            return;
+        }
+
         NavMap.TrackedEntities[member.Entity] = new NavMapBlip(
             coordinates.Value,
             GetMarkerTexture(member.Marker),
             member.Marker.Color,
             member.Entity == _selected,
             scale: member.Marker.Scale);
-        NavMap.LocalizedNames[member.Entity] = member.Name + ", " + role + "\n" + GetHealthStatus(member);
+        var details = member.Name + ", " + role;
+        if (member.Marker.ShowHealth)
+            details += "\n" + GetHealthStatus(member);
+        NavMap.LocalizedNames[member.Entity] = details;
     }
 
     private void AddMemberSection(CultMiniMapMarker marker, IEnumerable<CultMiniMapMember> members)
@@ -203,11 +267,16 @@ public sealed partial class CultMiniMapWindow : FancyWindow
 
     private Texture GetMarkerTexture(CultMiniMapMarker marker)
     {
-        if (_markerTextures.TryGetValue(marker.Icon, out var texture))
+        return GetTexture(marker.Icon);
+    }
+
+    private Texture GetTexture(SpriteSpecifier icon)
+    {
+        if (_markerTextures.TryGetValue(icon, out var texture))
             return texture;
 
-        texture = _entities.System<SpriteSystem>().Frame0(marker.Icon);
-        _markerTextures.Add(marker.Icon, texture);
+        texture = _entities.System<SpriteSystem>().Frame0(icon);
+        _markerTextures.Add(icon, texture);
         return texture;
     }
 

@@ -1,6 +1,8 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
 using System.Linq;
+using System.Numerics;
+using Content.Server.SS220.CultYogg.CultMiniMap;
 using Content.IntegrationTests.Fixtures;
 using Content.Shared.Actions.Components;
 using Content.Shared.Damage;
@@ -9,6 +11,7 @@ using Content.Shared.Damage.Systems;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
+using Content.Shared.SS220.CultYogg.Buildings;
 using Content.Shared.SS220.CultYogg.Cultists;
 using Content.Shared.SS220.CultYogg.CultMiniMap;
 using Content.Shared.SS220.CultYogg.MiGo;
@@ -49,12 +52,106 @@ public sealed class CultMiniMapTest : GameTest
       color: Violet
       scale: 0.75
     - component: MobState
+      prototypes:
+      - CultMiniMapHealthDummy
       icon:
         sprite: SS220/Interface/Actions/cult_yogg.rsi
         state: migo_teleport
       color: White
       scale: 1.5
+      markerType: Airlock
 """;
+
+    [Test]
+    public async Task PingsAreValidatedSharedByChannelAndExpire()
+    {
+        var map = await Pair.CreateTestMap();
+        var otherMap = await Pair.CreateTestMap();
+        var ui = SEntMan.System<SharedUserInterfaceSystem>();
+        var tracking = SEntMan.System<CultMiniMapTrackingSystem>();
+        EntityUid first = default;
+        EntityUid second = default;
+        EntityUid otherChannel = default;
+        EntityUid remote = default;
+        EntityUid outsider = default;
+        uint firstPingId = default;
+
+        await Server.WaitAssertion(() =>
+        {
+            first = SEntMan.SpawnEntity(null, map.GridCoords);
+            second = SEntMan.SpawnEntity(null, map.GridCoords);
+            otherChannel = SEntMan.SpawnEntity(null, map.GridCoords);
+            remote = SEntMan.SpawnEntity(null, otherMap.GridCoords);
+            outsider = SEntMan.SpawnEntity(null, map.GridCoords);
+            foreach (var owner in new[] { first, second, otherChannel, remote })
+                SEntMan.AddComponent<CultYoggComponent>(owner);
+
+            var firstMap = SEntMan.GetComponent<CultMiniMapComponent>(first);
+            firstMap.PingCooldown = 0.1f;
+            firstMap.PingDuration = 0.5f;
+            firstMap.MaxActivePings = 2;
+            var secondMap = SEntMan.GetComponent<CultMiniMapComponent>(second);
+            secondMap.PingCooldown = 0.1f;
+            secondMap.PingDuration = 0.5f;
+            secondMap.MaxActivePings = 2;
+            SEntMan.GetComponent<CultMiniMapComponent>(otherChannel).PingChannel = "another-cult";
+
+            foreach (var owner in new[] { first, second, otherChannel, remote })
+                ui.OpenUi(owner, CultMiniMapUIKey.Key, owner);
+
+            var coordinates = new EntityCoordinates(map.Grid, Vector2.Zero);
+            Assert.That(tracking.TryCreatePing((first, firstMap), outsider, coordinates), Is.False,
+                "Another actor must not publish through somebody else's map.");
+            Assert.That(tracking.TryCreatePing((first, firstMap), first,
+                new EntityCoordinates(otherMap.Grid, Vector2.Zero)), Is.False,
+                "The client may only ping the grid currently displayed by its map.");
+            Assert.That(tracking.TryCreatePing((first, firstMap), first,
+                new EntityCoordinates(map.Grid, new Vector2(10000f, 10000f))), Is.False,
+                "Coordinates outside the grid bounds must be rejected.");
+            Assert.That(tracking.TryCreatePing((first, firstMap), first, coordinates), Is.True);
+            Assert.That(tracking.TryCreatePing((first, firstMap), first, coordinates), Is.False,
+                "The server must enforce the cooldown.");
+
+            var firstState = GetState(first);
+            Assert.That(firstState.Pings, Has.Count.EqualTo(1));
+            var ping = firstState.Pings.Single();
+            firstPingId = ping.Id;
+            Assert.That(ping.Coordinates.NetEntity,
+                Is.EqualTo(SEntMan.GetNetEntity(map.Grid)));
+            Assert.That(ping.Icon, Is.EqualTo(new SpriteSpecifier.Texture(
+                new ResPath("/Textures/Interface/NavMap/beveled_circle.png"))));
+            Assert.That(ping.Color, Is.EqualTo(Color.DeepSkyBlue));
+            Assert.That(GetState(second).Pings.Select(ping => ping.Id), Does.Contain(firstPingId));
+            Assert.That(GetState(otherChannel).Pings, Is.Empty);
+            Assert.That(GetState(remote).Pings, Is.Empty,
+                "A shared channel must not reveal positions on a different map.");
+        });
+
+        await Server.WaitRunTicks(15);
+        await Server.WaitAssertion(() =>
+        {
+            var coordinates = new EntityCoordinates(map.Grid, Vector2.Zero);
+            var firstMap = SEntMan.GetComponent<CultMiniMapComponent>(first);
+            var secondMap = SEntMan.GetComponent<CultMiniMapComponent>(second);
+            Assert.That(tracking.TryCreatePing((first, firstMap), first, coordinates), Is.True);
+            Assert.That(tracking.TryCreatePing((second, secondMap), second, coordinates), Is.True);
+            var pings = GetState(first).Pings;
+            Assert.That(pings, Has.Count.EqualTo(2));
+            Assert.That(pings.Select(ping => ping.Id), Does.Not.Contain(firstPingId),
+                "The oldest marker must be removed when the channel reaches its limit.");
+        });
+
+        await Server.WaitRunTicks(120);
+        await Server.WaitAssertion(() =>
+        {
+            Assert.That(GetState(first).Pings, Is.Empty);
+            Assert.That(GetState(second).Pings, Is.Empty);
+            foreach (var owner in new[] { first, second, otherChannel, remote })
+                ui.CloseUi(owner, CultMiniMapUIKey.Key);
+            // Pair only tracks the last map for automatic cleanup.
+            SEntMan.DeleteEntity(map.MapUid);
+        });
+    }
 
     [Test]
     public async Task ConfiguredRulesSelectTargetsAndAppearances()
@@ -70,6 +167,8 @@ public sealed class CultMiniMapTest : GameTest
             var mob = SEntMan.SpawnEntity("CultMiniMapHealthDummy", map.GridCoords);
             var both = SEntMan.SpawnEntity("CultMiniMapHealthDummy", map.GridCoords);
             SEntMan.AddComponent<CultYoggComponent>(both);
+            var filteredOut = SEntMan.SpawnEntity(null, map.GridCoords);
+            SEntMan.AddComponent<MobStateComponent>(filteredOut);
             var miGo = SEntMan.SpawnEntity(null, map.GridCoords);
             SEntMan.AddComponent<MiGoComponent>(miGo);
 
@@ -91,6 +190,7 @@ public sealed class CultMiniMapTest : GameTest
                 new ResPath("/Textures/Interface/NavMap/beveled_star.png"))));
             Assert.That(selfMarker.Color, Is.EqualTo(Color.Cyan));
             Assert.That(selfMarker.Scale, Is.EqualTo(1.2f));
+            Assert.That(selfMarker.MarkerType, Is.EqualTo(CultMiniMapMarkerType.Icon));
 
             var cultMarker = state.Members.Single(member => member.Entity == SEntMan.GetNetEntity(cultist)).Marker;
             Assert.That(cultMarker.Component, Is.EqualTo("CultYogg"));
@@ -99,6 +199,7 @@ public sealed class CultMiniMapTest : GameTest
                 new ResPath("/Textures/Interface/NavMap/beveled_diamond.png"))));
             Assert.That(cultMarker.Color, Is.EqualTo(Color.Violet));
             Assert.That(cultMarker.Scale, Is.EqualTo(0.75f));
+            Assert.That(cultMarker.MarkerType, Is.EqualTo(CultMiniMapMarkerType.Icon));
             Assert.That(state.Members.Single(member => member.Entity == SEntMan.GetNetEntity(both)).Marker.Component,
                 Is.EqualTo("CultYogg"), "The first matching rule wins; there must be no duplicate markers.");
 
@@ -109,6 +210,7 @@ public sealed class CultMiniMapTest : GameTest
                 new ResPath("SS220/Interface/Actions/cult_yogg.rsi"), "migo_teleport")));
             Assert.That(mobMarker.Color, Is.EqualTo(Color.White));
             Assert.That(mobMarker.Scale, Is.EqualTo(1.5f));
+            Assert.That(mobMarker.MarkerType, Is.EqualTo(CultMiniMapMarkerType.Airlock));
 
             // Configuration is per observer; another map still uses its own defaults.
             ui.OpenUi(cultist, CultMiniMapUIKey.Key, cultist);
@@ -117,6 +219,52 @@ public sealed class CultMiniMapTest : GameTest
                 SEntMan.GetNetEntity(cultist), SEntMan.GetNetEntity(both), SEntMan.GetNetEntity(miGo),
             }));
             ui.CloseUi(cultist, CultMiniMapUIKey.Key);
+            ui.CloseUi(viewer, CultMiniMapUIKey.Key);
+        });
+    }
+
+    [Test]
+    public async Task DefaultBuildingRulesUsePrototypeSpecificMarkers()
+    {
+        var map = await Pair.CreateTestMap();
+        var ui = SEntMan.System<SharedUserInterfaceSystem>();
+
+        await Server.WaitAssertion(() =>
+        {
+            var viewer = SEntMan.SpawnEntity(null, map.GridCoords);
+            SEntMan.AddComponent<CultYoggComponent>(viewer);
+
+            var expected = new[]
+            {
+                (Prototype: "WallCultYogg", Label: "cult-mini-map-wall", Type: CultMiniMapMarkerType.Wall, Icon: (string?) null),
+                (Prototype: "CultYoggDoor", Label: "cult-mini-map-secret-door", Type: CultMiniMapMarkerType.SecretDoor, Icon: (string?) null),
+                (Prototype: "CultYoggAirlock", Label: "cult-mini-map-airlock", Type: CultMiniMapMarkerType.Airlock, Icon: (string?) null),
+                (Prototype: "CultYoggPod", Label: "cult-mini-map-pod", Type: CultMiniMapMarkerType.Icon, Icon: "/Textures/SS220/Interface/NavMap/cult_pod.png"),
+                (Prototype: "CultYoggFungusHydroponic", Label: "cult-mini-map-fungus", Type: CultMiniMapMarkerType.Icon, Icon: "/Textures/SS220/Interface/NavMap/cult_fungus.png"),
+                (Prototype: "CultYoggAltar", Label: "cult-mini-map-altar", Type: CultMiniMapMarkerType.Icon, Icon: "/Textures/SS220/Interface/NavMap/cult_altar.png"),
+                (Prototype: "CultYoggPond", Label: "cult-mini-map-pond", Type: CultMiniMapMarkerType.Icon, Icon: "/Textures/SS220/Interface/NavMap/cult_pond.png"),
+                (Prototype: "VoidTeleportEnter", Label: "cult-mini-map-teleporter", Type: CultMiniMapMarkerType.Icon, Icon: "/Textures/SS220/Interface/NavMap/cult_gate.png"),
+                (Prototype: "VoidTeleportExit", Label: "cult-mini-map-teleporter", Type: CultMiniMapMarkerType.Icon, Icon: "/Textures/SS220/Interface/NavMap/cult_gate.png"),
+            };
+            var buildings = expected.Select(entry =>
+                (Entity: SEntMan.SpawnEntity(entry.Prototype, map.GridCoords), Entry: entry)).ToList();
+
+            ui.OpenUi(viewer, CultMiniMapUIKey.Key, viewer);
+            var state = GetState(viewer);
+            Assert.That(state.Members, Has.Count.EqualTo(buildings.Count + 1));
+
+            foreach (var (entity, entry) in buildings)
+            {
+                var marker = state.Members.Single(member => member.Entity == SEntMan.GetNetEntity(entity)).Marker;
+                Assert.That(marker.Label?.ToString(), Is.EqualTo(entry.Label), entry.Prototype);
+                Assert.That(marker.MarkerType, Is.EqualTo(entry.Type), entry.Prototype);
+                Assert.That(marker.ShowInList, Is.False, entry.Prototype);
+                Assert.That(marker.ShowHealth, Is.False, entry.Prototype);
+                Assert.That(marker.Color, Is.EqualTo(Color.Red), entry.Prototype);
+                if (entry.Type == CultMiniMapMarkerType.Icon)
+                    Assert.That(marker.Icon, Is.EqualTo(new SpriteSpecifier.Texture(new ResPath(entry.Icon!))), entry.Prototype);
+            }
+
             ui.CloseUi(viewer, CultMiniMapUIKey.Key);
         });
     }
@@ -187,6 +335,7 @@ public sealed class CultMiniMapTest : GameTest
         EntityUid target = default;
         EntityUid miGo = default;
         EntityUid noThreshold = default;
+        EntityUid building = default;
 
         await Server.WaitAssertion(() =>
         {
@@ -201,6 +350,8 @@ public sealed class CultMiniMapTest : GameTest
             SEntMan.AddComponent<MiGoComponent>(noThreshold);
             SEntMan.AddComponent<MobStateComponent>(noThreshold);
             SEntMan.AddComponent<DamageableComponent>(noThreshold);
+            building = SEntMan.SpawnEntity("CultMiniMapHealthDummy", map.GridCoords);
+            SEntMan.AddComponent<CultYoggBuildingComponent>(building);
 
             ui.OpenUi(viewer, CultMiniMapUIKey.Key, viewer);
             var state = GetState(viewer);
@@ -213,6 +364,14 @@ public sealed class CultMiniMapTest : GameTest
             var miGoState = state.Members.Single(member => member.Entity == SEntMan.GetNetEntity(miGo));
             Assert.That(miGoState.HealthState, Is.EqualTo(MobState.Alive));
             Assert.That(miGoState.DamagePercentage, Is.EqualTo(0.5f).Within(0.001f));
+            var buildingState = state.Members.Single(member => member.Entity == SEntMan.GetNetEntity(building));
+            Assert.That(buildingState.Marker.Component, Is.EqualTo("CultYoggBuilding"));
+            Assert.That(buildingState.Marker.ShowInList, Is.False);
+            Assert.That(buildingState.Marker.ShowHealth, Is.False);
+            Assert.That(buildingState.Marker.MarkerType, Is.EqualTo(CultMiniMapMarkerType.Icon));
+            Assert.That(buildingState.HealthState, Is.EqualTo(MobState.Invalid),
+                "Map-only rules must not publish health even when the entity has mob health components.");
+            Assert.That(buildingState.DamagePercentage, Is.Null);
         });
 
         // Exercise damage, critical state, death and healing through the normal damage system.

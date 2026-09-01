@@ -17,6 +17,8 @@
                 <Label Name="MemberCount"/>
                 <LineEdit Name="SearchLineEdit" HorizontalExpand="True"
                           PlaceHolder="{Loc cult-mini-map-search}"/>
+                <Button Name="PingButton" Text="{Loc cult-mini-map-ping-button}"
+                        HorizontalExpand="True" Margin="0 5 0 0"/>
                 <ScrollContainer Name="MemberScroller" VerticalExpand="True" Margin="0 8">
                     <BoxContainer Name="MembersTable" Orientation="Vertical" HorizontalExpand="True"/>
                 </ScrollContainer>

@@ -14,11 +14,39 @@ public enum CultMiniMapUIKey
 }
 
 [Serializable, NetSerializable]
-public sealed class CultMiniMapState(NetEntity? grid, string gridName, List<CultMiniMapMember> members) : BoundUserInterfaceState
+public sealed class CultMiniMapState(
+    NetEntity? grid,
+    string gridName,
+    List<CultMiniMapMember> members,
+    List<CultMiniMapPing> pings) : BoundUserInterfaceState
 {
     public readonly NetEntity? Grid = grid;
     public readonly string GridName = gridName;
     public readonly List<CultMiniMapMember> Members = members;
+    public readonly List<CultMiniMapPing> Pings = pings;
+}
+
+[Serializable, NetSerializable]
+public sealed class CultMiniMapPing(
+    uint id,
+    NetCoordinates coordinates,
+    string author,
+    SpriteSpecifier icon,
+    Color color,
+    float scale)
+{
+    public readonly uint Id = id;
+    public readonly NetCoordinates Coordinates = coordinates;
+    public readonly string Author = author;
+    public readonly SpriteSpecifier Icon = icon;
+    public readonly Color Color = color;
+    public readonly float Scale = scale;
+}
+
+[Serializable, NetSerializable]
+public sealed class CultMiniMapPingMessage(NetCoordinates coordinates) : BoundUserInterfaceMessage
+{
+    public readonly NetCoordinates Coordinates = coordinates;
 }
 
 [Serializable, NetSerializable]
@@ -27,12 +55,14 @@ public sealed class CultMiniMapMember(
     string name,
     CultMiniMapMarker marker,
     NetCoordinates? coordinates,
+    float rotation,
     MobState healthState,
     float? damagePercentage)
 {
     public readonly NetEntity Entity = entity;
     public readonly string Name = name;
     public readonly CultMiniMapMarker Marker = marker;
+    public readonly float Rotation = rotation;
     public readonly MobState HealthState = healthState;
 
     // Damage relative to this mob's critical threshold, as in crew monitoring.
@@ -48,7 +78,15 @@ public sealed class CultMiniMapMember(
 /// Snapshot of a matching rule's appearance, independent of later component configuration changes.
 /// </summary>
 [Serializable, NetSerializable]
-public sealed class CultMiniMapMarker(string component, LocId? label, SpriteSpecifier icon, Color color, float scale)
+public sealed class CultMiniMapMarker(
+    string component,
+    LocId? label,
+    SpriteSpecifier icon,
+    Color color,
+    float scale,
+    CultMiniMapMarkerType markerType,
+    bool showInList,
+    bool showHealth)
 {
     public const string SelfComponent = "$self";
 
@@ -57,4 +95,16 @@ public sealed class CultMiniMapMarker(string component, LocId? label, SpriteSpec
     public readonly SpriteSpecifier Icon = icon;
     public readonly Color Color = color;
     public readonly float Scale = scale;
+    public readonly CultMiniMapMarkerType MarkerType = markerType;
+    public readonly bool ShowInList = showInList;
+    public readonly bool ShowHealth = showHealth;
+}
+
+[Serializable, NetSerializable]
+public enum CultMiniMapMarkerType : byte
+{
+    Icon,
+    Wall,
+    SecretDoor,
+    Airlock,
 }
