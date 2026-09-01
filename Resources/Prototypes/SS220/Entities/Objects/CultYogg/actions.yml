@@ -156,12 +156,11 @@
 
 - type: entity
   id: ActionCultMiniMap
-  name: MiniMap
-  description: SeeMiniMap
+  name: Cult map
+  description: Sense the location of cultists and Mi-Go.
   categories: [ HideSpawnMenu ]
   components:
   - type: Action
-    useDelay: 30
     itemIconStyle: NoItem
     icon: { sprite: SS220/Interface/Actions/cult_yogg.rsi, state: "migo_teleport"}
     checkCanInteract: false

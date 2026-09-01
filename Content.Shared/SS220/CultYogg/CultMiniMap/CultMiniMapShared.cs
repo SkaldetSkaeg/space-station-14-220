@@ -1,7 +1,9 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
-using Content.Shared.Medical.SuitSensor;
+using Content.Shared.Mobs;
+using Robust.Shared.Map;
 using Robust.Shared.Serialization;
+using Robust.Shared.Utility;
 
 namespace Content.Shared.SS220.CultYogg.CultMiniMap;
 
@@ -12,7 +14,47 @@ public enum CultMiniMapUIKey
 }
 
 [Serializable, NetSerializable]
-public sealed class CultMiniMapState(List<SuitSensorStatus> sensors) : BoundUserInterfaceState
+public sealed class CultMiniMapState(NetEntity? grid, string gridName, List<CultMiniMapMember> members) : BoundUserInterfaceState
 {
-    public List<SuitSensorStatus> Sensors = sensors;
+    public readonly NetEntity? Grid = grid;
+    public readonly string GridName = gridName;
+    public readonly List<CultMiniMapMember> Members = members;
+}
+
+[Serializable, NetSerializable]
+public sealed class CultMiniMapMember(
+    NetEntity entity,
+    string name,
+    CultMiniMapMarker marker,
+    NetCoordinates? coordinates,
+    MobState healthState,
+    float? damagePercentage)
+{
+    public readonly NetEntity Entity = entity;
+    public readonly string Name = name;
+    public readonly CultMiniMapMarker Marker = marker;
+    public readonly MobState HealthState = healthState;
+
+    // Damage relative to this mob's critical threshold, as in crew monitoring.
+    // Null if damage or a positive critical threshold is unavailable.
+    public readonly float? DamagePercentage = damagePercentage;
+
+    // Relative to the viewer's grid, so targets outside PVS do not need client entities.
+    // Null when the viewer has no grid or the target is on another map/in nullspace.
+    public readonly NetCoordinates? Coordinates = coordinates;
+}
+
+/// <summary>
+/// Snapshot of a matching rule's appearance, independent of later component configuration changes.
+/// </summary>
+[Serializable, NetSerializable]
+public sealed class CultMiniMapMarker(string component, LocId? label, SpriteSpecifier icon, Color color, float scale)
+{
+    public const string SelfComponent = "$self";
+
+    public readonly string Component = component;
+    public readonly LocId? Label = label;
+    public readonly SpriteSpecifier Icon = icon;
+    public readonly Color Color = color;
+    public readonly float Scale = scale;
 }

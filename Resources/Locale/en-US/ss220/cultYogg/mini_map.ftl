@@ -1,0 +1,21 @@
+ent-ActionCultMiniMap = Sense of unity
+    .desc = Sense the location of cultists and Mi-Go.
+
+cult-mini-map-title = Cult unity
+cult-mini-map-no-grid = Map unavailable outside a grid
+cult-mini-map-count = Members: { $count }
+cult-mini-map-search = Search by name or type
+cult-mini-map-cultist = Cultist
+cult-mini-map-migo = Mi-Go
+cult-mini-map-self = { $name } (you)
+cult-mini-map-self-section = You
+cult-mini-map-group = { $group } ({ $count })
+cult-mini-map-unavailable = Outside the current map
+cult-mini-map-empty = No members found
+cult-mini-map-legend = Cyan — you · Icons match the types in the list
+cult-mini-map-health-alive = Alive
+cult-mini-map-health-critical = Critical condition
+cult-mini-map-health-dead = Dead
+cult-mini-map-health-unknown = Health status unknown
+cult-mini-map-health-damage = Damage: { $percent }% of the critical threshold
+cult-mini-map-health-no-damage = Damage data unavailable

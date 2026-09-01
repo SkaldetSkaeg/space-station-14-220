@@ -1,16 +1,13 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
 using Content.Shared.Actions;
-using Content.Shared.Medical.CrewMonitoring;
-using Content.Shared.Pinpointer;
-using Content.Shared.SS220.CultYogg.MiGoTeleport;
 using Robust.Shared.Player;
 
 namespace Content.Shared.SS220.CultYogg.CultMiniMap;
 
 public sealed partial class CultMiniMapSystem : EntitySystem
 {
-    private const string CultMiniMapBoundUserInterfaceName = "CultMiniMapBoundUserInterface";//wierd
+    private const string CultMiniMapBoundUserInterfaceName = "CultMiniMapBoundUserInterface";
 
     [Dependency] private readonly SharedUserInterfaceSystem _uiSystem = default!;
     [Dependency] private readonly SharedActionsSystem _actions = default!;
@@ -23,8 +20,7 @@ public sealed partial class CultMiniMapSystem : EntitySystem
         SubscribeLocalEvent<CultMiniMapComponent, ComponentShutdown>(OnShutdown);
 
         SubscribeLocalEvent<CultMiniMapComponent, CultMiniMapActionEvent>(OnCultMiniMapAction);
-
-        SubscribeLocalEvent<CultMiniMapComponent, BoundUIOpenedEvent>(OnUIOpened);
+        SubscribeLocalEvent<BoundUserInterfaceMessageAttempt>(OnUiMessageAttempt);
     }
 
     private void OnStartup(Entity<CultMiniMapComponent> ent, ref ComponentStartup args)
@@ -38,6 +34,8 @@ public sealed partial class CultMiniMapSystem : EntitySystem
     private void OnShutdown(Entity<CultMiniMapComponent> ent, ref ComponentShutdown args)
     {
         _actions.RemoveAction(ent.Owner, ent.Comp.MiniMapActionEntity);
+        _uiSystem.CloseUi(ent.Owner, CultMiniMapUIKey.Key);
+        _uiSystem.SetUiState(ent.Owner, CultMiniMapUIKey.Key, null);
     }
 
     private void OnCultMiniMapAction(Entity<CultMiniMapComponent> ent, ref CultMiniMapActionEvent args)
@@ -49,27 +47,12 @@ public sealed partial class CultMiniMapSystem : EntitySystem
             args.Handled = true;
     }
 
-    private void OnUIOpened(Entity<CultMiniMapComponent> ent, ref BoundUIOpenedEvent args)
+    private void OnUiMessageAttempt(BoundUserInterfaceMessageAttempt args)
     {
-        UpdateUserInterface(ent, ent.Comp);
-    }
-
-    private void UpdateUserInterface(EntityUid ent, CultMiniMapComponent? component = null)//not sure, maybe should be Entity<CultMiniMapComponent> ent
-    {
-        if (!Resolve(ent, ref component))
-            return;
-
-        if (!_uiSystem.IsUiOpen(ent, CultMiniMapUIKey.Key))
-            return;
-
-        // The grid must have a NavMapComponent to visualize the map in the UI
-        var xform = Transform(ent);
-
-        if (xform.GridUid != null)
-            EnsureComp<NavMapComponent>(xform.GridUid.Value);
-
-        // Update all sensors info
-        //var allSensors = component.ConnectedSensors.Values.ToList();
-        //_uiSystem.SetUiState(uid, CrewMonitoringUIKey.Key, new CrewMonitoringState(allSensors));
+        // The UI registration can remain on the mob after deconversion. Do not allow it
+        // to be reopened without the ability, or inspected by another player's client.
+        if (args.UiKey.Equals(CultMiniMapUIKey.Key)
+            && (args.Actor != args.Target || !HasComp<CultMiniMapComponent>(args.Target)))
+            args.Cancel();
     }
 }

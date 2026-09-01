@@ -14,33 +14,14 @@ public sealed class CultMiniMapBoundUserInterface(EntityUid owner, Enum uiKey) :
     {
         base.Open();
 
-        EntityUid? gridUid = null;
-        var stationName = string.Empty;
-
-        if (EntMan.TryGetComponent<TransformComponent>(Owner, out var xform))
-        {
-            gridUid = xform.GridUid;
-
-            if (EntMan.TryGetComponent<MetaDataComponent>(gridUid, out var metaData))
-            {
-                stationName = metaData.EntityName;
-            }
-        }
-
         _menu = this.CreateWindow<CultMiniMapWindow>();
-        _menu.Set(stationName, gridUid);
     }
 
     protected override void UpdateState(BoundUserInterfaceState state)
     {
         base.UpdateState(state);
 
-        switch (state)
-        {
-            case CultMiniMapState st:
-                EntMan.TryGetComponent<TransformComponent>(Owner, out var xform);
-                _menu?.ShowSensors(st.Sensors, Owner, xform?.Coordinates);//ToDo_SS220 rewrite this one
-                break;
-        }
+        if (state is CultMiniMapState mapState)
+            _menu?.UpdateState(mapState, EntMan.GetNetEntity(Owner));
     }
 }

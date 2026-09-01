@@ -1,0 +1,21 @@
+ent-ActionCultMiniMap = Чувство единства
+    .desc = Узрите местоположение культистов и Ми-Го.
+
+cult-mini-map-title = Единство культа
+cult-mini-map-no-grid = Карта недоступна вне грида
+cult-mini-map-count = Участников: { $count }
+cult-mini-map-search = Поиск по имени или типу
+cult-mini-map-cultist = Культист
+cult-mini-map-migo = Ми-Го
+cult-mini-map-self = { $name } (вы)
+cult-mini-map-self-section = Вы
+cult-mini-map-group = { $group } ({ $count })
+cult-mini-map-unavailable = Вне текущей карты
+cult-mini-map-empty = Никого не найдено
+cult-mini-map-legend = Голубой — вы · Значки соответствуют типам в списке
+cult-mini-map-health-alive = Жив
+cult-mini-map-health-critical = Критическое состояние
+cult-mini-map-health-dead = Мёртв
+cult-mini-map-health-unknown = Состояние здоровья неизвестно
+cult-mini-map-health-damage = Повреждения: { $percent }% от порога критического состояния
+cult-mini-map-health-no-damage = Данные о повреждениях недоступны
