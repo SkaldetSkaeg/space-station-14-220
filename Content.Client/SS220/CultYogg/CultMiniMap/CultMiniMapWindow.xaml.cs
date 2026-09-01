@@ -48,8 +48,6 @@ public sealed partial class CultMiniMapWindow : FancyWindow
 
     public void UpdateState(CultMiniMapState state, NetEntity owner)
     {
-        // Keep only the textures used by the latest configuration; SpriteSystem caches the resources.
-        _markerTextures.Clear();
         _members = state.Members;
         _owner = owner;
 
@@ -154,7 +152,6 @@ public sealed partial class CultMiniMapWindow : FancyWindow
         if (coordinates == null || !NavMap.Visible)
             return;
 
-        var role = GetMarkerLabel(member.Marker);
         if (member.Marker.MarkerType != CultMiniMapMarkerType.Icon)
         {
             NavMap.StructureMarkers[member.Entity] = new CultMiniMapStructureBlip(
@@ -167,10 +164,11 @@ public sealed partial class CultMiniMapWindow : FancyWindow
 
         NavMap.TrackedEntities[member.Entity] = new NavMapBlip(
             coordinates.Value,
-            GetMarkerTexture(member.Marker),
+            GetTexture(member.Marker.Icon),
             member.Marker.Color,
             member.Entity == _selected,
             scale: member.Marker.Scale);
+        var role = GetMarkerLabel(member.Marker);
         var details = member.Name + ", " + role;
         if (member.Marker.ShowHealth)
             details += "\n" + GetHealthStatus(member);
@@ -186,13 +184,12 @@ public sealed partial class CultMiniMapWindow : FancyWindow
         if (MembersTable.ChildCount > 0)
             MembersTable.AddChild(new Control { SetHeight = 12 });
 
-        var color = marker.Color;
         var header = new BoxContainer
         {
             HorizontalExpand = true,
             Margin = new Thickness(10, 0, 4, 3),
         };
-        header.AddChild(CreateMarkerIcon(marker, color, 20f));
+        header.AddChild(CreateMarkerIcon(marker, 20f));
         header.AddChild(new Label
         {
             Text = Loc.GetString("cult-mini-map-group", ("group", GetMarkerLabel(marker)), ("count", entries.Count)),
@@ -209,29 +206,24 @@ public sealed partial class CultMiniMapWindow : FancyWindow
     private void AddMemberRow(CultMiniMapMember member)
     {
         var coordinates = _entities.GetCoordinates(member.Coordinates);
-        var healthText = GetHealthText(member);
+        var tooltip = member.Name;
+        if (member.Marker.ShowHealth)
+            tooltip += "\n" + GetHealthText(member);
+        if (coordinates == null)
+            tooltip += "\n" + Loc.GetString("cult-mini-map-unavailable");
+
         var button = new Button
         {
             HorizontalExpand = true,
             Disabled = coordinates == null || !NavMap.Visible,
-            ToolTip = member.Name + "\n" + healthText
-                + (coordinates == null ? "\n" + Loc.GetString("cult-mini-map-unavailable") : string.Empty),
+            ToolTip = tooltip,
         };
 
         var row = new BoxContainer { HorizontalExpand = true };
-        row.AddChild(CreateMarkerIcon(member.Marker, member.Marker.Color, 16f));
+        row.AddChild(CreateMarkerIcon(member.Marker, 16f));
 
-        var healthIcon = new AnimatedTextureRect
-        {
-            VerticalAlignment = VAlignment.Center,
-            Margin = new Thickness(0, 0, 6, 0),
-            ToolTip = healthText,
-            Modulate = member.HealthState == MobState.Invalid ? Color.Gray : Color.White,
-        };
-        healthIcon.SetFromSpriteSpecifier(new SpriteSpecifier.Rsi(
-            new ResPath("Interface/Alerts/human_crew_monitoring.rsi"), GetHealthIconState(member)));
-        healthIcon.DisplayRect.TextureScale = new Vector2(2f);
-        row.AddChild(healthIcon);
+        if (member.Marker.ShowHealth)
+            row.AddChild(CreateHealthIcon(member));
 
         row.AddChild(new Label
         {
@@ -239,11 +231,20 @@ public sealed partial class CultMiniMapWindow : FancyWindow
             HorizontalExpand = true,
             ClipText = true,
         });
-        row.AddChild(new Label
+        string? status = null;
+        if (coordinates == null)
+            status = Loc.GetString("cult-mini-map-unavailable");
+        else if (member.Marker.ShowHealth)
+            status = GetHealthStatus(member);
+
+        if (status != null)
         {
-            Text = coordinates == null ? Loc.GetString("cult-mini-map-unavailable") : GetHealthStatus(member),
-            Margin = new Thickness(6, 0, 0, 0),
-        });
+            row.AddChild(new Label
+            {
+                Text = status,
+                Margin = new Thickness(6, 0, 0, 0),
+            });
+        }
 
         button.AddChild(row);
         button.OnPressed += _ => SelectMember(member.Entity == _selected ? null : member.Entity);
@@ -251,23 +252,33 @@ public sealed partial class CultMiniMapWindow : FancyWindow
         MembersTable.AddChild(button);
     }
 
-    private TextureRect CreateMarkerIcon(CultMiniMapMarker marker, Color color, float size)
+    private static AnimatedTextureRect CreateHealthIcon(CultMiniMapMember member)
+    {
+        var healthIcon = new AnimatedTextureRect
+        {
+            VerticalAlignment = VAlignment.Center,
+            Margin = new Thickness(0, 0, 6, 0),
+            ToolTip = GetHealthText(member),
+            Modulate = member.HealthState == MobState.Invalid ? Color.Gray : Color.White,
+        };
+        healthIcon.SetFromSpriteSpecifier(new SpriteSpecifier.Rsi(
+            new ResPath("Interface/Alerts/human_crew_monitoring.rsi"), GetHealthIconState(member)));
+        healthIcon.DisplayRect.TextureScale = new Vector2(2f);
+        return healthIcon;
+    }
+
+    private TextureRect CreateMarkerIcon(CultMiniMapMarker marker, float size)
     {
         return new TextureRect
         {
-            Texture = GetMarkerTexture(marker),
+            Texture = GetTexture(marker.Icon),
             SetSize = new Vector2(size),
             CanShrink = true,
             Stretch = TextureRect.StretchMode.KeepAspectCentered,
-            Modulate = color,
+            Modulate = marker.Color,
             VerticalAlignment = VAlignment.Center,
             Margin = new Thickness(0, 0, 6, 0),
         };
-    }
-
-    private Texture GetMarkerTexture(CultMiniMapMarker marker)
-    {
-        return GetTexture(marker.Icon);
     }
 
     private Texture GetTexture(SpriteSpecifier icon)
@@ -323,11 +334,6 @@ public sealed partial class CultMiniMapWindow : FancyWindow
         return status + "\n" + damage;
     }
 
-    private static Color GetColor(CultMiniMapMember member)
-    {
-        return member.Marker.Color;
-    }
-
     private void SelectMember(NetEntity? entity)
     {
         _selected = entity;
@@ -354,9 +360,9 @@ public sealed partial class CultMiniMapWindow : FancyWindow
             if (!NavMap.TrackedEntities.TryGetValue(member.Entity, out var blip))
                 continue;
 
-            var color = GetColor(member);
-            if (_selected != null && !selected)
-                color *= Color.DimGray;
+            var color = _selected != null && !selected
+                ? member.Marker.Color * Color.DimGray
+                : member.Marker.Color;
 
             NavMap.TrackedEntities[member.Entity] = new NavMapBlip(
                 blip.Coordinates, blip.Texture, color, selected, blip.Selectable, blip.Scale);

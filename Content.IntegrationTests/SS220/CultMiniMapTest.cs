@@ -236,9 +236,9 @@ public sealed class CultMiniMapTest : GameTest
 
             var expected = new[]
             {
-                (Prototype: "WallCultYogg", Label: "cult-mini-map-wall", Type: CultMiniMapMarkerType.Wall, Icon: (string?) null),
-                (Prototype: "CultYoggDoor", Label: "cult-mini-map-secret-door", Type: CultMiniMapMarkerType.SecretDoor, Icon: (string?) null),
-                (Prototype: "CultYoggAirlock", Label: "cult-mini-map-airlock", Type: CultMiniMapMarkerType.Airlock, Icon: (string?) null),
+                (Prototype: "WallCultYogg", Label: "cult-mini-map-wall", Type: CultMiniMapMarkerType.Wall, Icon: default(string)),
+                (Prototype: "CultYoggDoor", Label: "cult-mini-map-secret-door", Type: CultMiniMapMarkerType.SecretDoor, Icon: default(string)),
+                (Prototype: "CultYoggAirlock", Label: "cult-mini-map-airlock", Type: CultMiniMapMarkerType.Airlock, Icon: default(string)),
                 (Prototype: "CultYoggPod", Label: "cult-mini-map-pod", Type: CultMiniMapMarkerType.Icon, Icon: "/Textures/SS220/Interface/NavMap/cult_pod.png"),
                 (Prototype: "CultYoggFungusHydroponic", Label: "cult-mini-map-fungus", Type: CultMiniMapMarkerType.Icon, Icon: "/Textures/SS220/Interface/NavMap/cult_fungus.png"),
                 (Prototype: "CultYoggAltar", Label: "cult-mini-map-altar", Type: CultMiniMapMarkerType.Icon, Icon: "/Textures/SS220/Interface/NavMap/cult_altar.png"),
@@ -262,7 +262,10 @@ public sealed class CultMiniMapTest : GameTest
                 Assert.That(marker.ShowHealth, Is.False, entry.Prototype);
                 Assert.That(marker.Color, Is.EqualTo(Color.Red), entry.Prototype);
                 if (entry.Type == CultMiniMapMarkerType.Icon)
+                {
                     Assert.That(marker.Icon, Is.EqualTo(new SpriteSpecifier.Texture(new ResPath(entry.Icon!))), entry.Prototype);
+                    Assert.That(marker.Scale, Is.EqualTo(1f), entry.Prototype);
+                }
             }
 
             ui.CloseUi(viewer, CultMiniMapUIKey.Key);

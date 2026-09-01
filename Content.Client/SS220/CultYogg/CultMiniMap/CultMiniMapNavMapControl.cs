@@ -15,16 +15,17 @@ namespace Content.Client.SS220.CultYogg.CultMiniMap;
 public sealed partial class CultMiniMapNavMapControl : NavMapControl
 {
     public NetEntity? Focus;
-    public Dictionary<NetEntity, string> LocalizedNames = new();
-    public Dictionary<NetEntity, CultMiniMapStructureBlip> StructureMarkers = new();
-    public Dictionary<uint, CultMiniMapPingBlip> Pings = new();
+    public readonly Dictionary<NetEntity, string> LocalizedNames = new();
+    public readonly Dictionary<NetEntity, CultMiniMapStructureBlip> StructureMarkers = new();
+    public readonly Dictionary<uint, CultMiniMapPingBlip> Pings = new();
     public bool PingMode;
     public event Action<EntityCoordinates>? PingRequestedAction;
 
-    private Label _trackedEntityLabel;
-    private PanelContainer _trackedEntityPanel;
+    private readonly HashSet<Vector2> _wallPositions = new();
+    private readonly Label _trackedEntityLabel;
+    private readonly PanelContainer _trackedEntityPanel;
 
-    public CultMiniMapNavMapControl() : base()
+    public CultMiniMapNavMapControl()
     {
         WallColor = new Color(192, 122, 196);
         TileColor = new(71, 42, 72);
@@ -87,11 +88,11 @@ public sealed partial class CultMiniMapNavMapControl : NavMapControl
 
     private void DrawStructures(DrawingHandleScreen handle)
     {
-        var wallPositions = new HashSet<Vector2>();
+        _wallPositions.Clear();
         foreach (var structure in StructureMarkers.Values)
         {
             if (structure.MarkerType is CultMiniMapMarkerType.Wall or CultMiniMapMarkerType.SecretDoor)
-                wallPositions.Add(structure.Coordinates.Position);
+                _wallPositions.Add(structure.Coordinates.Position);
         }
 
         foreach (var structure in StructureMarkers.Values)
@@ -99,10 +100,10 @@ public sealed partial class CultMiniMapNavMapControl : NavMapControl
             switch (structure.MarkerType)
             {
                 case CultMiniMapMarkerType.Wall:
-                    DrawWall(handle, structure, wallPositions);
+                    DrawWall(handle, structure, _wallPositions);
                     break;
                 case CultMiniMapMarkerType.SecretDoor:
-                    DrawSecretDoor(handle, structure, wallPositions);
+                    DrawSecretDoor(handle, structure, _wallPositions);
                     break;
                 case CultMiniMapMarkerType.Airlock:
                     DrawAirlock(handle, structure);
@@ -185,16 +186,18 @@ public sealed partial class CultMiniMapNavMapControl : NavMapControl
     private void DrawPings(DrawingHandleScreen handle)
     {
         var seconds = (float) Timing.RealTime.TotalSeconds;
+        var offset = GetOffset();
+        var mapScale = MinmapScaleModifier * MathF.Sqrt(MinimapScale);
         foreach (var ping in Pings.Values)
         {
-            var local = ping.Coordinates.Position - GetOffset();
+            var local = ping.Coordinates.Position - offset;
             var position = ScalePosition(new Vector2(local.X, -local.Y));
             var phase = (seconds * 0.85f + ping.Id * 0.173f) % 1f;
             DrawPingRing(handle, position, ping.Color, phase);
             DrawPingRing(handle, position, ping.Color, (phase + 0.5f) % 1f);
 
             var heartbeat = 1f + 0.08f * MathF.Sin(seconds * MathF.Tau * 2f + ping.Id);
-            var coefficient = MinmapScaleModifier * MathF.Sqrt(MinimapScale) * ping.Scale * heartbeat;
+            var coefficient = mapScale * ping.Scale * heartbeat;
             var extent = new Vector2(coefficient * ping.Texture.Width, coefficient * ping.Texture.Height);
             handle.DrawTextureRect(ping.Texture, new UIBox2(position - extent, position + extent), ping.Color);
         }
@@ -211,32 +214,23 @@ public sealed partial class CultMiniMapNavMapControl : NavMapControl
     {
         base.FrameUpdate(args);
 
-        if (Focus == null)
+        if (Focus is not { } focus || !TrackedEntities.TryGetValue(focus, out var blip))
         {
-            _trackedEntityLabel.Text = string.Empty;
-            _trackedEntityPanel.Visible = false;
-
+            HideTrackedEntity();
             return;
         }
 
-        foreach ((var netEntity, var blip) in TrackedEntities)
-        {
-            if (netEntity != Focus)
-                continue;
+        if (!LocalizedNames.TryGetValue(focus, out var name))
+            name = Loc.GetString("navmap-unknown-entity");
 
-            if (!LocalizedNames.TryGetValue(netEntity, out var name))
-                name = Loc.GetString("navmap-unknown-entity");
+        _trackedEntityLabel.Text = name + "\n" + Loc.GetString("navmap-location",
+            ("x", MathF.Round(blip.Coordinates.X)),
+            ("y", MathF.Round(blip.Coordinates.Y)));
+        _trackedEntityPanel.Visible = true;
+    }
 
-            var message = name + "\n" + Loc.GetString("navmap-location",
-                ("x", MathF.Round(blip.Coordinates.X)),
-                ("y", MathF.Round(blip.Coordinates.Y)));
-
-            _trackedEntityLabel.Text = message;
-            _trackedEntityPanel.Visible = true;
-
-            return;
-        }
-
+    private void HideTrackedEntity()
+    {
         _trackedEntityLabel.Text = string.Empty;
         _trackedEntityPanel.Visible = false;
     }

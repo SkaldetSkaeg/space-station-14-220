@@ -48,6 +48,7 @@ public sealed class CultMiniMapTrackingSystem : EntitySystem
         SubscribeLocalEvent<CultMiniMapComponent, BoundUIOpenedEvent>(OnOpened);
         SubscribeLocalEvent<CultMiniMapComponent, BoundUIClosedEvent>(OnClosed);
         SubscribeLocalEvent<CultMiniMapComponent, CultMiniMapPingMessage>(OnPing);
+        SubscribeLocalEvent<CultMiniMapComponent, ComponentRemove>(OnMapRemove);
     }
 
     private void OnCultInit(Entity<CultYoggComponent> ent, ref ComponentInit args)
@@ -94,6 +95,11 @@ public sealed class CultMiniMapTrackingSystem : EntitySystem
         TryCreatePing(ent, args.Actor, GetCoordinates(args.Coordinates));
     }
 
+    private void OnMapRemove(Entity<CultMiniMapComponent> ent, ref ComponentRemove args)
+    {
+        _nextPingByOwner.Remove(ent.Owner);
+    }
+
     /// <summary>
     /// Validates and publishes a ping. Public so non-UI callers can use the same authoritative path.
     /// </summary>
@@ -130,14 +136,11 @@ public sealed class CultMiniMapTrackingSystem : EntitySystem
         _nextPingByOwner[ent.Owner] = now + TimeSpan.FromSeconds(cooldown);
 
         TrimChannel(ent.Comp.PingChannel, Math.Max(1, ent.Comp.MaxActivePings));
-        var id = NextPingId();
-
         _pings.Add(new ActivePing(
-            id,
+            NextPingId(),
             grid,
             coordinates.Position,
             ent.Comp.PingChannel,
-            MetaData(actor).EntityName,
             ent.Comp.PingIcon,
             ent.Comp.PingColor,
             scale,
@@ -198,11 +201,12 @@ public sealed class CultMiniMapTrackingSystem : EntitySystem
     {
         base.Update(frameTime);
 
-        if (_timing.CurTime < _nextUpdate)
+        var now = _timing.CurTime;
+        if (now < _nextUpdate)
             return;
 
-        _nextUpdate = _timing.CurTime + UpdateInterval;
-        _pings.RemoveAll(ping => ping.ExpiresAt <= _timing.CurTime || !Exists(ping.Grid));
+        _nextUpdate = now + UpdateInterval;
+        _pings.RemoveAll(ping => ping.ExpiresAt <= now || !Exists(ping.Grid));
         var query = EntityQueryEnumerator<CultMiniMapComponent>();
         while (query.MoveNext(out var uid, out var comp))
         {
@@ -218,15 +222,12 @@ public sealed class CultMiniMapTrackingSystem : EntitySystem
         if (grid != null)
             EnsureComp<NavMapComponent>(grid.Value);
 
-        var selfScale = float.IsFinite(ent.Comp.SelfScale) && ent.Comp.SelfScale > 0f
-            ? ent.Comp.SelfScale
-            : 1f;
         var selfMarker = new CultMiniMapMarker(
             CultMiniMapMarker.SelfComponent,
             "cult-mini-map-self-section",
             ent.Comp.SelfIcon,
             ent.Comp.SelfColor,
-            selfScale,
+            PositiveOrDefault(ent.Comp.SelfScale, 1f),
             CultMiniMapMarkerType.Icon,
             true,
             true);
@@ -238,34 +239,43 @@ public sealed class CultMiniMapTrackingSystem : EntitySystem
         foreach (var rule in ent.Comp.TrackedComponents)
             AddMembers(viewer, rule, members, seen);
 
-        var pings = new List<CultMiniMapPing>();
-        if (grid != null)
-        {
-            foreach (var ping in _pings)
-            {
-                if (ping.Channel != ent.Comp.PingChannel || !Exists(ping.Grid))
-                    continue;
-
-                var mapCoordinates = _transform.ToMapCoordinates(new EntityCoordinates(ping.Grid, ping.Position));
-                if (mapCoordinates.MapId == MapId.Nullspace || mapCoordinates.MapId != viewer.MapID)
-                    continue;
-
-                var coordinates = _transform.ToCoordinates(grid.Value, mapCoordinates);
-                pings.Add(new CultMiniMapPing(
-                    ping.Id,
-                    GetNetCoordinates(coordinates),
-                    ping.Author,
-                    ping.Icon,
-                    ping.Color,
-                    ping.Scale));
-            }
-        }
+        var pings = GetVisiblePings(ent.Comp.PingChannel, viewer, grid);
 
         _ui.SetUiState(ent.Owner, CultMiniMapUIKey.Key, new CultMiniMapState(
             GetNetEntity(grid),
             grid == null ? string.Empty : MetaData(grid.Value).EntityName,
             members,
             pings));
+    }
+
+    private List<CultMiniMapPing> GetVisiblePings(
+        string channel,
+        TransformComponent viewer,
+        EntityUid? grid)
+    {
+        var result = new List<CultMiniMapPing>();
+        if (grid is not { } gridUid)
+            return result;
+
+        foreach (var ping in _pings)
+        {
+            if (ping.Channel != channel || !Exists(ping.Grid))
+                continue;
+
+            var mapCoordinates = _transform.ToMapCoordinates(new EntityCoordinates(ping.Grid, ping.Position));
+            if (mapCoordinates.MapId != viewer.MapID)
+                continue;
+
+            var coordinates = _transform.ToCoordinates(gridUid, mapCoordinates);
+            result.Add(new CultMiniMapPing(
+                ping.Id,
+                GetNetCoordinates(coordinates),
+                ping.Icon,
+                ping.Color,
+                ping.Scale));
+        }
+
+        return result;
     }
 
     private void AddMembers(TransformComponent viewer, CultMiniMapTrackedComponent rule,
@@ -316,9 +326,9 @@ public sealed class CultMiniMapTrackingSystem : EntitySystem
 
         var healthState = marker.ShowHealth ? GetHealthState(uid) : MobState.Invalid;
         var damagePercentage = marker.ShowHealth ? GetDamagePercentage(uid) : null;
-        var rotation = xform.LocalRotation;
-        if (viewer.GridUid is { } viewerGrid)
-            rotation = _transform.GetWorldRotation(xform) - _transform.GetWorldRotation(viewerGrid);
+        var rotation = viewer.GridUid is { } viewerGrid
+            ? _transform.GetWorldRotation(xform) - _transform.GetWorldRotation(viewerGrid)
+            : xform.LocalRotation;
 
         return new CultMiniMapMember(meta.NetEntity, meta.EntityName, marker,
             coordinates, (float) rotation.Theta, healthState, damagePercentage);
@@ -345,8 +355,11 @@ public sealed class CultMiniMapTrackingSystem : EntitySystem
         if (criticalThreshold.Value <= 0)
             return null;
 
-        return MathF.Max(0f,
-            _damageable.GetTotalDamage((uid, damageable)).Float() / criticalThreshold.Value.Float());
+        // Crew monitoring uses this legacy API for the same percentage; the engine has no numeric replacement yet.
+#pragma warning disable CS0618 // DamageableSystem.GetTotalDamage
+        var totalDamage = _damageable.GetTotalDamage((uid, damageable)).Float();
+#pragma warning restore CS0618
+        return MathF.Max(0f, totalDamage / criticalThreshold.Value.Float());
     }
 
     private sealed record ActivePing(
@@ -354,7 +367,6 @@ public sealed class CultMiniMapTrackingSystem : EntitySystem
         EntityUid Grid,
         Vector2 Position,
         string Channel,
-        string Author,
         SpriteSpecifier Icon,
         Color Color,
         float Scale,

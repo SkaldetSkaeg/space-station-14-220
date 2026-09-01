@@ -30,14 +30,12 @@ public sealed class CultMiniMapState(
 public sealed class CultMiniMapPing(
     uint id,
     NetCoordinates coordinates,
-    string author,
     SpriteSpecifier icon,
     Color color,
     float scale)
 {
     public readonly uint Id = id;
     public readonly NetCoordinates Coordinates = coordinates;
-    public readonly string Author = author;
     public readonly SpriteSpecifier Icon = icon;
     public readonly Color Color = color;
     public readonly float Scale = scale;

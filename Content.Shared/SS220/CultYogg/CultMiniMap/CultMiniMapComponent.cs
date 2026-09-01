@@ -68,7 +68,7 @@ public sealed partial class CultMiniMapComponent : Component
         {
             Component = "CultYoggBuilding",
             Label = "cult-mini-map-wall",
-            Prototypes = new List<EntProtoId> { "WallCultYogg" },
+            Prototypes = new() { "WallCultYogg" },
             MarkerType = CultMiniMapMarkerType.Wall,
             Color = Color.Red,
             ShowInList = false,
@@ -78,7 +78,7 @@ public sealed partial class CultMiniMapComponent : Component
         {
             Component = "CultYoggBuilding",
             Label = "cult-mini-map-secret-door",
-            Prototypes = new List<EntProtoId> { "CultYoggDoor" },
+            Prototypes = new() { "CultYoggDoor" },
             MarkerType = CultMiniMapMarkerType.SecretDoor,
             Color = Color.Red,
             ShowInList = false,
@@ -88,7 +88,7 @@ public sealed partial class CultMiniMapComponent : Component
         {
             Component = "CultYoggBuilding",
             Label = "cult-mini-map-airlock",
-            Prototypes = new List<EntProtoId> { "CultYoggAirlock" },
+            Prototypes = new() { "CultYoggAirlock" },
             MarkerType = CultMiniMapMarkerType.Airlock,
             Color = Color.Red,
             ShowInList = false,
@@ -106,10 +106,9 @@ public sealed partial class CultMiniMapComponent : Component
         {
             Component = "SelfLinkedTeleport",
             Label = "cult-mini-map-teleporter",
-            Prototypes = new List<EntProtoId> { "VoidTeleportEnter", "VoidTeleportExit" },
+            Prototypes = new() { "VoidTeleportEnter", "VoidTeleportExit" },
             Icon = new SpriteSpecifier.Texture(new ResPath("/Textures/SS220/Interface/NavMap/cult_gate.png")),
             Color = Color.Red,
-            Scale = 0.65f,
             ShowInList = false,
             ShowHealth = false,
         },
@@ -134,10 +133,9 @@ public sealed partial class CultMiniMapComponent : Component
         {
             Component = "CultYoggBuilding",
             Label = label,
-            Prototypes = new List<EntProtoId> { prototype },
+            Prototypes = new() { prototype },
             Icon = icon,
             Color = Color.Red,
-            Scale = 0.65f,
             ShowInList = false,
             ShowHealth = false,
         };
@@ -187,7 +185,7 @@ public sealed partial class CultMiniMapTrackedComponent
     public float Scale = 1f;
 
     /// <summary>
-    /// How the marker is drawn. Wall and airlock use map-scaled vector geometry instead of <see cref="Icon"/>.
+    /// How the marker is drawn. Structural marker types use map-scaled vector geometry instead of <see cref="Icon"/>.
     /// </summary>
     [DataField]
     public CultMiniMapMarkerType MarkerType = CultMiniMapMarkerType.Icon;
