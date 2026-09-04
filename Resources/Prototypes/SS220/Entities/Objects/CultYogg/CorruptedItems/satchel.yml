@@ -18,7 +18,9 @@
       components:
       - CultYogg
       - MiGo
+  - type: CuttableStuck
   - type: StuckOnEquip
   - type: Tag
     tags:
+    - CultYoggEquipment
     - CultYoggStealthProvidable

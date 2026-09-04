@@ -6,6 +6,9 @@
   suffix: CultYogg
   name: abstract cult restricted
   components:
+    - type: Tag
+      tags:
+      - CultYoggEquipment
     - type: RestrictedItem
       localizedPopup: "cult-yogg-role-item-popup"
       whitelist:
@@ -18,6 +21,9 @@
   suffix: CultYogg
   name: abstract cult restricted
   components:
+    - type: Tag
+      tags:
+      - CultYoggEquipment
     - type: RestrictedItem
       localizedPopup: "cult-yogg-role-item-popup"
       whitelist:

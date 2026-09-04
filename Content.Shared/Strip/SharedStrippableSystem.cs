@@ -16,6 +16,7 @@ using Content.Shared.Inventory;
 using Content.Shared.Inventory.VirtualItem;
 using Content.Shared.Popups;
 using Content.Shared.Strip.Components;
+using Content.Shared.SS220.StuckOnEquip;
 using Content.Shared.Verbs;
 using Robust.Shared.Utility;
 
@@ -35,6 +36,7 @@ public abstract class SharedStrippableSystem : EntitySystem
     [Dependency] private readonly SharedPopupSystem _popupSystem = default!;
 
     [Dependency] private readonly ISharedAdminLogManager _adminLogger = default!;
+    [Dependency] private readonly SharedStuckOnEquipSystem _stuckOnEquip = default!; // SS220
 
     public override void Initialize()
     {
@@ -286,6 +288,10 @@ public abstract class SharedStrippableSystem : EntitySystem
         EntityUid item,
         string slot)
     {
+        // SS220: aghost can remove stuck equipment through the regular stripping UI.
+        if (TryAdminGhostRemoveStuckItem(user, target, item, inHand: false))
+            return;
+
         if (!CanStripRemoveInventory(user, target, item, slot))
             return;
 
@@ -513,6 +519,10 @@ public abstract class SharedStrippableSystem : EntitySystem
             !Resolve(target, ref targetStrippable))
             return;
 
+        // SS220: aghost can remove stuck equipment through the regular stripping UI.
+        if (TryAdminGhostRemoveStuckItem(user, target, item, inHand: true))
+            return;
+
         if (!CanStripRemoveHand(user, target, item, handName))
             return;
 
@@ -568,6 +578,20 @@ public abstract class SharedStrippableSystem : EntitySystem
         _adminLogger.Add(LogType.Stripping, LogImpact.High, $"{ToPrettyString(user):actor} has stripped the item {ToPrettyString(item):item} from {ToPrettyString(target):target}'s hands");
 
         // Hand update will trigger strippable update.
+    }
+
+    // SS220
+    private bool TryAdminGhostRemoveStuckItem(EntityUid user, EntityUid target, EntityUid item, bool inHand)
+    {
+        if (!_stuckOnEquip.TryAdminGhostRemove(user, item))
+            return false;
+
+        if (!inHand)
+            RaiseLocalEvent(item, new DroppedEvent(user), true);
+        _handsSystem.PickupOrDrop(user, item);
+        _adminLogger.Add(LogType.Stripping, LogImpact.High,
+            $"{ToPrettyString(user):actor} has stripped the stuck item {ToPrettyString(item):item} from {ToPrettyString(target):target}");
+        return true;
     }
 
     private void OnStrippableDoAfterRunning(Entity<HandsComponent> entity, ref DoAfterAttemptEvent<StrippableDoAfterEvent> ev)

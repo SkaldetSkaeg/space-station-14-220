@@ -21,6 +21,7 @@
       right:
       - state: inhand-right
 #      - state: inhand-right-vox
+  - type: CuttableStuck
   - type: StuckOnEquip
     inHandItem: true
   - type: MeleeWeapon
@@ -40,5 +41,6 @@
     heavyAttackChance: 0.2
   - type: Tag
     tags:
+    - CultYoggEquipment
     - CultYoggStealthProvidable
     - CultYoggInnerHandToggleable
