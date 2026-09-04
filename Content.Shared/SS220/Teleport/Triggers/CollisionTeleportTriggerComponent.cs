@@ -2,7 +2,7 @@
 
 using Content.Shared.Whitelist;
 
-namespace Content.Shared.SS220.Teleport.Components;
+namespace Content.Shared.SS220.Teleport.Triggers;
 
 /// <summary>
 ///     Requests teleportation when a target collides with a teleporter fixture.

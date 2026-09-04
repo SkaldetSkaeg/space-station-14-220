@@ -3,12 +3,11 @@
 using Content.Shared.DoAfter;
 using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Popups;
-using Content.Shared.SS220.Teleport.Components;
 using Content.Shared.Verbs;
 using Content.Shared.Whitelist;
 using Robust.Shared.Network;
 
-namespace Content.Shared.SS220.Teleport.Systems;
+namespace Content.Shared.SS220.Teleport.Triggers;
 
 public sealed partial class AltVerbTeleportTriggerSystem : EntitySystem
 {

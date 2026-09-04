@@ -1,11 +1,10 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
-using Content.Shared.SS220.Teleport.Components;
 using Content.Shared.Whitelist;
 using Robust.Shared.Network;
 using Robust.Shared.Physics.Events;
 
-namespace Content.Shared.SS220.Teleport.Systems;
+namespace Content.Shared.SS220.Teleport.Triggers;
 
 public sealed partial class CollisionTeleportTriggerSystem : EntitySystem
 {

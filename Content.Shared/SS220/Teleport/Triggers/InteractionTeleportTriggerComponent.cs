@@ -3,34 +3,28 @@
 using Content.Shared.FixedPoint;
 using Content.Shared.Whitelist;
 
-namespace Content.Shared.SS220.Teleport.Components;
+namespace Content.Shared.SS220.Teleport.Triggers;
 
 /// <summary>
-///     Requests teleportation when the user activates an alternative verb while holding the teleporter in their active hand.
+///     Requests teleportation through a verb or drag-and-drop interaction.
 /// </summary>
 [RegisterComponent]
-public sealed partial class AltVerbTeleportTriggerComponent : Component
+public sealed partial class InteractionTeleportTriggerComponent : Component
 {
     /// <summary>
-    ///     Text displayed for the alternative-use verb.
+    ///     Entities allowed to be teleported.
     /// </summary>
     [DataField]
-    public LocId VerbText = "teleport-enter-verb";
+    public EntityWhitelist? TargetWhitelist;
 
     /// <summary>
-    ///     Entities allowed to use the teleporter.
+    ///     Entities prevented from being teleported.
     /// </summary>
     [DataField]
-    public EntityWhitelist? UserWhitelist;
+    public EntityWhitelist? TargetBlacklist;
 
     /// <summary>
-    ///     Entities prevented from using the teleporter.
-    /// </summary>
-    [DataField]
-    public EntityWhitelist? UserBlacklist;
-
-    /// <summary>
-    ///     Message shown when the user does not pass the whitelist.
+    ///     Message shown when the target does not pass the whitelist.
     /// </summary>
     [DataField]
     public LocId? WhitelistRejectedLoc;
