@@ -3,6 +3,7 @@
 using Content.Shared.Ghost;
 using Content.Shared.Movement.Pulling.Components;
 using Content.Shared.Movement.Pulling.Systems;
+using Content.Shared.SS220.Grab;
 using Robust.Shared.Map;
 
 namespace Content.Shared.SS220.Teleport.Systems;
@@ -14,6 +15,7 @@ public sealed partial class SharedTeleportSystem : EntitySystem
 {
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private PullingSystem _pulling = default!;
+    [Dependency] private SharedGrabSystem _grab = default!;
 
     public bool TryTeleport(EntityUid teleporter, EntityUid target, EntityCoordinates destination)
     {
@@ -33,6 +35,7 @@ public sealed partial class SharedTeleportSystem : EntitySystem
         RaiseLocalEvent(teleporter, ref beforeTeleport);
 
         StopPullingRelationships(target);
+        StopGrabRelationships(target);
 
         _transform.SetCoordinates(target, Transform(target), destination);
 
@@ -78,5 +81,22 @@ public sealed partial class SharedTeleportSystem : EntitySystem
             return;
 
         _pulling.TryStopPull(pulledTarget, pulledEntity);
+    }
+
+    private void StopGrabRelationships(EntityUid target)
+    {
+        if (TryComp(target, out GrabbableComponent? targetGrabbable))
+            _grab.BreakGrab((target, targetGrabbable));
+
+        if (!TryComp(target, out GrabberComponent? targetGrabber))
+            return;
+
+        if (targetGrabber.Grabbing is not { } grabbedTarget)
+            return;
+
+        if (!TryComp(grabbedTarget, out GrabbableComponent? grabbedEntity))
+            return;
+
+        _grab.BreakGrab((grabbedTarget, grabbedEntity));
     }
 }
