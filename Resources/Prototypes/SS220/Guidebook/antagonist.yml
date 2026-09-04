@@ -3,3 +3,39 @@
   id: CultYogg
   name: guide-entry-cult-yogg
   text: "/ServerInfo/SS220/Guidebook/Antagonist/CultYogg.xml"
+  children:
+  - CultYoggMiGo
+  - CultYoggBase
+  - CultYoggEquipment
+  - CultYoggRitual
+  - CultYoggCounterplay
+
+- type: guideEntry
+  id: CultYoggMiGo
+  name: guide-entry-cult-yogg-migo
+  priority: 1
+  text: "/ServerInfo/SS220/Guidebook/Antagonist/CultYoggMiGo.xml"
+
+- type: guideEntry
+  id: CultYoggBase
+  name: guide-entry-cult-yogg-base
+  priority: 2
+  text: "/ServerInfo/SS220/Guidebook/Antagonist/CultYoggBase.xml"
+
+- type: guideEntry
+  id: CultYoggEquipment
+  name: guide-entry-cult-yogg-equipment
+  priority: 3
+  text: "/ServerInfo/SS220/Guidebook/Antagonist/CultYoggEquipment.xml"
+
+- type: guideEntry
+  id: CultYoggRitual
+  name: guide-entry-cult-yogg-ritual
+  priority: 4
+  text: "/ServerInfo/SS220/Guidebook/Antagonist/CultYoggRitual.xml"
+
+- type: guideEntry
+  id: CultYoggCounterplay
+  name: guide-entry-cult-yogg-counterplay
+  priority: 5
+  text: "/ServerInfo/SS220/Guidebook/Antagonist/CultYoggCounterplay.xml"

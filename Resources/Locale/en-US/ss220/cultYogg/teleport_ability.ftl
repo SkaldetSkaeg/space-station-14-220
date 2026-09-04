@@ -1,0 +1,3 @@
+migo-teleport-action-button = Teleport
+migo-teleport-observe-button = Observe
+migo-teleport-search-filter = Search...
