@@ -184,6 +184,12 @@ public sealed partial class InteractionTeleportTriggerSystem : EntitySystem
         if (!HasComp<GhostComponent>(ghost))
             return false;
 
+        var attemptEvent = new TeleportUseAttemptEvent(ghost, ghost);
+        RaiseLocalEvent(ent, ref attemptEvent);
+
+        if (attemptEvent.Cancelled)
+            return false;
+
         var request = new GhostTeleportRequestEvent(ghost);
         RaiseLocalEvent(ent, ref request);
         return request.Handled;

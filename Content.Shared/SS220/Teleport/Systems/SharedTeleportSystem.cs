@@ -4,7 +4,9 @@ using Content.Shared.Ghost;
 using Content.Shared.Movement.Pulling.Components;
 using Content.Shared.Movement.Pulling.Systems;
 using Content.Shared.SS220.Grab;
+using Content.Shared.Weapons.Misc;
 using Robust.Shared.Map;
+using Robust.Shared.Physics.Systems;
 
 namespace Content.Shared.SS220.Teleport.Systems;
 
@@ -16,6 +18,7 @@ public sealed partial class SharedTeleportSystem : EntitySystem
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private PullingSystem _pulling = default!;
     [Dependency] private SharedGrabSystem _grab = default!;
+    [Dependency] private SharedJointSystem _joints = default!;
 
     public bool TryTeleport(EntityUid teleporter, EntityUid target, EntityCoordinates destination)
     {
@@ -34,8 +37,7 @@ public sealed partial class SharedTeleportSystem : EntitySystem
         var beforeTeleport = new BeforeTeleportEvent(target);
         RaiseLocalEvent(teleporter, ref beforeTeleport);
 
-        StopPullingRelationships(target);
-        StopGrabRelationships(target);
+        StopTeleportRelationships(target);
 
         _transform.SetCoordinates(target, Transform(target), destination);
 
@@ -62,8 +64,17 @@ public sealed partial class SharedTeleportSystem : EntitySystem
         if (!destination.IsValid(EntityManager))
             return false;
 
+        StopTeleportRelationships(target);
+
         _transform.SetCoordinates(target, Transform(target), destination);
         return true;
+    }
+
+    private void StopTeleportRelationships(EntityUid target)
+    {
+        StopPullingRelationships(target);
+        StopGrabRelationships(target);
+        _joints.RemoveJoint(target, SharedGrapplingGunSystem.GrapplingJoint);
     }
 
     private void StopPullingRelationships(EntityUid target)

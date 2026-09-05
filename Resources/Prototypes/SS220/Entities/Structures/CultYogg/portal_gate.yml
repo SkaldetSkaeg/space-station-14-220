@@ -57,6 +57,8 @@
     sprite: SS220/Structures/CultYogg/void_portal_gate.rsi
     layers:
     - state: base
+    - state: portal
+      shader: unshaded
     - state: light
       shader: unshaded
     drawdepth: Overdoors
