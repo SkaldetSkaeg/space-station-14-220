@@ -1,7 +1,9 @@
 using Content.Shared.Ghost.Components;
 using Content.Shared.Movement.Pulling.Components;
 using Content.Shared.Movement.Pulling.Systems;
+using Content.Shared.Weapons.Misc;
 using Robust.Shared.Map;
+using Robust.Shared.Physics.Systems;
 
 namespace Content.Shared.Teleportation.Systems;
 
@@ -12,6 +14,7 @@ public sealed partial class SharedTeleportSystem : EntitySystem
 {
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private PullingSystem _pulling = default!;
+    [Dependency] private SharedJointSystem _joints = default!;
 
     /// <summary>
     /// Attempts to move a target to already resolved destination coordinates.
@@ -36,7 +39,7 @@ public sealed partial class SharedTeleportSystem : EntitySystem
         var beforeTeleport = new BeforeTeleportEvent(target);
         RaiseLocalEvent(teleporter, ref beforeTeleport);
 
-        StopPullingRelationships(target);
+        StopSpatialRelationships(target);
         _transform.SetCoordinates(target, Transform(target), destination);
 
         var targetTeleported = new TargetTeleportedEvent(target);
@@ -49,11 +52,12 @@ public sealed partial class SharedTeleportSystem : EntitySystem
     }
 
     /// <summary>
-    /// Attempts to teleport an observer without invoking the regular teleport lifecycle.
+    /// Attempts to teleport a ghost or spectral entity without invoking the regular teleport lifecycle.
+    /// Pulling and grappling relationships are still stopped before movement.
     /// </summary>
     public bool TryTeleportGhost(EntityUid target, EntityCoordinates destination)
     {
-        if (!HasComp<GhostComponent>(target))
+        if (!HasComp<GhostComponent>(target) && !HasComp<SpectralComponent>(target))
             return false;
 
         if (TerminatingOrDeleted(target))
@@ -62,8 +66,17 @@ public sealed partial class SharedTeleportSystem : EntitySystem
         if (!destination.IsValid(EntityManager))
             return false;
 
+        StopSpatialRelationships(target);
         _transform.SetCoordinates(target, Transform(target), destination);
         return true;
+    }
+
+    private void StopSpatialRelationships(EntityUid target)
+    {
+        StopPullingRelationships(target);
+
+        // Do not leave a relayed physics joint spanning unrelated coordinates or maps after teleportation.
+        _joints.RemoveJoint(target, SharedGrapplingGunSystem.GrapplingJoint);
     }
 
     private void StopPullingRelationships(EntityUid target)

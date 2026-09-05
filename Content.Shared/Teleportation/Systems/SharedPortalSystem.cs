@@ -1,283 +1,273 @@
 ﻿using System.Linq;
-using Content.Shared.Movement.Pulling.Components;
-using Content.Shared.Movement.Pulling.Systems;
+using Content.Shared.Ghost.Components;
 using Content.Shared.Popups;
-using Content.Shared.Projectiles;
-using Content.Shared.Tag;
+using Content.Shared.Revenant.Components;
 using Content.Shared.Teleportation.Components;
-using Content.Shared.Weapons.Misc;
-using Content.Shared.Verbs;
-using Robust.Shared.Audio.Systems;
+using Content.Shared.Teleportation.Triggers;
 using Robust.Shared.Map;
 using Robust.Shared.Network;
-using Robust.Shared.Physics.Dynamics;
-using Robust.Shared.Physics.Events;
-using Robust.Shared.Physics.Systems;
 using Robust.Shared.Player;
 using Robust.Shared.Random;
-using Robust.Shared.Utility;
-using Robust.Shared.Prototypes;
 
 namespace Content.Shared.Teleportation.Systems;
 
 /// <summary>
-/// This handles teleporting entities from a portal to a linked portal, or to a random nearby destination.
-/// Uses <see cref="LinkedEntitySystem"/> to get linked portals.
+/// Resolves linked or random portal destinations and delegates movement to <see cref="SharedTeleportSystem"/>.
 /// </summary>
 /// <seealso cref="PortalComponent"/>
 public abstract partial class SharedPortalSystem : EntitySystem
 {
-    [Dependency] private INetManager _netMan = default!;
+    [Dependency] private INetManager _net = default!;
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
-    [Dependency] private PullingSystem _pulling = default!;
-    [Dependency] private SharedAudioSystem _audio = default!;
-    [Dependency] private SharedJointSystem _joints = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private SharedTeleportSystem _teleport = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
-    [Dependency] private TagSystem _tag = default!;
-
-    private const string PortalFixture = "portalFixture";
-    private const string ProjectileFixture = "projectile";
-    private static readonly ProtoId<TagPrototype> ShowTraverseVerbTag = "AllowPortalTraversal";
-    private static readonly ProtoId<TagPrototype> PreventCollisionTag = "PreventPortalCollision";
 
     private const int MaxRandomTeleportAttempts = 20;
 
-    /// <inheritdoc/>
     public override void Initialize()
     {
-        SubscribeLocalEvent<PortalComponent, GetVerbsEvent<AlternativeVerb>>(OnGetVerbs);
+        base.Initialize();
 
-        SubscribeLocalEvent<PortalComponent, StartCollideEvent>(OnCollide);
-        SubscribeLocalEvent<PortalComponent, EndCollideEvent>(OnEndCollide);
+        SubscribeLocalEvent<PortalComponent, TeleportUseAttemptEvent>(OnTeleportUseAttempt);
+        SubscribeLocalEvent<PortalComponent, TeleportRequestEvent>(OnTeleportRequest);
+        SubscribeLocalEvent<PortalComponent, TeleportTriggerExitedEvent>(OnTeleportTriggerExited);
     }
 
-    private void OnGetVerbs(Entity<PortalComponent> ent, ref GetVerbsEvent<AlternativeVerb> args)
+    private void OnTeleportUseAttempt(Entity<PortalComponent> ent, ref TeleportUseAttemptEvent args)
     {
-        // Traversal altverb for ghosts to use that bypasses normal functionality
-        if (!args.CanAccess || !_tag.HasTag(args.User, ShowTraverseVerbTag))
-            return;
-
-        // Don't use the verb with unlinked or with multi-output portals
-        // (this is only intended to be useful for ghosts to see where a linked portal leads)
-        var disabled = !TryComp<LinkedEntityComponent>(ent, out var link) || link.LinkedEntities.Count != 1;
-
-        var subject = args.User;
-        args.Verbs.Add(new AlternativeVerb
+        if (args.Mode == TeleportMode.Ghost)
         {
-            Priority = 11,
-            Act = () =>
+            if (!IsGhostTraversalTarget(args.Target))
             {
-                if (link == null || disabled)
-                    return;
+                args.Cancelled = true;
+                return;
+            }
 
-                // check prediction
-                if (_netMan.IsClient && !CanPredictTeleport((ent, link)))
-                    return;
+            if (!TryComp<LinkedEntityComponent>(ent, out var ghostLink))
+            {
+                args.Cancelled = true;
+                args.CancelReason ??= "portal-component-no-linked-entities";
+                return;
+            }
 
-                var destination = link.LinkedEntities.First();
+            if (ghostLink.LinkedEntities.Count != 1)
+            {
+                args.Cancelled = true;
+                args.CancelReason ??= "portal-component-no-linked-entities";
+            }
 
-                TeleportEntity(ent, subject, Transform(destination).Coordinates, destination, false);
-            },
-            Disabled = disabled,
-            Text = Loc.GetString("portal-component-ghost-traverse"),
-            Message = disabled
-                ? Loc.GetString("portal-component-no-linked-entities")
-                : Loc.GetString("portal-component-can-ghost-traverse"),
-            Icon = new SpriteSpecifier.Texture(new("/Textures/Interface/VerbIcons/open.svg.192dpi.png"))
-        });
+            return;
+        }
+
+        if (HasComp<PortalTimeoutComponent>(args.Target))
+        {
+            args.Cancelled = true;
+            return;
+        }
+
+        if (ent.Comp.RandomTeleport)
+            return;
+
+        if (TryComp<LinkedEntityComponent>(ent, out var link) && link.LinkedEntities.Count != 0)
+            return;
+
+        args.Cancelled = true;
     }
 
-    private void OnCollide(Entity<PortalComponent> ent, ref StartCollideEvent args)
+    private void OnTeleportTriggerExited(Entity<PortalComponent> ent, ref TeleportTriggerExitedEvent args)
     {
-        if (!ShouldCollide(args.OurFixtureId, args.OtherFixtureId, args.OurFixture, args.OtherFixture))
+        if (TryComp<PortalTimeoutComponent>(args.Target, out var timeout) && timeout.EnteredPortal != ent)
+            RemCompDeferred<PortalTimeoutComponent>(args.Target);
+    }
+
+    private void OnTeleportRequest(Entity<PortalComponent> ent, ref TeleportRequestEvent args)
+    {
+        if (args.Handled)
             return;
 
-        var subject = args.OtherEntity;
-
-        if (_tag.HasTag(args.OtherEntity, PreventCollisionTag))
-            return;
-
-        // best not.
-        if (Transform(subject).Anchored)
-            return;
-
-        // break pulls before portal enter so we don't break shit
-        if (TryComp<PullableComponent>(subject, out var pullable) && pullable.BeingPulled)
+        if (args.Mode == TeleportMode.Ghost)
         {
-            _pulling.TryStopPull(subject, pullable);
-        }
+            if (IsGhostTraversalTarget(args.Target) && TryTeleportGhost(ent, args.Target))
+                args.Handled = true;
 
-        if (TryComp<PullerComponent>(subject, out var pullerComp)
-            && TryComp<PullableComponent>(pullerComp.Pulling, out var subjectPulling))
-        {
-            _pulling.TryStopPull(pullerComp.Pulling.Value, subjectPulling);
-        }
-
-        // also break grapple joints
-        _joints.RemoveJoint(subject, SharedGrapplingGunSystem.GrapplingJoint);
-
-        // if they came from another portal, just return and wait for them to exit the portal
-        if (HasComp<PortalTimeoutComponent>(subject))
-        {
             return;
         }
 
         if (TryComp<LinkedEntityComponent>(ent, out var link) && link.LinkedEntities.Count != 0)
         {
-            // check prediction
-            if (_netMan.IsClient && !CanPredictTeleport((ent, link)))
+            if (_net.IsClient && !CanPredictTeleport((ent, link)))
                 return;
 
-            // pick a target and teleport there
-            var target = _random.Pick(link.LinkedEntities);
+            var destinationEntity = _random.Pick(link.LinkedEntities);
+            if (!Exists(destinationEntity))
+                return;
 
-            if (HasComp<PortalComponent>(target))
-            {
-                // if target is a portal, signal that they shouldn't be immediately teleported back
-                var timeout = EnsureComp<PortalTimeoutComponent>(subject);
-                timeout.EnteredPortal = ent;
-                Dirty(subject, timeout);
-            }
+            if (TerminatingOrDeleted(destinationEntity))
+                return;
 
-            TeleportEntity(ent, subject, Transform(target).Coordinates, target);
+            var destination = Transform(destinationEntity).Coordinates;
+            if (!TryTeleport(ent, args.Target, destination, destinationEntity))
+                return;
+
+            args.Handled = true;
             return;
         }
 
-        if (_netMan.IsClient)
+        if (_net.IsClient)
             return;
 
-        // no linked entity--teleport randomly
-        if (ent.Comp.RandomTeleport)
-            TeleportRandomly(ent, subject);
-    }
-
-    private void OnEndCollide(Entity<PortalComponent> ent, ref EndCollideEvent args)
-    {
-        if (!ShouldCollide(args.OurFixtureId, args.OtherFixtureId, args.OurFixture, args.OtherFixture))
+        if (!ent.Comp.RandomTeleport)
             return;
 
-        var subject = args.OtherEntity;
-
-        // if they came from a different portal, remove the timeout
-        if (TryComp<PortalTimeoutComponent>(subject, out var timeout) && timeout.EnteredPortal != ent)
-        {
-            RemCompDeferred<PortalTimeoutComponent>(subject);
-        }
+        var randomDestination = FindRandomDestination(ent);
+        if (TryTeleport(ent, args.Target, randomDestination))
+            args.Handled = true;
     }
 
-    /// <summary>
-    /// Checks if the colliding fixtures are the ones we want.
-    /// </summary>
-    /// <returns>
-    /// False if our fixture is not a portal fixture.
-    /// False if other fixture is not hard, but makes an exception for projectiles.
-    /// </returns>
-    private bool ShouldCollide(string ourId, string otherId, Fixture our, Fixture other)
+    private bool TryTeleportGhost(Entity<PortalComponent> ent, EntityUid target)
     {
-        return ourId == PortalFixture && (other.Hard || otherId == ProjectileFixture);
-    }
-
-    /// <summary>
-    /// Checks if the client is able to predict the teleport.
-    /// Client can't predict outside 1-to-1 portal-to-portal interactions due to randomness involved.
-    /// </summary>
-    /// <returns>
-    /// False if the linked entity count isn't 1.
-    /// False if the linked entity doesn't exist on the client / is outside PVS.
-    /// </returns>
-    private bool CanPredictTeleport(Entity<LinkedEntityComponent> portal)
-    {
-        var first = portal.Comp.LinkedEntities.First();
-        var exists = Exists(first);
-
-        if (!exists ||
-            portal.Comp.LinkedEntities.Count != 1 || // 0 and >1 use RNG
-            exists && Transform(first).MapID == MapId.Nullspace) // The linked entity is most likely outside PVS
+        if (!TryComp<LinkedEntityComponent>(ent, out var link))
             return false;
 
+        if (link.LinkedEntities.Count != 1)
+            return false;
+
+        if (_net.IsClient && !CanPredictTeleport((ent, link)))
+            return false;
+
+        var destinationEntity = link.LinkedEntities.First();
+        if (!Exists(destinationEntity))
+            return false;
+
+        if (TerminatingOrDeleted(destinationEntity))
+            return false;
+
+        var destination = Transform(destinationEntity).Coordinates;
+        if (!TryValidateDestination(ent, destination, destinationEntity))
+            return false;
+
+        var source = Transform(target).Coordinates;
+        if (!_teleport.TryTeleportGhost(target, destination))
+            return false;
+
+        LogTeleport(ent, target, source, destination);
         return true;
     }
 
-    /// <summary>
-    /// Handles teleporting a subject from the portal entity to a coordinate.
-    /// Also deletes invalid portals.
-    /// </summary>
-    /// <param name="ent"> The portal being collided with. </param>
-    /// <param name="subject"> The entity getting teleported. </param>
-    /// <param name="target"> The location to teleport to. </param>
-    /// <param name="targetEntity"> The portal on the other side of the teleport. </param>
-    private void TeleportEntity(Entity<PortalComponent> ent, EntityUid subject, EntityCoordinates target, EntityUid? targetEntity = null, bool playSound = true)
+    private bool TryTeleport(
+        Entity<PortalComponent> ent,
+        EntityUid target,
+        EntityCoordinates destination,
+        EntityUid? destinationEntity = null)
     {
-        var ourCoords = Transform(ent).Coordinates;
-        var onSameMap = _transform.GetMapId(ourCoords) == _transform.GetMapId(target);
+        if (!TryValidateDestination(ent, destination, destinationEntity))
+            return false;
+
+        var addedTimeout = false;
+        if (HasComp<PortalComponent>(destinationEntity))
+        {
+            addedTimeout = !HasComp<PortalTimeoutComponent>(target);
+            var timeout = EnsureComp<PortalTimeoutComponent>(target);
+            timeout.EnteredPortal = ent;
+            Dirty(target, timeout);
+        }
+
+        var source = Transform(target).Coordinates;
+        if (!_teleport.TryTeleport(ent, target, destination))
+        {
+            if (addedTimeout)
+                RemComp<PortalTimeoutComponent>(target);
+
+            return false;
+        }
+
+        LogTeleport(ent, target, source, destination);
+        return true;
+    }
+
+    private bool TryValidateDestination(
+        Entity<PortalComponent> ent,
+        EntityCoordinates destination,
+        EntityUid? destinationEntity)
+    {
+        var source = Transform(ent).Coordinates;
+        var onSameMap = _transform.GetMapId(source) == _transform.GetMapId(destination);
+        var mapInvalid = !onSameMap && !ent.Comp.CanTeleportToOtherMaps;
         var distanceInvalid = ent.Comp.MaxTeleportRadius != null
-                              && ourCoords.TryDistance(EntityManager, target, out var distance)
+                              && source.TryDistance(EntityManager, destination, out var distance)
                               && distance > ent.Comp.MaxTeleportRadius;
 
-        // Early out if this is an invalid configuration
-        if (!onSameMap && !ent.Comp.CanTeleportToOtherMaps || distanceInvalid)
+        if (!mapInvalid && !distanceInvalid)
+            return true;
+
+        if (_net.IsClient)
+            return false;
+
+        _popup.PopupCoordinates(
+            Loc.GetString("portal-component-invalid-configuration-fizzle"),
+            source,
+            Filter.Pvs(source, entityMan: EntityManager),
+            true);
+
+        _popup.PopupCoordinates(
+            Loc.GetString("portal-component-invalid-configuration-fizzle"),
+            destination,
+            Filter.Pvs(destination, entityMan: EntityManager),
+            true);
+
+        QueueDel(ent);
+
+        if (destinationEntity != null)
+            QueueDel(destinationEntity.Value);
+
+        return false;
+    }
+
+    private EntityCoordinates FindRandomDestination(Entity<PortalComponent> ent)
+    {
+        var source = Transform(ent).Coordinates;
+        var destination = source.Offset(_random.NextVector2(ent.Comp.MaxRandomRadius));
+
+        for (var i = 0; i < MaxRandomTeleportAttempts; i++)
         {
-            if (_netMan.IsClient)
-                return;
-
-            _popup.PopupCoordinates(Loc.GetString("portal-component-invalid-configuration-fizzle"),
-                ourCoords, Filter.Pvs(ourCoords, entityMan: EntityManager), true);
-
-            _popup.PopupCoordinates(Loc.GetString("portal-component-invalid-configuration-fizzle"),
-                target, Filter.Pvs(target, entityMan: EntityManager), true);
-
-            QueueDel(ent);
-
-            if (targetEntity != null)
-                QueueDel(targetEntity.Value);
-
-            return;
+            destination = source.Offset(_random.NextVector2(ent.Comp.MaxRandomRadius));
+            if (!_lookup.AnyEntitiesIntersecting(_transform.ToMapCoordinates(destination), LookupFlags.Static))
+                break;
         }
 
-        var arrivalSound = CompOrNull<PortalComponent>(targetEntity)?.ArrivalSound ?? ent.Comp.ArrivalSound;
-        var departureSound = ent.Comp.DepartureSound;
-
-        LogTeleport(ent, subject, Transform(subject).Coordinates, target);
-
-        _transform.SetCoordinates(subject, target);
-
-        if (!playSound)
-            return;
-
-        _audio.PlayPredicted(departureSound, ent, subject);
-        _audio.PlayPredicted(arrivalSound, subject, subject);
+        return destination;
     }
 
     /// <summary>
-    /// Finds a random coordinate within the portal's radius and teleports the subject there.
-    /// Attempts to not put the subject inside a static entity (e.g. wall).
+    /// Logs a successful portal teleport on the server.
     /// </summary>
-    /// <param name="ent"> The portal being collided with. </param>
-    /// <param name="subject"> The entity getting teleported. </param>
-    private void TeleportRandomly(Entity<PortalComponent> ent, EntityUid subject)
+    protected virtual void LogTeleport(
+        EntityUid portal,
+        EntityUid target,
+        EntityCoordinates source,
+        EntityCoordinates destination)
     {
-        var xform = Transform(ent);
-        var coords = xform.Coordinates;
-        var newCoords = coords.Offset(_random.NextVector2(ent.Comp.MaxRandomRadius));
-        for (var i = 0; i < MaxRandomTeleportAttempts; i++)
-        {
-            var randVector = _random.NextVector2(ent.Comp.MaxRandomRadius);
-            newCoords = coords.Offset(randVector);
-            if (!_lookup.AnyEntitiesIntersecting(_transform.ToMapCoordinates(newCoords), LookupFlags.Static))
-            {
-                // newCoords is not a wall
-                break;
-            }
-            // after "MaxRandomTeleportAttempts" attempts, end up in the walls
-        }
-
-        TeleportEntity(ent, subject, newCoords);
     }
 
-    protected virtual void LogTeleport(EntityUid portal, EntityUid subject, EntityCoordinates source,
-        EntityCoordinates target)
+    private bool CanPredictTeleport(Entity<LinkedEntityComponent> portal)
     {
+        if (portal.Comp.LinkedEntities.Count != 1)
+            return false;
+
+        var destination = portal.Comp.LinkedEntities.First();
+        if (!Exists(destination))
+            return false;
+
+        return Transform(destination).MapID != MapId.Nullspace;
+    }
+
+    private bool IsGhostTraversalTarget(EntityUid target)
+    {
+        if (HasComp<GhostComponent>(target))
+            return true;
+
+        return HasComp<RevenantComponent>(target);
     }
 }

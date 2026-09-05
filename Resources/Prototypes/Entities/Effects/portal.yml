@@ -1,6 +1,29 @@
 ﻿# Standing portals
 - type: entity
   abstract: true
+  id: BasePortalTeleportation
+  components:
+  - type: Portal
+  - type: CollisionTeleportTrigger
+    triggerFixtureId: portalFixture
+    allowedNonHardTargetFixtureIds:
+    - projectile
+    targetBlacklist:
+      tags:
+      - PreventPortalCollision
+  - type: TeleportSound
+    departureSound: /Audio/Effects/teleport_departure.ogg
+    arrivalSound: /Audio/Effects/teleport_arrival.ogg
+  - type: TeleportOnVerb
+    mode: Ghost
+    enabledMessage: portal-component-can-ghost-traverse
+    userWhitelist:
+      tags:
+      - AllowPortalTraversal
+
+- type: entity
+  abstract: true
+  parent: BasePortalTeleportation
   id: BasePortal
   name: bluespace portal
   description: Transports you to a linked destination!
@@ -25,7 +48,6 @@
         layer:
         - WallLayer
         hard: false
-  - type: Portal
   - type: PointLight
     radius: 3
     energy: 1
@@ -72,7 +94,7 @@
   name: shadow rift
   description: Looks unstable.
   components:
-  - type: Portal
+  - type: TeleportSound
     arrivalSound: /Audio/Items/hiss.ogg
     departureSound: /Audio/Items/hiss.ogg
   - type: Sprite

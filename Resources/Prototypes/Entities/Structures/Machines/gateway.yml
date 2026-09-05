@@ -1,5 +1,5 @@
 - type: entity
-  parent: BaseStructure
+  parent: [ BaseStructure, BasePortalTeleportation ]
   id: Gateway
   name: gateway
   description: A mysterious gateway built by unknown hands, it allows for faster than light travel to far-flung locations.
