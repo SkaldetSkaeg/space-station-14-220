@@ -1,7 +1,9 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Content.Client.SS220.CultYogg.CultMiniMap;
 using Content.Server.SS220.CultYogg.CultMiniMap;
 using Content.IntegrationTests.Fixtures;
 using Content.Shared.Actions.Components;
@@ -62,6 +64,26 @@ public sealed class CultMiniMapTest : GameTest
       scale: 1.5
       markerType: Airlock
 """;
+
+    [Test]
+    public void StructureNeighborsUseSourceGridTiles()
+    {
+        var grid = new NetEntity(1);
+        var otherGrid = new NetEntity(2);
+        var origin = new CultMiniMapStructureLocation(grid, Vector2i.Zero);
+        var walls = new HashSet<CultMiniMapStructureLocation>
+        {
+            origin,
+            new(grid, Vector2i.Up),
+            new(otherGrid, Vector2i.Right),
+        };
+
+        var neighbors = CultMiniMapNavMapControl.GetStructureNeighbors(walls, origin);
+
+        Assert.That(neighbors.HasFlag(CultMiniMapStructureNeighbors.North), Is.True);
+        Assert.That(neighbors.HasFlag(CultMiniMapStructureNeighbors.East), Is.False,
+            "Walls on different grids must not join even when their tile indices are adjacent.");
+    }
 
     [Test]
     public async Task PingsAreValidatedSharedByChannelAndExpire()
@@ -194,13 +216,13 @@ public sealed class CultMiniMapTest : GameTest
             SEntMan.EventBus.RaiseLocalEvent(viewer, duplicateOpen);
             Assert.That(GetState(viewer), Is.SameAs(state),
                 "A duplicate open message must not rebuild an already initialized minimap state.");
-            Assert.That(state.Members.Select(member => member.Entity), Is.EquivalentTo(new[]
+            Assert.That(state.TrackedEntities.Select(member => member.Entity), Is.EquivalentTo(new[]
             {
                 SEntMan.GetNetEntity(viewer), SEntMan.GetNetEntity(cultist),
                 SEntMan.GetNetEntity(mob), SEntMan.GetNetEntity(both),
             }), "Custom rules replace the defaults, while the viewer remains in their own section.");
 
-            var selfMarker = state.Members.Single(member => member.Entity == SEntMan.GetNetEntity(viewer)).Marker;
+            var selfMarker = state.TrackedEntities.Single(member => member.Entity == SEntMan.GetNetEntity(viewer)).Marker;
             Assert.That(selfMarker.Component, Is.EqualTo(CultMiniMapMarker.SelfComponent));
             Assert.That(selfMarker.RuleIndex, Is.EqualTo(CultMiniMapMarker.SelfRuleIndex));
             Assert.That(selfMarker.Label?.ToString(), Is.EqualTo("cult-mini-map-self-section"));
@@ -210,7 +232,7 @@ public sealed class CultMiniMapTest : GameTest
             Assert.That(selfMarker.Scale, Is.EqualTo(1.2f));
             Assert.That(selfMarker.MarkerType, Is.EqualTo(CultMiniMapMarkerType.Icon));
 
-            var cultMarker = state.Members.Single(member => member.Entity == SEntMan.GetNetEntity(cultist)).Marker;
+            var cultMarker = state.TrackedEntities.Single(member => member.Entity == SEntMan.GetNetEntity(cultist)).Marker;
             Assert.That(cultMarker.Component, Is.EqualTo("CultYogg"));
             Assert.That(cultMarker.RuleIndex, Is.EqualTo(0));
             Assert.That(cultMarker.Label?.ToString(), Is.EqualTo("cult-mini-map-cultist"));
@@ -219,10 +241,10 @@ public sealed class CultMiniMapTest : GameTest
             Assert.That(cultMarker.Color, Is.EqualTo(Color.Violet));
             Assert.That(cultMarker.Scale, Is.EqualTo(0.75f));
             Assert.That(cultMarker.MarkerType, Is.EqualTo(CultMiniMapMarkerType.Icon));
-            Assert.That(state.Members.Single(member => member.Entity == SEntMan.GetNetEntity(both)).Marker.Component,
+            Assert.That(state.TrackedEntities.Single(member => member.Entity == SEntMan.GetNetEntity(both)).Marker.Component,
                 Is.EqualTo("CultYogg"), "The first matching rule wins; there must be no duplicate markers.");
 
-            var mobMarker = state.Members.Single(member => member.Entity == SEntMan.GetNetEntity(mob)).Marker;
+            var mobMarker = state.TrackedEntities.Single(member => member.Entity == SEntMan.GetNetEntity(mob)).Marker;
             Assert.That(mobMarker.Component, Is.EqualTo("MobState"));
             Assert.That(mobMarker.RuleIndex, Is.EqualTo(1));
             Assert.That(mobMarker.Label, Is.Null);
@@ -234,7 +256,7 @@ public sealed class CultMiniMapTest : GameTest
 
             // Configuration is per observer; another map still uses its own defaults.
             ui.OpenUi(cultist, CultMiniMapUIKey.Key, cultist);
-            Assert.That(GetState(cultist).Members.Select(member => member.Entity), Is.EquivalentTo(new[]
+            Assert.That(GetState(cultist).TrackedEntities.Select(member => member.Entity), Is.EquivalentTo(new[]
             {
                 SEntMan.GetNetEntity(cultist), SEntMan.GetNetEntity(both), SEntMan.GetNetEntity(miGo),
             }));
@@ -271,11 +293,13 @@ public sealed class CultMiniMapTest : GameTest
 
             ui.OpenUi(viewer, CultMiniMapUIKey.Key, viewer);
             var state = GetState(viewer);
-            Assert.That(state.Members, Has.Count.EqualTo(buildings.Count + 1));
+            Assert.That(state.TrackedEntities, Has.Count.EqualTo(buildings.Count + 1));
 
             foreach (var (entity, entry) in buildings)
             {
-                var marker = state.Members.Single(member => member.Entity == SEntMan.GetNetEntity(entity)).Marker;
+                var trackedEntity = state.TrackedEntities
+                    .Single(candidate => candidate.Entity == SEntMan.GetNetEntity(entity));
+                var marker = trackedEntity.Marker;
                 Assert.That(marker.Label?.ToString(), Is.EqualTo(entry.Label), entry.Prototype);
                 Assert.That(marker.MarkerType, Is.EqualTo(entry.Type), entry.Prototype);
                 Assert.That(marker.ShowInList, Is.False, entry.Prototype);
@@ -285,6 +309,12 @@ public sealed class CultMiniMapTest : GameTest
                 {
                     Assert.That(marker.Icon, Is.EqualTo(new SpriteSpecifier.Texture(new ResPath(entry.Icon!))), entry.Prototype);
                     Assert.That(marker.Scale, Is.EqualTo(1f), entry.Prototype);
+                    Assert.That(trackedEntity.StructureLocation, Is.Null, entry.Prototype);
+                }
+                else
+                {
+                    Assert.That(trackedEntity.StructureLocation?.Grid,
+                        Is.EqualTo(SEntMan.GetNetEntity(map.Grid)), entry.Prototype);
                 }
             }
 
@@ -307,7 +337,7 @@ public sealed class CultMiniMapTest : GameTest
             target = SEntMan.SpawnEntity("CultMiniMapHealthDummy", map.GridCoords);
             SEntMan.AddComponent<CultYoggComponent>(target);
             ui.OpenUi(viewer, CultMiniMapUIKey.Key, viewer);
-            oldMarker = GetState(viewer).Members
+            oldMarker = GetState(viewer).TrackedEntities
                 .Single(member => member.Entity == SEntMan.GetNetEntity(target)).Marker;
 
             var rules = SEntMan.GetComponent<CultMiniMapComponent>(viewer).TrackedComponents;
@@ -323,7 +353,7 @@ public sealed class CultMiniMapTest : GameTest
         await Server.WaitRunTicks(120);
         await Server.WaitAssertion(() =>
         {
-            var marker = GetState(viewer).Members
+            var marker = GetState(viewer).TrackedEntities
                 .Single(member => member.Entity == SEntMan.GetNetEntity(target)).Marker;
             Assert.That(marker.Component, Is.EqualTo("MobState"));
             Assert.That(marker.Color, Is.EqualTo(Color.Green));
@@ -338,7 +368,7 @@ public sealed class CultMiniMapTest : GameTest
         await Server.WaitRunTicks(120);
         await Server.WaitAssertion(() =>
         {
-            var members = GetState(viewer).Members;
+            var members = GetState(viewer).TrackedEntities;
             Assert.That(members, Has.Count.EqualTo(1));
             Assert.That(members.Single().Entity, Is.EqualTo(SEntMan.GetNetEntity(viewer)));
             Assert.That(members.Single().Marker.Component, Is.EqualTo(CultMiniMapMarker.SelfComponent));
@@ -378,16 +408,16 @@ public sealed class CultMiniMapTest : GameTest
 
             ui.OpenUi(viewer, CultMiniMapUIKey.Key, viewer);
             var state = GetState(viewer);
-            var self = state.Members.Single(member => member.Entity == SEntMan.GetNetEntity(viewer));
+            var self = state.TrackedEntities.Single(member => member.Entity == SEntMan.GetNetEntity(viewer));
             Assert.That(self.HealthState, Is.EqualTo(MobState.Invalid));
             Assert.That(self.DamagePercentage, Is.Null);
-            var noThresholdState = state.Members.Single(member => member.Entity == SEntMan.GetNetEntity(noThreshold));
+            var noThresholdState = state.TrackedEntities.Single(member => member.Entity == SEntMan.GetNetEntity(noThreshold));
             Assert.That(noThresholdState.HealthState, Is.EqualTo(MobState.Alive));
             Assert.That(noThresholdState.DamagePercentage, Is.Null);
-            var miGoState = state.Members.Single(member => member.Entity == SEntMan.GetNetEntity(miGo));
+            var miGoState = state.TrackedEntities.Single(member => member.Entity == SEntMan.GetNetEntity(miGo));
             Assert.That(miGoState.HealthState, Is.EqualTo(MobState.Alive));
             Assert.That(miGoState.DamagePercentage, Is.EqualTo(0.5f).Within(0.001f));
-            var buildingState = state.Members.Single(member => member.Entity == SEntMan.GetNetEntity(building));
+            var buildingState = state.TrackedEntities.Single(member => member.Entity == SEntMan.GetNetEntity(building));
             Assert.That(buildingState.Marker.Component, Is.EqualTo("CultYoggBuilding"));
             Assert.That(buildingState.Marker.ShowInList, Is.False);
             Assert.That(buildingState.Marker.ShowHealth, Is.False);
@@ -409,7 +439,7 @@ public sealed class CultMiniMapTest : GameTest
             await Server.WaitRunTicks(120);
             await Server.WaitAssertion(() =>
             {
-                var member = GetState(viewer).Members.Single(member => member.Entity == SEntMan.GetNetEntity(target));
+                var member = GetState(viewer).TrackedEntities.Single(member => member.Entity == SEntMan.GetNetEntity(target));
                 Assert.That(member.HealthState, Is.EqualTo(expectedState));
                 Assert.That(member.DamagePercentage, Is.EqualTo(amount / 100f).Within(0.001f));
                 Assert.That(member.Coordinates, Is.Null);
@@ -420,7 +450,7 @@ public sealed class CultMiniMapTest : GameTest
         await Server.WaitRunTicks(120);
         await Server.WaitAssertion(() =>
         {
-            var member = GetState(viewer).Members.Single(member => member.Entity == SEntMan.GetNetEntity(target));
+            var member = GetState(viewer).TrackedEntities.Single(member => member.Entity == SEntMan.GetNetEntity(target));
             Assert.That(member.DamagePercentage, Is.Null, "A zero threshold must not produce NaN or infinity.");
             ui.CloseUi(viewer, CultMiniMapUIKey.Key);
             SEntMan.DeleteEntity(map.MapUid);
@@ -458,17 +488,17 @@ public sealed class CultMiniMapTest : GameTest
 
             ui.OpenUi(viewer, CultMiniMapUIKey.Key, viewer);
             var state = GetState(viewer);
-            Assert.That(state.Members.Select(member => member.Entity), Is.EquivalentTo(new[]
+            Assert.That(state.TrackedEntities.Select(member => member.Entity), Is.EquivalentTo(new[]
             {
                 SEntMan.GetNetEntity(viewer), SEntMan.GetNetEntity(cultist), SEntMan.GetNetEntity(miGo),
                 SEntMan.GetNetEntity(both), SEntMan.GetNetEntity(remote),
             }));
-            var miGoMarker = state.Members.Single(member => member.Entity == SEntMan.GetNetEntity(both)).Marker;
+            var miGoMarker = state.TrackedEntities.Single(member => member.Entity == SEntMan.GetNetEntity(both)).Marker;
             Assert.That(miGoMarker.Component, Is.EqualTo("MiGo"));
             Assert.That(miGoMarker.Icon, Is.EqualTo(new SpriteSpecifier.Texture(
                 new ResPath("/Textures/SS220/Interface/NavMap/migo.png"))));
-            Assert.That(state.Members.Single(member => member.Entity == SEntMan.GetNetEntity(remote)).Coordinates, Is.Null);
-            var position = state.Members.Single(member => member.Entity == SEntMan.GetNetEntity(cultist)).Coordinates;
+            Assert.That(state.TrackedEntities.Single(member => member.Entity == SEntMan.GetNetEntity(remote)).Coordinates, Is.Null);
+            var position = state.TrackedEntities.Single(member => member.Entity == SEntMan.GetNetEntity(cultist)).Coordinates;
             Assert.That(position.HasValue, Is.True);
             Assert.That(position.Value.NetEntity, Is.EqualTo(SEntMan.GetNetEntity(map.Grid)));
             Assert.That(position.Value.Position.X, Is.EqualTo(200f));
@@ -485,12 +515,12 @@ public sealed class CultMiniMapTest : GameTest
         await Server.WaitAssertion(() =>
         {
             var state = GetState(viewer);
-            Assert.That(state.Members.Select(member => member.Entity), Is.EquivalentTo(new[]
+            Assert.That(state.TrackedEntities.Select(member => member.Entity), Is.EquivalentTo(new[]
             {
                 SEntMan.GetNetEntity(viewer), SEntMan.GetNetEntity(cultist),
                 SEntMan.GetNetEntity(outsider), SEntMan.GetNetEntity(remote),
             }));
-            Assert.That(state.Members.Single(member => member.Entity == SEntMan.GetNetEntity(cultist)).Coordinates.Value.Position.X,
+            Assert.That(state.TrackedEntities.Single(member => member.Entity == SEntMan.GetNetEntity(cultist)).Coordinates.Value.Position.X,
                 Is.EqualTo(250f));
 
             transform.SetCoordinates(viewer, otherMap.GridCoords);
@@ -502,8 +532,8 @@ public sealed class CultMiniMapTest : GameTest
         {
             var state = GetState(viewer);
             Assert.That(state.Grid, Is.EqualTo(SEntMan.GetNetEntity(otherMap.Grid)));
-            Assert.That(state.Members.Single(member => member.Entity == SEntMan.GetNetEntity(remote)).Coordinates, Is.Not.Null);
-            Assert.That(state.Members.Single(member => member.Entity == SEntMan.GetNetEntity(cultist)).Coordinates, Is.Null);
+            Assert.That(state.TrackedEntities.Single(member => member.Entity == SEntMan.GetNetEntity(remote)).Coordinates, Is.Not.Null);
+            Assert.That(state.TrackedEntities.Single(member => member.Entity == SEntMan.GetNetEntity(cultist)).Coordinates, Is.Null);
             transform.SetCoordinates(viewer, new EntityCoordinates(otherMap.MapUid, 50, 0));
         });
 
@@ -513,8 +543,8 @@ public sealed class CultMiniMapTest : GameTest
         {
             var state = GetState(viewer);
             Assert.That(state.Grid, Is.Null);
-            Assert.That(state.Members, Has.Count.EqualTo(4));
-            Assert.That(state.Members.All(member => member.Coordinates == null), Is.True);
+            Assert.That(state.TrackedEntities, Has.Count.EqualTo(4));
+            Assert.That(state.TrackedEntities.All(member => member.Coordinates == null), Is.True);
             ui.CloseUi(viewer, CultMiniMapUIKey.Key);
             Assert.That(ui.TryGetUiState<CultMiniMapState>(viewer, CultMiniMapUIKey.Key, out _), Is.False);
             // Pair only tracks the last map for automatic cleanup.

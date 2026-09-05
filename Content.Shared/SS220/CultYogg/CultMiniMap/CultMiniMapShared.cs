@@ -2,6 +2,7 @@
 
 using Content.Shared.Mobs;
 using Robust.Shared.Map;
+using Robust.Shared.Maths;
 using Robust.Shared.Serialization;
 using Robust.Shared.Utility;
 
@@ -17,12 +18,12 @@ public enum CultMiniMapUIKey
 public sealed class CultMiniMapState(
     NetEntity? grid,
     string gridName,
-    List<CultMiniMapMember> members,
+    List<CultMiniMapTrackedEntity> trackedEntities,
     List<CultMiniMapPing> pings) : BoundUserInterfaceState
 {
     public readonly NetEntity? Grid = grid;
     public readonly string GridName = gridName;
-    public readonly List<CultMiniMapMember> Members = members;
+    public readonly List<CultMiniMapTrackedEntity> TrackedEntities = trackedEntities;
     public readonly List<CultMiniMapPing> Pings = pings;
 }
 
@@ -48,14 +49,15 @@ public sealed class CultMiniMapPingMessage(NetCoordinates coordinates) : BoundUs
 }
 
 [Serializable, NetSerializable]
-public sealed class CultMiniMapMember(
+public sealed class CultMiniMapTrackedEntity(
     NetEntity entity,
     string name,
     CultMiniMapMarker marker,
     NetCoordinates? coordinates,
     float rotation,
     MobState healthState,
-    float? damagePercentage)
+    float? damagePercentage,
+    CultMiniMapStructureLocation? structureLocation)
 {
     public readonly NetEntity Entity = entity;
     public readonly string Name = name;
@@ -67,9 +69,25 @@ public sealed class CultMiniMapMember(
     // Null if damage or a positive critical threshold is unavailable.
     public readonly float? DamagePercentage = damagePercentage;
 
+    // Grid-local identity used to join adjacent structure tiles without depending on grid rotation.
+    public readonly CultMiniMapStructureLocation? StructureLocation = structureLocation;
+
     // Relative to the viewer's grid, so targets outside PVS do not need client entities.
     // Null when the viewer has no grid or the target is on another map/in nullspace.
     public readonly NetCoordinates? Coordinates = coordinates;
+}
+
+[Serializable, NetSerializable]
+public readonly record struct CultMiniMapStructureLocation(NetEntity Grid, Vector2i Tile);
+
+[Flags]
+public enum CultMiniMapStructureNeighbors : byte
+{
+    None = 0,
+    North = 1 << 0,
+    East = 1 << 1,
+    South = 1 << 2,
+    West = 1 << 3,
 }
 
 /// <summary>

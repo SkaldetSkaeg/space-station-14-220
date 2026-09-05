@@ -8,6 +8,7 @@ using Robust.Client.UserInterface.Controls;
 using Robust.Client.UserInterface;
 using Robust.Shared.Input;
 using Robust.Shared.Map;
+using Robust.Shared.Maths;
 using Robust.Shared.Timing;
 
 namespace Content.Client.SS220.CultYogg.CultMiniMap;
@@ -21,7 +22,6 @@ public sealed partial class CultMiniMapNavMapControl : NavMapControl
     public bool PingMode;
     public event Action<EntityCoordinates>? PingRequestedAction;
 
-    private readonly HashSet<Vector2> _wallPositions = new();
     private readonly Label _trackedEntityLabel;
     private readonly PanelContainer _trackedEntityPanel;
 
@@ -88,22 +88,15 @@ public sealed partial class CultMiniMapNavMapControl : NavMapControl
 
     private void DrawStructures(DrawingHandleScreen handle)
     {
-        _wallPositions.Clear();
-        foreach (var structure in StructureMarkers.Values)
-        {
-            if (structure.MarkerType is CultMiniMapMarkerType.Wall or CultMiniMapMarkerType.SecretDoor)
-                _wallPositions.Add(structure.Coordinates.Position);
-        }
-
         foreach (var structure in StructureMarkers.Values)
         {
             switch (structure.MarkerType)
             {
                 case CultMiniMapMarkerType.Wall:
-                    DrawWall(handle, structure, _wallPositions);
+                    DrawWall(handle, structure);
                     break;
                 case CultMiniMapMarkerType.SecretDoor:
-                    DrawSecretDoor(handle, structure, _wallPositions);
+                    DrawSecretDoor(handle, structure);
                     break;
                 case CultMiniMapMarkerType.Airlock:
                     DrawAirlock(handle, structure);
@@ -112,39 +105,48 @@ public sealed partial class CultMiniMapNavMapControl : NavMapControl
         }
     }
 
-    private void DrawWall(
-        DrawingHandleScreen handle,
-        CultMiniMapStructureBlip structure,
-        HashSet<Vector2> wallPositions)
+    private void DrawWall(DrawingHandleScreen handle, CultMiniMapStructureBlip structure)
     {
         var topLeft = StructurePoint(structure, new Vector2(-0.5f, 0.5f));
         var topRight = StructurePoint(structure, new Vector2(0.5f, 0.5f));
         var bottomRight = StructurePoint(structure, new Vector2(0.5f, -0.5f));
         var bottomLeft = StructurePoint(structure, new Vector2(-0.5f, -0.5f));
 
-        var position = structure.Coordinates.Position;
-        if (!wallPositions.Contains(position + Vector2.UnitY))
+        if (!structure.Neighbors.HasFlag(CultMiniMapStructureNeighbors.North))
             handle.DrawLine(topLeft, topRight, structure.Color);
-        if (!wallPositions.Contains(position + Vector2.UnitX))
+        if (!structure.Neighbors.HasFlag(CultMiniMapStructureNeighbors.East))
             handle.DrawLine(topRight, bottomRight, structure.Color);
-        if (!wallPositions.Contains(position - Vector2.UnitY))
+        if (!structure.Neighbors.HasFlag(CultMiniMapStructureNeighbors.South))
             handle.DrawLine(bottomRight, bottomLeft, structure.Color);
-        if (!wallPositions.Contains(position - Vector2.UnitX))
+        if (!structure.Neighbors.HasFlag(CultMiniMapStructureNeighbors.West))
             handle.DrawLine(bottomLeft, topLeft, structure.Color);
 
         handle.DrawLine(topLeft, bottomRight, structure.Color);
     }
 
-    private void DrawSecretDoor(
-        DrawingHandleScreen handle,
-        CultMiniMapStructureBlip structure,
-        HashSet<Vector2> wallPositions)
+    private void DrawSecretDoor(DrawingHandleScreen handle, CultMiniMapStructureBlip structure)
     {
-        DrawWall(handle, structure, wallPositions);
+        DrawWall(handle, structure);
         handle.DrawLine(
             StructurePoint(structure, new Vector2(0.5f, 0.5f)),
             StructurePoint(structure, new Vector2(-0.5f, -0.5f)),
             structure.Color);
+    }
+
+    internal static CultMiniMapStructureNeighbors GetStructureNeighbors(
+        HashSet<CultMiniMapStructureLocation> walls,
+        CultMiniMapStructureLocation location)
+    {
+        var neighbors = CultMiniMapStructureNeighbors.None;
+        if (walls.Contains(location with { Tile = location.Tile + Vector2i.Up }))
+            neighbors |= CultMiniMapStructureNeighbors.North;
+        if (walls.Contains(location with { Tile = location.Tile + Vector2i.Right }))
+            neighbors |= CultMiniMapStructureNeighbors.East;
+        if (walls.Contains(location with { Tile = location.Tile + Vector2i.Down }))
+            neighbors |= CultMiniMapStructureNeighbors.South;
+        if (walls.Contains(location with { Tile = location.Tile + Vector2i.Left }))
+            neighbors |= CultMiniMapStructureNeighbors.West;
+        return neighbors;
     }
 
     private void DrawAirlock(DrawingHandleScreen handle, CultMiniMapStructureBlip structure)
@@ -247,4 +249,6 @@ public readonly record struct CultMiniMapStructureBlip(
     EntityCoordinates Coordinates,
     CultMiniMapMarkerType MarkerType,
     Color Color,
-    float Rotation);
+    float Rotation,
+    CultMiniMapStructureLocation? Location,
+    CultMiniMapStructureNeighbors Neighbors);

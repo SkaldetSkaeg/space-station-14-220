@@ -26,6 +26,7 @@ public sealed class CultMiniMapTrackingSystem : EntitySystem
 {
     [Dependency] private readonly SharedUserInterfaceSystem _ui = default!;
     [Dependency] private readonly SharedTransformSystem _transform = default!;
+    [Dependency] private readonly SharedMapSystem _map = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly DamageableSystem _damageable = default!;
     [Dependency] private readonly MobThresholdSystem _thresholds = default!;
@@ -228,23 +229,13 @@ public sealed class CultMiniMapTrackingSystem : EntitySystem
         if (grid != null)
             EnsureComp<NavMapComponent>(grid.Value);
 
-        var selfMarker = new CultMiniMapMarker(
-            CultMiniMapMarker.SelfRuleIndex,
-            CultMiniMapMarker.SelfComponent,
-            "cult-mini-map-self-section",
-            ent.Comp.SelfIcon,
-            ent.Comp.SelfColor,
-            PositiveOrDefault(ent.Comp.SelfScale, 1f),
-            CultMiniMapMarkerType.Icon,
-            true,
-            true);
-        var members = new List<CultMiniMapMember>
+        var trackedEntities = new List<CultMiniMapTrackedEntity>
         {
-            CreateMember(viewer, ent.Owner, selfMarker),
+            CreateTrackedEntity(viewer, ent.Owner, CreateSelfMarker(ent.Comp)),
         };
         var seen = new HashSet<EntityUid> { ent.Owner };
         for (var ruleIndex = 0; ruleIndex < ent.Comp.TrackedComponents.Count; ruleIndex++)
-            AddMembers(viewer, ent.Comp.TrackedComponents[ruleIndex], ruleIndex, members, seen);
+            AddTrackedEntities(viewer, ent.Comp.TrackedComponents[ruleIndex], ruleIndex, trackedEntities, seen);
 
         var maxActivePings = Math.Clamp(ent.Comp.MaxActivePings, 1, MaxStoredPingsPerChannel);
         var pings = GetVisiblePings(ent.Comp.PingChannel, viewer, grid, maxActivePings);
@@ -252,7 +243,7 @@ public sealed class CultMiniMapTrackingSystem : EntitySystem
         _ui.SetUiState(ent.Owner, CultMiniMapUIKey.Key, new CultMiniMapState(
             GetNetEntity(grid),
             grid == null ? string.Empty : MetaData(grid.Value).EntityName,
-            members,
+            trackedEntities,
             pings));
     }
 
@@ -290,32 +281,50 @@ public sealed class CultMiniMapTrackingSystem : EntitySystem
         return result;
     }
 
-    private void AddMembers(TransformComponent viewer, CultMiniMapTrackedComponent rule, int ruleIndex,
-        List<CultMiniMapMember> members, HashSet<EntityUid> seen)
+    private static CultMiniMapMarker CreateSelfMarker(CultMiniMapComponent component)
+    {
+        return new CultMiniMapMarker(
+            CultMiniMapMarker.SelfRuleIndex,
+            CultMiniMapMarker.SelfComponent,
+            "cult-mini-map-self-section",
+            component.SelfIcon,
+            component.SelfColor,
+            PositiveOrDefault(component.SelfScale, 1f),
+            CultMiniMapMarkerType.Icon,
+            true,
+            true);
+    }
+
+    private void AddTrackedEntities(TransformComponent viewer, CultMiniMapTrackedComponent rule, int ruleIndex,
+        List<CultMiniMapTrackedEntity> trackedEntities, HashSet<EntityUid> seen)
     {
         // YAML validates component names; tolerate unavailable types in runtime edits as well.
         if (!_componentFactory.TryGetRegistration(rule.Component, out var registration))
             return;
 
-        var scale = float.IsFinite(rule.Scale) && rule.Scale > 0f ? rule.Scale : 1f;
-        var marker = new CultMiniMapMarker(
-            ruleIndex,
-            rule.Component,
-            rule.Label,
-            rule.Icon,
-            rule.Color,
-            scale,
-            rule.MarkerType,
-            rule.ShowInList,
-            rule.ShowHealth);
+        var marker = CreateRuleMarker(rule, ruleIndex);
         var query = EntityManager.AllEntityQueryEnumerator(registration.Type);
         while (query.MoveNext(out var uid, out _))
         {
             if (TerminatingOrDeleted(uid) || !MatchesPrototype(uid, rule) || !seen.Add(uid))
                 continue;
 
-            members.Add(CreateMember(viewer, uid, marker));
+            trackedEntities.Add(CreateTrackedEntity(viewer, uid, marker));
         }
+    }
+
+    private static CultMiniMapMarker CreateRuleMarker(CultMiniMapTrackedComponent rule, int ruleIndex)
+    {
+        return new CultMiniMapMarker(
+            ruleIndex,
+            rule.Component,
+            rule.Label,
+            rule.Icon,
+            rule.Color,
+            PositiveOrDefault(rule.Scale, 1f),
+            rule.MarkerType,
+            rule.ShowInList,
+            rule.ShowHealth);
     }
 
     private bool MatchesPrototype(EntityUid uid, CultMiniMapTrackedComponent rule)
@@ -329,7 +338,10 @@ public sealed class CultMiniMapTrackingSystem : EntitySystem
         return rule.Prototypes.Contains(new EntProtoId(id));
     }
 
-    private CultMiniMapMember CreateMember(TransformComponent viewer, EntityUid uid, CultMiniMapMarker marker)
+    private CultMiniMapTrackedEntity CreateTrackedEntity(
+        TransformComponent viewer,
+        EntityUid uid,
+        CultMiniMapMarker marker)
     {
         var xform = Transform(uid);
         var meta = MetaData(uid);
@@ -343,8 +355,23 @@ public sealed class CultMiniMapTrackingSystem : EntitySystem
             ? _transform.GetWorldRotation(xform) - _transform.GetWorldRotation(viewerGrid)
             : xform.LocalRotation;
 
-        return new CultMiniMapMember(meta.NetEntity, meta.EntityName, marker,
-            coordinates, (float) rotation.Theta, healthState, damagePercentage);
+        return new CultMiniMapTrackedEntity(meta.NetEntity, meta.EntityName, marker,
+            coordinates, (float) rotation.Theta, healthState, damagePercentage,
+            GetStructureLocation(xform, marker.MarkerType));
+    }
+
+    private CultMiniMapStructureLocation? GetStructureLocation(
+        TransformComponent xform,
+        CultMiniMapMarkerType markerType)
+    {
+        if (markerType == CultMiniMapMarkerType.Icon || xform.GridUid is not { } grid)
+            return null;
+
+        if (!TryComp<MapGridComponent>(grid, out var gridComp))
+            return null;
+
+        var tile = _map.TileIndicesFor(grid, gridComp, xform.Coordinates);
+        return new CultMiniMapStructureLocation(GetNetEntity(grid), tile);
     }
 
     private MobState GetHealthState(EntityUid uid)
