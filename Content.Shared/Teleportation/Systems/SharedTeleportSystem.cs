@@ -1,4 +1,3 @@
-using Content.Shared.Ghost.Components;
 using Content.Shared.Movement.Pulling.Components;
 using Content.Shared.Movement.Pulling.Systems;
 using Content.Shared.Weapons.Misc;
@@ -8,7 +7,7 @@ using Robust.Shared.Physics.Systems;
 namespace Content.Shared.Teleportation.Systems;
 
 /// <summary>
-/// Moves entities to resolved destination coordinates and raises the common teleport lifecycle events.
+/// Moves entities to resolved destination coordinates, optionally raising the common teleport lifecycle events.
 /// </summary>
 public sealed partial class SharedTeleportSystem : EntitySystem
 {
@@ -17,7 +16,7 @@ public sealed partial class SharedTeleportSystem : EntitySystem
     [Dependency] private SharedJointSystem _joints = default!;
 
     /// <summary>
-    /// Attempts to move a target to already resolved destination coordinates.
+    /// Attempts to move a target and raise teleport lifecycle events on the teleporter and target.
     /// </summary>
     /// <param name="teleporter">The entity performing the teleportation.</param>
     /// <param name="target">The entity to teleport.</param>
@@ -27,20 +26,13 @@ public sealed partial class SharedTeleportSystem : EntitySystem
         if (!Exists(teleporter))
             return false;
 
-        if (!Exists(target))
-            return false;
-
-        if (TerminatingOrDeleted(target))
-            return false;
-
-        if (!destination.IsValid(EntityManager))
+        if (!CanTeleport(target, destination))
             return false;
 
         var beforeTeleport = new BeforeTeleportEvent(target);
         RaiseLocalEvent(teleporter, ref beforeTeleport);
 
-        StopSpatialRelationships(target);
-        _transform.SetCoordinates(target, Transform(target), destination);
+        Teleport(target, destination);
 
         var targetTeleported = new TargetTeleportedEvent(target);
         RaiseLocalEvent(teleporter, ref targetTeleported);
@@ -52,23 +44,27 @@ public sealed partial class SharedTeleportSystem : EntitySystem
     }
 
     /// <summary>
-    /// Attempts to teleport a ghost or spectral entity without invoking the regular teleport lifecycle.
+    /// Moves a target without raising teleport lifecycle events, including those that trigger sounds.
     /// Pulling and grappling relationships are still stopped before movement.
     /// </summary>
-    public bool TryTeleportGhost(EntityUid target, EntityCoordinates destination)
+    public bool TryTeleport(EntityUid target, EntityCoordinates destination)
     {
-        if (!HasComp<GhostComponent>(target) && !HasComp<SpectralComponent>(target))
+        if (!CanTeleport(target, destination))
             return false;
 
-        if (TerminatingOrDeleted(target))
-            return false;
+        Teleport(target, destination);
+        return true;
+    }
 
-        if (!destination.IsValid(EntityManager))
-            return false;
+    private bool CanTeleport(EntityUid target, EntityCoordinates destination)
+    {
+        return Exists(target) && !TerminatingOrDeleted(target) && destination.IsValid(EntityManager);
+    }
 
+    private void Teleport(EntityUid target, EntityCoordinates destination)
+    {
         StopSpatialRelationships(target);
         _transform.SetCoordinates(target, Transform(target), destination);
-        return true;
     }
 
     private void StopSpatialRelationships(EntityUid target)

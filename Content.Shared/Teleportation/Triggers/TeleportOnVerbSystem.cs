@@ -1,7 +1,6 @@
 using Content.Shared.Verbs;
 using Content.Shared.Whitelist;
 using Robust.Shared.Network;
-using Robust.Shared.Utility;
 
 namespace Content.Shared.Teleportation.Triggers;
 
@@ -14,29 +13,43 @@ public sealed partial class TeleportOnVerbSystem : EntitySystem
     {
         base.Initialize();
 
-        SubscribeLocalEvent<TeleportOnVerbComponent, GetVerbsEvent<AlternativeVerb>>(OnGetVerbs);
+        SubscribeVerb<Verb>(TeleportVerbType.Verb);
+        SubscribeVerb<AlternativeVerb>(TeleportVerbType.Alternative);
+        SubscribeVerb<InteractionVerb>(TeleportVerbType.Interaction);
+        SubscribeVerb<ActivationVerb>(TeleportVerbType.Activation);
     }
 
-    private void OnGetVerbs(Entity<TeleportOnVerbComponent> ent, ref GetVerbsEvent<AlternativeVerb> args)
+    private void SubscribeVerb<TVerb>(TeleportVerbType type) where TVerb : Verb, new()
     {
-        if (!args.CanAccess)
+        SubscribeLocalEvent<TeleportOnVerbComponent, GetVerbsEvent<TVerb>>(
+            (Entity<TeleportOnVerbComponent> ent, ref GetVerbsEvent<TVerb> args) => OnGetVerbs(ent, ref args, type));
+    }
+
+    private void OnGetVerbs<TVerb>(Entity<TeleportOnVerbComponent> ent, ref GetVerbsEvent<TVerb> args, TeleportVerbType type)
+        where TVerb : Verb, new()
+    {
+        if (ent.Comp.VerbType != type || !args.CanAccess)
             return;
 
         if (!IsUserAllowed(ent.Comp, args.User))
             return;
 
         var target = args.User;
-        var attempt = new TeleportUseAttemptEvent(target, target, Mode: ent.Comp.Mode);
+        var attempt = new TeleportUseAttemptEvent(target, target);
         RaiseLocalEvent(ent, ref attempt);
 
-        args.Verbs.Add(new AlternativeVerb
+        if (attempt.Cancelled && ent.Comp.HideWhenDisabled)
+            return;
+
+        args.Verbs.Add(new TVerb
         {
-            Priority = 11,
+            Priority = ent.Comp.Priority,
             Act = () => RequestTeleport(ent, target),
             Disabled = attempt.Cancelled,
             Text = Loc.GetString(ent.Comp.VerbText),
             Message = GetMessage(ent.Comp, attempt),
-            Icon = new SpriteSpecifier.Texture(new("/Textures/Interface/VerbIcons/open.svg.192dpi.png"))
+            Icon = ent.Comp.VerbIcon,
+            Category = ent.Comp.VerbCategory is { } category ? new VerbCategory(category, null) : null,
         });
     }
 
@@ -45,13 +58,13 @@ public sealed partial class TeleportOnVerbSystem : EntitySystem
         if (!IsUserAllowed(ent.Comp, target))
             return;
 
-        var attempt = new TeleportUseAttemptEvent(target, target, Mode: ent.Comp.Mode);
+        var attempt = new TeleportUseAttemptEvent(target, target);
         RaiseLocalEvent(ent, ref attempt);
 
         if (attempt.Cancelled)
             return;
 
-        var request = new TeleportRequestEvent(target, target, ent.Comp.Mode);
+        var request = new TeleportRequestEvent(target, target);
         RaiseLocalEvent(ent, ref request);
 
         if (request.Handled)
@@ -66,23 +79,15 @@ public sealed partial class TeleportOnVerbSystem : EntitySystem
 
     private bool IsUserAllowed(TeleportOnVerbComponent component, EntityUid user)
     {
-        if (_whitelist.IsWhitelistFail(component.UserWhitelist, user))
-            return false;
-
-        if (_whitelist.IsWhitelistPass(component.UserBlacklist, user))
-            return false;
-
-        return true;
+        return !_whitelist.IsWhitelistFail(component.UserWhitelist, user) &&
+               !_whitelist.IsWhitelistPass(component.UserBlacklist, user);
     }
 
     private string? GetMessage(TeleportOnVerbComponent component, TeleportUseAttemptEvent attempt)
     {
-        if (attempt.CancelReason is { } cancelReason)
-            return Loc.GetString(cancelReason);
-
-        if (component.EnabledMessage is { } enabledMessage)
-            return Loc.GetString(enabledMessage);
-
-        return null;
+        var message = attempt.Cancelled
+            ? attempt.CancelReason ?? component.DisabledMessage
+            : component.EnabledMessage;
+        return message is { } key ? Loc.GetString(key) : null;
     }
 }
