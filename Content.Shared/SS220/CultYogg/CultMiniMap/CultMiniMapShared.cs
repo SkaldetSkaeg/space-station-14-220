@@ -77,6 +77,7 @@ public sealed class CultMiniMapMember(
 /// </summary>
 [Serializable, NetSerializable]
 public sealed class CultMiniMapMarker(
+    int ruleIndex,
     string component,
     LocId? label,
     SpriteSpecifier icon,
@@ -86,7 +87,13 @@ public sealed class CultMiniMapMarker(
     bool showInList,
     bool showHealth)
 {
+    public const int SelfRuleIndex = -1;
     public const string SelfComponent = "$self";
+
+    /// <summary>
+    /// Index of the matching tracked-components rule. Used to keep menu sections distinct.
+    /// </summary>
+    public readonly int RuleIndex = ruleIndex;
 
     public readonly string Component = component;
     public readonly LocId? Label = label;

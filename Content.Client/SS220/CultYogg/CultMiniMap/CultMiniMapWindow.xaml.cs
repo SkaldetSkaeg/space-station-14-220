@@ -130,7 +130,7 @@ public sealed partial class CultMiniMapWindow : FancyWindow
 
         foreach (var group in visibleMembers
                      .Where(member => member.Entity != _owner)
-                     .GroupBy(member => member.Marker.Component))
+                     .GroupBy(member => member.Marker.RuleIndex))
         {
             AddMemberSection(group.First().Marker, group.OrderBy(member => member.Name));
         }

@@ -46,6 +46,9 @@ public sealed partial class CultMiniMapComponent : Component
     [DataField]
     public float PingCooldown = 3f;
 
+    /// <summary>
+    /// Number of the latest channel pings shown on this owner's map.
+    /// </summary>
     [DataField]
     public int MaxActivePings = 8;
 

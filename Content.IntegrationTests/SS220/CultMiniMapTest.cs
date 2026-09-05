@@ -17,6 +17,7 @@ using Content.Shared.SS220.CultYogg.CultMiniMap;
 using Content.Shared.SS220.CultYogg.MiGo;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Map;
+using Robust.Shared.Map.Components;
 using Robust.Shared.Maths;
 using Robust.Shared.Utility;
 
@@ -89,11 +90,11 @@ public sealed class CultMiniMapTest : GameTest
             var firstMap = SEntMan.GetComponent<CultMiniMapComponent>(first);
             firstMap.PingCooldown = 0.1f;
             firstMap.PingDuration = 0.5f;
-            firstMap.MaxActivePings = 2;
+            firstMap.MaxActivePings = 1;
             var secondMap = SEntMan.GetComponent<CultMiniMapComponent>(second);
             secondMap.PingCooldown = 0.1f;
             secondMap.PingDuration = 0.5f;
-            secondMap.MaxActivePings = 2;
+            secondMap.MaxActivePings = 3;
             SEntMan.GetComponent<CultMiniMapComponent>(otherChannel).PingChannel = "another-cult";
 
             foreach (var owner in new[] { first, second, otherChannel, remote })
@@ -108,6 +109,10 @@ public sealed class CultMiniMapTest : GameTest
             Assert.That(tracking.TryCreatePing((first, firstMap), first,
                 new EntityCoordinates(map.Grid, new Vector2(10000f, 10000f))), Is.False,
                 "Coordinates outside the grid bounds must be rejected.");
+            var bounds = SEntMan.GetComponent<MapGridComponent>(map.Grid).LocalAABB;
+            Assert.That(tracking.TryCreatePing((first, firstMap), first,
+                new EntityCoordinates(map.Grid, new Vector2(bounds.Right + 0.5f, bounds.Center.Y))), Is.False,
+                "Coordinates in the old enlarged-AABB band must be rejected.");
             Assert.That(tracking.TryCreatePing((first, firstMap), first, coordinates), Is.True);
             Assert.That(tracking.TryCreatePing((first, firstMap), first, coordinates), Is.False,
                 "The server must enforce the cooldown.");
@@ -135,10 +140,13 @@ public sealed class CultMiniMapTest : GameTest
             var secondMap = SEntMan.GetComponent<CultMiniMapComponent>(second);
             Assert.That(tracking.TryCreatePing((first, firstMap), first, coordinates), Is.True);
             Assert.That(tracking.TryCreatePing((second, secondMap), second, coordinates), Is.True);
-            var pings = GetState(first).Pings;
-            Assert.That(pings, Has.Count.EqualTo(2));
-            Assert.That(pings.Select(ping => ping.Id), Does.Not.Contain(firstPingId),
-                "The oldest marker must be removed when the channel reaches its limit.");
+            var firstPings = GetState(first).Pings;
+            Assert.That(firstPings, Has.Count.EqualTo(1));
+            Assert.That(firstPings.Select(ping => ping.Id), Does.Not.Contain(firstPingId));
+            var secondPings = GetState(second).Pings;
+            Assert.That(secondPings, Has.Count.EqualTo(3));
+            Assert.That(secondPings.Select(ping => ping.Id), Does.Contain(firstPingId),
+                "One owner's display limit must not evict shared channel history for another owner.");
         });
 
         await Server.WaitRunTicks(120);
@@ -177,6 +185,15 @@ public sealed class CultMiniMapTest : GameTest
                 "Being tracked does not grant the ability to view the map.");
             ui.OpenUi(viewer, CultMiniMapUIKey.Key, viewer);
             var state = GetState(viewer);
+            var duplicateOpen = new OpenBoundInterfaceMessage
+            {
+                Actor = viewer,
+                UiKey = CultMiniMapUIKey.Key,
+                Entity = SEntMan.GetNetEntity(viewer),
+            };
+            SEntMan.EventBus.RaiseLocalEvent(viewer, duplicateOpen);
+            Assert.That(GetState(viewer), Is.SameAs(state),
+                "A duplicate open message must not rebuild an already initialized minimap state.");
             Assert.That(state.Members.Select(member => member.Entity), Is.EquivalentTo(new[]
             {
                 SEntMan.GetNetEntity(viewer), SEntMan.GetNetEntity(cultist),
@@ -185,6 +202,7 @@ public sealed class CultMiniMapTest : GameTest
 
             var selfMarker = state.Members.Single(member => member.Entity == SEntMan.GetNetEntity(viewer)).Marker;
             Assert.That(selfMarker.Component, Is.EqualTo(CultMiniMapMarker.SelfComponent));
+            Assert.That(selfMarker.RuleIndex, Is.EqualTo(CultMiniMapMarker.SelfRuleIndex));
             Assert.That(selfMarker.Label?.ToString(), Is.EqualTo("cult-mini-map-self-section"));
             Assert.That(selfMarker.Icon, Is.EqualTo(new SpriteSpecifier.Texture(
                 new ResPath("/Textures/Interface/NavMap/beveled_star.png"))));
@@ -194,6 +212,7 @@ public sealed class CultMiniMapTest : GameTest
 
             var cultMarker = state.Members.Single(member => member.Entity == SEntMan.GetNetEntity(cultist)).Marker;
             Assert.That(cultMarker.Component, Is.EqualTo("CultYogg"));
+            Assert.That(cultMarker.RuleIndex, Is.EqualTo(0));
             Assert.That(cultMarker.Label?.ToString(), Is.EqualTo("cult-mini-map-cultist"));
             Assert.That(cultMarker.Icon, Is.EqualTo(new SpriteSpecifier.Texture(
                 new ResPath("/Textures/Interface/NavMap/beveled_diamond.png"))));
@@ -205,6 +224,7 @@ public sealed class CultMiniMapTest : GameTest
 
             var mobMarker = state.Members.Single(member => member.Entity == SEntMan.GetNetEntity(mob)).Marker;
             Assert.That(mobMarker.Component, Is.EqualTo("MobState"));
+            Assert.That(mobMarker.RuleIndex, Is.EqualTo(1));
             Assert.That(mobMarker.Label, Is.Null);
             Assert.That(mobMarker.Icon, Is.EqualTo(new SpriteSpecifier.Rsi(
                 new ResPath("SS220/Interface/Actions/cult_yogg.rsi"), "migo_teleport")));
