@@ -1,5 +1,6 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
+using System.Linq;
 using System.Numerics;
 using Content.Client.Pinpointer.UI;
 using Content.Shared.SS220.CultYogg.CultMiniMap;
@@ -15,6 +16,10 @@ namespace Content.Client.SS220.CultYogg.CultMiniMap;
 
 public sealed partial class CultMiniMapNavMapControl : NavMapControl
 {
+    // Keep the same base palette as the standard crew-monitoring map.
+    private static readonly Color DefaultWallColor = new(192, 122, 196);
+    private static readonly Color DefaultTileColor = new(71, 42, 72);
+
     public NetEntity? Focus;
     public readonly Dictionary<NetEntity, string> LocalizedNames = new();
     public readonly Dictionary<NetEntity, CultMiniMapStructureBlip> StructureMarkers = new();
@@ -27,8 +32,8 @@ public sealed partial class CultMiniMapNavMapControl : NavMapControl
 
     public CultMiniMapNavMapControl()
     {
-        WallColor = new Color(192, 122, 196);
-        TileColor = new(71, 42, 72);
+        WallColor = DefaultWallColor;
+        TileColor = DefaultTileColor;
         BackgroundColor = Color.FromSrgb(TileColor.WithAlpha(BackgroundOpacity));
 
         _trackedEntityLabel = new Label
@@ -147,6 +152,31 @@ public sealed partial class CultMiniMapNavMapControl : NavMapControl
         if (walls.Contains(location with { Tile = location.Tile + Vector2i.Left }))
             neighbors |= CultMiniMapStructureNeighbors.West;
         return neighbors;
+    }
+
+    internal void UpdateStructureNeighbors()
+    {
+        var connectedWallLocations = StructureMarkers.Values
+            .Where(IsConnectedWall)
+            .Select(marker => marker.Location)
+            .OfType<CultMiniMapStructureLocation>()
+            .ToHashSet();
+
+        foreach (var (entity, marker) in StructureMarkers.ToArray())
+        {
+            if (!IsConnectedWall(marker) || marker.Location is not { } location)
+                continue;
+
+            StructureMarkers[entity] = marker with
+            {
+                Neighbors = GetStructureNeighbors(connectedWallLocations, location),
+            };
+        }
+    }
+
+    private static bool IsConnectedWall(CultMiniMapStructureBlip marker)
+    {
+        return marker.MarkerType is CultMiniMapMarkerType.Wall or CultMiniMapMarkerType.SecretDoor;
     }
 
     private void DrawAirlock(DrawingHandleScreen handle, CultMiniMapStructureBlip structure)

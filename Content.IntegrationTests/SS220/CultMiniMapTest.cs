@@ -48,7 +48,7 @@ public sealed class CultMiniMapTest : GameTest
   id: CultMiniMapConfiguredViewer
   components:
   - type: CultMiniMap
-    trackedComponents:
+    trackingRules:
     - component: CultYogg
       label: cult-mini-map-cultist
       icon: /Textures/Interface/NavMap/beveled_diamond.png
@@ -340,14 +340,14 @@ public sealed class CultMiniMapTest : GameTest
             oldMarker = GetState(viewer).TrackedEntities
                 .Single(member => member.Entity == SEntMan.GetNetEntity(target)).Marker;
 
-            var rules = SEntMan.GetComponent<CultMiniMapComponent>(viewer).TrackedComponents;
+            var rules = SEntMan.GetComponent<CultMiniMapComponent>(viewer).TrackingRules!;
             rules[0].Color = Color.Red;
             rules.RemoveAt(0);
             rules[0].Color = Color.Green;
             rules[0].Icon = new SpriteSpecifier.Texture(new ResPath("/Textures/Interface/NavMap/beveled_star.png"));
             rules[0].Scale = 0f;
             // Invalid names can be entered through runtime edits; they must not break other rules.
-            rules.Insert(0, new CultMiniMapTrackedComponent { Component = "NonexistentMiniMapTestComponent" });
+            rules.Insert(0, new CultMiniMapTrackingRule { ComponentName = "NonexistentMiniMapTestComponent" });
         });
 
         await Server.WaitRunTicks(120);
@@ -362,7 +362,7 @@ public sealed class CultMiniMapTest : GameTest
             Assert.That(marker.Scale, Is.EqualTo(1f), "Invalid sizes must not hide or corrupt map markers.");
             Assert.That(oldMarker.Component, Is.EqualTo("CultYogg"));
             Assert.That(oldMarker.Color, Is.EqualTo(Color.Violet), "Published states must not change with the config.");
-            SEntMan.GetComponent<CultMiniMapComponent>(viewer).TrackedComponents.Clear();
+            SEntMan.GetComponent<CultMiniMapComponent>(viewer).TrackingRules!.Clear();
         });
 
         await Server.WaitRunTicks(120);

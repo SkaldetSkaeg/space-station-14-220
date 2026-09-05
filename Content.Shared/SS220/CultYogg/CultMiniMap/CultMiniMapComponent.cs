@@ -3,7 +3,6 @@
 using Content.Shared.Actions;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
-using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom;
 using Robust.Shared.Utility;
 
 namespace Content.Shared.SS220.CultYogg.CultMiniMap;
@@ -53,157 +52,23 @@ public sealed partial class CultMiniMapComponent : Component
     public int MaxActivePings = 8;
 
     /// <summary>
-    /// Components visible on this owner's map. The first matching rule supplies the marker.
-    /// These server-side settings are sent to the owner through the UI state.
+    /// Reusable ordered set of tracking rules.
     /// </summary>
     [DataField]
-    public List<CultMiniMapTrackedComponent> TrackedComponents = new()
-    {
-        new()
-        {
-            Component = "MiGo",
-            Label = "cult-mini-map-migo",
-            Icon = new SpriteSpecifier.Texture(new ResPath("/Textures/SS220/Interface/NavMap/migo.png")),
-            Color = Color.Gold,
-        },
-        new() { Component = "CultYogg", Label = "cult-mini-map-cultist", Color = Color.Violet },
-        new()
-        {
-            Component = "CultYoggBuilding",
-            Label = "cult-mini-map-wall",
-            Prototypes = new() { "WallCultYogg" },
-            MarkerType = CultMiniMapMarkerType.Wall,
-            Color = Color.Red,
-            ShowInList = false,
-            ShowHealth = false,
-        },
-        new()
-        {
-            Component = "CultYoggBuilding",
-            Label = "cult-mini-map-secret-door",
-            Prototypes = new() { "CultYoggDoor" },
-            MarkerType = CultMiniMapMarkerType.SecretDoor,
-            Color = Color.Red,
-            ShowInList = false,
-            ShowHealth = false,
-        },
-        new()
-        {
-            Component = "CultYoggBuilding",
-            Label = "cult-mini-map-airlock",
-            Prototypes = new() { "CultYoggAirlock" },
-            MarkerType = CultMiniMapMarkerType.Airlock,
-            Color = Color.Red,
-            ShowInList = false,
-            ShowHealth = false,
-        },
-        BuildingIconRule("CultYoggPod", "cult-mini-map-pod",
-            new SpriteSpecifier.Texture(new ResPath("/Textures/SS220/Interface/NavMap/cult_pod.png"))),
-        BuildingIconRule("CultYoggFungusHydroponic", "cult-mini-map-fungus",
-            new SpriteSpecifier.Texture(new ResPath("/Textures/SS220/Interface/NavMap/cult_fungus.png"))),
-        BuildingIconRule("CultYoggAltar", "cult-mini-map-altar",
-            new SpriteSpecifier.Texture(new ResPath("/Textures/SS220/Interface/NavMap/cult_altar.png"))),
-        BuildingIconRule("CultYoggPond", "cult-mini-map-pond",
-            new SpriteSpecifier.Texture(new ResPath("/Textures/SS220/Interface/NavMap/cult_pond.png"))),
-        new()
-        {
-            Component = "SelfLinkedTeleport",
-            Label = "cult-mini-map-teleporter",
-            Prototypes = new() { "VoidTeleportEnter", "VoidTeleportExit" },
-            Icon = new SpriteSpecifier.Texture(new ResPath("/Textures/SS220/Interface/NavMap/cult_gate.png")),
-            Color = Color.Red,
-            ShowInList = false,
-            ShowHealth = false,
-        },
-        new()
-        {
-            Component = "CultYoggBuilding",
-            Label = "cult-mini-map-building",
-            Icon = new SpriteSpecifier.Texture(new ResPath("/Textures/Interface/NavMap/beveled_square.png")),
-            Color = Color.Orange,
-            Scale = 0.8f,
-            ShowInList = false,
-            ShowHealth = false,
-        },
-    };
+    public ProtoId<CultMiniMapProfilePrototype> TrackingProfile = "CultYogg";
 
-    private static CultMiniMapTrackedComponent BuildingIconRule(
-        EntProtoId prototype,
-        LocId label,
-        SpriteSpecifier icon)
-    {
-        return new CultMiniMapTrackedComponent
-        {
-            Component = "CultYoggBuilding",
-            Label = label,
-            Prototypes = new() { prototype },
-            Icon = icon,
-            Color = Color.Red,
-            ShowInList = false,
-            ShowHealth = false,
-        };
-    }
+    /// <summary>
+    /// Optional owner-specific replacement for <see cref="TrackingProfile"/> rules.
+    /// An empty list displays only the map owner.
+    /// </summary>
+    [DataField]
+    public List<CultMiniMapTrackingRule>? TrackingRules;
 
     [ViewVariables]
     public EntProtoId MiniMapAction = "ActionCultMiniMap";
 
     [ViewVariables, AutoNetworkedField]
     public EntityUid? MiniMapActionEntity;
-}
-
-[DataDefinition]
-public sealed partial class CultMiniMapTrackedComponent
-{
-    /// <summary>
-    /// Registered component name, without the Component suffix.
-    /// </summary>
-    [DataField(required: true, customTypeSerializer: typeof(ComponentNameSerializer))]
-    public string Component = string.Empty;
-
-    /// <summary>
-    /// Optional entity prototype filter. An empty list matches every entity with <see cref="Component"/>.
-    /// </summary>
-    [DataField]
-    public List<EntProtoId> Prototypes = new();
-
-    /// <summary>
-    /// Optional localization key for the type shown in the list. Defaults to the component name.
-    /// </summary>
-    [DataField]
-    public LocId? Label;
-
-    /// <summary>
-    /// PNG texture or RSI state. The map displays its first frame.
-    /// </summary>
-    [DataField]
-    public SpriteSpecifier Icon = new SpriteSpecifier.Texture(new ResPath("/Textures/Interface/NavMap/beveled_circle.png"));
-
-    [DataField]
-    public Color Color = Color.White;
-
-    /// <summary>
-    /// Positive size multiplier for the map marker. List icons have a fixed size.
-    /// </summary>
-    [DataField]
-    public float Scale = 1f;
-
-    /// <summary>
-    /// How the marker is drawn. Structural marker types use map-scaled vector geometry instead of <see cref="Icon"/>.
-    /// </summary>
-    [DataField]
-    public CultMiniMapMarkerType MarkerType = CultMiniMapMarkerType.Icon;
-
-    /// <summary>
-    /// Whether matching entities appear in the side list. They remain visible on the map when disabled.
-    /// </summary>
-    [DataField]
-    public bool ShowInList = true;
-
-    /// <summary>
-    /// Whether health is collected and shown for matching entities.
-    /// </summary>
-    [DataField]
-    public bool ShowHealth = true;
 }
 
 public sealed partial class CultMiniMapActionEvent : InstantActionEvent

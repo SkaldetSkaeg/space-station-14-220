@@ -31,6 +31,7 @@ public sealed class CultMiniMapTrackingSystem : EntitySystem
     [Dependency] private readonly DamageableSystem _damageable = default!;
     [Dependency] private readonly MobThresholdSystem _thresholds = default!;
     [Dependency] private readonly IComponentFactory _componentFactory = default!;
+    [Dependency] private readonly IPrototypeManager _prototype = default!;
 
     private TimeSpan _nextUpdate;
     private uint _nextPingId;
@@ -234,8 +235,9 @@ public sealed class CultMiniMapTrackingSystem : EntitySystem
             CreateTrackedEntity(viewer, ent.Owner, CreateSelfMarker(ent.Comp)),
         };
         var seen = new HashSet<EntityUid> { ent.Owner };
-        for (var ruleIndex = 0; ruleIndex < ent.Comp.TrackedComponents.Count; ruleIndex++)
-            AddTrackedEntities(viewer, ent.Comp.TrackedComponents[ruleIndex], ruleIndex, trackedEntities, seen);
+        var ruleIndex = 0;
+        foreach (var rule in ResolveTrackingRules(ent.Comp))
+            AddTrackedEntities(viewer, rule, ruleIndex++, trackedEntities, seen);
 
         var maxActivePings = Math.Clamp(ent.Comp.MaxActivePings, 1, MaxStoredPingsPerChannel);
         var pings = GetVisiblePings(ent.Comp.PingChannel, viewer, grid, maxActivePings);
@@ -281,6 +283,26 @@ public sealed class CultMiniMapTrackingSystem : EntitySystem
         return result;
     }
 
+    private IEnumerable<CultMiniMapTrackingRule> ResolveTrackingRules(CultMiniMapComponent component)
+    {
+        if (component.TrackingRules is { } trackingRules)
+        {
+            foreach (var rule in trackingRules)
+                yield return rule;
+
+            yield break;
+        }
+
+        if (!_prototype.TryIndex(component.TrackingProfile, out var profile))
+            yield break;
+
+        foreach (var ruleId in profile.Rules)
+        {
+            if (_prototype.TryIndex(ruleId, out var rule))
+                yield return rule;
+        }
+    }
+
     private static CultMiniMapMarker CreateSelfMarker(CultMiniMapComponent component)
     {
         return new CultMiniMapMarker(
@@ -295,11 +317,11 @@ public sealed class CultMiniMapTrackingSystem : EntitySystem
             true);
     }
 
-    private void AddTrackedEntities(TransformComponent viewer, CultMiniMapTrackedComponent rule, int ruleIndex,
+    private void AddTrackedEntities(TransformComponent viewer, CultMiniMapTrackingRule rule, int ruleIndex,
         List<CultMiniMapTrackedEntity> trackedEntities, HashSet<EntityUid> seen)
     {
         // YAML validates component names; tolerate unavailable types in runtime edits as well.
-        if (!_componentFactory.TryGetRegistration(rule.Component, out var registration))
+        if (!_componentFactory.TryGetRegistration(rule.ComponentName, out var registration))
             return;
 
         var marker = CreateRuleMarker(rule, ruleIndex);
@@ -313,11 +335,11 @@ public sealed class CultMiniMapTrackingSystem : EntitySystem
         }
     }
 
-    private static CultMiniMapMarker CreateRuleMarker(CultMiniMapTrackedComponent rule, int ruleIndex)
+    private static CultMiniMapMarker CreateRuleMarker(CultMiniMapTrackingRule rule, int ruleIndex)
     {
         return new CultMiniMapMarker(
             ruleIndex,
-            rule.Component,
+            rule.ComponentName,
             rule.Label,
             rule.Icon,
             rule.Color,
@@ -327,7 +349,7 @@ public sealed class CultMiniMapTrackingSystem : EntitySystem
             rule.ShowHealth);
     }
 
-    private bool MatchesPrototype(EntityUid uid, CultMiniMapTrackedComponent rule)
+    private bool MatchesPrototype(EntityUid uid, CultMiniMapTrackingRule rule)
     {
         if (rule.Prototypes.Count == 0)
             return true;
