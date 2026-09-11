@@ -1,4 +1,5 @@
-ghost-gui-toggle-hud-on = Теперь вы видите мир глазами СБ.
-ghost-gui-toggle-hud-off = Теперь вы видите как обычный призрак.
-
 ghost-role-verb-take-ghost-text = Запросить
+
+ghost-hud-window-title = Настройки визоров
+ghost-hud-medical = Медицинский визор
+ghost-hud-security = Визор СБ

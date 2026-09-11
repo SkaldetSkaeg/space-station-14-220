@@ -1,0 +1,9 @@
+<ui:FancyWindow xmlns="https://spacestation14.io"
+                xmlns:ui="clr-namespace:Content.Client.UserInterface.Controls"
+                MinSize="280 120"
+                Title="{Loc ghost-hud-window-title}">
+    <BoxContainer Orientation="Vertical" SeparationOverride="8" Margin="8">
+        <CheckBox Name="MedicalHud" Text="{Loc ghost-hud-medical}" />
+        <CheckBox Name="SecurityHud" Text="{Loc ghost-hud-security}" />
+    </BoxContainer>
+</ui:FancyWindow>
