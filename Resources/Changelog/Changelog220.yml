@@ -1,12 +1,4 @@
 ﻿Entries:
-- author: VictorBoum, TTTomaTTT, NightmareStalker
-  changes:
-  - message: "\u0414\u043E\u0431\u0430\u0432\u043B\u0435\u043D\u0430 \u043F\u0430\u043C\
-      \u044F\u0442\u043D\u0430\u044F \u0441\u0442\u0430\u0442\u0443\u044F"
-    type: Add
-  id: 1204
-  time: '2025-10-24T14:03:51.0000000+00:00'
-  url: https://github.com/SerbiaStrong-220/space-station-14/pull/3482
 - author: SkaldetSkaeg
   changes:
   - message: "\u041C\u0438\u0413\u043E \u0434\u043E\u0431\u0430\u0432\u043B\u0435\u043D\
@@ -8994,3 +8986,12 @@
   id: 1703
   time: '2026-09-11T12:57:35.0000000+00:00'
   url: https://github.com/SerbiaStrong-220/space-station-14/pull/4541
+- author: OperatorXeno, Kovert
+  changes:
+  - message: "\u0414\u043E\u0431\u0430\u0432\u043B\u0435\u043D\u044B \u0445\u0438\u043C\
+      \u043A\u0430 \u0438 \u0433\u043E\u0441\u0442 \u0431\u0430\u0440 \u0432 \u0440\
+      \u0430\u0437\u0434\u0435\u043B \u0430\u0440\u0435\u043D."
+    type: Add
+  id: 1704
+  time: '2026-09-11T13:01:20.0000000+00:00'
+  url: https://github.com/SerbiaStrong-220/space-station-14/pull/4562
