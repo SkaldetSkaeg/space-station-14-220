@@ -137,6 +137,7 @@ public sealed partial class TeleportToRandomPoweredLightSystem : EntitySystem
         }
 
         var mapUid = _map.GetMapOrInvalid(_gameTicker.DefaultMap);
+
         if (TerminatingOrDeleted(mapUid))
         {
             Log.Error($"TeleportToRandomPoweredLight couldn't teleport {ToPrettyString(target)} because the default map is terminating or deleted");
