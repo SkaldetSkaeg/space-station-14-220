@@ -1,3 +1,4 @@
+using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
 
 namespace Content.Shared.SS220.Ghost;
@@ -9,22 +10,22 @@ public enum GhostHudUiKey : byte
 }
 
 [Serializable, NetSerializable]
-public enum GhostHudType : byte
+public sealed class GhostHudBoundUserInterfaceState(List<GhostHudUiEntry> huds) : BoundUserInterfaceState
 {
-    Medical,
-    Security,
+    public List<GhostHudUiEntry> Huds { get; } = huds;
 }
 
 [Serializable, NetSerializable]
-public sealed class GhostHudBoundUserInterfaceState(bool medicalEnabled, bool securityEnabled) : BoundUserInterfaceState
+public sealed class GhostHudUiEntry(ProtoId<GhostHudPrototype> id, LocId name, bool enabled)
 {
-    public bool MedicalEnabled { get; } = medicalEnabled;
-    public bool SecurityEnabled { get; } = securityEnabled;
+    public ProtoId<GhostHudPrototype> Id { get; } = id;
+    public LocId Name { get; } = name;
+    public bool Enabled { get; } = enabled;
 }
 
 [Serializable, NetSerializable]
-public sealed class GhostHudToggledMessage(GhostHudType hud, bool enabled) : BoundUserInterfaceMessage
+public sealed class GhostHudToggledMessage(ProtoId<GhostHudPrototype> hud, bool enabled) : BoundUserInterfaceMessage
 {
-    public GhostHudType Hud { get; } = hud;
+    public ProtoId<GhostHudPrototype> Hud { get; } = hud;
     public bool Enabled { get; } = enabled;
 }

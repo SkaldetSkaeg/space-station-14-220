@@ -1,0 +1,16 @@
+- type: ghostHud
+  id: Medical
+  name: ghost-hud-medical
+  components:
+  - type: ShowHealthBars
+    damageContainers: [Biological, Ipc]
+  - type: ShowHealthIcons
+    damageContainers: [Biological, Ipc]
+
+- type: ghostHud
+  id: Security
+  name: ghost-hud-security
+  components:
+  - type: ShowJobIcons
+  - type: ShowMindShieldIcons
+  - type: ShowCriminalRecordIcons

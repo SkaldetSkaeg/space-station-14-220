@@ -95,16 +95,14 @@
   - type: GhostHearing
   - type: HallucinationImmune # SS220 - hallucinationSystem
   - type: SuperMatterImmune # SS220 - SuperMatterCrystal
-  # SS220 ADD GHOST HUD'S START
-  - type: ShowHealthBars
-    damageContainers:
-      - Biological
-      - Ipc #SS220-MicroFixesIPC
-  - type: ShowHealthIcons
-    damageContainers:
-      - Biological
-      - Ipc #SS220-MicroFixesIPC
-  # SS220 ADD GHOST HUD'S END
+  # SS220 ghost-hud-settings begin
+  - type: GhostHudSettings
+    huds:
+    - id: Medical
+      enabled: true
+    - id: Security
+      enabled: false
+  # SS220 ghost-hud-settings end
   - type: ShowEventRoleIcons # SS220 Add event role icons
   - type: ShowElectrocutionHUD
   - type: IntrinsicRadioReceiver
