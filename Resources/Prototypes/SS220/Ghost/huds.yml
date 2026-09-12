@@ -8,9 +8,14 @@
     damageContainers: [Biological, Ipc]
 
 - type: ghostHud
-  id: Security
-  name: ghost-hud-security
+  id: CriminalRecords
+  name: ghost-hud-criminal-records
   components:
-  - type: ShowJobIcons
   - type: ShowMindShieldIcons
   - type: ShowCriminalRecordIcons
+
+- type: ghostHud
+  id: JobIcons
+  name: ghost-hud-job-icons
+  components:
+  - type: ShowJobIcons

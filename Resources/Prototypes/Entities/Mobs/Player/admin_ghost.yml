@@ -28,7 +28,9 @@
     huds:
     - id: Medical
       enabled: true
-    - id: Security
+    - id: CriminalRecords
+      enabled: false
+    - id: JobIcons
       enabled: false
   # SS220 ghost-hud-settings end
   - type: Hands
