@@ -151,7 +151,7 @@ public sealed partial class CultMiniMapWindow
 
     private static string GetMarkerLabel(CultMiniMapMarker marker)
     {
-        return marker.Label is { } label ? Loc.GetString(label) : marker.Component;
+        return marker.Label != null ? Loc.GetString(marker.Label.Value) : marker.Component;
     }
 
     private static string GetHealthIconState(CultMiniMapTrackedEntity member)
@@ -162,10 +162,14 @@ public sealed partial class CultMiniMapWindow
             return "dead";
         if (member.HealthState == MobState.Critical)
             return "critical";
-        if (member.HealthState != MobState.Alive || member.DamagePercentage is not { } damage)
+        if (member.HealthState != MobState.Alive)
             return "alive";
 
-        var index = (int) MathF.Round(4f * Math.Clamp(damage, 0f, 1f));
+        var damage = member.DamagePercentage;
+        if (damage == null)
+            return "alive";
+
+        var index = (int) MathF.Round(4f * Math.Clamp(damage.Value, 0f, 1f));
         return "health" + index;
     }
 
@@ -186,8 +190,9 @@ public sealed partial class CultMiniMapWindow
         if (member.HealthState == MobState.Invalid)
             return status;
 
-        var damage = member.DamagePercentage is { } percentage
-            ? Loc.GetString("cult-mini-map-health-damage", ("percent", MathF.Round(percentage * 100f)))
+        var percentage = member.DamagePercentage;
+        var damage = percentage != null
+            ? Loc.GetString("cult-mini-map-health-damage", ("percent", MathF.Round(percentage.Value * 100f)))
             : Loc.GetString("cult-mini-map-health-no-damage");
         return status + "\n" + damage;
     }

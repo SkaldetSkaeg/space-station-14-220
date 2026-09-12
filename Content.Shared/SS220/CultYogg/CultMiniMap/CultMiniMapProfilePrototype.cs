@@ -17,6 +17,9 @@ public sealed partial class CultMiniMapProfilePrototype : IPrototype
     [IdDataField]
     public string ID { get; private set; } = default!;
 
+    /// <summary>
+    /// Tracking rules in priority order; the first matching rule wins.
+    /// </summary>
     [DataField(required: true)]
     public List<ProtoId<CultMiniMapTrackingRulePrototype>> Rules { get; private set; } = new();
 }
@@ -53,6 +56,9 @@ public partial class CultMiniMapTrackingRule
     public SpriteSpecifier Icon =
         new SpriteSpecifier.Texture(new ResPath("/Textures/Interface/NavMap/beveled_circle.png"));
 
+    /// <summary>
+    /// Color applied to this rule's map markers and list icons.
+    /// </summary>
     [DataField]
     public Color Color = Color.White;
 

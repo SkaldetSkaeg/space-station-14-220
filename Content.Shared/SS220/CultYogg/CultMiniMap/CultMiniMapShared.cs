@@ -19,7 +19,7 @@ public sealed class CultMiniMapState(
     NetEntity? grid,
     string gridName,
     List<CultMiniMapTrackedEntity> trackedEntities,
-    List<CultMiniMapPing> pings) : BoundUserInterfaceState
+    List<CultMiniMapPing> pings)
 {
     public readonly NetEntity? Grid = grid;
     public readonly string GridName = gridName;

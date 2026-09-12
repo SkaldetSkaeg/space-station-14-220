@@ -35,7 +35,7 @@ public sealed partial class CultMiniMapSystem : EntitySystem
     {
         _actions.RemoveAction(ent.Owner, ent.Comp.MiniMapActionEntity);
         _uiSystem.CloseUi(ent.Owner, CultMiniMapUIKey.Key);
-        _uiSystem.SetUiState(ent.Owner, CultMiniMapUIKey.Key, null);
+        ent.Comp.State = null;
     }
 
     private void OnCultMiniMapAction(Entity<CultMiniMapComponent> ent, ref CultMiniMapActionEvent args)

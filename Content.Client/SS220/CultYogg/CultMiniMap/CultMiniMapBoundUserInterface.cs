@@ -17,13 +17,19 @@ public sealed class CultMiniMapBoundUserInterface(EntityUid owner, Enum uiKey) :
         _menu = this.CreateWindow<CultMiniMapWindow>();
         _menu.PingRequested += coordinates =>
             SendMessage(new CultMiniMapPingMessage(EntMan.GetNetCoordinates(coordinates)));
+        Update();
     }
 
-    protected override void UpdateState(BoundUserInterfaceState state)
+    public override void Update()
     {
-        base.UpdateState(state);
+        base.Update();
 
-        if (state is CultMiniMapState mapState)
-            _menu?.UpdateState(mapState, EntMan.GetNetEntity(Owner));
+        if (!EntMan.TryGetComponent<CultMiniMapComponent>(Owner, out var component))
+            return;
+
+        if (component.State == null)
+            return;
+
+        _menu?.UpdateState(component.State, EntMan.GetNetEntity(Owner));
     }
 }

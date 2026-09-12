@@ -71,7 +71,8 @@ public sealed partial class CultMiniMapNavMapControl : NavMapControl
         }
 
         var dragDistance = (StartDragPosition - args.PointerLocation.Position).Length();
-        if (dragDistance > MinDragDistance || MapUid is not { } grid)
+        var grid = MapUid;
+        if (dragDistance > MinDragDistance || grid == null)
         {
             base.KeyBindUp(args);
             return;
@@ -81,7 +82,7 @@ public sealed partial class CultMiniMapNavMapControl : NavMapControl
         // the grid's physics center, which must be restored for grid-local coordinates.
         var position = InverseMapPosition(args.RelativePixelPosition) + GetOffset() - Offset;
         PingMode = false;
-        PingRequestedAction?.Invoke(new EntityCoordinates(grid, position));
+        PingRequestedAction?.Invoke(new EntityCoordinates(grid.Value, position));
         args.Handle();
     }
 
@@ -164,12 +165,16 @@ public sealed partial class CultMiniMapNavMapControl : NavMapControl
 
         foreach (var (entity, marker) in StructureMarkers.ToArray())
         {
-            if (!IsConnectedWall(marker) || marker.Location is not { } location)
+            if (!IsConnectedWall(marker))
+                continue;
+
+            var location = marker.Location;
+            if (location == null)
                 continue;
 
             StructureMarkers[entity] = marker with
             {
-                Neighbors = GetStructureNeighbors(connectedWallLocations, location),
+                Neighbors = GetStructureNeighbors(connectedWallLocations, location.Value),
             };
         }
     }
@@ -246,13 +251,20 @@ public sealed partial class CultMiniMapNavMapControl : NavMapControl
     {
         base.FrameUpdate(args);
 
-        if (Focus is not { } focus || !TrackedEntities.TryGetValue(focus, out var blip))
+        var focus = Focus;
+        if (focus == null)
         {
             HideTrackedEntity();
             return;
         }
 
-        if (!LocalizedNames.TryGetValue(focus, out var name))
+        if (!TrackedEntities.TryGetValue(focus.Value, out var blip))
+        {
+            HideTrackedEntity();
+            return;
+        }
+
+        if (!LocalizedNames.TryGetValue(focus.Value, out var name))
             name = Loc.GetString("navmap-unknown-entity");
 
         _trackedEntityLabel.Text = name + "\n" + Loc.GetString("navmap-location",

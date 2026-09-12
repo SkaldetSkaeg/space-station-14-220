@@ -1,11 +1,13 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Content.Client.SS220.CultYogg.CultMiniMap;
 using Content.Server.SS220.CultYogg.CultMiniMap;
 using Content.IntegrationTests.Fixtures;
+using Content.IntegrationTests.Fixtures.Attributes;
 using Content.Shared.Actions.Components;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Components;
@@ -17,7 +19,10 @@ using Content.Shared.SS220.CultYogg.Buildings;
 using Content.Shared.SS220.CultYogg.Cultists;
 using Content.Shared.SS220.CultYogg.CultMiniMap;
 using Content.Shared.SS220.CultYogg.MiGo;
+using Robust.Client.UserInterface;
+using Robust.Client.UserInterface.Controls;
 using Robust.Shared.GameObjects;
+using Robust.Shared.Localization;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Maths;
@@ -48,6 +53,8 @@ public sealed class CultMiniMapTest : GameTest
   id: CultMiniMapConfiguredViewer
   components:
   - type: CultMiniMap
+    pingDuration: 8
+    pingCooldown: 3
     trackingRules:
     - component: CultYogg
       label: cult-mini-map-cultist
@@ -86,6 +93,158 @@ public sealed class CultMiniMapTest : GameTest
     }
 
     [Test]
+    public async Task PrivateSnapshotIsNotStoredInPublicUiState()
+    {
+        var map = await Pair.CreateTestMap();
+        var ui = SEntMan.System<SharedUserInterfaceSystem>();
+
+        await Server.WaitAssertion(() =>
+        {
+            var owner = SEntMan.SpawnEntity(null, map.GridCoords);
+            SEntMan.AddComponent<CultYoggComponent>(owner);
+            ui.OpenUi(owner, CultMiniMapUIKey.Key, owner);
+            Assert.That(GetState(owner).TrackedEntities, Has.Count.EqualTo(1));
+            Assert.That(SEntMan.GetComponent<UserInterfaceComponent>(owner).States,
+                Does.Not.ContainKey(CultMiniMapUIKey.Key),
+                "Ordinary UI states are replicated to outsiders in PVS, even when they cannot open the UI.");
+            ui.CloseUi(owner, CultMiniMapUIKey.Key);
+        });
+    }
+
+    private static PoolSettings ConnectedSettings => new() { Connected = true };
+
+    [Test]
+    [PairConfig(nameof(ConnectedSettings))]
+    public async Task SnapshotReplicatesOnlyToOwner()
+    {
+        var map = await Pair.CreateTestMap();
+        var ui = SEntMan.System<SharedUserInterfaceSystem>();
+        EntityUid owner = default;
+        EntityUid outsider = default;
+        EntityUid member = default;
+
+        await Server.WaitAssertion(() =>
+        {
+            owner = SEntMan.SpawnEntity(null, map.GridCoords);
+            outsider = SEntMan.SpawnEntity(null, map.GridCoords);
+            SEntMan.AddComponent<CultYoggComponent>(owner);
+            Server.PlayerMan.SetAttachedEntity(ServerSession!, outsider);
+            ui.OpenUi(owner, CultMiniMapUIKey.Key, owner);
+            Assert.That(GetState(owner).TrackedEntities, Has.Count.EqualTo(1));
+        });
+
+        await Pair.RunTicksSync(10);
+        var clientOwner = Pair.ToClientUid(owner);
+        await Client.WaitAssertion(() =>
+        {
+            Assert.That(CEntMan.EntityExists(clientOwner), Is.True);
+            Assert.That(CEntMan.HasComponent<CultMiniMapComponent>(clientOwner), Is.False);
+            Assert.That(CEntMan.GetComponent<UserInterfaceComponent>(clientOwner).States,
+                Does.Not.ContainKey(CultMiniMapUIKey.Key));
+        });
+
+        await Server.WaitPost(() =>
+        {
+            member = SEntMan.SpawnEntity(null, map.GridCoords);
+            SEntMan.AddComponent<CultYoggComponent>(member);
+        });
+        await Pair.RunTicksSync(120);
+        await Server.WaitAssertion(() => Assert.That(GetState(owner).TrackedEntities, Has.Count.EqualTo(2)));
+        await Client.WaitAssertion(() =>
+            Assert.That(CEntMan.HasComponent<CultMiniMapComponent>(clientOwner), Is.False));
+
+        await Client.ExecuteCommand("fullstatereset");
+        await Pair.RunTicksSync(10);
+        await Client.WaitAssertion(() =>
+        {
+            Assert.That(CEntMan.HasComponent<CultMiniMapComponent>(clientOwner), Is.False);
+            Assert.That(CEntMan.GetComponent<UserInterfaceComponent>(clientOwner).States,
+                Does.Not.ContainKey(CultMiniMapUIKey.Key));
+        });
+
+        await Server.WaitPost(() => Server.PlayerMan.SetAttachedEntity(ServerSession!, owner));
+        await Pair.RunTicksSync(10);
+        await Client.WaitAssertion(() =>
+        {
+            var state = CEntMan.GetComponent<CultMiniMapComponent>(clientOwner).State;
+            Assert.That(state, Is.Not.Null);
+            Assert.That(state.TrackedEntities, Has.Count.EqualTo(2));
+            var window = Client.ResolveDependency<IUserInterfaceManager>().WindowRoot.Children
+                .OfType<CultMiniMapWindow>().Single(control => control.IsOpen);
+            Assert.That(window.FindControl<CultMiniMapNavMapControl>("NavMap").TrackedEntities, Has.Count.EqualTo(2));
+            Assert.That(window.FindControl<Label>("MemberCount").Text, Is.EqualTo(Loc.GetString("cult-mini-map-count", ("count", 2))));
+        });
+
+        await Server.WaitPost(() => SEntMan.RemoveComponent<CultYoggComponent>(member));
+        await Pair.RunTicksSync(120);
+        await Client.WaitAssertion(() =>
+        {
+            Assert.That(CEntMan.GetComponent<CultMiniMapComponent>(clientOwner).State.TrackedEntities,
+                Has.Count.EqualTo(1));
+            var window = Client.ResolveDependency<IUserInterfaceManager>().WindowRoot.Children
+                .OfType<CultMiniMapWindow>().Single(control => control.IsOpen);
+            Assert.That(window.FindControl<CultMiniMapNavMapControl>("NavMap").TrackedEntities, Has.Count.EqualTo(1));
+            Assert.That(window.FindControl<Label>("MemberCount").Text, Is.EqualTo(Loc.GetString("cult-mini-map-count", ("count", 1))));
+        });
+
+        await Server.WaitPost(() => ui.CloseUi(owner, CultMiniMapUIKey.Key));
+        await Pair.RunTicksSync(10);
+        await Client.WaitAssertion(() =>
+            Assert.That(CEntMan.GetComponent<CultMiniMapComponent>(clientOwner).State, Is.Null));
+    }
+
+    [Test]
+    public async Task WallContoursIgnoreEntityRotation()
+    {
+        var map = await Pair.CreateTestMap();
+        var sourceMap = await Pair.CreateTestMap();
+        var ui = SEntMan.System<SharedUserInterfaceSystem>();
+        var transform = SEntMan.System<SharedTransformSystem>();
+
+        await Server.WaitAssertion(() =>
+        {
+            // Put the source grid on the viewer's map, with a different grid rotation.
+            transform.SetParent(sourceMap.Grid, map.MapUid);
+            transform.SetLocalPosition(sourceMap.Grid, new Vector2(10, 0));
+            transform.SetLocalRotation(map.Grid, Angle.FromDegrees(30));
+            transform.SetLocalRotation(sourceMap.Grid, Angle.FromDegrees(90));
+            var mapSystem = SEntMan.System<SharedMapSystem>();
+            mapSystem.SetTile(sourceMap.Grid, new Vector2i(0, 1), sourceMap.Tile.Tile);
+            mapSystem.SetTile(sourceMap.Grid, new Vector2i(1, 0), sourceMap.Tile.Tile);
+            var viewer = SEntMan.SpawnEntity(null, map.GridCoords);
+            SEntMan.AddComponent<CultYoggComponent>(viewer);
+            var wall = SEntMan.SpawnEntity("WallCultYogg", sourceMap.GridCoords);
+            var door = SEntMan.SpawnEntity("CultYoggDoor", new EntityCoordinates(sourceMap.Grid, 0, 1));
+            var airlock = SEntMan.SpawnEntity("CultYoggAirlock", new EntityCoordinates(sourceMap.Grid, 1, 0));
+            transform.SetLocalRotation(wall, Angle.FromDegrees(180));
+            transform.SetLocalRotation(door, Angle.FromDegrees(90));
+            transform.SetLocalRotation(airlock, Angle.FromDegrees(90));
+            foreach (var entity in new[] { wall, door, airlock })
+            {
+                Assert.That(SEntMan.GetComponent<TransformComponent>(entity).GridUid,
+                    Is.EqualTo(sourceMap.Grid.Owner));
+            }
+            Assert.That(SEntMan.GetComponent<TransformComponent>(airlock).LocalRotation,
+                Is.EqualTo(Angle.FromDegrees(90)));
+            ui.OpenUi(viewer, CultMiniMapUIKey.Key, viewer);
+            var state = GetState(viewer);
+
+            foreach (var entity in new[] { wall, door })
+            {
+                var marker = state.TrackedEntities.Single(entry => entry.Entity == SEntMan.GetNetEntity(entity));
+                Assert.That(marker.Rotation, Is.EqualTo((float) Angle.FromDegrees(60).Theta).Within(0.001f),
+                    "Wall contour directions must follow the source grid, regardless of the wall's local rotation.");
+            }
+
+            var airlockMarker = state.TrackedEntities.Single(entry => entry.Entity == SEntMan.GetNetEntity(airlock));
+            Assert.That(airlockMarker.Rotation, Is.EqualTo((float) Angle.FromDegrees(150).Theta).Within(0.001f),
+                "Airlocks must retain their entity orientation.");
+            ui.CloseUi(viewer, CultMiniMapUIKey.Key);
+            SEntMan.DeleteEntity(map.MapUid);
+        });
+    }
+
+    [Test]
     public async Task PingsAreValidatedSharedByChannelAndExpire()
     {
         var map = await Pair.CreateTestMap();
@@ -110,12 +269,12 @@ public sealed class CultMiniMapTest : GameTest
                 SEntMan.AddComponent<CultYoggComponent>(owner);
 
             var firstMap = SEntMan.GetComponent<CultMiniMapComponent>(first);
-            firstMap.PingCooldown = 0.1f;
-            firstMap.PingDuration = 0.5f;
+            firstMap.PingCooldown = TimeSpan.FromSeconds(0.1);
+            firstMap.PingDuration = TimeSpan.FromSeconds(0.5);
             firstMap.MaxActivePings = 1;
             var secondMap = SEntMan.GetComponent<CultMiniMapComponent>(second);
-            secondMap.PingCooldown = 0.1f;
-            secondMap.PingDuration = 0.5f;
+            secondMap.PingCooldown = TimeSpan.FromSeconds(0.1);
+            secondMap.PingDuration = TimeSpan.FromSeconds(0.5);
             secondMap.MaxActivePings = 3;
             SEntMan.GetComponent<CultMiniMapComponent>(otherChannel).PingChannel = "another-cult";
 
@@ -123,6 +282,8 @@ public sealed class CultMiniMapTest : GameTest
                 ui.OpenUi(owner, CultMiniMapUIKey.Key, owner);
 
             var coordinates = new EntityCoordinates(map.Grid, Vector2.Zero);
+            Assert.That(tracking.TryCreatePing((outsider, null), outsider, coordinates), Is.False,
+                "A caller without the map component must be rejected.");
             Assert.That(tracking.TryCreatePing((first, firstMap), outsider, coordinates), Is.False,
                 "Another actor must not publish through somebody else's map.");
             Assert.That(tracking.TryCreatePing((first, firstMap), first,
@@ -192,6 +353,9 @@ public sealed class CultMiniMapTest : GameTest
         await Server.WaitAssertion(() =>
         {
             var viewer = SEntMan.SpawnEntity("CultMiniMapConfiguredViewer", map.GridCoords);
+            var configuration = SEntMan.GetComponent<CultMiniMapComponent>(viewer);
+            Assert.That(configuration.PingDuration, Is.EqualTo(TimeSpan.FromSeconds(8)));
+            Assert.That(configuration.PingCooldown, Is.EqualTo(TimeSpan.FromSeconds(3)));
             var cultist = SEntMan.SpawnEntity(null, map.GridCoords);
             SEntMan.AddComponent<CultYoggComponent>(cultist);
             var mob = SEntMan.SpawnEntity("CultMiniMapHealthDummy", map.GridCoords);
@@ -546,7 +710,7 @@ public sealed class CultMiniMapTest : GameTest
             Assert.That(state.TrackedEntities, Has.Count.EqualTo(4));
             Assert.That(state.TrackedEntities.All(member => member.Coordinates == null), Is.True);
             ui.CloseUi(viewer, CultMiniMapUIKey.Key);
-            Assert.That(ui.TryGetUiState<CultMiniMapState>(viewer, CultMiniMapUIKey.Key, out _), Is.False);
+            Assert.That(SEntMan.GetComponent<CultMiniMapComponent>(viewer).State, Is.Null);
             // Pair only tracks the last map for automatic cleanup.
             SEntMan.DeleteEntity(map.MapUid);
         });
@@ -596,7 +760,7 @@ public sealed class CultMiniMapTest : GameTest
             Assert.That(SEntMan.HasComponent<CultMiniMapComponent>(owner), Is.False);
             Assert.That(SEntMan.GetComponent<ActionsComponent>(owner).Actions, Does.Not.Contain(action.Value));
             Assert.That(ui.IsUiOpen(owner, CultMiniMapUIKey.Key), Is.False);
-            Assert.That(ui.TryGetUiState<CultMiniMapState>(owner, CultMiniMapUIKey.Key, out _), Is.False);
+            Assert.That(SEntMan.GetComponent<UserInterfaceComponent>(owner).States, Does.Not.ContainKey(CultMiniMapUIKey.Key));
             ui.OpenUi(owner, CultMiniMapUIKey.Key, owner);
             Assert.That(ui.IsUiOpen(owner, CultMiniMapUIKey.Key), Is.False);
         });
@@ -604,8 +768,8 @@ public sealed class CultMiniMapTest : GameTest
 
     private CultMiniMapState GetState(EntityUid owner)
     {
-        Assert.That(SEntMan.System<SharedUserInterfaceSystem>()
-            .TryGetUiState<CultMiniMapState>(owner, CultMiniMapUIKey.Key, out var state), Is.True);
+        var state = SEntMan.GetComponent<CultMiniMapComponent>(owner).State;
+        Assert.That(state, Is.Not.Null);
         return state;
     }
 }

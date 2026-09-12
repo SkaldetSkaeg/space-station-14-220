@@ -43,6 +43,9 @@ public sealed partial class CultMiniMapWindow : FancyWindow
         };
     }
 
+    /// <summary>
+    /// Applies the owner's snapshot to the map, member list, health indicators and pings.
+    /// </summary>
     public void UpdateState(CultMiniMapState state, NetEntity owner)
     {
         _trackedEntities = state.TrackedEntities;
@@ -94,7 +97,7 @@ public sealed partial class CultMiniMapWindow : FancyWindow
     private void SelectMember(NetEntity? entity)
     {
         _selected = entity;
-        if (entity is { } selected && NavMap.TrackedEntities.TryGetValue(selected, out var blip))
+        if (entity != null && NavMap.TrackedEntities.TryGetValue(entity.Value, out var blip))
             NavMap.CenterToCoordinates(blip.Coordinates);
 
         UpdateSelection();
