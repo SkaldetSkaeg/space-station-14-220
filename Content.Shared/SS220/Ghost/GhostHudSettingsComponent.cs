@@ -9,7 +9,7 @@ namespace Content.Shared.SS220.Ghost;
 public sealed partial class GhostHudSettingsComponent : Component
 {
     [DataField(required: true)]
-    public List<GhostHudSetting> Huds = new();
+    public List<GhostHudSetting> Huds = [];
 }
 
 [DataDefinition]

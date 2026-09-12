@@ -5,7 +5,7 @@ namespace Content.Shared.SS220.Ghost;
 /// <summary>
 /// Components and their configuration controlled by one ghost HUD checkbox.
 /// </summary>
-[Prototype("ghostHud")]
+[Prototype]
 public sealed partial class GhostHudPrototype : IPrototype
 {
     [IdDataField]

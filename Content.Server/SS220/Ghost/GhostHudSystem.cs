@@ -3,10 +3,10 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Server.SS220.Ghost;
 
-public sealed class GhostHudSystem : EntitySystem
+public sealed partial class GhostHudSystem : EntitySystem
 {
-    [Dependency] private readonly SharedUserInterfaceSystem _ui = default!;
-    [Dependency] private readonly IPrototypeManager _prototype = default!;
+    [Dependency] private SharedUserInterfaceSystem _ui = default!;
+    [Dependency] private IPrototypeManager _prototype = default!;
 
     public override void Initialize()
     {
