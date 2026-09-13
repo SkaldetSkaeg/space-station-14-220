@@ -27,46 +27,47 @@ public sealed partial class KudzuSystem : EntitySystem
     {
         SubscribeLocalEvent<KudzuComponent, ComponentStartup>(SetupKudzu);
         SubscribeLocalEvent<KudzuComponent, SpreadNeighborsEvent>(OnKudzuSpread);
-        SubscribeLocalEvent<KudzuComponent, DamageChangedEvent>(OnDamageChanged);
+        SubscribeLocalEvent<KudzuComponent, DamageDealtEvent>(OnDamageDealt, after: new[] { typeof(DamageableSystem) });
     }
 
-    private void OnDamageChanged(EntityUid uid, KudzuComponent component, DamageChangedEvent args)
+    private void OnDamageDealt(Entity<KudzuComponent> ent, ref DamageDealtEvent args)
     {
-        // Every time we take any damage, we reduce growth depending on all damage over the growth impact
-        //   So the kudzu gets slower growing the more it is hurt.
-        var growthDamage = (int) (_damageable.GetTotalDamage((uid, args.Damageable)) / component.GrowthHealth);
-        if (growthDamage > 0)
-        {
-            if (!EnsureComp<GrowingKudzuComponent>(uid, out _))
-                component.GrowthLevel = 3;
+        if (!_damageableQuery.TryComp(ent, out var damageable))
+            return;
 
-            component.GrowthLevel = Math.Max(1, component.GrowthLevel - growthDamage);
-            if (TryComp<AppearanceComponent>(uid, out var appearance))
-            {
-                _appearance.SetData(uid, KudzuVisuals.GrowthLevel, component.GrowthLevel, appearance);
-            }
-        }
+        // Run after the damage model has applied damage or healing, so growth uses the remaining damage.
+        var totalDamage = _damageable.GetPositiveDamage((ent.Owner, damageable)).GetTotal();
+        var growthDamage = (int) (totalDamage / ent.Comp.GrowthHealth);
+        if (growthDamage <= 0)
+            return;
+
+        if (!EnsureComp<GrowingKudzuComponent>(ent.Owner, out _))
+            ent.Comp.GrowthLevel = ent.Comp.MaxGrowthLevel;
+
+        ent.Comp.GrowthLevel = Math.Max(1, ent.Comp.GrowthLevel - growthDamage);
+        if (TryComp<AppearanceComponent>(ent.Owner, out var appearance))
+            _appearance.SetData(ent.Owner, KudzuVisuals.GrowthLevel, ent.Comp.GrowthLevel, appearance);
     }
 
-    private void OnKudzuSpread(EntityUid uid, KudzuComponent component, ref SpreadNeighborsEvent args)
+    private void OnKudzuSpread(Entity<KudzuComponent> ent, ref SpreadNeighborsEvent args)
     {
-        if (component.GrowthLevel < 3)
+        if (ent.Comp.GrowthLevel < ent.Comp.MaxGrowthLevel)
             return;
 
         if (args.NeighborFreeTiles.Count == 0)
         {
-            RemCompDeferred<ActiveEdgeSpreaderComponent>(uid);
+            RemCompDeferred<ActiveEdgeSpreaderComponent>(ent);
             return;
         }
 
-        if (!_robustRandom.Prob(component.SpreadChance))
+        if (!_robustRandom.Prob(ent.Comp.SpreadChance))
             return;
 
-        var prototype = MetaData(uid).EntityPrototype?.ID;
+        var prototype = MetaData(ent).EntityPrototype?.ID;
 
         if (prototype == null)
         {
-            RemCompDeferred<ActiveEdgeSpreaderComponent>(uid);
+            RemCompDeferred<ActiveEdgeSpreaderComponent>(ent);
             return;
         }
 
@@ -82,15 +83,17 @@ public sealed partial class KudzuSystem : EntitySystem
         }
     }
 
-    private void SetupKudzu(EntityUid uid, KudzuComponent component, ComponentStartup args)
+    private void SetupKudzu(Entity<KudzuComponent> ent, ref ComponentStartup args)
     {
-        if (!TryComp<AppearanceComponent>(uid, out var appearance))
-        {
-            return;
-        }
+        DebugTools.Assert(ent.Comp.MaxGrowthLevel >= 1);
+        ent.Comp.MaxGrowthLevel = Math.Max(1, ent.Comp.MaxGrowthLevel);
+        ent.Comp.GrowthLevel = Math.Clamp(ent.Comp.GrowthLevel, 1, ent.Comp.MaxGrowthLevel);
 
-        _appearance.SetData(uid, KudzuVisuals.Variant, _robustRandom.Next(1, component.SpriteVariants), appearance);
-        _appearance.SetData(uid, KudzuVisuals.GrowthLevel, 1, appearance);
+        if (!_appearanceQuery.TryComp(ent, out var appearance))
+            return;
+
+        _appearance.SetData(ent, KudzuVisuals.Variant, _robustRandom.Next(1, ent.Comp.SpriteVariants), appearance);
+        _appearance.SetData(ent, KudzuVisuals.GrowthLevel, ent.Comp.GrowthLevel, appearance);
     }
 
     /// <inheritdoc/>
@@ -106,20 +109,18 @@ public sealed partial class KudzuSystem : EntitySystem
 
             grow.NextTick = curTime + TimeSpan.FromSeconds(0.5);
 
-            if (!_kudzuQuery.TryGetComponent(uid, out var kudzu))
+            if (!_kudzuQuery.TryComp(uid, out var kudzu))
             {
                 RemCompDeferred(uid, grow);
                 continue;
             }
 
             if (!_robustRandom.Prob(kudzu.GrowthTickChance))
-            {
                 continue;
-            }
 
-            if (_damageableQuery.TryGetComponent(uid, out var damage))
+            if (_damageableQuery.TryComp(uid, out var damage))
             {
-                var totalDamage = _damageable.GetTotalDamage((uid, damage));
+                var totalDamage = _damageable.GetPositiveDamage((uid, damage)).GetTotal();
                 if (totalDamage > 1.0)
                 {
                     if (kudzu.DamageRecovery != null)
@@ -127,26 +128,21 @@ public sealed partial class KudzuSystem : EntitySystem
                         // This kudzu features healing, so Gradually heal
                         _damageable.TryChangeDamage(uid, kudzu.DamageRecovery, true);
                     }
-                    if (totalDamage >= kudzu.GrowthBlock)
-                    {
-                        // Don't grow when quite damaged
-                        if (_robustRandom.Prob(0.95f))
-                        {
-                            continue;
-                        }
-                    }
+                    // Don't grow when quite damaged.
+                    if (totalDamage >= kudzu.GrowthBlock && _robustRandom.Prob(0.95f))
+                        continue;
                 }
             }
 
-            kudzu.GrowthLevel += 1;
+            kudzu.GrowthLevel = Math.Min(kudzu.GrowthLevel + 1, kudzu.MaxGrowthLevel);
 
-            if (kudzu.GrowthLevel >= 3)
+            if (kudzu.GrowthLevel >= kudzu.MaxGrowthLevel)
             {
                 // why cache when you can simply cease to be? Also saves a bit of memory/time.
                 RemCompDeferred(uid, grow);
             }
 
-            if (_appearanceQuery.TryGetComponent(uid, out var appearance))
+            if (_appearanceQuery.TryComp(uid, out var appearance))
             {
                 _appearance.SetData(uid, KudzuVisuals.GrowthLevel, kudzu.GrowthLevel, appearance);
             }
