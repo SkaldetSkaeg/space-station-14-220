@@ -1,7 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-// SS220-Cult_cleaning start
 using System.Globalization;
-// SS220-Cult_cleaning end
 using Content.Client.UserInterface.Controls;
 using JetBrains.Annotations;
 using Robust.Client.UserInterface;
