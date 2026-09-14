@@ -7,14 +7,33 @@ public sealed partial class KudzuVisualsSystem : VisualizerSystem<KudzuVisualsCo
 {
     protected override void OnAppearanceChange(EntityUid uid, KudzuVisualsComponent component, ref AppearanceChangeEvent args)
     {
-
         if (args.Sprite == null)
             return;
-        if (AppearanceSystem.TryGetData<int>(uid, KudzuVisuals.Variant, out var var, args.Component)
-            && AppearanceSystem.TryGetData<int>(uid, KudzuVisuals.GrowthLevel, out var level, args.Component))
+
+        if (!AppearanceSystem.TryGetData<int>(uid, KudzuVisuals.Variant, out var variant, args.Component))
+            return;
+
+        if (!AppearanceSystem.TryGetData<int>(uid, KudzuVisuals.GrowthLevel, out var level, args.Component))
+            return;
+
+        if (variant < 0 || variant >= component.Variants.Count)
+            return;
+
+        KudzuVisualStage? selected = null;
+        foreach (var stage in component.Variants[variant].Stages)
         {
-            var index = SpriteSystem.LayerMapReserve((uid, args.Sprite), $"{component.Layer}");
-            SpriteSystem.LayerSetRsiState((uid, args.Sprite), index, $"kudzu_{level}{var}");
+            if (stage.MinGrowth > level)
+                continue;
+
+            if (selected != null && stage.MinGrowth <= selected.MinGrowth)
+                continue;
+
+            selected = stage;
         }
+
+        if (selected == null)
+            return;
+
+        SpriteSystem.LayerSetRsiState((uid, args.Sprite), KudzuVisualLayers.Base, selected.State);
     }
 }

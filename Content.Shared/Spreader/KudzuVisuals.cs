@@ -8,3 +8,12 @@ public enum KudzuVisuals : byte
     GrowthLevel,
     Variant
 }
+
+/// <summary>
+/// Sprite layers controlled by the kudzu visualizer.
+/// </summary>
+[Serializable, NetSerializable]
+public enum KudzuVisualLayers : byte
+{
+    Base,
+}

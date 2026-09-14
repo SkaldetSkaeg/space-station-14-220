@@ -17,7 +17,7 @@ public sealed partial class KudzuComponent : Component
 
     /// <summary>
     /// Final growth stage and the minimum stage required to spread. Must be at least 1.
-    /// Entities using KudzuVisuals need a kudzu_{stage}{variant} sprite state for each stage and variant.
+    /// Visual thresholds are configured separately in KudzuVisuals; multiple growth stages can share a state.
     /// </summary>
     [DataField]
     public int MaxGrowthLevel = 3;
@@ -60,14 +60,4 @@ public sealed partial class KudzuComponent : Component
     [DataField]
     public float GrowthTickChance = 1f;
 
-    /// <summary>
-    /// Number of visual variants provided for each growth stage. A variant is chosen at startup
-    /// and reused as the stage changes; this does not control the number of growth stages.
-    /// </summary>
-    /// <remarks>
-    /// The current selection uses this value as an exclusive upper bound, so the last variant
-    /// is not selected when this value is greater than 1.
-    /// </remarks>
-    [DataField]
-    public int SpriteVariants = 3;
 }

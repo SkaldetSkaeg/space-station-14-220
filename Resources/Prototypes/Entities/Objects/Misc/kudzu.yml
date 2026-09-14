@@ -44,9 +44,33 @@
           "/Audio/Weapons/slash.ogg"
   - type: Sprite
     sprite: Objects/Misc/kudzu.rsi
-    state: kudzu_11
     drawdepth: Overdoors
+    layers:
+    - state: sprout_var1
+      map: [enum.KudzuVisualLayers.Base]
   - type: KudzuVisuals
+    variants:
+    - stages:
+      - minGrowth: 1
+        state: sprout_var1
+      - minGrowth: 2
+        state: growing_var1
+      - minGrowth: 3
+        state: mature_var1
+    - stages:
+      - minGrowth: 1
+        state: sprout_var2
+      - minGrowth: 2
+        state: growing_var2
+      - minGrowth: 3
+        state: mature_var2
+    - stages:
+      - minGrowth: 1
+        state: sprout_var3
+      - minGrowth: 2
+        state: growing_var3
+      - minGrowth: 3
+        state: mature_var3
   - type: Clickable
   - type: Damageable
     damageModifierSet: Wood
@@ -133,9 +157,44 @@
   - type: Sprite
     drawdepth: HighFloorObjects
     sprite: Objects/Misc/kudzuflower.rsi
-    state: kudzu_11
+  - type: KudzuVisuals
+    variants:
+    - stages:
+      - minGrowth: 1
+        state: sprout_var1
+      - minGrowth: 2
+        state: growing_var1
+      - minGrowth: 3
+        state: mature_var1
+    - stages:
+      - minGrowth: 1
+        state: sprout_var2
+      - minGrowth: 2
+        state: growing_var2
+      - minGrowth: 3
+        state: mature_var2
+    - stages:
+      - minGrowth: 1
+        state: sprout_var3
+      - minGrowth: 2
+        state: growing_var3
+      - minGrowth: 3
+        state: mature_var3
+    - stages:
+      - minGrowth: 1
+        state: sprout_var4
+      - minGrowth: 2
+        state: growing_var4
+      - minGrowth: 3
+        state: mature_var4
+    - stages:
+      - minGrowth: 1
+        state: sprout_var2
+      - minGrowth: 2
+        state: growing_var5
+      - minGrowth: 3
+        state: mature_var5
   - type: Kudzu
-    spriteVariants: 5
     spreadChance: 0.01
   - type: SpeedModifierContacts
     walkSpeedModifier: 0.8
@@ -195,9 +254,19 @@
           "/Audio/Weapons/slash.ogg"
   - type: Sprite
     sprite: Objects/Misc/fleshkudzu.rsi
-    state: kudzu_11
     drawdepth: Overdoors
+    layers:
+    - state: sprout_var1
+      map: [enum.KudzuVisualLayers.Base]
   - type: KudzuVisuals
+    variants:
+    - stages:
+      - minGrowth: 1
+        state: sprout_var1
+      - minGrowth: 2
+        state: growing_var1
+      - minGrowth: 3
+        state: mature_var1
   - type: Clickable
   - type: Damageable
   - type: Injurable

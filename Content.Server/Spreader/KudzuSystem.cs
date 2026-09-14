@@ -92,8 +92,15 @@ public sealed partial class KudzuSystem : EntitySystem
         if (!_appearanceQuery.TryComp(ent, out var appearance))
             return;
 
-        _appearance.SetData(ent, KudzuVisuals.Variant, _robustRandom.Next(1, ent.Comp.SpriteVariants), appearance);
         _appearance.SetData(ent, KudzuVisuals.GrowthLevel, ent.Comp.GrowthLevel, appearance);
+
+        if (!TryComp<KudzuVisualsComponent>(ent, out var visuals))
+            return;
+
+        if (visuals.Variants.Count == 0)
+            return;
+
+        _appearance.SetData(ent, KudzuVisuals.Variant, _robustRandom.Next(visuals.Variants.Count), appearance);
     }
 
     /// <inheritdoc/>
