@@ -56,5 +56,5 @@ ent-CultYoggLightBulb = cursed light bulb
     .desc = A light bulb overgrown with mushrooms. Somehow, it levitates.
 ent-CultYoggLightTube = cursed light tube
     .desc = A light tube overgrown with mushrooms. Somehow, it levitates.
-ent-VenomancerThorne = cursed thorn
+ent-VenomancerThorn = cursed thorn
     .desc = Better pull it out before it is too late...

@@ -18,7 +18,9 @@ namespace Content.Client.SS220.Guidebook.Controls;
 [UsedImplicitly]
 public sealed class GuideSpriteEmbed : TextureRect, IDocumentTag
 {
-    [Dependency] private readonly IEntitySystemManager _systems = default!;
+    private const float DefaultScale = 2f;
+
+    [Dependency] private readonly IEntitySystemManager _systemManager = default!;
 
     public GuideSpriteEmbed()
     {
@@ -27,21 +29,37 @@ public sealed class GuideSpriteEmbed : TextureRect, IDocumentTag
         Margin = new Thickness(8);
     }
 
+    /// <inheritdoc />
     public bool TryParseTag(Dictionary<string, string> args, [NotNullWhen(true)] out Control? control)
     {
         control = null;
-        if (!args.TryGetValue("Sprite", out var sprite) || !args.TryGetValue("State", out var state))
+        if (!args.TryGetValue("Sprite", out var sprite))
             return false;
 
-        var scale = 2f;
-        if (args.TryGetValue("Scale", out var value) &&
-            (!float.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out scale) ||
-             !float.IsFinite(scale) || scale <= 0))
+        if (!args.TryGetValue("State", out var state))
             return false;
 
-        Texture = _systems.GetEntitySystem<SpriteSystem>().Frame0(new SpriteSpecifier.Rsi(new ResPath(sprite), state));
+        if (!TryGetScale(args, out var scale))
+            return false;
+
+        Texture = _systemManager.GetEntitySystem<SpriteSystem>().Frame0(new SpriteSpecifier.Rsi(new ResPath(sprite), state));
         TextureScale = new Vector2(scale);
         control = this;
         return true;
+    }
+
+    private static bool TryGetScale(Dictionary<string, string> args, out float scale)
+    {
+        scale = DefaultScale;
+        if (!args.TryGetValue("Scale", out var value))
+            return true;
+
+        if (!float.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out scale))
+            return false;
+
+        if (!float.IsFinite(scale))
+            return false;
+
+        return scale > 0;
     }
 }
