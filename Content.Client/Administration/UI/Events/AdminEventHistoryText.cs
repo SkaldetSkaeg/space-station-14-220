@@ -1,0 +1,71 @@
+using Content.Shared.Administration;
+using Content.Shared.GameTicking;
+
+namespace Content.Client.Administration.UI.Events;
+
+/// <summary>
+/// Localized history labels keep unknown origins and reasons distinct from inferred explanations.
+/// </summary>
+internal static class AdminEventHistoryText
+{
+    public static string Status(AdminEventHistoryStatus status) => Loc.GetString(status switch
+    {
+        AdminEventHistoryStatus.Pending => "admin-events-pending",
+        AdminEventHistoryStatus.Delayed => "admin-events-delayed",
+        AdminEventHistoryStatus.Active => "admin-events-active",
+        AdminEventHistoryStatus.Ended => "admin-events-history-status-ended",
+        AdminEventHistoryStatus.Stopped => "admin-events-history-status-stopped",
+        AdminEventHistoryStatus.Cancelled => "admin-events-history-status-cancelled",
+        _ => "admin-events-history-unknown",
+    });
+
+    public static Color StatusColor(AdminEventHistoryStatus status) => status switch
+    {
+        AdminEventHistoryStatus.Active => Color.LightGreen,
+        AdminEventHistoryStatus.Delayed => Color.Gold,
+        AdminEventHistoryStatus.Stopped or AdminEventHistoryStatus.Cancelled => Color.LightCoral,
+        _ => Color.LightGray,
+    };
+
+    public static string Time(TimeSpan? time)
+    {
+        if (time == null)
+            return Loc.GetString("admin-events-history-empty-value");
+
+        return $"{(int) time.Value.TotalHours:00}:{time.Value.Minutes:00}:{time.Value.Seconds:00}";
+    }
+
+    public static string Source(GameRuleSource source)
+    {
+        var name = source.Name ?? Loc.GetString("admin-events-history-unknown");
+        return source.Kind switch
+        {
+            GameRuleSourceKind.Administrator => Loc.GetString("admin-events-history-source-admin", ("name", name)),
+            GameRuleSourceKind.ServerConsole => Loc.GetString("admin-events-history-source-console"),
+            GameRuleSourceKind.Scheduler => Loc.GetString("admin-events-history-source-scheduler",
+                ("name", name), ("entity", source.Scheduler?.ToString() ?? "?"),
+                ("table", source.Table ?? Loc.GetString("admin-events-inline-table"))),
+            _ => Loc.GetString("admin-events-history-unknown"),
+        };
+    }
+
+    public static string EndReason(AdminEventHistoryEntry entry)
+    {
+        if (entry.EndedAt == null)
+            return Loc.GetString("admin-events-history-empty-value");
+
+        var reason = Loc.GetString(entry.EndReason switch
+        {
+            GameRuleEndReason.DurationElapsed => "admin-events-history-reason-duration",
+            GameRuleEndReason.Administrator => "admin-events-history-reason-admin",
+            GameRuleEndReason.ServerConsole => "admin-events-history-reason-console",
+            GameRuleEndReason.RulesCleared => "admin-events-history-reason-cleared",
+            GameRuleEndReason.EntityDeleted => "admin-events-history-reason-deleted",
+            _ => "admin-events-history-unknown",
+        });
+        if (entry.EndedBy == null)
+            return reason;
+
+        return Loc.GetString("admin-events-history-reason-by", ("reason", reason), ("name", entry.EndedBy));
+    }
+}

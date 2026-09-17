@@ -1,0 +1,23 @@
+<ui:FancyWindow xmlns="https://spacestation14.io"
+                xmlns:ui="clr-namespace:Content.Client.UserInterface.Controls"
+                Title="{Loc admin-events-add-title}"
+                MinSize="520 360" SetSize="650 520">
+    <BoxContainer Orientation="Vertical" Margin="8" SeparationOverride="8">
+        <RichTextLabel Text="{Loc admin-events-add-hint}"/>
+        <LineEdit Name="Search" PlaceHolder="{Loc admin-events-add-search}"/>
+        <BoxContainer Name="EventFilterBox" Orientation="Vertical" HorizontalExpand="True" Visible="False">
+            <Label Text="{Loc admin-events-add-subcategory}"/>
+            <OptionButton Name="EventCategoryFilter"/>
+        </BoxContainer>
+        <PanelContainer StyleClasses="PanelDeep" VerticalExpand="True">
+            <ScrollContainer HScrollEnabled="False" Margin="6">
+                <BoxContainer Name="RuleList" Orientation="Vertical" SeparationOverride="4"/>
+            </ScrollContainer>
+        </PanelContainer>
+        <RichTextLabel Name="Status"/>
+        <BoxContainer Orientation="Horizontal" SeparationOverride="8">
+            <Button Name="CancelButton" Text="{Loc admin-events-add-cancel}" HorizontalExpand="True"/>
+            <Button Name="ConfirmButton" Text="{Loc admin-events-add}" HorizontalExpand="True" Disabled="True"/>
+        </BoxContainer>
+    </BoxContainer>
+</ui:FancyWindow>

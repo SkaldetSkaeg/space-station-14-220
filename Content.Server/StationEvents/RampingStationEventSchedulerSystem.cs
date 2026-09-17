@@ -58,7 +58,7 @@ public sealed partial class RampingStationEventSchedulerSystem : GameRuleSystem<
             }
 
             PickNextEventTime(uid, scheduler);
-            _event.RunRandomEvent(scheduler.ScheduledGameRules);
+            _event.RunRandomEvent(scheduler.ScheduledGameRules, uid);
         }
     }
 

@@ -39,7 +39,11 @@ public sealed partial class NestedSelector : EntityTableSelectorWithNestedBase
     /// <inheritdoc/>>
     protected override IEnumerable<(EntProtoId spawn, double)> ListSpawnsImplementation(IEntityManager entMan, IPrototypeManager proto, EntityTableContext ctx)
     {
-        return proto.Index(TableId).Table.ListSpawns(entMan, proto, ctx);
+        using var scoped = ctx.RespectConditions ? ScopedConditions(ctx) : null;
+        foreach (var spawn in proto.Index(TableId).Table.ListSpawns(entMan, proto, ctx))
+        {
+            yield return spawn;
+        }
     }
 
     /// <inheritdoc/>>

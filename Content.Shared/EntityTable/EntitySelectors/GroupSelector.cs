@@ -40,9 +40,13 @@ public sealed partial class GroupSelector : EntityTableSelectorWithChildrenBase
 
     protected override IEnumerable<(EntProtoId spawn, double)> ListSpawnsImplementation(IEntityManager entMan, IPrototypeManager proto, EntityTableContext ctx)
     {
-        var totalWeight = Children.Sum(x => x.Weight);
+        using var scoped = ctx.RespectConditions ? ScopedConditions(ctx) : null;
+        var children = ctx.RespectConditions
+            ? Children.Where(child => child.CheckConditions(entMan, proto, ctx)).ToList()
+            : Children;
+        var totalWeight = children.Sum(x => x.Weight);
 
-        foreach (var child in Children)
+        foreach (var child in children)
         {
             var weightMod = child.Weight / totalWeight;
             foreach (var (ent, prob) in child.ListSpawns(entMan, proto, ctx, weightMod))

@@ -106,13 +106,20 @@ public abstract partial class EntityTableSelector
     }
 
     /// <summary>
-    /// Gets a list of every spawn in the table, and the odds of that spawn occuring, ignoring conditions.
+    /// Gets a list of every spawn in the table and its odds, ignoring conditions unless
+    /// <see cref="EntityTableContext.RespectConditions"/> is enabled. Does not sample the table.
     /// </summary>
     public IEnumerable<(EntProtoId spawn, double prob)> ListSpawns(IEntityManager entMan,
         IPrototypeManager proto,
         EntityTableContext ctx,
         float mod = 1f)
     {
+        if (ctx.RespectConditions && !CheckConditions(entMan, proto, ctx))
+            yield break;
+
+        if (ctx.RespectConditions && (Prob <= 0 || Rolls.Average() <= 0))
+            yield break;
+
         foreach (var (spawn, prob) in ListSpawnsImplementation(entMan, proto, ctx))
         {
             yield return (spawn, prob * Prob * Rolls.Odds() * mod);

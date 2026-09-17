@@ -6,6 +6,7 @@ using Content.Server.Station.Systems;
 using Content.Server.StationEvents.Components;
 using Content.Shared.Database;
 using Content.Shared.GameTicking.Components;
+using Content.Shared.GameTicking;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Player;
 
@@ -109,7 +110,7 @@ public abstract partial class StationEventSystem<T> : GameRuleSystem<T> where T 
             }
             else if (stationEvent.EndTime != null && Timing.CurTime >= stationEvent.EndTime && GameTicker.IsGameRuleActive(uid, ruleData))
             {
-                GameTicker.EndGameRule(uid, ruleData);
+                GameTicker.EndGameRule(uid, ruleData, GameRuleEndReason.DurationElapsed);
             }
         }
     }

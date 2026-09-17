@@ -3,6 +3,7 @@ using Content.Server.GameTicking;
 using Content.Server.RoundEnd;
 using Content.Server.StationEvents.Components;
 using Content.Shared.CCVar;
+using Content.Shared.GameTicking;
 using Robust.Server.Player;
 using Robust.Shared.Configuration;
 using Robust.Shared.Prototypes;
@@ -44,7 +45,7 @@ public sealed partial class EventManagerSystem : EntitySystem
     /// <summary>
     /// Randomly runs an event from provided EntityTableSelector.
     /// </summary>
-    public void RunRandomEvent(EntityTableSelector limitedEventsTable)
+    public void RunRandomEvent(EntityTableSelector limitedEventsTable, EntityUid? scheduler = null)
     {
         if (!TryBuildLimitedEvents(limitedEventsTable, out var limitedEvents))
         {
@@ -67,7 +68,14 @@ public sealed partial class EventManagerSystem : EntitySystem
             return;
         }
 
-        GameTicker.AddGameRule(randomLimitedEvent);
+        GameRuleSource? source = null;
+        if (scheduler != null && TryComp<MetaDataComponent>(scheduler, out var metadata))
+        {
+            var table = limitedEventsTable is NestedSelector nested ? nested.TableId.Id : null;
+            source = new GameRuleSource(GameRuleSourceKind.Scheduler,
+                metadata.EntityPrototype?.ID ?? metadata.EntityName, GetNetEntity(scheduler.Value), table);
+        }
+        GameTicker.AddGameRule(randomLimitedEvent, source);
     }
 
     /// <summary>

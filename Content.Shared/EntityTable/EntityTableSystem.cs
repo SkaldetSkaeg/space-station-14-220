@@ -108,6 +108,12 @@ public sealed class EntityTableContext
 {
     private readonly Dictionary<string, object> _data = new();
 
+    /// <summary>
+    /// When listing possible spawns, evaluate current conditions without sampling the table.
+    /// False preserves the default listing of all theoretical spawns.
+    /// </summary>
+    public bool RespectConditions { get; init; }
+
     public EntityTableContext()
     {
 

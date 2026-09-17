@@ -2,10 +2,12 @@ using System.Linq;
 using System.Text;
 using Content.Server.Administration;
 using Content.Server.GameTicking.Rules.Components;
+using Content.Server.StationEvents;
 using Content.Shared.Administration;
 using Content.Shared.CCVar;
 using Content.Shared.Database;
 using Content.Shared.GameTicking.Components;
+using Content.Shared.GameTicking;
 using Content.Shared.Prototypes;
 using Content.Shared.Whitelist;
 using JetBrains.Annotations;
@@ -32,6 +34,7 @@ public sealed partial class GameTicker
     [ViewVariables] private string[] _ignoredRules = [];
 
     [Dependency] private EntityWhitelistSystem _whitelist = null!;
+    [Dependency] private StationEventHistorySystem _eventHistory = default!;
 
     /// <summary>
     ///     A list storing the start times of all game rules that have been started this round.
@@ -85,7 +88,12 @@ public sealed partial class GameTicker
     /// start it yet, instead waiting until the rule is actually started by other code (usually roundstart)
     /// </summary>
     /// <returns>The entity for the added gamerule</returns>
-    public EntityUid AddGameRule([ForbidLiteral] string ruleId)
+    public EntityUid AddGameRule([ForbidLiteral] string ruleId) => AddGameRule(ruleId, null);
+
+    /// <summary>
+    /// Adds a rule with an explicitly identified origin for its history.
+    /// </summary>
+    public EntityUid AddGameRule([ForbidLiteral] string ruleId, GameRuleSource? source)
     {
         var ruleEntity = Spawn(ruleId, MapCoordinates.Nullspace);
         _sawmill.Info($"Added game rule {ToPrettyString(ruleEntity)}");
@@ -101,7 +109,8 @@ public sealed partial class GameTicker
 #endif
         Log.Info(str);
 
-        var ev = new GameRuleAddedEvent(ruleEntity, ruleId);
+        var ev = new GameRuleAddedEvent(ruleEntity, ruleId, source);
+        _eventHistory.RecordAdded(ruleEntity, ev);
         RaiseLocalEvent(ruleEntity, ref ev, true);
 
         var currentTime = RunLevel == GameRunLevel.PreRoundLobby ? TimeSpan.Zero : RoundDuration();
@@ -209,6 +218,7 @@ public sealed partial class GameTicker
         ruleData.ActivatedAt = _gameTiming.CurTime;
 
         var ev = new GameRuleStartedEvent(ruleEntity, id);
+        _eventHistory.RecordStarted(ruleEntity, ev);
         RaiseLocalEvent(ruleEntity, ref ev, true);
         return true;
     }
@@ -217,7 +227,8 @@ public sealed partial class GameTicker
     /// Ends a game rule.
     /// </summary>
     [PublicAPI]
-    public bool EndGameRule(EntityUid ruleEntity, GameRuleComponent? ruleData = null)
+    public bool EndGameRule(EntityUid ruleEntity, GameRuleComponent? ruleData = null,
+        GameRuleEndReason reason = GameRuleEndReason.Unknown, string? endedBy = null)
     {
         if (!Resolve(ruleEntity, ref ruleData))
             return false;
@@ -235,7 +246,8 @@ public sealed partial class GameTicker
         _sawmill.Info($"Ended game rule {ToPrettyString(ruleEntity)}");
         _adminLogger.Add(LogType.EventStopped, $"Ended game rule {ToPrettyString(ruleEntity)}");
 
-        var ev = new GameRuleEndedEvent(ruleEntity, id);
+        var ev = new GameRuleEndedEvent(ruleEntity, id, reason, endedBy);
+        _eventHistory.RecordEnded(ruleEntity, ev);
         RaiseLocalEvent(ruleEntity, ref ev, true);
         return true;
     }
@@ -338,11 +350,16 @@ public sealed partial class GameTicker
         return false;
     }
 
-    public void ClearGameRules()
+    public void ClearGameRules() => ClearGameRules(null);
+
+    /// <summary>
+    /// Ends all added rules, preserving the name of the administrator who requested the cleanup.
+    /// </summary>
+    public void ClearGameRules(string? endedBy)
     {
         foreach (var rule in GetAddedGameRules())
         {
-            EndGameRule(rule);
+            EndGameRule(rule, reason: GameRuleEndReason.RulesCleared, endedBy: endedBy);
         }
     }
 
@@ -481,7 +498,10 @@ public sealed partial class GameTicker
             {
                 _adminLogger.Add(LogType.EventStarted, $"Unknown tried to add game rule [{rule}] via command");
             }
-            var ent = AddGameRule(rule);
+            var source = shell.Player == null
+                ? new GameRuleSource(GameRuleSourceKind.ServerConsole)
+                : new GameRuleSource(GameRuleSourceKind.Administrator, shell.Player.Name);
+            var ent = AddGameRule(rule, source);
 
             // Start rule if we're already in the middle of a round
             if(RunLevel == GameRunLevel.InRound)
@@ -514,7 +534,9 @@ public sealed partial class GameTicker
                 _adminLogger.Add(LogType.EventStopped, $"Unknown tried to end game rule [{rule}] via command");
             }
 
-            EndGameRule(ruleEnt.Value);
+            EndGameRule(ruleEnt.Value,
+                reason: shell.Player == null ? GameRuleEndReason.ServerConsole : GameRuleEndReason.Administrator,
+                endedBy: shell.Player?.Name);
         }
     }
 
@@ -527,7 +549,7 @@ public sealed partial class GameTicker
     [AdminCommand(AdminFlags.Fun)]
     private void ClearGameRulesCommand(IConsoleShell shell, string argstr, string[] args)
     {
-        ClearGameRules();
+        ClearGameRules(shell.Player?.Name);
     }
 
     [AdminCommand(AdminFlags.Admin)]

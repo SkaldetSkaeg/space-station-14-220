@@ -3,6 +3,7 @@ using Content.IntegrationTests.Fixtures.Attributes;
 using Content.Shared.EntityTable;
 using Content.Shared.EntityTable.Conditions;
 using Content.Shared.EntityTable.EntitySelectors;
+using Content.Shared.EntityTable.ValueSelector;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
@@ -492,6 +493,35 @@ public sealed class EntityTableTest : GameTest
 
         result = Run(Table("EntityTableTestContainerCondition"), ctx: ctx);
         Assert.That(result, Is.Empty);
+    }
+
+    [Test]
+    [RunOnSide(Side.Server)]
+    public void ListSpawnsCanRespectConditionsWithoutSampling()
+    {
+        var table = new NestedSelector { TableId = "EntityTableTestDeepComposition" };
+        var ctx = new EntityTableContext { RespectConditions = true };
+        ctx.SetData(HasBudgetCondition.BudgetContextKey, 0f);
+        var result = _sEntityTable.ListSpawns(table, ctx).ToArray();
+        Assert.That(result.Select(entry => entry.spawn), Is.EquivalentTo(new EntProtoId[] { EntProto1, EntProto2 }));
+        Assert.That(result.Single(entry => entry.spawn == EntProto2).Item2, Is.EqualTo(1));
+        // The default listing still includes the failed group branch.
+        Assert.That(_sEntityTable.ListSpawns(table).Count(), Is.EqualTo(3));
+
+        var excluded = new HashSet<EntProtoId> { EntProto2 };
+        ctx.SetData(ExcludeEntitiesFromContextCondition.EntitiesToExclude, excluded);
+        var scoped = Table("EntityTableTestLocalizedChildConditions");
+        Assert.That(_sEntityTable.ListSpawns(scoped, ctx).Select(entry => entry.spawn),
+            Is.EquivalentTo(new EntProtoId[] { EntProto1, EntProto2 }));
+        Assert.That(ctx.TryGetData<object>(EntityTableSelector.AdditionalConditionsKey, out _), Is.False);
+        Assert.That(excluded, Is.EquivalentTo(new EntProtoId[] { EntProto2 }));
+
+        var zeroAmount = new EntSelector { Id = EntProto1, Amount = new ConstantNumberSelector(0) };
+        var zeroRolls = new EntSelector { Id = EntProto1, Rolls = new ConstantNumberSelector(0) };
+        var zeroProbability = new EntSelector { Id = EntProto1, Prob = 0 };
+        Assert.That(_sEntityTable.ListSpawns(zeroAmount, ctx), Is.Empty);
+        Assert.That(_sEntityTable.ListSpawns(zeroRolls, ctx), Is.Empty);
+        Assert.That(_sEntityTable.ListSpawns(zeroProbability, ctx), Is.Empty);
     }
 
     private static IRobustRandom SeededRand(int seed)

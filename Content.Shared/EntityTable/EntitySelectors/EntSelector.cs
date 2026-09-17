@@ -37,6 +37,9 @@ public sealed partial class EntSelector : EntityTableSelector
 
     protected override IEnumerable<(EntProtoId spawn, double)> ListSpawnsImplementation(IEntityManager entMan, IPrototypeManager proto, EntityTableContext ctx)
     {
+        if (ctx.RespectConditions && Amount.Average() <= 0)
+            yield break;
+
         yield return (Id, 1f);
     }
 

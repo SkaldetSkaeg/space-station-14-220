@@ -42,7 +42,7 @@ public sealed partial class GameRuleComponent : Component
 /// Good for announcing station events and other such things.
 /// </summary>
 [ByRefEvent]
-public readonly record struct GameRuleAddedEvent(EntityUid RuleEntity, string RuleId);
+public readonly record struct GameRuleAddedEvent(EntityUid RuleEntity, string RuleId, GameRuleSource? Source = null);
 
 /// <summary>
 /// Raised when the rule actually begins.
@@ -56,4 +56,5 @@ public readonly record struct GameRuleStartedEvent(EntityUid RuleEntity, string 
 /// Do cleanup and other such things here.
 /// </summary>
 [ByRefEvent]
-public readonly record struct GameRuleEndedEvent(EntityUid RuleEntity, string RuleId);
+public readonly record struct GameRuleEndedEvent(EntityUid RuleEntity, string RuleId,
+    GameRuleEndReason Reason = GameRuleEndReason.Unknown, string? EndedBy = null);

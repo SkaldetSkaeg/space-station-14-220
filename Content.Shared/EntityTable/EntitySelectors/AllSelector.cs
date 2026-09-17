@@ -26,6 +26,8 @@ public sealed partial class AllSelector : EntityTableSelectorWithChildrenBase
 
     protected override IEnumerable<(EntProtoId spawn, double)> ListSpawnsImplementation(IEntityManager entMan, IPrototypeManager proto, EntityTableContext ctx)
     {
+        using var scoped = ctx.RespectConditions ? ScopedConditions(ctx) : null;
+
         foreach (var child in Children)
         {
             foreach (var (spawn, prob) in child.ListSpawns(entMan, proto, ctx))

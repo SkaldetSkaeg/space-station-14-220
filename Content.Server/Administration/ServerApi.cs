@@ -18,6 +18,7 @@ using Content.Shared.Administration.Managers;
 using Content.Shared.CCVar;
 using Content.Shared.Database;
 using Content.Shared.GameTicking.Components;
+using Content.Shared.GameTicking;
 using Content.Shared.Prototypes;
 using Robust.Server.ServerStatus;
 using Robust.Shared.Asynchronous;
@@ -275,7 +276,7 @@ public sealed partial class ServerApi : IPostInjectInit
             }
 
             _sawmill.Info($"Ended game rule {body.GameRuleId} by {FormatLogActor(actor)}.");
-            ticker.EndGameRule(gameRule.Value);
+            ticker.EndGameRule(gameRule.Value, reason: GameRuleEndReason.Administrator, endedBy: actor.Name);
 
             await RespondOk(context);
         });
@@ -302,7 +303,7 @@ public sealed partial class ServerApi : IPostInjectInit
                 return;
             }
 
-            var ruleEntity = ticker.AddGameRule(body.GameRuleId);
+            var ruleEntity = ticker.AddGameRule(body.GameRuleId, new GameRuleSource(GameRuleSourceKind.Administrator, actor.Name));
             _sawmill.Info($"Added game rule {body.GameRuleId} by {FormatLogActor(actor)}.");
             if (ticker.RunLevel == GameRunLevel.InRound)
             {
