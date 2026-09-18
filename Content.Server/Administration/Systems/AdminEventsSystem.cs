@@ -20,7 +20,7 @@ namespace Content.Server.Administration.Systems;
 /// </summary>
 public sealed partial class AdminEventsSystem : EntitySystem
 {
-    [Dependency] private GameTicker _ticker = default!;
+    [Dependency] private ServerGameTicker _ticker = default!;
     [Dependency] private EventManagerSystem _events = default!;
     [Dependency] private EntityTableSystem _tables = default!;
     [Dependency] private IAdminManager _admins = default!;
@@ -48,11 +48,14 @@ public sealed partial class AdminEventsSystem : EntitySystem
             return null;
 
         var uid = _ticker.AddGameRule(id, new GameRuleSource(GameRuleSourceKind.Administrator, player.Name));
-        _adminLog.Add(LogType.EventStarted, $"{player} added game rule {ToPrettyString(uid)} via the events window");
-        if (_ticker.RunLevel == GameRunLevel.InRound)
-            _ticker.StartGameRule(uid);
+        if (uid == null)
+            return null;
 
-        return GetNetEntity(uid);
+        _adminLog.Add(LogType.EventStarted, $"{player} added game rule {ToPrettyString(uid.Value)} via the events window");
+        if (_ticker.RunLevel == GameRunLevel.InRound)
+            _ticker.StartGameRule(uid.Value.AsNullable());
+
+        return GetNetEntity(uid.Value);
     }
 
     /// <summary>
@@ -70,7 +73,7 @@ public sealed partial class AdminEventsSystem : EntitySystem
             return false;
 
         var ruleName = ToPrettyString(uid.Value);
-        if (!_ticker.EndGameRule(uid.Value, rule, GameRuleEndReason.Administrator, player.Name))
+        if (!_ticker.EndGameRule((uid.Value, rule), GameRuleEndReason.Administrator, player.Name))
             return false;
 
         // EndGameRule prevents a restart but leaves the delayed-start timer behind.
@@ -88,9 +91,10 @@ public sealed partial class AdminEventsSystem : EntitySystem
     public AdminEventsEuiState GetSnapshot()
     {
         var state = new AdminEventsEuiState { EventsEnabled = _events.EventsEnabled };
-        // Pending history entries have a suffix, so they do not match event prototype IDs.
-        var occurrences = _ticker.AllPreviousGameRules
-            .GroupBy(rule => rule.Item2, StringComparer.Ordinal)
+        // Count actual starts across all schedulers, including completed and deleted rules.
+        var occurrences = _history.GetHistory()
+            .Where(entry => entry.StartedAt != null)
+            .GroupBy(entry => entry.Prototype, StringComparer.Ordinal)
             .ToDictionary(group => group.Key, group => group.Count(), StringComparer.Ordinal);
 
         foreach (var uid in _ticker.GetAddedGameRules())
@@ -141,7 +145,7 @@ public sealed partial class AdminEventsSystem : EntitySystem
         if (!TryComp<GameRuleComponent>(uid, out var rule))
             return inactive;
 
-        if (!_ticker.IsGameRuleActive(uid.Value, rule))
+        if (!_ticker.IsGameRuleActive((uid.Value, rule)))
             return inactive;
 
         float? seconds = null;

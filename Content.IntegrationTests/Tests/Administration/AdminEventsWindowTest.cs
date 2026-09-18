@@ -6,6 +6,7 @@ using Content.IntegrationTests.Tests.Interaction;
 using Content.Server.Administration.Managers;
 using Content.Server.GameTicking;
 using Content.Shared.CCVar;
+using Content.Shared.GameTicking.Components;
 using Moq;
 using Robust.Client.Graphics;
 using Robust.Client.UserInterface;
@@ -38,12 +39,12 @@ public sealed class AdminEventsWindowTest : InteractionTest
         await Server.WaitPost(() =>
         {
             admins.PromoteHost(ServerSession);
-            SEntMan.System<GameTicker>().ClearGameRules();
-            var basic = SEntMan.System<GameTicker>().AddGameRule("AdminEventsTestScheduler");
-            SEntMan.System<GameTicker>().StartGameRule(basic);
+            SEntMan.System<ServerGameTicker>().ClearGameRules();
+            var basic = SEntMan.System<ServerGameTicker>().AddGameRule("AdminEventsTestScheduler")!.Value.Owner;
+            SEntMan.System<ServerGameTicker>().StartGameRule(basic);
             Server.ResolveDependency<IConfigurationManager>().SetCVar(CCVars.EventsEnabled, true);
-            dynamicRule = SEntMan.System<GameTicker>().AddGameRule("DynamicStationEventScheduler");
-            SEntMan.System<GameTicker>().AddGameRule("InactivityTimeRestart");
+            dynamicRule = SEntMan.System<ServerGameTicker>().AddGameRule("DynamicStationEventScheduler")!.Value.Owner;
+            SEntMan.System<ServerGameTicker>().AddGameRule("InactivityTimeRestart");
             Server.ResolveDependency<IConsoleHost>().ExecuteCommand(ServerSession, "eventsui");
         });
         await RunUntilSynced();
@@ -194,11 +195,11 @@ public sealed class AdminEventsWindowTest : InteractionTest
 
         await Server.WaitPost(() =>
         {
-            var ticker = SEntMan.System<GameTicker>();
-            var ready = ticker.AddGameRule("AdminEventsTestReady");
+            var ticker = SEntMan.System<ServerGameTicker>();
+            var ready = ticker.AddGameRule("AdminEventsTestReady")!.Value.Owner;
             ticker.StartGameRule(ready);
             ticker.EndGameRule(ready);
-            var repeatable = ticker.AddGameRule("AdminEventsTestRepeatable");
+            var repeatable = ticker.AddGameRule("AdminEventsTestRepeatable")!.Value.Owner;
             ticker.StartGameRule(repeatable);
             ticker.EndGameRule(repeatable);
         });
@@ -267,7 +268,7 @@ public sealed class AdminEventsWindowTest : InteractionTest
             Assert.That(picker.IsOpen, Is.False);
             Assert.That(RuleButton("RampingStationEventScheduler").Pressed, Is.True);
         });
-        await Server.WaitAssertion(() => Assert.That(SEntMan.System<GameTicker>().GetAddedGameRules()
+        await Server.WaitAssertion(() => Assert.That(SEntMan.System<ServerGameTicker>().GetAddedGameRules()
             .Count(uid => SEntMan.GetComponent<MetaDataComponent>(uid).EntityPrototype?.ID == "RampingStationEventScheduler"), Is.EqualTo(1)));
 
         await ClickControl(RuleButton("DynamicStationEventScheduler"));
@@ -293,7 +294,7 @@ public sealed class AdminEventsWindowTest : InteractionTest
         await ClickControl(RuleButton("DynamicStationEventScheduler"));
         await ClickControl(stop);
         await RunUntilSynced();
-        await Server.WaitAssertion(() => Assert.That(SEntMan.System<GameTicker>().IsGameRuleAdded(dynamicRule), Is.False));
+        await Server.WaitAssertion(() => Assert.That(SEntMan.HasComponent<GameRuleComponent>(dynamicRule), Is.False));
         await Client.WaitAssertion(() =>
         {
             Assert.That(RuleButton("AdminEventsTestScheduler").Pressed, Is.True);
@@ -370,13 +371,13 @@ public sealed class AdminEventsWindowTest : InteractionTest
         });
         await ClickControl(LatestHistory().Children.OfType<BoxContainer>().Single().Children.OfType<Button>().Single());
         await Client.WaitAssertion(() => Assert.That(LatestHistory().Children.OfType<TableContainer>().Single().Visible, Is.False));
-        await Server.WaitAssertion(() => Assert.That(SEntMan.System<GameTicker>().GetAddedGameRules()
+        await Server.WaitAssertion(() => Assert.That(SEntMan.System<ServerGameTicker>().GetAddedGameRules()
             .Any(uid => SEntMan.GetComponent<MetaDataComponent>(uid).EntityPrototype?.ID == "AdminEventsTestReady"), Is.False));
         await Client.WaitPost(() => tabs.CurrentTab = 0);
         await RunUntilSynced();
         await Client.WaitAssertion(() => Assert.That(RuleButton("AdminEventsTestScheduler").Pressed, Is.True));
 
-        await Server.WaitPost(() => SEntMan.System<GameTicker>().ClearGameRules());
+        await Server.WaitPost(() => SEntMan.System<ServerGameTicker>().ClearGameRules());
         await ClickControl(window.RefreshButton);
         await RunUntilSynced();
         await Client.WaitAssertion(() =>
@@ -386,7 +387,7 @@ public sealed class AdminEventsWindowTest : InteractionTest
             Assert.That(HasEntry("AdminEventsTestTable"), Is.False);
         });
 
-        await Server.WaitPost(() => SEntMan.System<GameTicker>().AddGameRule("BasicStationEventScheduler"));
+        await Server.WaitPost(() => SEntMan.System<ServerGameTicker>().AddGameRule("BasicStationEventScheduler"));
         await ClickControl(window.RefreshButton);
         await RunUntilSynced();
         await OpenInfo(EntryRows().First().Name);

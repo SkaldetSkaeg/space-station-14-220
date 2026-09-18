@@ -92,7 +92,7 @@ public sealed class AdminEventsTest : GameTest
         await Server.WaitAssertion(() =>
         {
             var admins = Server.ResolveDependency<IAdminManager>();
-            var ticker = SEntMan.System<GameTicker>();
+            var ticker = SEntMan.System<ServerGameTicker>();
             var events = SEntMan.System<AdminEventsSystem>();
             ticker.ClearGameRules();
             admins.PromoteHost(ServerSession);
@@ -158,15 +158,15 @@ public sealed class AdminEventsTest : GameTest
         await Server.WaitAssertion(() =>
         {
             var admins = Server.ResolveDependency<IAdminManager>();
-            var ticker = SEntMan.System<GameTicker>();
+            var ticker = SEntMan.System<ServerGameTicker>();
             var events = SEntMan.System<AdminEventsSystem>();
             ticker.ClearGameRules();
             admins.PromoteHost(ServerSession);
 
-            var active = ticker.AddGameRule("AdminEventsTestScheduler");
+            var active = ticker.AddGameRule("AdminEventsTestScheduler")!.Value.Owner;
             ticker.StartGameRule(active);
-            var pending = ticker.AddGameRule("AdminEventsTestScheduler");
-            var delayed = ticker.AddGameRule("AdminEventsTestScheduler");
+            var pending = ticker.AddGameRule("AdminEventsTestScheduler")!.Value.Owner;
+            var delayed = ticker.AddGameRule("AdminEventsTestScheduler")!.Value.Owner;
             SEntMan.AddComponent<DelayedStartRuleComponent>(delayed).RuleStartTime = TimeSpan.MaxValue;
             var entity = SEntMan.GetNetEntity(active);
 
@@ -191,10 +191,10 @@ public sealed class AdminEventsTest : GameTest
             Assert.That(events.TryStopRule(ServerSession, default), Is.False);
 
             Assert.That(events.TryStopRule(ServerSession, entity), Is.True);
-            Assert.That(ticker.IsGameRuleActive(active), Is.False);
+            Assert.That(SEntMan.HasComponent<ActiveGameRuleComponent>(active), Is.False);
             Assert.That(events.TryStopRule(ServerSession, entity), Is.False);
             Assert.That(ticker.GetAddedGameRules(), Is.EquivalentTo(new[] { pending, delayed }));
-            Assert.That(ticker.AllPreviousGameRules.Count(rule => rule.Item2 == "AdminEventsTestScheduler"), Is.EqualTo(1));
+            Assert.That(events.GetSnapshot().History.Count(rule => rule.Prototype == "AdminEventsTestScheduler" && rule.StartedAt != null), Is.EqualTo(1));
 
             Assert.That(events.TryStopRule(ServerSession, SEntMan.GetNetEntity(pending)), Is.True);
             Assert.That(ticker.StartGameRule(pending), Is.False);
@@ -214,10 +214,10 @@ public sealed class AdminEventsTest : GameTest
         {
             var config = Server.ResolveDependency<IConfigurationManager>();
             config.SetCVar(CCVars.EventsEnabled, true);
-            var ticker = SEntMan.System<GameTicker>();
+            var ticker = SEntMan.System<ServerGameTicker>();
             var events = SEntMan.System<AdminEventsSystem>();
             ticker.ClearGameRules();
-            var uid = ticker.AddGameRule(prototype);
+            var uid = ticker.AddGameRule(prototype)!.Value.Owner;
             var entity = SEntMan.GetNetEntity(uid);
             Assert.That(events.GetSchedulerTimer(entity).Seconds, Is.Null);
             ticker.StartGameRule(uid);
@@ -255,10 +255,10 @@ public sealed class AdminEventsTest : GameTest
         {
             var config = Server.ResolveDependency<IConfigurationManager>();
             config.SetCVar(CCVars.EventsEnabled, true);
-            var ticker = SEntMan.System<GameTicker>();
+            var ticker = SEntMan.System<ServerGameTicker>();
             var events = SEntMan.System<AdminEventsSystem>();
             ticker.ClearGameRules();
-            var scheduler = ticker.AddGameRule("AdminEventsTestScheduler");
+            var scheduler = ticker.AddGameRule("AdminEventsTestScheduler")!.Value.Owner;
 
             AdminEventAvailability Status(string id) => events.GetSnapshot().Tables.Single().Entries
                 .Single(entry => entry.Prototype == id).Availability;
@@ -288,7 +288,7 @@ public sealed class AdminEventsTest : GameTest
             Assert.That(Status("AdminEventsTestReady"), Is.EqualTo(AdminEventAvailability.EventsDisabled));
             config.SetCVar(CCVars.EventsEnabled, true);
 
-            var ready = ticker.AddGameRule("AdminEventsTestReady");
+            var ready = ticker.AddGameRule("AdminEventsTestReady")!.Value.Owner;
             Assert.That(Occurrences("AdminEventsTestReady"), Is.Zero, "Adding a pending rule does not trigger it.");
             var pendingHistory = events.GetSnapshot().History.Single(entry => entry.Entity == SEntMan.GetNetEntity(ready));
             Assert.That(pendingHistory.Status, Is.EqualTo(AdminEventHistoryStatus.Pending));
@@ -301,12 +301,12 @@ public sealed class AdminEventsTest : GameTest
             Assert.That(Status("AdminEventsTestReady"), Is.EqualTo(AdminEventAvailability.ConditionsNotMet));
             Assert.That(Occurrences("AdminEventsTestReady"), Is.EqualTo(1), "Finished events remain in the round history.");
 
-            var repeatable = ticker.AddGameRule("AdminEventsTestRepeatable");
+            var repeatable = ticker.AddGameRule("AdminEventsTestRepeatable")!.Value.Owner;
             ticker.StartGameRule(repeatable);
             ticker.EndGameRule(repeatable);
             Assert.That(Occurrences("AdminEventsTestRepeatable"), Is.EqualTo(1));
             Assert.That(Status("AdminEventsTestRepeatable"), Is.EqualTo(AdminEventAvailability.Available));
-            var repeated = ticker.AddGameRule("AdminEventsTestRepeatable");
+            var repeated = ticker.AddGameRule("AdminEventsTestRepeatable")!.Value.Owner;
             ticker.StartGameRule(repeated);
             ticker.EndGameRule(repeated);
             Assert.That(Occurrences("AdminEventsTestRepeatable"), Is.EqualTo(2));
@@ -318,9 +318,8 @@ public sealed class AdminEventsTest : GameTest
             {
                 "AdminEventsTestRepeatable", "AdminEventsTestRepeatable", "AdminEventsTestReady",
             }));
-            Assert.That(history.Select(entry => entry.StartedAt), Is.EqualTo(ticker.AllPreviousGameRules
-                .Where(rule => rule.Item2 == "AdminEventsTestReady" || rule.Item2 == "AdminEventsTestRepeatable")
-                .Reverse().Select(rule => rule.Item1)));
+            Assert.That(history.Select(entry => entry.StartedAt), Is.All.Not.Null);
+            Assert.That(history.Select(entry => entry.StartedAt), Is.Ordered.Descending);
             Assert.That(events.GetSnapshot().History.Where(entry => entry.Prototype == "AdminEventsTestReady" || entry.Prototype == "AdminEventsTestRepeatable"), Is.EqualTo(history));
         });
     }
@@ -330,7 +329,7 @@ public sealed class AdminEventsTest : GameTest
     {
         await Server.WaitAssertion(() =>
         {
-            var ticker = SEntMan.System<GameTicker>();
+            var ticker = SEntMan.System<ServerGameTicker>();
             var events = SEntMan.System<AdminEventsSystem>();
             var history = SEntMan.System<StationEventHistorySystem>();
             var admins = Server.ResolveDependency<IAdminManager>();
@@ -339,7 +338,7 @@ public sealed class AdminEventsTest : GameTest
 
             AdminEventHistoryEntry Entry(EntityUid uid) => history.GetHistory().Single(entry => entry.Entity == SEntMan.GetNetEntity(uid));
             var source = new GameRuleSource(GameRuleSourceKind.Administrator, ServerSession.Name);
-            var first = ticker.AddGameRule("AdminEventsTestRepeatable", source);
+            var first = ticker.AddGameRule("AdminEventsTestRepeatable", source)!.Value.Owner;
             Assert.That(Entry(first).Status, Is.EqualTo(AdminEventHistoryStatus.Pending));
             Assert.That(Entry(first).Source, Is.EqualTo(source));
             ticker.StartGameRule(first);
@@ -354,7 +353,7 @@ public sealed class AdminEventsTest : GameTest
             SEntMan.DeleteEntity(first);
             Assert.That(history.GetHistory().Single(entry => entry.Sequence == finished.Sequence), Is.EqualTo(finished));
 
-            var delayed = ticker.AddGameRule("AdminEventsTestRepeatable", source);
+            var delayed = ticker.AddGameRule("AdminEventsTestRepeatable", source)!.Value.Owner;
             SEntMan.GetComponent<GameRuleComponent>(delayed).Delay = new MinMax(30, 30);
             ticker.StartGameRule(delayed);
             Assert.That(Entry(delayed).Status, Is.EqualTo(AdminEventHistoryStatus.Delayed));
@@ -365,24 +364,24 @@ public sealed class AdminEventsTest : GameTest
             Assert.That(Entry(delayed).EndedBy, Is.EqualTo(ServerSession.Name));
             Assert.That(Entry(delayed).EndReason, Is.EqualTo(GameRuleEndReason.Administrator));
 
-            var manual = ticker.AddGameRule("AdminEventsTestRepeatable", source);
+            var manual = ticker.AddGameRule("AdminEventsTestRepeatable", source)!.Value.Owner;
             ticker.StartGameRule(manual);
             events.TryStopRule(ServerSession, SEntMan.GetNetEntity(manual));
             Assert.That(Entry(manual).Status, Is.EqualTo(AdminEventHistoryStatus.Stopped));
 
-            var deleted = ticker.AddGameRule("AdminEventsTestRepeatable");
+            var deleted = ticker.AddGameRule("AdminEventsTestRepeatable")!.Value.Owner;
             ticker.StartGameRule(deleted);
             var deletedId = Entry(deleted).Sequence;
             SEntMan.DeleteEntity(deleted);
             Assert.That(history.GetHistory().Single(entry => entry.Sequence == deletedId).EndReason, Is.EqualTo(GameRuleEndReason.EntityDeleted));
 
-            var unknown = ticker.AddGameRule("AdminEventsTestRepeatable");
+            var unknown = ticker.AddGameRule("AdminEventsTestRepeatable")!.Value.Owner;
             ticker.StartGameRule(unknown);
             ticker.EndGameRule(unknown);
             Assert.That(Entry(unknown).Source.Kind, Is.EqualTo(GameRuleSourceKind.Unknown));
             Assert.That(Entry(unknown).EndReason, Is.EqualTo(GameRuleEndReason.Unknown));
 
-            var scheduler = ticker.AddGameRule("AdminEventsTestScheduler");
+            var scheduler = ticker.AddGameRule("AdminEventsTestScheduler")!.Value.Owner;
             SEntMan.System<EventManagerSystem>().RunRandomEvent(new NestedSelector { TableId = "AdminEventsTestTable" }, scheduler);
             var scheduled = history.GetHistory().First();
             Assert.That(scheduled.Source.Kind, Is.EqualTo(GameRuleSourceKind.Scheduler));
@@ -412,16 +411,16 @@ public sealed class AdminEventsTest : GameTest
     {
         await Server.WaitAssertion(() =>
         {
-            var ticker = SEntMan.System<GameTicker>();
+            var ticker = SEntMan.System<ServerGameTicker>();
             var events = SEntMan.System<AdminEventsSystem>();
             ticker.ClearGameRules();
 
-            var pending = ticker.AddGameRule(prototype);
-            var active = ticker.AddGameRule(prototype);
+            var pending = ticker.AddGameRule(prototype)!.Value.Owner;
+            var active = ticker.AddGameRule(prototype)!.Value.Owner;
             ticker.StartGameRule(active);
-            var delayed = ticker.AddGameRule(prototype);
+            var delayed = ticker.AddGameRule(prototype)!.Value.Owner;
             SEntMan.AddComponent<DelayedStartRuleComponent>(delayed);
-            var ended = ticker.AddGameRule(prototype);
+            var ended = ticker.AddGameRule(prototype)!.Value.Owner;
             ticker.EndGameRule(ended);
 
             var state = events.GetSnapshot();
