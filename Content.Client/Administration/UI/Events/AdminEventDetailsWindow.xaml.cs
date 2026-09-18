@@ -16,22 +16,21 @@ public sealed partial class AdminEventDetailsWindow : FancyWindow
         RobustXamlLoader.Load(this);
     }
 
+    /// <summary>
+    /// Updates the description, availability and conditions from the latest event snapshot.
+    /// </summary>
     public void UpdateEntry(AdminEventTableEntry entry)
     {
-        var name = entry.Prototype;
-        if (entry.Name != entry.Prototype && entry.Name.Length > 0)
-            name += $"\n{entry.Name}";
-        EventName.SetMessage(name);
-        var description = entry.Description;
-        if (Loc.TryGetString($"ent-{entry.Prototype}.desc", out var localizedDescription))
-            description = localizedDescription;
-
-        Description.SetMessage(string.IsNullOrWhiteSpace(description)
-            ? Loc.GetString("admin-events-info-no-description")
-            : description);
+        EventName.SetMessage(AdminEventTooltip.GetName(entry.Prototype, entry.Name));
+        Description.SetMessage(AdminEventTooltip.GetDescription(entry.Prototype, entry.Description));
         Availability.SetMessage(GetAvailabilityText(entry.Availability));
         Availability.Modulate = entry.Availability == AdminEventAvailability.Available ? Color.White : Color.LightCoral;
 
+        UpdateConditions(entry);
+    }
+
+    private void UpdateConditions(AdminEventTableEntry entry)
+    {
         WeightValue.SetMessage(Loc.GetString("admin-events-info-weight", ("weight", entry.Weight)));
         OccurrencesValue.SetMessage(entry.Occurrences.ToString());
         PlayersValue.SetMessage(entry.MinimumPlayers.ToString());

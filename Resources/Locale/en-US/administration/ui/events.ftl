@@ -118,6 +118,13 @@ admin-events-history-status =
 admin-events-history-unknown = Unknown
 admin-events-history-empty-value = —
 admin-events-history-source-admin = Administrator: { $name }
+admin-events-history-source-value =
+    { $kind ->
+        [Administrator] { admin-events-history-source-admin }
+        [ServerConsole] { admin-events-history-source-console }
+        [Scheduler] { admin-events-history-source-scheduler }
+       *[other] { admin-events-history-unknown }
+    }
 admin-events-history-source-console = Server console
 admin-events-history-source-scheduler = { $name } ({ $entity }) / { $table }
 admin-events-history-end-reason =

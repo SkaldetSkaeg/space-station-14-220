@@ -12,17 +12,35 @@ internal static class AdminEventTooltip
         if (prototype == null)
             return fallback;
 
-        var description = Loc.TryGetString($"ent-{prototype.Id}.desc", out var localized)
-            ? localized
-            : prototype.Description;
+        return string.Join("\n",
+            GetName(prototype.Id, prototype.Name),
+            GetDescription(prototype.Id, prototype.Description),
+            GetDelay(prototype));
+    }
+
+    /// <summary>
+    /// Shows the prototype ID and a distinct non-empty display name on separate lines.
+    /// </summary>
+    public static string GetName(string id, string name)
+    {
+        if (name.Length == 0 || name == id)
+            return id;
+
+        return $"{id}\n{name}";
+    }
+
+    /// <summary>
+    /// Prefers the client's localized description and supplies a placeholder for empty descriptions.
+    /// </summary>
+    public static string GetDescription(string id, string description)
+    {
+        if (Loc.TryGetString($"ent-{id}.desc", out var localized))
+            description = localized;
+
         if (string.IsNullOrWhiteSpace(description))
-            description = Loc.GetString("admin-events-info-no-description");
+            return Loc.GetString("admin-events-info-no-description");
 
-        var name = prototype.Id;
-        if (prototype.Name.Length > 0 && prototype.Name != prototype.Id)
-            name += $"\n{prototype.Name}";
-
-        return $"{name}\n{description}\n{GetDelay(prototype)}";
+        return description;
     }
 
     private static string GetDelay(AdminGameRulePrototypeInfo prototype)

@@ -27,19 +27,12 @@ internal static class AdminEventHistoryText
         return $"{(int) time.Value.TotalHours:00}:{time.Value.Minutes:00}:{time.Value.Seconds:00}";
     }
 
-    public static string Source(GameRuleSource source)
-    {
-        var name = source.Name ?? Loc.GetString("admin-events-history-unknown");
-        return source.Kind switch
-        {
-            GameRuleSourceKind.Administrator => Loc.GetString("admin-events-history-source-admin", ("name", name)),
-            GameRuleSourceKind.ServerConsole => Loc.GetString("admin-events-history-source-console"),
-            GameRuleSourceKind.Scheduler => Loc.GetString("admin-events-history-source-scheduler",
-                ("name", name), ("entity", source.Scheduler?.ToString() ?? "?"),
-                ("table", source.Table ?? Loc.GetString("admin-events-inline-table"))),
-            _ => Loc.GetString("admin-events-history-unknown"),
-        };
-    }
+    public static string Source(GameRuleSource source) =>
+        Loc.GetString("admin-events-history-source-value",
+            ("kind", source.Kind.ToString()),
+            ("name", source.Name ?? Loc.GetString("admin-events-history-unknown")),
+            ("entity", source.Scheduler?.ToString() ?? "?"),
+            ("table", source.Table ?? Loc.GetString("admin-events-inline-table")));
 
     public static string EndReason(AdminEventHistoryEntry entry)
     {
