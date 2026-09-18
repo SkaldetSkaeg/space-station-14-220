@@ -26,7 +26,7 @@ internal static class AdminEventTooltip
         if (name.Length == 0 || name == id)
             return id;
 
-        return $"{id}\n{name}";
+        return string.Join("\n", id, name);
     }
 
     /// <summary>

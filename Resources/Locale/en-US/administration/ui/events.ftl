@@ -41,6 +41,13 @@ admin-events-info-round-end-label = Can start after the evacuation shuttle can n
 admin-events-info-minutes = { $minutes } min
 admin-events-info-snapshot = Status at the last refresh. Availability does not guarantee a run: the scheduler timer and random selection still apply.
 admin-events-available = Available for selection under the current conditions.
+admin-events-availability =
+    { $availability ->
+        [Available] { admin-events-available }
+        [EventsDisabled] { admin-events-unavailable-disabled }
+        [SchedulerInactive] { admin-events-unavailable-scheduler }
+       *[other] { admin-events-unavailable-conditions }
+    }
 admin-events-unavailable-disabled = Unavailable: automatic events are disabled.
 admin-events-unavailable-scheduler = Unavailable: this scheduler is not active.
 admin-events-unavailable-conditions = Unavailable: event or table conditions are not met, the event is excluded, or its weight is zero.

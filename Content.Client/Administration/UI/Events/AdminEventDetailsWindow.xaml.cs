@@ -44,14 +44,9 @@ public sealed partial class AdminEventDetailsWindow : FancyWindow
             : "admin-events-entry-round-end-blocked"));
     }
 
-    public static string GetAvailabilityText(AdminEventAvailability availability)
-    {
-        return Loc.GetString(availability switch
-        {
-            AdminEventAvailability.Available => "admin-events-available",
-            AdminEventAvailability.EventsDisabled => "admin-events-unavailable-disabled",
-            AdminEventAvailability.SchedulerInactive => "admin-events-unavailable-scheduler",
-            _ => "admin-events-unavailable-conditions",
-        });
-    }
+    /// <summary>
+    /// Returns the localized selection status for event details and tooltips.
+    /// </summary>
+    public static string GetAvailabilityText(AdminEventAvailability availability) =>
+        Loc.GetString("admin-events-availability", ("availability", availability.ToString()));
 }
