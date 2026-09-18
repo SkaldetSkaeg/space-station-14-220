@@ -13,6 +13,8 @@ namespace Content.Client.Administration.UI.Events;
 [GenerateTypedNameReferences]
 public sealed partial class AdminGameRulePickerWindow : FancyWindow
 {
+    private const int AllEventCategoriesId = -1;
+
     private List<AdminGameRulePrototypeInfo> _rules = new();
     private string? _selected;
     private bool _canAdd;
@@ -26,22 +28,24 @@ public sealed partial class AdminGameRulePickerWindow : FancyWindow
         RobustXamlLoader.Load(this);
         EventCategoryFilter.OnItemSelected += args =>
         {
-            _eventCategory = args.Id == -1 ? null : (AdminStationEventCategory) args.Id;
+            _eventCategory = args.Id == AllEventCategoriesId ? null : (AdminStationEventCategory) args.Id;
             EventCategoryFilter.SelectId(args.Id);
             RebuildList();
         };
         Search.OnTextChanged += _ => RebuildList();
         CancelButton.OnPressed += _ => Close();
-        ConfirmButton.OnPressed += _ =>
-        {
-            if (!_canAdd || _waiting || _selected == null)
-                return;
+        ConfirmButton.OnPressed += _ => AddSelectedRule();
+    }
 
-            _waiting = true;
-            Status.SetMessage(Loc.GetString("admin-events-add-pending"));
-            RebuildList();
-            AddRequested?.Invoke(_selected);
-        };
+    private void AddSelectedRule()
+    {
+        if (!_canAdd || _waiting || _selected == null)
+            return;
+
+        _waiting = true;
+        Status.SetMessage(Loc.GetString("admin-events-add-pending"));
+        RebuildList();
+        AddRequested?.Invoke(_selected);
     }
 
     public void UpdateRules(List<AdminGameRulePrototypeInfo> rules, bool canAdd)
@@ -74,17 +78,17 @@ public sealed partial class AdminGameRulePickerWindow : FancyWindow
         var categories = _rules.Where(rule => rule.Category == AdminGameRuleCategory.Events)
             .Select(rule => rule.EventCategory).Distinct().OrderBy(category => category).ToList();
         EventFilterBox.Visible = categories.Count > 1;
-        if (!EventFilterBox.Visible)
+        if (categories.Count <= 1)
             _eventCategory = null;
 
         if (_eventCategory != null && !categories.Contains(_eventCategory.Value))
             _eventCategory = null;
 
         EventCategoryFilter.Clear();
-        EventCategoryFilter.AddItem(Loc.GetString("admin-events-add-all-events"), -1);
+        EventCategoryFilter.AddItem(Loc.GetString("admin-events-add-all-events"), AllEventCategoriesId);
         foreach (var category in categories)
             EventCategoryFilter.AddItem(AdminGameRuleCategoryText.Get(category), (int) category);
-        EventCategoryFilter.SelectId(_eventCategory == null ? -1 : (int) _eventCategory.Value);
+        EventCategoryFilter.SelectId(_eventCategory == null ? AllEventCategoriesId : (int) _eventCategory.Value);
     }
 
     private void RebuildList()
@@ -105,40 +109,12 @@ public sealed partial class AdminGameRulePickerWindow : FancyWindow
             Status.SetMessage(string.Empty);
 
         RuleList.DisposeAllChildren();
-        var group = new ButtonGroup();
-        (AdminGameRuleCategory, AdminStationEventCategory)? previousGroup = null;
-        foreach (var rule in matches)
+        var buttons = new ButtonGroup();
+        foreach (var group in matches.GroupBy(rule => (rule.Category, rule.EventCategory)))
         {
-            var currentGroup = (rule.Category, rule.EventCategory);
-            if (previousGroup != currentGroup)
-            {
-                var title = AdminGameRuleCategoryText.Get(rule.Category);
-                if (rule.Category == AdminGameRuleCategory.Events)
-                    title += " / " + AdminGameRuleCategoryText.Get(rule.EventCategory);
-                var heading = new RichTextLabel { Margin = new Thickness(4, 8, 4, 4), Modulate = Color.Gold };
-                heading.SetMessage(title);
-                RuleList.AddChild(heading);
-                previousGroup = currentGroup;
-            }
-
-            var button = new Button
-            {
-                Text = rule.Id,
-                ToolTip = AdminEventTooltip.Get(rule, rule.Id),
-                ClipText = true,
-                TextAlign = Label.AlignMode.Left,
-                Group = group,
-                Pressed = rule.Id == _selected,
-                Disabled = _waiting,
-                MinHeight = 28,
-            };
-            button.OnPressed += _ =>
-            {
-                _selected = rule.Id;
-                Status.SetMessage(Loc.GetString("admin-events-add-selected", ("id", rule.Id)));
-                ConfirmButton.Disabled = !_canAdd || _waiting;
-            };
-            RuleList.AddChild(button);
+            AddGroupHeading(group.Key.Category, group.Key.EventCategory);
+            foreach (var rule in group)
+                AddRuleButton(rule, buttons);
         }
 
         if (matches.Count == 0)
@@ -147,5 +123,38 @@ public sealed partial class AdminGameRulePickerWindow : FancyWindow
         Search.Editable = !_waiting;
         EventCategoryFilter.Disabled = _waiting;
         ConfirmButton.Disabled = !_canAdd || _waiting || _selected == null;
+    }
+
+    private void AddGroupHeading(AdminGameRuleCategory category, AdminStationEventCategory eventCategory)
+    {
+        var title = AdminGameRuleCategoryText.Get(category);
+        if (category == AdminGameRuleCategory.Events)
+            title += " / " + AdminGameRuleCategoryText.Get(eventCategory);
+
+        var heading = new RichTextLabel { Margin = new Thickness(4, 8, 4, 4), Modulate = Color.Gold };
+        heading.SetMessage(title);
+        RuleList.AddChild(heading);
+    }
+
+    private void AddRuleButton(AdminGameRulePrototypeInfo rule, ButtonGroup group)
+    {
+        var button = new Button
+        {
+            Text = rule.Id,
+            ToolTip = AdminEventTooltip.Get(rule, rule.Id),
+            ClipText = true,
+            TextAlign = Label.AlignMode.Left,
+            Group = group,
+            Pressed = rule.Id == _selected,
+            Disabled = _waiting,
+            MinHeight = 28,
+        };
+        button.OnPressed += _ =>
+        {
+            _selected = rule.Id;
+            Status.SetMessage(Loc.GetString("admin-events-add-selected", ("id", rule.Id)));
+            ConfirmButton.Disabled = !_canAdd || _waiting;
+        };
+        RuleList.AddChild(button);
     }
 }

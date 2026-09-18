@@ -8,8 +8,8 @@ using Content.Shared.Administration;
 using Content.Shared.Database;
 using Content.Shared.EntityTable;
 using Content.Shared.EntityTable.EntitySelectors;
-using Content.Shared.GameTicking.Components;
 using Content.Shared.GameTicking;
+using Content.Shared.GameTicking.Components;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 
@@ -90,9 +90,13 @@ public sealed partial class AdminEventsSystem : EntitySystem
     /// </summary>
     public AdminEventsEuiState GetSnapshot()
     {
-        var state = new AdminEventsEuiState { EventsEnabled = _events.EventsEnabled };
+        var state = new AdminEventsEuiState
+        {
+            EventsEnabled = _events.EventsEnabled,
+            History = _history.GetHistory(),
+        };
         // Count actual starts across all schedulers, including completed and deleted rules.
-        var occurrences = _history.GetHistory()
+        var occurrences = state.History
             .Where(entry => entry.StartedAt != null)
             .GroupBy(entry => entry.Prototype, StringComparer.Ordinal)
             .ToDictionary(group => group.Key, group => group.Count(), StringComparer.Ordinal);
@@ -102,11 +106,7 @@ public sealed partial class AdminEventsSystem : EntitySystem
             var metadata = MetaData(uid);
             var prototype = metadata.EntityPrototype;
             var category = prototype == null ? AdminGameRuleCategory.Other : GetCategory(prototype);
-            var status = AdminEventRuleStatus.Pending;
-            if (_ticker.IsGameRuleActive(uid))
-                status = AdminEventRuleStatus.Active;
-            else if (HasComp<DelayedStartRuleComponent>(uid))
-                status = AdminEventRuleStatus.Delayed;
+            var status = GetRuleStatus(uid);
 
             var netEntity = GetNetEntity(uid);
             state.Rules.Add(new AdminEventRuleInfo(netEntity,
@@ -128,7 +128,6 @@ public sealed partial class AdminEventsSystem : EntitySystem
             .Select(GetPrototypeInfo)
             .ToList();
 
-        state.History = _history.GetHistory();
         return state;
     }
 
@@ -159,6 +158,17 @@ public sealed partial class AdminEventsSystem : EntitySystem
             return inactive;
 
         return new AdminSchedulerTimerInfo(scheduler, Math.Max(0, seconds.Value), !_events.EventsEnabled);
+    }
+
+    private AdminEventRuleStatus GetRuleStatus(EntityUid uid)
+    {
+        if (_ticker.IsGameRuleActive(uid))
+            return AdminEventRuleStatus.Active;
+
+        if (HasComp<DelayedStartRuleComponent>(uid))
+            return AdminEventRuleStatus.Delayed;
+
+        return AdminEventRuleStatus.Pending;
     }
 
     private AdminGameRulePrototypeInfo GetPrototypeInfo(EntityPrototype prototype)
@@ -196,14 +206,6 @@ public sealed partial class AdminEventsSystem : EntitySystem
             if (!prototype.TryComp<StationEventComponent>(out var stationEvent, EntityManager.ComponentFactory))
                 continue;
 
-            var availability = AdminEventAvailability.Available;
-            if (!_events.EventsEnabled)
-                availability = AdminEventAvailability.EventsDisabled;
-            else if (status != AdminEventRuleStatus.Active)
-                availability = AdminEventAvailability.SchedulerInactive;
-            else if (stationEvent.Weight <= 0 || !available.ContainsKey(prototype))
-                availability = AdminEventAvailability.ConditionsNotMet;
-
             entries.Add(new AdminEventTableEntry(
                 id.Id,
                 prototype.Name,
@@ -215,11 +217,25 @@ public sealed partial class AdminEventsSystem : EntitySystem
                 stationEvent.MaxOccurrences,
                 stationEvent.OccursDuringRoundEnd,
                 occurrences.GetValueOrDefault(id.Id),
-                availability));
+                GetEventAvailability(status, stationEvent.Weight, available.ContainsKey(prototype))));
         }
 
         var table = selector is NestedSelector nested ? nested.TableId.Id : string.Empty;
         entries.Sort((left, right) => StringComparer.Ordinal.Compare(left.Prototype, right.Prototype));
         return new AdminEventTableInfo(scheduler, table, entries);
+    }
+
+    private AdminEventAvailability GetEventAvailability(AdminEventRuleStatus schedulerStatus, float weight, bool eligible)
+    {
+        if (!_events.EventsEnabled)
+            return AdminEventAvailability.EventsDisabled;
+
+        if (schedulerStatus != AdminEventRuleStatus.Active)
+            return AdminEventAvailability.SchedulerInactive;
+
+        if (weight <= 0 || !eligible)
+            return AdminEventAvailability.ConditionsNotMet;
+
+        return AdminEventAvailability.Available;
     }
 }

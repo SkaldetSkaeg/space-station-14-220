@@ -8,16 +8,8 @@ namespace Content.Client.Administration.UI.Events;
 /// </summary>
 internal static class AdminEventHistoryText
 {
-    public static string Status(AdminEventHistoryStatus status) => Loc.GetString(status switch
-    {
-        AdminEventHistoryStatus.Pending => "admin-events-pending",
-        AdminEventHistoryStatus.Delayed => "admin-events-delayed",
-        AdminEventHistoryStatus.Active => "admin-events-active",
-        AdminEventHistoryStatus.Ended => "admin-events-history-status-ended",
-        AdminEventHistoryStatus.Stopped => "admin-events-history-status-stopped",
-        AdminEventHistoryStatus.Cancelled => "admin-events-history-status-cancelled",
-        _ => "admin-events-history-unknown",
-    });
+    public static string Status(AdminEventHistoryStatus status) =>
+        Loc.GetString("admin-events-history-status", ("status", status.ToString()));
 
     public static Color StatusColor(AdminEventHistoryStatus status) => status switch
     {
@@ -54,15 +46,7 @@ internal static class AdminEventHistoryText
         if (entry.EndedAt == null)
             return Loc.GetString("admin-events-history-empty-value");
 
-        var reason = Loc.GetString(entry.EndReason switch
-        {
-            GameRuleEndReason.DurationElapsed => "admin-events-history-reason-duration",
-            GameRuleEndReason.Administrator => "admin-events-history-reason-admin",
-            GameRuleEndReason.ServerConsole => "admin-events-history-reason-console",
-            GameRuleEndReason.RulesCleared => "admin-events-history-reason-cleared",
-            GameRuleEndReason.EntityDeleted => "admin-events-history-reason-deleted",
-            _ => "admin-events-history-unknown",
-        });
+        var reason = Loc.GetString("admin-events-history-end-reason", ("reason", entry.EndReason.ToString()));
         if (entry.EndedBy == null)
             return reason;
 

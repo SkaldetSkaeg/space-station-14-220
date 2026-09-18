@@ -54,6 +54,27 @@ cmd-eventsui-help = Usage: eventsui
 admin-events-add-subcategory = Event category
 admin-events-add-all-events = All GameRules
 admin-events-group-gamerules = GameRules
+admin-events-group =
+    { $category ->
+        [Events] { admin-events-group-events }
+        [Schedulers] { admin-events-group-schedulers }
+        [Roles] { admin-events-group-roles }
+        [RoundComposition] { admin-events-group-round-composition }
+        [StationVariations] { admin-events-group-station-variations }
+        [RoundControl] { admin-events-group-round-control }
+        [SpecialModes] { admin-events-group-special-modes }
+       *[other] { admin-events-group-other }
+    }
+admin-events-subgroup =
+    { $category ->
+        [Antagonists] { admin-events-subgroup-antagonists }
+        [DerelictCyborgs] { admin-events-subgroup-cyborgs }
+        [Creatures] { admin-events-subgroup-creatures }
+        [CargoGifts] { admin-events-subgroup-cargo-gifts }
+        [Meteors] { admin-events-subgroup-meteors }
+        [Shuttles] { admin-events-subgroup-shuttles }
+       *[other] { admin-events-subgroup-effects }
+    }
 admin-events-group-events = Events
 admin-events-group-schedulers = Schedulers
 admin-events-group-roles = Roles and antagonists
@@ -84,19 +105,30 @@ admin-events-history-started = Started
 admin-events-history-ended = Ended
 admin-events-history-source = Source
 admin-events-history-reason = End reason
-admin-events-history-status-ended = Ended
-admin-events-history-status-stopped = Stopped
-admin-events-history-status-cancelled = Cancelled
+admin-events-history-status =
+    { $status ->
+        [Pending] { admin-events-pending }
+        [Delayed] { admin-events-delayed }
+        [Active] { admin-events-active }
+        [Ended] Ended
+        [Stopped] Stopped
+        [Cancelled] Cancelled
+       *[other] { admin-events-history-unknown }
+    }
 admin-events-history-unknown = Unknown
 admin-events-history-empty-value = —
 admin-events-history-source-admin = Administrator: { $name }
 admin-events-history-source-console = Server console
 admin-events-history-source-scheduler = { $name } ({ $entity }) / { $table }
-admin-events-history-reason-duration = Configured duration elapsed
-admin-events-history-reason-admin = Stopped by an administrator
-admin-events-history-reason-console = Stopped through the server console
-admin-events-history-reason-cleared = GameRules cleared
-admin-events-history-reason-deleted = GameRule entity deleted
+admin-events-history-end-reason =
+    { $reason ->
+        [DurationElapsed] Configured duration elapsed
+        [Administrator] Stopped by an administrator
+        [ServerConsole] Stopped through the server console
+        [RulesCleared] GameRules cleared
+        [EntityDeleted] GameRule entity deleted
+       *[other] { admin-events-history-unknown }
+    }
 admin-events-history-reason-by = { $reason } ({ $name })
 admin-events-next-attempt = Next event attempt: { $time }
 admin-events-next-attempt-paused = Next event attempt: paused ({ $time } remaining)
