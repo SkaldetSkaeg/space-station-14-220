@@ -91,7 +91,7 @@ public sealed partial class AdminGameRulePickerWindow : FancyWindow
     {
         var query = Search.Text.Trim();
         var matches = _rules
-            .Where(rule => _eventCategory == null || rule.EventCategory == _eventCategory)
+            .Where(rule => _eventCategory == null || (rule.Category == AdminGameRuleCategory.Events && rule.EventCategory == _eventCategory))
             .Where(rule => rule.Id.Contains(query, StringComparison.OrdinalIgnoreCase)
                 || rule.Name.Contains(query, StringComparison.CurrentCultureIgnoreCase))
             .OrderBy(rule => rule.Category)

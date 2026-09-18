@@ -103,8 +103,11 @@ public sealed class AdminEventsWindowTest : InteractionTest
         {
             Assert.That(RuleButton("AdminEventsTestScheduler").Pressed, Is.True);
             Assert.That(rules.Children.OfType<Button>().Any(button => button.Text.Contains("InactivityTimeRestart")), Is.False);
-            Assert.That(eventRules.Children.OfType<Button>(), Is.Empty);
-            Assert.That(history.Children.OfType<PanelContainer>(), Is.Empty);
+            Assert.That(eventRules.Children.OfType<Button>().Any(button => button.Text.StartsWith("AdminEventsTestReady (")), Is.False);
+            Assert.That(history.Children.OfType<PanelContainer>().Select(row => row.Name), Is.EqualTo(new[]
+            {
+                "InactivityTimeRestart", "DynamicStationEventScheduler", "AdminEventsTestScheduler",
+            }));
             Assert.That(entries.VisibleInTree, Is.True);
             Assert.That(HasEntry("AdminEventsTestTable"), Is.True);
             Assert.That(HasEntry("PowerGridCheck"), Is.True);
@@ -303,14 +306,16 @@ public sealed class AdminEventsWindowTest : InteractionTest
         await Client.WaitAssertion(() =>
         {
             Assert.That(eventRules.VisibleInTree, Is.True);
+            Assert.That(eventRules.Children.OfType<Button>().Any(button => button.Text.StartsWith("InactivityTimeRestart (")), Is.True);
             Assert.That(rules.VisibleInTree, Is.False);
-            Assert.That(history.Children.OfType<PanelContainer>().Select(row => row.Name), Is.EqualTo(new[]
+            Assert.That(history.Children.OfType<PanelContainer>().Select(row => row.Name), Is.SupersetOf(new[]
             {
                 "AdminEventsTestRepeatable", "AdminEventsTestReady",
             }));
-            Assert.That(stopEvent.Disabled, Is.True);
+            Assert.That(stopEvent.Disabled, Is.False);
             AssertDraws(window);
         });
+        var historyBeforeAdd = history.Children.OfType<PanelContainer>().Count();
         await ClickControl(addEvent);
         await Client.WaitAssertion(() =>
         {
@@ -319,8 +324,8 @@ public sealed class AdminEventsWindowTest : InteractionTest
                 Does.Contain(Loc.GetString("admin-events-delay-range", ("min", 10), ("max", 20))));
             Assert.That(choices.Children.OfType<Button>().Single(button => button.Text == "BluespaceArtifact").ToolTip,
                 Does.Contain(Loc.GetString("admin-events-delay-fixed", ("seconds", 30))));
-            Assert.That(choices.Children.OfType<Button>().Any(button => button.Text == "BasicStationEventScheduler"), Is.False);
-            Assert.That(choices.Children.OfType<Button>().Any(button => button.Text == "Sandbox"), Is.False);
+            Assert.That(choices.Children.OfType<Button>().Any(button => button.Text == "BasicStationEventScheduler"), Is.True);
+            Assert.That(choices.Children.OfType<Button>().Any(button => button.Text == "Sandbox"), Is.True);
         });
         await SelectFilter(eventCategories, "admin-events-subgroup-antagonists");
         await Client.WaitAssertion(() =>
@@ -337,18 +342,23 @@ public sealed class AdminEventsWindowTest : InteractionTest
         await Client.WaitAssertion(() =>
         {
             Assert.That(tabs.CurrentTab, Is.EqualTo(1));
-            Assert.That(eventRules.Children.OfType<Button>().Single().Pressed, Is.True);
+            Assert.That(eventRules.Children.OfType<Button>().Single(button => button.Text.StartsWith("AdminEventsTestReady (")).Pressed, Is.True);
             Assert.That(stopEvent.Disabled, Is.False);
-            Assert.That(history.Children.OfType<PanelContainer>().Count(), Is.EqualTo(3));
+            Assert.That(history.Children.OfType<PanelContainer>().Count(), Is.EqualTo(historyBeforeAdd + 1));
+            Assert.That(LatestHistory().Children.OfType<TableContainer>().Single().Visible, Is.False);
         });
+        await ClickControl(LatestHistory().Children.OfType<BoxContainer>().Single().Children.OfType<Button>().Single());
+        await Client.WaitAssertion(() => Assert.That(LatestHistory().Children.OfType<TableContainer>().Single().Visible, Is.True));
         await ClickControl(stopEvent);
         await RunUntilSynced();
         await Client.WaitAssertion(() =>
         {
-            Assert.That(eventRules.Children.OfType<Button>(), Is.Empty);
-            Assert.That(stopEvent.Disabled, Is.True);
-            Assert.That(history.Children.OfType<PanelContainer>().Count(), Is.EqualTo(3));
+            Assert.That(eventRules.Children.OfType<Button>().Any(button => button.Text.StartsWith("AdminEventsTestReady (")), Is.False);
+            Assert.That(stopEvent.Disabled, Is.False);
+            Assert.That(history.Children.OfType<PanelContainer>().Count(), Is.EqualTo(historyBeforeAdd + 1));
             Assert.That(history.Children.OfType<PanelContainer>().First().Name, Is.EqualTo("AdminEventsTestReady"));
+            Assert.That(LatestHistory().Children.OfType<TableContainer>().Single().Visible, Is.True,
+                "Expanded details should survive a state refresh.");
             Assert.That(LatestHistory().Children.OfType<BoxContainer>().Single().Children.OfType<Label>()
                 .Single(label => label.Name == "HistoryStatus").Text, Is.EqualTo(Loc.GetString("admin-events-history-status-stopped")));
             Assert.That(HistoryValue("admin-events-history-source"),
@@ -358,6 +368,8 @@ public sealed class AdminEventsWindowTest : InteractionTest
             Assert.That(HistoryValue("admin-events-history-ended"), Does.Match(@"\d+:\d{2}:\d{2}"));
             AssertDraws(window);
         });
+        await ClickControl(LatestHistory().Children.OfType<BoxContainer>().Single().Children.OfType<Button>().Single());
+        await Client.WaitAssertion(() => Assert.That(LatestHistory().Children.OfType<TableContainer>().Single().Visible, Is.False));
         await Server.WaitAssertion(() => Assert.That(SEntMan.System<GameTicker>().GetAddedGameRules()
             .Any(uid => SEntMan.GetComponent<MetaDataComponent>(uid).EntityPrototype?.ID == "AdminEventsTestReady"), Is.False));
         await Client.WaitPost(() => tabs.CurrentTab = 0);

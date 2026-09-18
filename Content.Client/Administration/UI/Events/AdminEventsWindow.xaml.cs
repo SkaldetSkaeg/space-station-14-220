@@ -19,7 +19,7 @@ public sealed partial class AdminEventsWindow : FancyWindow
     private AdminEventsEuiState _state = new();
     private NetEntity? _selectedRule;
     private NetEntity? _selectedEvent;
-    private AdminGameRuleCategory _pickerCategory = AdminGameRuleCategory.Schedulers;
+    private AdminGameRuleCategory? _pickerCategory = AdminGameRuleCategory.Schedulers;
     private readonly AdminEventDetailsWindow _detailsWindow = new();
     private string? _detailsPrototype;
     private NetEntity? _detailsScheduler;
@@ -29,6 +29,7 @@ public sealed partial class AdminEventsWindow : FancyWindow
     private float _timerPollRemaining;
     private Dictionary<NetEntity, AdminSchedulerTimerInfo> _timers = new();
     private readonly HashSet<(NetEntity Scheduler, string Table, string Category)> _collapsedCategories = new();
+    private readonly HashSet<NetEntity> _expandedHistory = new();
 
     public event Action<string>? AddRuleRequested;
     public event Action<NetEntity>? StopRuleRequested;
@@ -38,18 +39,18 @@ public sealed partial class AdminEventsWindow : FancyWindow
     {
         RobustXamlLoader.Load(this);
         Tabs.SetTabTitle(0, Loc.GetString("admin-events-group-schedulers"));
-        Tabs.SetTabTitle(1, Loc.GetString("admin-events-group-events"));
+        Tabs.SetTabTitle(1, Loc.GetString("admin-events-group-gamerules"));
         Tabs.OnTabChanged += _ => _timerPollRemaining = 0;
         OnClose += _detailsWindow.Close;
         OnClose += _rulePicker.Close;
         AddRuleButton.OnPressed += _ => OpenPicker(AdminGameRuleCategory.Schedulers);
-        AddEventButton.OnPressed += _ => OpenPicker(AdminGameRuleCategory.Events);
+        AddEventButton.OnPressed += _ => OpenPicker(null);
         _rulePicker.AddRequested += id => AddRuleRequested?.Invoke(id);
         StopRuleButton.OnPressed += _ => RequestStop(_selectedRule);
         StopEventButton.OnPressed += _ => RequestStop(_selectedEvent);
     }
 
-    private void OpenPicker(AdminGameRuleCategory category)
+    private void OpenPicker(AdminGameRuleCategory? category)
     {
         if (!_state.CanAddRules)
             return;
@@ -62,7 +63,7 @@ public sealed partial class AdminEventsWindow : FancyWindow
 
     private void UpdatePicker()
     {
-        _rulePicker.UpdateRules(_state.AvailableRules.Where(rule => rule.Category == _pickerCategory).ToList(), _state.CanAddRules);
+        _rulePicker.UpdateRules(_state.AvailableRules.Where(rule => _pickerCategory == null || rule.Category == _pickerCategory).ToList(), _state.CanAddRules);
     }
 
     private void RequestStop(NetEntity? entity)
@@ -91,7 +92,7 @@ public sealed partial class AdminEventsWindow : FancyWindow
         var added = state.Rules.FirstOrDefault(rule => rule.Entity == _addedRule);
         if (added != null)
         {
-            if (added.Category == AdminGameRuleCategory.Events)
+            if (_pickerCategory == null || added.Category != AdminGameRuleCategory.Schedulers)
             {
                 _selectedEvent = _addedRule;
                 Tabs.CurrentTab = 1;
@@ -108,7 +109,7 @@ public sealed partial class AdminEventsWindow : FancyWindow
             : "admin-events-disabled");
 
         var schedulers = state.Rules.Where(rule => rule.Category == AdminGameRuleCategory.Schedulers).ToList();
-        var events = state.Rules.Where(rule => rule.Category == AdminGameRuleCategory.Events).ToList();
+        var events = state.Rules;
         _selectedRule = schedulers.FirstOrDefault(rule => rule.Entity == _selectedRule)?.Entity ?? schedulers.FirstOrDefault()?.Entity;
         _selectedEvent = events.FirstOrDefault(rule => rule.Entity == _selectedEvent)?.Entity ?? events.FirstOrDefault()?.Entity;
         RebuildRules(RulesList, schedulers, _selectedRule, entity =>
@@ -154,19 +155,26 @@ public sealed partial class AdminEventsWindow : FancyWindow
 
     private void UpdateHistory()
     {
+        _expandedHistory.RemoveWhere(entity => !_state.History.Any(entry => entry.Entity == entity));
         HistoryList.DisposeAllChildren();
         foreach (var entry in _state.History)
         {
             var contents = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Vertical, SeparationOverride = 6, Margin = new Thickness(8) };
             var card = new PanelContainer { Name = entry.Prototype, StyleClasses = { StyleClass.PanelDark } };
             var heading = new BoxContainer { SeparationOverride = 8 };
-            heading.AddChild(new Label
+            var expanded = _expandedHistory.Contains(entry.Entity);
+            var toggle = new Button
             {
-                Text = $"{entry.Prototype} ({entry.Entity})",
+                Name = "HistoryToggle",
+                Text = $"{(expanded ? "▼" : "▶")} {entry.Prototype} ({entry.Entity})",
                 ToolTip = GetEventTooltip(entry.Prototype),
                 HorizontalExpand = true,
                 ClipText = true,
-            });
+                TextAlign = Label.AlignMode.Left,
+                ToggleMode = true,
+                Pressed = expanded,
+            };
+            heading.AddChild(toggle);
             heading.AddChild(new Label
             {
                 Name = "HistoryStatus",
@@ -174,7 +182,16 @@ public sealed partial class AdminEventsWindow : FancyWindow
                 Modulate = AdminEventHistoryText.StatusColor(entry.Status),
             });
             contents.AddChild(heading);
-            var fields = new TableContainer { Name = "HistoryFields", Columns = 2, HorizontalExpand = true };
+            var fields = new TableContainer { Name = "HistoryFields", Columns = 2, HorizontalExpand = true, Visible = expanded };
+            toggle.OnToggled += args =>
+            {
+                fields.Visible = args.Pressed;
+                toggle.Text = $"{(args.Pressed ? "▼" : "▶")} {entry.Prototype} ({entry.Entity})";
+                if (args.Pressed)
+                    _expandedHistory.Add(entry.Entity);
+                else
+                    _expandedHistory.Remove(entry.Entity);
+            };
             AddHistoryField(fields, "admin-events-history-added", AdminEventHistoryText.Time(entry.AddedAt));
             AddHistoryField(fields, "admin-events-history-started", AdminEventHistoryText.Time(entry.StartedAt));
             AddHistoryField(fields, "admin-events-history-ended", AdminEventHistoryText.Time(entry.EndedAt));

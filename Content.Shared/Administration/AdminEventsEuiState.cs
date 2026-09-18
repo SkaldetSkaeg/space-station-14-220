@@ -109,7 +109,7 @@ public sealed record AdminEventRuleInfo(NetEntity Entity, string Prototype, stri
     AdminGameRuleCategory Category);
 
 /// <summary>
-/// One station event instance, retained after cancellation, completion or deletion.
+/// One GameRule instance, retained after cancellation, completion or deletion.
 /// Times are elapsed round time. Null means that transition has not been recorded.
 /// </summary>
 [Serializable, NetSerializable]
@@ -128,7 +128,7 @@ public sealed record AdminEventHistoryEntry(
     string? EndedBy);
 
 /// <summary>
-/// Lifecycle of an individual event. Cancelled means it ended before actually starting.
+/// Lifecycle of an individual GameRule. Cancelled means it ended before actually starting.
 /// </summary>
 [Serializable, NetSerializable]
 public enum AdminEventHistoryStatus : byte

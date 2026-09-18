@@ -47,9 +47,6 @@ public sealed partial class AdminEventsSystem : EntitySystem
         if (!prototype.TryComp<GameRuleComponent>(out _, EntityManager.ComponentFactory))
             return null;
 
-        if (!IsVisibleCategory(GetCategory(prototype)))
-            return null;
-
         var uid = _ticker.AddGameRule(id, new GameRuleSource(GameRuleSourceKind.Administrator, player.Name));
         _adminLog.Add(LogType.EventStarted, $"{player} added game rule {ToPrettyString(uid)} via the events window");
         if (_ticker.RunLevel == GameRunLevel.InRound)
@@ -70,10 +67,6 @@ public sealed partial class AdminEventsSystem : EntitySystem
             return false;
 
         if (!TryComp<GameRuleComponent>(uid, out var rule))
-            return false;
-
-        var prototype = MetaData(uid.Value).EntityPrototype;
-        if (prototype == null || !IsVisibleCategory(GetCategory(prototype)))
             return false;
 
         var ruleName = ToPrettyString(uid.Value);
@@ -104,13 +97,7 @@ public sealed partial class AdminEventsSystem : EntitySystem
         {
             var metadata = MetaData(uid);
             var prototype = metadata.EntityPrototype;
-            if (prototype == null)
-                continue;
-
-            var category = GetCategory(prototype);
-            if (!IsVisibleCategory(category))
-                continue;
-
+            var category = prototype == null ? AdminGameRuleCategory.Other : GetCategory(prototype);
             var status = AdminEventRuleStatus.Pending;
             if (_ticker.IsGameRuleActive(uid))
                 status = AdminEventRuleStatus.Active;
@@ -119,7 +106,7 @@ public sealed partial class AdminEventsSystem : EntitySystem
 
             var netEntity = GetNetEntity(uid);
             state.Rules.Add(new AdminEventRuleInfo(netEntity,
-                prototype.ID, metadata.EntityName, status, category));
+                prototype?.ID ?? metadata.EntityName, metadata.EntityName, status, category));
 
             if (category == AdminGameRuleCategory.Schedulers)
                 state.Timers.Add(GetSchedulerTimer(netEntity));
@@ -133,7 +120,6 @@ public sealed partial class AdminEventsSystem : EntitySystem
 
         state.Rules = state.Rules.OrderBy(rule => rule.Prototype, StringComparer.Ordinal).ToList();
         state.AvailableRules = _ticker.GetAllGameRulePrototypes()
-            .Where(prototype => IsVisibleCategory(GetCategory(prototype)))
             .OrderBy(prototype => prototype.ID, StringComparer.Ordinal)
             .Select(GetPrototypeInfo)
             .ToList();
@@ -180,11 +166,6 @@ public sealed partial class AdminEventsSystem : EntitySystem
             GetCategory(prototype), GetEventCategory(prototype),
             delay == null ? null : Math.Max(0, (int) delay.Value.Min),
             delay == null ? null : Math.Max(0, (int) delay.Value.Max));
-    }
-
-    private static bool IsVisibleCategory(AdminGameRuleCategory category)
-    {
-        return category == AdminGameRuleCategory.Schedulers || category == AdminGameRuleCategory.Events;
     }
 
     private AdminEventTableInfo GetTable(

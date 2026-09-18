@@ -1,6 +1,5 @@
 using System.Linq;
 using Content.Server.GameTicking;
-using Content.Server.StationEvents.Components;
 using Content.Shared.Administration;
 using Content.Shared.GameTicking;
 using Content.Shared.GameTicking.Components;
@@ -8,7 +7,7 @@ using Content.Shared.GameTicking.Components;
 namespace Content.Server.StationEvents;
 
 /// <summary>
-/// Records individual station event lifecycles throughout the round, independently of open admin windows.
+/// Records individual GameRule lifecycles throughout the round, independently of open admin windows.
 /// Records stay server-side and are exposed only through the authorized admin EUI.
 /// </summary>
 public sealed partial class StationEventHistorySystem : EntitySystem
@@ -20,7 +19,7 @@ public sealed partial class StationEventHistorySystem : EntitySystem
     public override void Initialize()
     {
         base.Initialize();
-        SubscribeLocalEvent<StationEventComponent, EntityTerminatingEvent>(OnTerminating);
+        SubscribeLocalEvent<GameRuleComponent, EntityTerminatingEvent>(OnTerminating);
         SubscribeLocalEvent<RoundRestartCleanupEvent>(OnRoundCleanup);
     }
 
@@ -44,7 +43,7 @@ public sealed partial class StationEventHistorySystem : EntitySystem
     /// </summary>
     public void RecordAdded(EntityUid uid, GameRuleAddedEvent args)
     {
-        if (!HasComp<StationEventComponent>(uid))
+        if (!HasComp<GameRuleComponent>(uid))
             return;
 
         var entry = GetOrAdd(uid, args.RuleId);
@@ -56,7 +55,7 @@ public sealed partial class StationEventHistorySystem : EntitySystem
     /// </summary>
     public void RecordStarted(EntityUid uid, GameRuleStartedEvent args)
     {
-        if (!HasComp<StationEventComponent>(uid))
+        if (!HasComp<GameRuleComponent>(uid))
             return;
 
         var entry = GetOrAdd(uid, args.RuleId);
@@ -72,7 +71,7 @@ public sealed partial class StationEventHistorySystem : EntitySystem
     /// </summary>
     public void RecordEnded(EntityUid uid, GameRuleEndedEvent args)
     {
-        if (!HasComp<StationEventComponent>(uid))
+        if (!HasComp<GameRuleComponent>(uid))
             return;
 
         var entry = GetOrAdd(uid, args.RuleId);
@@ -85,7 +84,7 @@ public sealed partial class StationEventHistorySystem : EntitySystem
         };
     }
 
-    private void OnTerminating(EntityUid uid, StationEventComponent component, ref EntityTerminatingEvent args)
+    private void OnTerminating(EntityUid uid, GameRuleComponent component, ref EntityTerminatingEvent args)
     {
         // Do not create entries for unused prototypes or repopulate history during a round reset's entity flush.
         if (!_entries.TryGetValue(uid, out var entry))
@@ -120,7 +119,7 @@ public sealed partial class StationEventHistorySystem : EntitySystem
     }
 
     /// <summary>
-    /// Returns newest-added events first, with delayed starts reflected in the current snapshot.
+    /// Returns newest-added rules first, with delayed starts reflected in the current snapshot.
     /// Only authorized administrators should receive this data.
     /// </summary>
     public List<AdminEventHistoryEntry> GetHistory()

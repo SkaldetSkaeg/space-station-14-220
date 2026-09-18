@@ -121,14 +121,18 @@ public sealed class AdminEventsTest : GameTest
             Assert.That(catalog, Does.Contain("BasicStationEventScheduler"));
             Assert.That(catalog, Does.Not.Contain("BaseGameRule"));
             Assert.That(catalog, Does.Not.Contain("MobHuman"));
-            Assert.That(catalog, Does.Not.Contain("Sandbox"));
-            Assert.That(catalog, Does.Not.Contain("DynamicRule"));
-            Assert.That(catalog, Does.Not.Contain("InactivityTimeRestart"));
+            Assert.That(catalog, Does.Contain("Sandbox"));
+            Assert.That(catalog, Does.Contain("DynamicRule"));
+            Assert.That(catalog, Does.Contain("InactivityTimeRestart"));
             Assert.That(catalog, Is.Unique);
             Assert.That(events.TryAddRule(ServerSession, "MissingAdminEventsRule"), Is.Null);
             Assert.That(events.TryAddRule(ServerSession, "BaseGameRule"), Is.Null);
             Assert.That(events.TryAddRule(ServerSession, "MobHuman"), Is.Null);
-            Assert.That(events.TryAddRule(ServerSession, "Sandbox"), Is.Null);
+            var sandbox = events.TryAddRule(ServerSession, "Sandbox");
+            Assert.That(sandbox, Is.Not.Null);
+            Assert.That(events.GetSnapshot().Rules.Any(rule => rule.Entity == sandbox), Is.True);
+            Assert.That(events.TryStopRule(ServerSession, sandbox!.Value), Is.True);
+            Assert.That(events.GetSnapshot().History.Single(entry => entry.Entity == sandbox).EndedAt, Is.Not.Null);
 
             var data = admins.GetAdminData(ServerSession)!;
             var flags = data.Flags;
@@ -286,7 +290,7 @@ public sealed class AdminEventsTest : GameTest
 
             var ready = ticker.AddGameRule("AdminEventsTestReady");
             Assert.That(Occurrences("AdminEventsTestReady"), Is.Zero, "Adding a pending rule does not trigger it.");
-            var pendingHistory = events.GetSnapshot().History.Single();
+            var pendingHistory = events.GetSnapshot().History.Single(entry => entry.Entity == SEntMan.GetNetEntity(ready));
             Assert.That(pendingHistory.Status, Is.EqualTo(AdminEventHistoryStatus.Pending));
             Assert.That(pendingHistory.StartedAt, Is.Null);
             ticker.StartGameRule(ready);
@@ -309,7 +313,7 @@ public sealed class AdminEventsTest : GameTest
             SEntMan.DeleteEntity(ready);
             SEntMan.DeleteEntity(repeatable);
             SEntMan.DeleteEntity(repeated);
-            var history = events.GetSnapshot().History;
+            var history = events.GetSnapshot().History.Where(entry => entry.Prototype == "AdminEventsTestReady" || entry.Prototype == "AdminEventsTestRepeatable").ToList();
             Assert.That(history.Select(entry => entry.Prototype), Is.EqualTo(new[]
             {
                 "AdminEventsTestRepeatable", "AdminEventsTestRepeatable", "AdminEventsTestReady",
@@ -317,7 +321,7 @@ public sealed class AdminEventsTest : GameTest
             Assert.That(history.Select(entry => entry.StartedAt), Is.EqualTo(ticker.AllPreviousGameRules
                 .Where(rule => rule.Item2 == "AdminEventsTestReady" || rule.Item2 == "AdminEventsTestRepeatable")
                 .Reverse().Select(rule => rule.Item1)));
-            Assert.That(events.GetSnapshot().History, Is.EqualTo(history));
+            Assert.That(events.GetSnapshot().History.Where(entry => entry.Prototype == "AdminEventsTestReady" || entry.Prototype == "AdminEventsTestRepeatable"), Is.EqualTo(history));
         });
     }
 
