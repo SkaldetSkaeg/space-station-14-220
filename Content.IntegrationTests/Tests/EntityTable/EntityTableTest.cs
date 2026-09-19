@@ -502,13 +502,13 @@ public sealed class EntityTableTest : GameTest
         var table = new NestedSelector { TableId = "EntityTableTestDeepComposition" };
         var ctx = new EntityTableContext { RespectConditions = true };
         ctx.SetData(HasBudgetCondition.BudgetContextKey, 0f);
-        var result = _sEntityTable.ListSpawns(table, ctx).ToArray();
+        (EntProtoId spawn, double)[] result = [.. _sEntityTable.ListSpawns(table, ctx)];
         Assert.That(result.Select(entry => entry.spawn), Is.EquivalentTo(new EntProtoId[] { EntProto1, EntProto2 }));
         Assert.That(result.Single(entry => entry.spawn == EntProto2).Item2, Is.EqualTo(1));
         // The default listing still includes the failed group branch.
         Assert.That(_sEntityTable.ListSpawns(table).Count(), Is.EqualTo(3));
 
-        var excluded = new HashSet<EntProtoId> { EntProto2 };
+        HashSet<EntProtoId> excluded = [EntProto2];
         ctx.SetData(ExcludeEntitiesFromContextCondition.EntitiesToExclude, excluded);
         var scoped = Table("EntityTableTestLocalizedChildConditions");
         Assert.That(_sEntityTable.ListSpawns(scoped, ctx).Select(entry => entry.spawn),

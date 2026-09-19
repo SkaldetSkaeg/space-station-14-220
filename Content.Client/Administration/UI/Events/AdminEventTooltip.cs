@@ -1,4 +1,5 @@
 using Content.Shared.Administration;
+using Robust.Shared.Localization;
 
 namespace Content.Client.Administration.UI.Events;
 
@@ -12,10 +13,13 @@ internal static class AdminEventTooltip
         if (prototype == null)
             return fallback;
 
-        return string.Join("\n",
+        // An explicit array avoids the span overload, which is rejected by the client sandbox.
+        return string.Join("\n", new[]
+        {
             GetName(prototype.Id, prototype.Name),
             GetDescription(prototype.Id, prototype.Description),
-            GetDelay(prototype));
+            GetDelay(prototype),
+        });
     }
 
     /// <summary>
@@ -26,7 +30,7 @@ internal static class AdminEventTooltip
         if (name.Length == 0 || name == id)
             return id;
 
-        return string.Join("\n", id, name);
+        return string.Join("\n", new[] { id, name });
     }
 
     /// <summary>
@@ -34,7 +38,8 @@ internal static class AdminEventTooltip
     /// </summary>
     public static string GetDescription(string id, string description)
     {
-        if (Loc.TryGetString($"ent-{id}.desc", out var localized))
+        var localization = IoCManager.Resolve<ILocalizationManager>();
+        if (localization.TryGetString($"ent-{id}.desc", out var localized))
             description = localized;
 
         if (string.IsNullOrWhiteSpace(description))

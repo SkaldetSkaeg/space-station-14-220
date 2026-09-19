@@ -27,9 +27,9 @@ public sealed partial class AdminEventsWindow : FancyWindow
     private NetEntity? _addedRule;
     private bool _stoppingRule;
     private float _timerPollRemaining;
-    private Dictionary<NetEntity, AdminSchedulerTimerInfo> _timers = new();
-    private readonly HashSet<(NetEntity Scheduler, string Table, string Category)> _collapsedCategories = new();
-    private readonly HashSet<NetEntity> _expandedHistory = new();
+    private Dictionary<NetEntity, AdminSchedulerTimerInfo> _timers = [];
+    private readonly HashSet<(NetEntity Scheduler, string Table, string Category)> _collapsedCategories = [];
+    private readonly HashSet<NetEntity> _expandedHistory = [];
 
     public event Action<string>? AddRuleRequested;
     public event Action<NetEntity>? StopRuleRequested;
@@ -63,7 +63,7 @@ public sealed partial class AdminEventsWindow : FancyWindow
 
     private void UpdatePicker()
     {
-        _rulePicker.UpdateRules(_state.AvailableRules.Where(rule => _pickerCategory == null || rule.Category == _pickerCategory).ToList(), _state.CanAddRules);
+        _rulePicker.UpdateRules([.. _state.AvailableRules.Where(rule => _pickerCategory == null || rule.Category == _pickerCategory)], _state.CanAddRules);
     }
 
     private void RequestStop(NetEntity? entity)
@@ -108,7 +108,7 @@ public sealed partial class AdminEventsWindow : FancyWindow
             ? "admin-events-enabled"
             : "admin-events-disabled");
 
-        var schedulers = state.Rules.Where(rule => rule.Category == AdminGameRuleCategory.Schedulers).ToList();
+        List<AdminEventRuleInfo> schedulers = [.. state.Rules.Where(rule => rule.Category == AdminGameRuleCategory.Schedulers)];
         var events = state.Rules;
         _selectedRule = schedulers.FirstOrDefault(rule => rule.Entity == _selectedRule)?.Entity ?? schedulers.FirstOrDefault()?.Entity;
         _selectedEvent = events.FirstOrDefault(rule => rule.Entity == _selectedEvent)?.Entity ?? events.FirstOrDefault()?.Entity;
@@ -130,7 +130,7 @@ public sealed partial class AdminEventsWindow : FancyWindow
 
     private void RebuildRules(BoxContainer list, List<AdminEventRuleInfo> rules, NetEntity? selected, Action<NetEntity> select)
     {
-        list.DisposeAllChildren();
+        list.RemoveAllChildren();
         var group = new ButtonGroup();
         foreach (var rule in rules)
         {
@@ -156,7 +156,7 @@ public sealed partial class AdminEventsWindow : FancyWindow
     private void UpdateHistory()
     {
         _expandedHistory.RemoveWhere(entity => !_state.History.Any(entry => entry.Entity == entity));
-        HistoryList.DisposeAllChildren();
+        HistoryList.RemoveAllChildren();
         foreach (var entry in _state.History)
         {
             var contents = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Vertical, SeparationOverride = 6, Margin = new Thickness(8) };
@@ -218,7 +218,7 @@ public sealed partial class AdminEventsWindow : FancyWindow
     {
         UpdateStopButton();
         UpdateTimerLabel();
-        EntriesList.DisposeAllChildren();
+        EntriesList.RemoveAllChildren();
         var rule = _state.Rules.FirstOrDefault(rule => rule.Entity == _selectedRule);
         if (rule == null)
         {
@@ -228,7 +228,7 @@ public sealed partial class AdminEventsWindow : FancyWindow
         }
 
         SelectedRuleLabel.SetMessage($"{rule.Prototype} ({rule.Entity}) — {GetStatus(rule.Status)}");
-        var tables = _state.Tables.Where(table => table.Scheduler == rule.Entity).ToList();
+        List<AdminEventTableInfo> tables = [.. _state.Tables.Where(table => table.Scheduler == rule.Entity)];
         if (tables.Count == 0)
         {
             AddText(EntriesList, Loc.GetString("admin-events-rule-no-table"));
@@ -246,21 +246,23 @@ public sealed partial class AdminEventsWindow : FancyWindow
             }
 
             AddCategory(table, "admin-events-category-triggered",
-                table.Entries.Where(entry => entry.Occurrences > 0).ToList());
+                [.. table.Entries.Where(entry => entry.Occurrences > 0)]);
             AddCategory(table, "admin-events-category-waiting",
-                table.Entries.Where(entry => entry.Occurrences == 0 && entry.Availability == AdminEventAvailability.Available).ToList());
+                [.. table.Entries.Where(entry => entry.Occurrences == 0 && entry.Availability == AdminEventAvailability.Available)]);
             AddCategory(table, "admin-events-category-unavailable",
-                table.Entries.Where(entry => entry.Occurrences == 0 && entry.Availability != AdminEventAvailability.Available).ToList());
+                [.. table.Entries.Where(entry => entry.Occurrences == 0 && entry.Availability != AdminEventAvailability.Available)]);
         }
     }
 
     private void AddLikelihoodChart(AdminEventTableInfo table)
     {
-        var candidates = table.Entries
-            .Where(entry => entry.Availability == AdminEventAvailability.Available && entry.Weight > 0)
-            .OrderByDescending(entry => entry.Weight)
-            .ThenBy(entry => entry.Prototype, StringComparer.Ordinal)
-            .ToList();
+        List<AdminEventTableEntry> candidates =
+        [
+            .. table.Entries
+                .Where(entry => entry.Availability == AdminEventAvailability.Available && entry.Weight > 0)
+                .OrderByDescending(entry => entry.Weight)
+                .ThenBy(entry => entry.Prototype, StringComparer.Ordinal)
+        ];
         var chart = new PanelContainer { Name = "LikelihoodPanel", StyleClasses = { StyleClass.PanelDark } };
         var contents = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Vertical, SeparationOverride = 4, Margin = new Thickness(8) };
         chart.AddChild(contents);
@@ -284,7 +286,11 @@ public sealed partial class AdminEventsWindow : FancyWindow
                 MaxValue = candidates[0].Weight,
                 Value = entry.Weight,
             });
-            row.AddChild(new Label { Text = Loc.GetString("admin-events-likelihood-weight", ("weight", entry.Weight)), MinWidth = 80 });
+            row.AddChild(new Label
+            {
+                Text = Loc.GetString("admin-events-likelihood-weight", ("weight", entry.Weight.ToString("0.###"))),
+                MinWidth = 80,
+            });
             contents.AddChild(row);
         }
 
@@ -319,7 +325,7 @@ public sealed partial class AdminEventsWindow : FancyWindow
         }
 
         var remaining = TimeSpan.FromSeconds(Math.Ceiling(timer.Seconds.Value));
-        var time = $"{(int) remaining.TotalMinutes:00}:{remaining.Seconds:00}";
+        var time = $"{(int)remaining.TotalMinutes:00}:{remaining.Seconds:00}";
         NextAttemptLabel.Text = Loc.GetString(timer.Paused ? "admin-events-next-attempt-paused" : "admin-events-next-attempt", ("time", time));
     }
 

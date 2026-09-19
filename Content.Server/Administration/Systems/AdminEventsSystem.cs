@@ -25,7 +25,7 @@ public sealed partial class AdminEventsSystem : EntitySystem
     [Dependency] private EntityTableSystem _tables = default!;
     [Dependency] private IAdminManager _admins = default!;
     [Dependency] private IAdminLogManager _adminLog = default!;
-    [Dependency] private StationEventHistorySystem _history = default!;
+    [Dependency] private GameRuleHistorySystem _history = default!;
 
     /// <summary>
     /// Adds a validated GameRule with the same permission and round-start behavior as addgamerule.
@@ -44,7 +44,7 @@ public sealed partial class AdminEventsSystem : EntitySystem
         if (prototype.Abstract)
             return null;
 
-        if (!prototype.TryComp<GameRuleComponent>(out _, EntityManager.ComponentFactory))
+        if (!HasComp<GameRuleComponent>(prototype))
             return null;
 
         var uid = _ticker.AddGameRule(id, new GameRuleSource(GameRuleSourceKind.Administrator, player.Name));
@@ -93,7 +93,19 @@ public sealed partial class AdminEventsSystem : EntitySystem
         var state = new AdminEventsEuiState
         {
             EventsEnabled = _events.EventsEnabled,
-            History = _history.GetHistory(),
+            History = [.. _history.GetHistory().Select(entry => new AdminEventHistoryEntry(
+                entry.Sequence,
+                entry.Entity,
+                entry.Prototype,
+                entry.Name,
+                entry.Description,
+                entry.AddedAt,
+                entry.StartedAt,
+                entry.EndedAt,
+                entry.Status,
+                entry.Source,
+                entry.EndReason,
+                entry.EndedBy))],
         };
         // Count actual starts across all schedulers, including completed and deleted rules.
         var occurrences = state.History
@@ -122,11 +134,13 @@ public sealed partial class AdminEventsSystem : EntitySystem
                 state.Tables.Add(GetTable(netEntity, ramping.ScheduledGameRules, status, occurrences));
         }
 
-        state.Rules = state.Rules.OrderBy(rule => rule.Prototype, StringComparer.Ordinal).ToList();
-        state.AvailableRules = _ticker.GetAllGameRulePrototypes()
-            .OrderBy(prototype => prototype.ID, StringComparer.Ordinal)
-            .Select(GetPrototypeInfo)
-            .ToList();
+        state.Rules = [.. state.Rules.OrderBy(rule => rule.Prototype, StringComparer.Ordinal)];
+        state.AvailableRules =
+        [
+            .. _ticker.GetAllGameRulePrototypes()
+                .OrderBy(prototype => prototype.ID, StringComparer.Ordinal)
+                .Select(GetPrototypeInfo)
+        ];
 
         return state;
     }
@@ -173,13 +187,14 @@ public sealed partial class AdminEventsSystem : EntitySystem
 
     private AdminGameRulePrototypeInfo GetPrototypeInfo(EntityPrototype prototype)
     {
-        prototype.TryComp<GameRuleComponent>(out var rule, EntityManager.ComponentFactory);
-        var delay = rule?.Delay;
+        var delay = prototype.TryComp<GameRuleComponent>(out var rule, EntityManager.ComponentFactory)
+            ? rule.Delay
+            : null;
         // StartGameRule samples MinMax.Next, which truncates the configured bounds to integer seconds.
         return new AdminGameRulePrototypeInfo(prototype.ID, prototype.Name, prototype.Description,
             GetCategory(prototype), GetEventCategory(prototype),
-            delay == null ? null : Math.Max(0, (int) delay.Value.Min),
-            delay == null ? null : Math.Max(0, (int) delay.Value.Max));
+            delay == null ? null : Math.Max(0, (int)delay.Value.Min),
+            delay == null ? null : Math.Max(0, (int)delay.Value.Max));
     }
 
     private AdminEventTableInfo GetTable(
@@ -193,7 +208,7 @@ public sealed partial class AdminEventsSystem : EntitySystem
             .Where(entry => entry.Item2 > 0)
             .Select(entry => entry.spawn);
         _events.TryBuildLimitedEvents(candidates, out var available);
-        var entries = new List<AdminEventTableEntry>();
+        List<AdminEventTableEntry> entries = [];
         // ListSpawns expands nested tables without consuming RNG or evaluating spawn conditions.
         foreach (var id in _tables.ListSpawns(selector).Select(entry => entry.spawn).Distinct())
         {

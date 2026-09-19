@@ -1,4 +1,5 @@
 using Content.Shared.Administration;
+using Content.Shared.GameTicking;
 
 namespace Content.Client.Administration.UI.Events;
 
@@ -7,9 +8,13 @@ namespace Content.Client.Administration.UI.Events;
 /// </summary>
 internal static class AdminGameRuleCategoryText
 {
-    public static string Get(AdminGameRuleCategory category) =>
-        Loc.GetString("admin-events-group", ("category", category.ToString()));
+    public static string Get(AdminGameRuleCategory category)
+    {
+        return Loc.GetString("admin-events-group", ("category", category.ToString()));
+    }
 
-    public static string Get(AdminStationEventCategory category) =>
-        Loc.GetString("admin-events-subgroup", ("category", category.ToString()));
+    public static string Get(StationEventCategory category)
+    {
+        return Loc.GetString("admin-events-subgroup", ("category", category.ToString()));
+    }
 }

@@ -1,75 +1,70 @@
-using System.Linq;
-using Content.Server.Antag.Components;
 using Content.Server.GameTicking.Rules.Components;
 using Content.Server.StationEvents.Components;
 using Content.Shared.Administration;
-using Content.Shared.GameTicking.Rules;
+using Content.Shared.GameTicking;
+using Content.Shared.Antag.Components;
 using Content.Shared.GameTicking.Rules.Components;
-using Content.Shared.Prototypes;
 using Robust.Shared.Prototypes;
 
 namespace Content.Server.Administration.Systems;
 
 public sealed partial class AdminEventsSystem
 {
-    private static readonly EntProtoId DerelictCyborgBase = "BaseDerelictCyborgSpawn";
-    // These ghost-role events do not use AntagSelection.
-    private static readonly EntProtoId RevenantEvent = "RevenantSpawn";
-    private static readonly EntProtoId SkeletonEvent = "ClosetSkeleton";
-
-    private static AdminGameRuleCategory GetCategory(EntityPrototype prototype)
+    private AdminGameRuleCategory GetCategory(EntityPrototype prototype)
     {
-        if (prototype.HasComponent<StationEventComponent>())
+        if (HasComp<StationEventComponent>(prototype))
             return AdminGameRuleCategory.Events;
 
-        if (prototype.HasComponent<BasicStationEventSchedulerComponent>() || prototype.HasComponent<RampingStationEventSchedulerComponent>())
+        if (HasComp<BasicStationEventSchedulerComponent>(prototype)
+            || HasComp<RampingStationEventSchedulerComponent>(prototype))
             return AdminGameRuleCategory.Schedulers;
 
-        if (prototype.HasComponent<SecretRuleComponent>()
-            || prototype.HasComponent<DynamicRuleComponent>()
-            || prototype.HasComponent<SubGamemodesComponent>())
+        if (HasComp<SecretRuleComponent>(prototype)
+            || HasComp<DynamicRuleComponent>(prototype)
+            || HasComp<SubGamemodesComponent>(prototype))
             return AdminGameRuleCategory.RoundComposition;
 
-        if (prototype.HasComponent<StationVariationPassRuleComponent>() || prototype.HasComponent<RoundstartStationVariationRuleComponent>())
+        if (HasComp<StationVariationPassRuleComponent>(prototype)
+            || HasComp<RoundstartStationVariationRuleComponent>(prototype))
             return AdminGameRuleCategory.StationVariations;
 
-        if (prototype.HasComponent<AntagSelectionComponent>() || prototype.HasComponent<SurvivorRuleComponent>())
+        if (HasComp<AntagSelectionComponent>(prototype) || HasComp<SurvivorRuleComponent>(prototype))
             return AdminGameRuleCategory.Roles;
 
-        if (prototype.HasComponent<SandboxRuleComponent>() || prototype.HasComponent<DeathMatchRuleComponent>())
+        if (HasComp<SandboxRuleComponent>(prototype) || HasComp<DeathMatchRuleComponent>(prototype))
             return AdminGameRuleCategory.SpecialModes;
 
-        if (prototype.HasComponent<RespawnDeadRuleComponent>()
-            || prototype.HasComponent<InactivityRuleComponent>()
-            || prototype.HasComponent<MaxTimeRestartRuleComponent>())
+        if (HasComp<RespawnDeadRuleComponent>(prototype)
+            || HasComp<InactivityRuleComponent>(prototype)
+            || HasComp<MaxTimeRestartRuleComponent>(prototype))
             return AdminGameRuleCategory.RoundControl;
 
         return AdminGameRuleCategory.Other;
     }
 
-    private AdminStationEventCategory GetEventCategory(EntityPrototype prototype)
+    private StationEventCategory GetEventCategory(EntityPrototype prototype)
     {
-        if (!prototype.HasComponent<StationEventComponent>())
-            return AdminStationEventCategory.Effects;
+        if (!prototype.TryComp<StationEventComponent>(out var stationEvent, EntityManager.ComponentFactory))
+            return StationEventCategory.Effects;
 
-        if (prototype.HasComponent<CargoGiftsRuleComponent>())
-            return AdminStationEventCategory.CargoGifts;
+        if (stationEvent.Category != null)
+            return stationEvent.Category.Value;
 
-        if (prototype.HasComponent<MeteorSwarmComponent>() || prototype.HasComponent<ImmovableRodRuleComponent>())
-            return AdminStationEventCategory.Meteors;
+        if (HasComp<CargoGiftsRuleComponent>(prototype))
+            return StationEventCategory.CargoGifts;
 
-        if (prototype.HasComponent<VentCrittersRuleComponent>() || prototype.HasComponent<VentHordeRuleComponent>())
-            return AdminStationEventCategory.Creatures;
+        if (HasComp<MeteorSwarmComponent>(prototype) || HasComp<ImmovableRodRuleComponent>(prototype))
+            return StationEventCategory.Meteors;
 
-        if (ProtoMan.EnumerateAllParents<EntityPrototype>(prototype.ID, true).Any(parent => parent.id == DerelictCyborgBase.Id))
-            return AdminStationEventCategory.DerelictCyborgs;
+        if (HasComp<VentCrittersRuleComponent>(prototype) || HasComp<VentHordeRuleComponent>(prototype))
+            return StationEventCategory.Creatures;
 
-        if (prototype.HasComponent<AntagSelectionComponent>() || prototype.ID == RevenantEvent.Id || prototype.ID == SkeletonEvent.Id)
-            return AdminStationEventCategory.Antagonists;
+        if (HasComp<AntagSelectionComponent>(prototype))
+            return StationEventCategory.Antagonists;
 
-        if (prototype.HasComponent<LoadMapRuleComponent>())
-            return AdminStationEventCategory.Shuttles;
+        if (HasComp<LoadMapRuleComponent>(prototype))
+            return StationEventCategory.Shuttles;
 
-        return AdminStationEventCategory.Effects;
+        return StationEventCategory.Effects;
     }
 }

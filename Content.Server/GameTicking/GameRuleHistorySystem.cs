@@ -1,19 +1,17 @@
 using System.Linq;
-using Content.Server.GameTicking;
-using Content.Shared.Administration;
 using Content.Shared.GameTicking;
 using Content.Shared.GameTicking.Components;
 
-namespace Content.Server.StationEvents;
+namespace Content.Server.GameTicking;
 
 /// <summary>
 /// Records individual GameRule lifecycles throughout the round, independently of open admin windows.
-/// Records stay server-side and are exposed only through the authorized admin EUI.
+/// Retains starts after entity deletion so schedulers can enforce round-wide limits.
 /// </summary>
-public sealed partial class StationEventHistorySystem : EntitySystem
+public sealed partial class GameRuleHistorySystem : EntitySystem
 {
     [Dependency] private ServerGameTicker _ticker = default!;
-    private readonly Dictionary<EntityUid, AdminEventHistoryEntry> _entries = new();
+    private readonly Dictionary<EntityUid, GameRuleHistoryEntry> _entries = [];
     private int _sequence;
 
     public override void Initialize()
@@ -25,14 +23,14 @@ public sealed partial class StationEventHistorySystem : EntitySystem
 
     private TimeSpan RoundTime => _ticker.RunLevel == GameRunLevel.PreRoundLobby ? TimeSpan.Zero : _ticker.RoundDuration();
 
-    private AdminEventHistoryEntry GetOrAdd(EntityUid uid)
+    private GameRuleHistoryEntry GetOrAdd(EntityUid uid)
     {
         if (_entries.TryGetValue(uid, out var entry))
             return entry;
 
         var metadata = MetaData(uid);
-        entry = new AdminEventHistoryEntry(++_sequence, GetNetEntity(uid), metadata.EntityPrototype?.ID ?? metadata.EntityName, metadata.EntityName,
-            metadata.EntityDescription, null, null, null, AdminEventHistoryStatus.Pending,
+        entry = new GameRuleHistoryEntry(++_sequence, GetNetEntity(uid), metadata.EntityPrototype?.ID ?? metadata.EntityName, metadata.EntityName,
+            metadata.EntityDescription, null, null, null, GameRuleHistoryStatus.Pending,
             new GameRuleSource(GameRuleSourceKind.Unknown), GameRuleEndReason.Unknown, null);
         _entries.Add(uid, entry);
         return entry;
@@ -62,7 +60,7 @@ public sealed partial class StationEventHistorySystem : EntitySystem
         _entries[uid] = entry with
         {
             StartedAt = RoundTime,
-            Status = AdminEventHistoryStatus.Active,
+            Status = GameRuleHistoryStatus.Active,
         };
     }
 
@@ -115,15 +113,15 @@ public sealed partial class StationEventHistorySystem : EntitySystem
         };
     }
 
-    private static AdminEventHistoryStatus GetEndedStatus(bool started, GameRuleEndReason reason)
+    private static GameRuleHistoryStatus GetEndedStatus(bool started, GameRuleEndReason reason)
     {
         if (!started)
-            return AdminEventHistoryStatus.Cancelled;
+            return GameRuleHistoryStatus.Cancelled;
 
         if (reason == GameRuleEndReason.Administrator || reason == GameRuleEndReason.ServerConsole || reason == GameRuleEndReason.RulesCleared)
-            return AdminEventHistoryStatus.Stopped;
+            return GameRuleHistoryStatus.Stopped;
 
-        return AdminEventHistoryStatus.Ended;
+        return GameRuleHistoryStatus.Ended;
     }
 
     /// <summary>
@@ -144,7 +142,7 @@ public sealed partial class StationEventHistorySystem : EntitySystem
             if (entry.StartedAt.Value > lastStart)
                 lastStart = entry.StartedAt.Value;
 
-            active |= entry.Status == AdminEventHistoryStatus.Active;
+            active |= entry.Status == GameRuleHistoryStatus.Active;
         }
 
         return (count, lastStart, active);
@@ -158,14 +156,15 @@ public sealed partial class StationEventHistorySystem : EntitySystem
 
     /// <summary>
     /// Returns newest-added rules first, with delayed starts reflected in the current snapshot.
-    /// Only authorized administrators should receive this data.
     /// </summary>
-    public List<AdminEventHistoryEntry> GetHistory()
+    public List<GameRuleHistoryEntry> GetHistory()
     {
-        return _entries.Select(pair => pair.Value.Status == AdminEventHistoryStatus.Pending && HasComp<DelayedStartRuleComponent>(pair.Key)
-                ? pair.Value with { Status = AdminEventHistoryStatus.Delayed }
-                : pair.Value)
-            .OrderByDescending(entry => entry.Sequence)
-            .ToList();
+        return
+        [
+            .. _entries.Select(pair => pair.Value.Status == GameRuleHistoryStatus.Pending && HasComp<DelayedStartRuleComponent>(pair.Key)
+                    ? pair.Value with { Status = GameRuleHistoryStatus.Delayed }
+                    : pair.Value)
+                .OrderByDescending(entry => entry.Sequence)
+        ];
     }
 }

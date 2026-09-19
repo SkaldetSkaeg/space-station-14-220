@@ -13,11 +13,11 @@ public sealed class AdminEventsEuiState : EuiStateBase
     public bool EventsEnabled;
     public bool CanAddRules;
     public bool CanStopRules;
-    public List<AdminEventRuleInfo> Rules = new();
-    public List<AdminEventTableInfo> Tables = new();
-    public List<AdminGameRulePrototypeInfo> AvailableRules = new();
-    public List<AdminEventHistoryEntry> History = new();
-    public List<AdminSchedulerTimerInfo> Timers = new();
+    public List<AdminEventRuleInfo> Rules = [];
+    public List<AdminEventTableInfo> Tables = [];
+    public List<AdminGameRulePrototypeInfo> AvailableRules = [];
+    public List<AdminEventHistoryEntry> History = [];
+    public List<AdminSchedulerTimerInfo> Timers = [];
 }
 
 /// <summary>
@@ -30,7 +30,7 @@ public sealed record AdminGameRulePrototypeInfo(
     string Name,
     string Description,
     AdminGameRuleCategory Category,
-    AdminStationEventCategory EventCategory,
+    StationEventCategory EventCategory,
     int? MinimumStartDelaySeconds,
     int? MaximumStartDelaySeconds);
 
@@ -48,21 +48,6 @@ public enum AdminGameRuleCategory : byte
     RoundControl,
     SpecialModes,
     Other,
-}
-
-/// <summary>
-/// Subgroups of station events, independent of their current availability.
-/// </summary>
-[Serializable, NetSerializable]
-public enum AdminStationEventCategory : byte
-{
-    Effects,
-    Antagonists,
-    DerelictCyborgs,
-    Creatures,
-    CargoGifts,
-    Meteors,
-    Shuttles,
 }
 
 /// <summary>
@@ -122,24 +107,10 @@ public sealed record AdminEventHistoryEntry(
     TimeSpan? AddedAt,
     TimeSpan? StartedAt,
     TimeSpan? EndedAt,
-    AdminEventHistoryStatus Status,
+    GameRuleHistoryStatus Status,
     GameRuleSource Source,
     GameRuleEndReason EndReason,
     string? EndedBy);
-
-/// <summary>
-/// Lifecycle of an individual GameRule. Cancelled means it ended before actually starting.
-/// </summary>
-[Serializable, NetSerializable]
-public enum AdminEventHistoryStatus : byte
-{
-    Pending,
-    Delayed,
-    Active,
-    Ended,
-    Stopped,
-    Cancelled,
-}
 
 /// <summary>
 /// The lifecycle states shown for unfinished rules.

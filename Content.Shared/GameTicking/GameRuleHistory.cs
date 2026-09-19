@@ -34,3 +34,17 @@ public enum GameRuleEndReason : byte
     RulesCleared,
     EntityDeleted,
 }
+
+/// <summary>
+/// Lifecycle of an individual GameRule. Cancelled means it ended before actually starting.
+/// </summary>
+[Serializable, NetSerializable]
+public enum GameRuleHistoryStatus : byte
+{
+    Pending,
+    Delayed,
+    Active,
+    Ended,
+    Stopped,
+    Cancelled,
+}

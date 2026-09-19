@@ -21,7 +21,7 @@ public sealed partial class EventManagerSystem : EntitySystem
     [Dependency] private EntityTableSystem _entityTable = default!;
     [Dependency] private ServerGameTicker _gameTicker = default!;
     [Dependency] private RoundEndSystem _roundEnd = default!;
-    [Dependency] private StationEventHistorySystem _history = default!;
+    [Dependency] private GameRuleHistorySystem _history = default!;
 
     public bool EventsEnabled { get; private set; }
     private void SetEnabled(bool value) => EventsEnabled = value;

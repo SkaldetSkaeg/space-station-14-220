@@ -8,31 +8,38 @@ namespace Content.Client.Administration.UI.Events;
 /// </summary>
 internal static class AdminEventHistoryText
 {
-    public static string Status(AdminEventHistoryStatus status) =>
-        Loc.GetString("admin-events-history-status", ("status", status.ToString()));
-
-    public static Color StatusColor(AdminEventHistoryStatus status) => status switch
+    public static string Status(GameRuleHistoryStatus status)
     {
-        AdminEventHistoryStatus.Active => Color.LightGreen,
-        AdminEventHistoryStatus.Delayed => Color.Gold,
-        AdminEventHistoryStatus.Stopped or AdminEventHistoryStatus.Cancelled => Color.LightCoral,
-        _ => Color.LightGray,
-    };
+        return Loc.GetString("admin-events-history-status", ("status", status.ToString()));
+    }
+
+    public static Color StatusColor(GameRuleHistoryStatus status)
+    {
+        return status switch
+        {
+            GameRuleHistoryStatus.Active => Color.LightGreen,
+            GameRuleHistoryStatus.Delayed => Color.Gold,
+            GameRuleHistoryStatus.Stopped or GameRuleHistoryStatus.Cancelled => Color.LightCoral,
+            _ => Color.LightGray,
+        };
+    }
 
     public static string Time(TimeSpan? time)
     {
         if (time == null)
             return Loc.GetString("admin-events-history-empty-value");
 
-        return $"{(int) time.Value.TotalHours:00}:{time.Value.Minutes:00}:{time.Value.Seconds:00}";
+        return $"{(int)time.Value.TotalHours:00}:{time.Value.Minutes:00}:{time.Value.Seconds:00}";
     }
 
-    public static string Source(GameRuleSource source) =>
-        Loc.GetString("admin-events-history-source-value",
+    public static string Source(GameRuleSource source)
+    {
+        return Loc.GetString("admin-events-history-source-value",
             ("kind", source.Kind.ToString()),
             ("name", source.Name ?? Loc.GetString("admin-events-history-unknown")),
             ("entity", source.Scheduler?.ToString() ?? "?"),
             ("table", source.Table ?? Loc.GetString("admin-events-inline-table")));
+    }
 
     public static string EndReason(AdminEventHistoryEntry entry)
     {

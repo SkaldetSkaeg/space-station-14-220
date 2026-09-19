@@ -1,7 +1,6 @@
 using System.Linq;
 using System.Text;
 using Content.Server.Administration;
-using Content.Server.StationEvents;
 using Content.Shared.Administration;
 using Content.Shared.Database;
 using Content.Shared.GameTicking;
@@ -13,12 +12,22 @@ namespace Content.Server.GameTicking;
 
 public sealed partial class ServerGameTicker
 {
-    [Dependency] private StationEventHistorySystem _eventHistory = default!;
+    [Dependency] private GameRuleHistorySystem _eventHistory = default!;
 
-    protected override void RecordGameRuleAdded(EntityUid rule) => _eventHistory.RecordAdded(rule);
-    protected override void RecordGameRuleStarted(EntityUid rule) => _eventHistory.RecordStarted(rule);
+    protected override void RecordGameRuleAdded(EntityUid rule)
+    {
+        _eventHistory.RecordAdded(rule);
+    }
+
+    protected override void RecordGameRuleStarted(EntityUid rule)
+    {
+        _eventHistory.RecordStarted(rule);
+    }
+
     protected override void RecordGameRuleEnded(EntityUid rule, GameRuleEndReason reason = GameRuleEndReason.Unknown, string? endedBy = null)
-        => _eventHistory.RecordEnded(rule, reason, endedBy);
+    {
+        _eventHistory.RecordEnded(rule, reason, endedBy);
+    }
 
     /// <summary>
     /// Adds a rule and records the initiating administrator or scheduler in its server-side history.

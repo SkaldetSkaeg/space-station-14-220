@@ -190,6 +190,7 @@
   id: ClosetSkeleton
   components:
   - type: StationEvent
+    category: Antagonists
     weight: 5
     duration: 1
     occursDuringRoundEnd: false
@@ -320,6 +321,7 @@
   id: RevenantSpawn
   components:
   - type: StationEvent
+    category: Antagonists
     weight: 7.5
     duration: 1
     occursDuringRoundEnd: false
@@ -645,6 +647,7 @@
   id: BaseDerelictCyborgSpawn
   components:
   - type: StationEvent
+    category: DerelictCyborgs
     weight: 2.5
     earliestStart: 15
     reoccurrenceDelay: 20

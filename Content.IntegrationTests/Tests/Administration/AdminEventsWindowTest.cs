@@ -6,6 +6,7 @@ using Content.IntegrationTests.Tests.Interaction;
 using Content.Server.Administration.Managers;
 using Content.Server.GameTicking;
 using Content.Shared.CCVar;
+using Content.Shared.GameTicking;
 using Content.Shared.GameTicking.Components;
 using Moq;
 using Robust.Client.Graphics;
@@ -22,7 +23,8 @@ namespace Content.IntegrationTests.Tests.Administration;
 
 public sealed class AdminEventsWindowTest : InteractionTest
 {
-    public override PoolSettings PoolSettings => new() { Connected = true, Dirty = true };
+    // DummyTicker skips round cleanup, so pooled pairs can retain another test's rule history.
+    public override PoolSettings PoolSettings => new() { Connected = true, Dirty = true, Fresh = true };
 
     [TestCase(1f)]
     [TestCase(1.25f)]
@@ -77,7 +79,7 @@ public sealed class AdminEventsWindowTest : InteractionTest
             .Single(button => button.Text.StartsWith(prototype + " ("));
         bool HasEntry(string text) => entries.Children.OfType<RichTextLabel>()
             .Any(label => label.GetMessage().Contains(text)) || EntryRows().Any(row => row.Name == text)
-            || entries.Children.OfType<Collapsible>().Any(section => ((CollapsibleHeading) section.Heading!).Title!.Contains(text));
+            || entries.Children.OfType<Collapsible>().Any(section => ((CollapsibleHeading)section.Heading!).Title!.Contains(text));
         BoxContainer EntryRow(string prototype) => EntryRows().Single(row => row.Name == prototype);
         Button InfoButton(string prototype) => EntryRow(prototype).Children.OfType<Button>().Single();
         RichTextLabel EntryLabel(string prototype) => EntryRow(prototype).Children.OfType<RichTextLabel>().Single();
@@ -169,7 +171,7 @@ public sealed class AdminEventsWindowTest : InteractionTest
         await Client.WaitAssertion(() =>
         {
             var table = GetControlFromField<TableContainer>("ConditionsTable", details);
-            var cells = table.Children.ToArray();
+            Control[] cells = [.. table.Children];
             Assert.That(cells, Has.Length.EqualTo(16));
             for (var row = 0; row < cells.Length; row += 2)
             {
@@ -361,7 +363,7 @@ public sealed class AdminEventsWindowTest : InteractionTest
             Assert.That(LatestHistory().Children.OfType<TableContainer>().Single().Visible, Is.True,
                 "Expanded details should survive a state refresh.");
             Assert.That(LatestHistory().Children.OfType<BoxContainer>().Single().Children.OfType<Label>()
-                .Single(label => label.Name == "HistoryStatus").Text, Is.EqualTo(Loc.GetString("admin-events-history-status-stopped")));
+                .Single(label => label.Name == "HistoryStatus").Text, Is.EqualTo(Loc.GetString("admin-events-history-status", ("status", GameRuleHistoryStatus.Stopped.ToString()))));
             Assert.That(HistoryValue("admin-events-history-source"),
                 Is.EqualTo(Loc.GetString("admin-events-history-source-admin", ("name", ServerSession.Name))));
             Assert.That(HistoryValue("admin-events-history-reason"), Does.Contain(ServerSession.Name));

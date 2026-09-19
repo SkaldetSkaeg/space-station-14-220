@@ -31,7 +31,7 @@ public sealed partial class AdminEventDetailsWindow : FancyWindow
 
     private void UpdateConditions(AdminEventTableEntry entry)
     {
-        WeightValue.SetMessage(Loc.GetString("admin-events-info-weight", ("weight", entry.Weight)));
+        WeightValue.SetMessage(Loc.GetString("admin-events-info-weight", ("weight", entry.Weight.ToString("0.###"))));
         OccurrencesValue.SetMessage(entry.Occurrences.ToString());
         PlayersValue.SetMessage(entry.MinimumPlayers.ToString());
         EarliestValue.SetMessage(Loc.GetString("admin-events-info-minutes", ("minutes", entry.EarliestStartMinutes)));
@@ -47,6 +47,8 @@ public sealed partial class AdminEventDetailsWindow : FancyWindow
     /// <summary>
     /// Returns the localized selection status for event details and tooltips.
     /// </summary>
-    public static string GetAvailabilityText(AdminEventAvailability availability) =>
-        Loc.GetString("admin-events-availability", ("availability", availability.ToString()));
+    public static string GetAvailabilityText(AdminEventAvailability availability)
+    {
+        return Loc.GetString("admin-events-availability", ("availability", availability.ToString()));
+    }
 }
