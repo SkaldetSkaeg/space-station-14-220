@@ -16,6 +16,9 @@ using Robust.Shared.Console;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Configuration;
 using Robust.Shared.Random;
+using Robust.Shared.Serialization.Manager;
+using Robust.Shared.Serialization.Manager.Exceptions;
+using Robust.Shared.Serialization.Markdown.Mapping;
 
 namespace Content.IntegrationTests.Tests.Administration;
 
@@ -26,11 +29,17 @@ public sealed class AdminEventsTest : GameTest
 
     [TestPrototypes]
     internal const string Prototypes = """
+        - type: gameRuleCategory
+          id: AdminEventsTestCategory
+          name: admin-events-title
+          priority: 100
         - type: entity
           id: AdminEventsTestReady
           parent: BaseGameRule
           description: An event description for the information window.
           components:
+          - type: GameRule
+            category: Incidents
           - type: StationEvent
             earliestStart: 0
             reoccurrenceDelay: 0
@@ -39,6 +48,8 @@ public sealed class AdminEventsTest : GameTest
           id: AdminEventsTestRepeatable
           parent: BaseGameRule
           components:
+          - type: GameRule
+            category: Incidents
           - type: StationEvent
             earliestStart: 0
             reoccurrenceDelay: 0
@@ -47,8 +58,9 @@ public sealed class AdminEventsTest : GameTest
           parent: BaseGameRule
           abstract: true
           components:
-          - type: StationEvent
+          - type: GameRule
             category: DerelictCyborgs
+          - type: StationEvent
           - type: AntagSelection
             antags: []
         - type: entity
@@ -61,8 +73,8 @@ public sealed class AdminEventsTest : GameTest
           id: AdminEventsTestCategoryOverride
           parent: AdminEventsTestCategoryParent
           components:
-          - type: StationEvent
-            category: Effects
+          - type: GameRule
+            category: Incidents
         - type: entity
           id: AdminEventsTestTooEarly
           parent: AdminEventsTestReady
@@ -88,9 +100,17 @@ public sealed class AdminEventsTest : GameTest
           id: AdminEventsTestScheduler
           parent: BaseGameRule
           components:
+          - type: GameRule
+            category: AdminEventsTestCategory
           - type: BasicStationEventScheduler
             scheduledGameRules: !type:NestedSelector
               tableId: AdminEventsTestTable
+        - type: entity
+          id: AdminEventsTestCustomCategory
+          parent: BaseGameRule
+          components:
+          - type: GameRule
+            category: AdminEventsTestCategory
         - type: entityTable
           id: AdminEventsTestTable
           table: !type:AllSelector
@@ -108,6 +128,39 @@ public sealed class AdminEventsTest : GameTest
             - id: PowerGridCheck
             - id: RandomSentience
         """;
+
+    [Test]
+    public async Task RuleCategoryIsRequired()
+    {
+        await Server.WaitAssertion(() =>
+        {
+            var serialization = Server.ResolveDependency<ISerializationManager>();
+            Assert.Throws<RequiredFieldNotMappedException>(() =>
+                serialization.Read<GameRuleComponent>(new MappingDataNode(), notNullableOverride: true));
+        });
+    }
+
+    [Test]
+    public async Task CategoriesComeFromRuleData()
+    {
+        await Server.WaitAssertion(() =>
+        {
+            const string prototype = "AdminEventsTestCustomCategory";
+            var ticker = SEntMan.System<ServerGameTicker>();
+            var events = SEntMan.System<AdminEventsSystem>();
+            ticker.ClearGameRules();
+            var uid = ticker.AddGameRule(prototype)!.Value.Owner;
+            var state = events.GetSnapshot();
+            Assert.That(state.AvailableRules.Single(rule => rule.Id == prototype).Category.Id, Is.EqualTo("AdminEventsTestCategory"));
+            Assert.That(state.Rules.Single().Category.Id, Is.EqualTo("AdminEventsTestCategory"));
+
+            // The live instance can override its prototype without changing its behavior components.
+            SEntMan.GetComponent<GameRuleComponent>(uid).Category = "SpecialModes";
+            state = events.GetSnapshot();
+            Assert.That(state.Rules.Single().Category.Id, Is.EqualTo("SpecialModes"));
+            Assert.That(state.AvailableRules.Single(rule => rule.Id == prototype).Category.Id, Is.EqualTo("AdminEventsTestCategory"));
+        });
+    }
 
     [Test]
     public async Task AddingRulesValidatesPrototypesAndPermissions()
@@ -128,20 +181,25 @@ public sealed class AdminEventsTest : GameTest
             Assert.That(Rule("AnomalySpawn").MaximumStartDelaySeconds, Is.EqualTo(20));
             Assert.That(Rule("BluespaceArtifact").MinimumStartDelaySeconds, Is.EqualTo(30));
             Assert.That(Rule("BluespaceArtifact").MaximumStartDelaySeconds, Is.EqualTo(30));
-            Assert.That(Rule("DragonSpawn").Category, Is.EqualTo(AdminGameRuleCategory.Events));
-            Assert.That(Rule("BasicStationEventScheduler").Category, Is.EqualTo(AdminGameRuleCategory.Schedulers));
-            Assert.That(Rule("DynamicStationEventScheduler").Category, Is.EqualTo(AdminGameRuleCategory.Schedulers));
-            Assert.That(Rule("ClericalError").EventCategory, Is.EqualTo(StationEventCategory.Effects));
-            Assert.That(Rule("LoneOpsSpawn").EventCategory, Is.EqualTo(StationEventCategory.Antagonists));
-            Assert.That(Rule("RevenantSpawn").EventCategory, Is.EqualTo(StationEventCategory.Antagonists));
-            Assert.That(Rule("ClosetSkeleton").EventCategory, Is.EqualTo(StationEventCategory.Antagonists));
-            Assert.That(Rule("AdminEventsTestCategoryInherited").EventCategory, Is.EqualTo(StationEventCategory.DerelictCyborgs));
-            Assert.That(Rule("AdminEventsTestCategoryOverride").EventCategory, Is.EqualTo(StationEventCategory.Effects));
-            Assert.That(Rule("DerelictEngineerCyborgSpawn").EventCategory, Is.EqualTo(StationEventCategory.DerelictCyborgs));
-            Assert.That(Rule("KingRatMigration").EventCategory, Is.EqualTo(StationEventCategory.Creatures));
-            Assert.That(Rule("GiftsMedical").EventCategory, Is.EqualTo(StationEventCategory.CargoGifts));
-            Assert.That(Rule("ImmovableRodSpawn").EventCategory, Is.EqualTo(StationEventCategory.Meteors));
-            Assert.That(Rule("UnknownShuttleInstigator").EventCategory, Is.EqualTo(StationEventCategory.Shuttles));
+            Assert.That(Rule("DragonSpawn").Category.Id, Is.EqualTo("MidRoundAntagonists"));
+            Assert.That(Rule("Traitor").Category.Id, Is.EqualTo("RoundStartAntagonists"));
+            Assert.That(Rule("TraitorReinforcement").Category.Id, Is.EqualTo("MidRoundAntagonists"));
+            Assert.That(Rule("Survivor").Category.Id, Is.EqualTo("Roles"));
+            Assert.That(Rule("AdminEventsTestScheduler").IsScheduler, Is.True);
+            Assert.That(Rule("AdminEventsTestCustomCategory").IsScheduler, Is.False);
+            Assert.That(Rule("BasicStationEventScheduler").Category.Id, Is.EqualTo("Schedulers"));
+            Assert.That(Rule("DynamicStationEventScheduler").Category.Id, Is.EqualTo("Schedulers"));
+            Assert.That(Rule("ClericalError").Category.Id, Is.EqualTo("Incidents"));
+            Assert.That(Rule("LoneOpsSpawn").Category.Id, Is.EqualTo("MidRoundAntagonists"));
+            Assert.That(Rule("RevenantSpawn").Category.Id, Is.EqualTo("MidRoundAntagonists"));
+            Assert.That(Rule("ClosetSkeleton").Category.Id, Is.EqualTo("MidRoundAntagonists"));
+            Assert.That(Rule("AdminEventsTestCategoryInherited").Category.Id, Is.EqualTo("DerelictCyborgs"));
+            Assert.That(Rule("AdminEventsTestCategoryOverride").Category.Id, Is.EqualTo("Incidents"));
+            Assert.That(Rule("DerelictEngineerCyborgSpawn").Category.Id, Is.EqualTo("DerelictCyborgs"));
+            Assert.That(Rule("KingRatMigration").Category.Id, Is.EqualTo("Creatures"));
+            Assert.That(Rule("GiftsMedical").Category.Id, Is.EqualTo("CargoGifts"));
+            Assert.That(Rule("ImmovableRodSpawn").Category.Id, Is.EqualTo("Meteors"));
+            Assert.That(Rule("UnknownShuttleInstigator").Category.Id, Is.EqualTo("Shuttles"));
             string[] catalog = [.. availableRules.Select(rule => rule.Id)];
             Assert.That(catalog, Does.Contain("DragonSpawn"));
             Assert.That(catalog, Does.Contain("BasicStationEventScheduler"));

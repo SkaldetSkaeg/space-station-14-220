@@ -5,9 +5,9 @@
     <BoxContainer Orientation="Vertical" Margin="8" SeparationOverride="8">
         <RichTextLabel Text="{Loc admin-events-add-hint}"/>
         <LineEdit Name="Search" PlaceHolder="{Loc admin-events-add-search}"/>
-        <BoxContainer Name="EventFilterBox" Orientation="Vertical" HorizontalExpand="True" Visible="False">
-            <Label Text="{Loc admin-events-add-subcategory}"/>
-            <OptionButton Name="EventCategoryFilter"/>
+        <BoxContainer Name="CategoryFilterBox" Orientation="Vertical" HorizontalExpand="True" Visible="False">
+            <Label Text="{Loc admin-events-add-category}"/>
+            <OptionButton Name="CategoryFilter"/>
         </BoxContainer>
         <PanelContainer StyleClasses="PanelDeep" VerticalExpand="True">
             <ScrollContainer HScrollEnabled="False" Margin="6">

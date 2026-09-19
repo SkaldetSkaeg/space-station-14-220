@@ -2,4 +2,6 @@
   id: Survivor
   parent: BaseGameRule
   components:
+  - type: GameRule
+    category: Roles
   - type: SurvivorRule

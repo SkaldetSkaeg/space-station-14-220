@@ -23,6 +23,7 @@
   abstract: true
   components:
   - type: GameRule
+    category: CargoGifts
     delay:
       min: 10
       max: 10

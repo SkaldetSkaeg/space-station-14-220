@@ -117,14 +117,16 @@ public sealed partial class AdminEventsSystem : EntitySystem
         {
             var metadata = MetaData(uid);
             var prototype = metadata.EntityPrototype;
-            var category = prototype == null ? AdminGameRuleCategory.Other : GetCategory(prototype);
+            var category = Comp<GameRuleComponent>(uid).Category;
+            var isScheduler = HasComp<BasicStationEventSchedulerComponent>(uid)
+                || HasComp<RampingStationEventSchedulerComponent>(uid);
             var status = GetRuleStatus(uid);
 
             var netEntity = GetNetEntity(uid);
             state.Rules.Add(new AdminEventRuleInfo(netEntity,
-                prototype?.ID ?? metadata.EntityName, metadata.EntityName, status, category));
+                prototype?.ID ?? metadata.EntityName, metadata.EntityName, status, category, isScheduler));
 
-            if (category == AdminGameRuleCategory.Schedulers)
+            if (isScheduler)
                 state.Timers.Add(GetSchedulerTimer(netEntity));
 
             if (TryComp<BasicStationEventSchedulerComponent>(uid, out var basic))
@@ -192,7 +194,7 @@ public sealed partial class AdminEventsSystem : EntitySystem
             : null;
         // StartGameRule samples MinMax.Next, which truncates the configured bounds to integer seconds.
         return new AdminGameRulePrototypeInfo(prototype.ID, prototype.Name, prototype.Description,
-            GetCategory(prototype), GetEventCategory(prototype),
+            GetCategory(prototype), IsScheduler(prototype),
             delay == null ? null : Math.Max(0, (int)delay.Value.Min),
             delay == null ? null : Math.Max(0, (int)delay.Value.Max));
     }

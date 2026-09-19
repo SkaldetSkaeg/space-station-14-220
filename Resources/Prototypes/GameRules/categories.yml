@@ -1,0 +1,77 @@
+# Add a category prototype and its localization, then set GameRule.category to its ID.
+# The rule picker discovers categories automatically; higher priority sorts first.
+
+- type: gameRuleCategory
+  id: Schedulers
+  name: game-rule-category-schedulers
+  priority: 15
+
+- type: gameRuleCategory
+  id: RoundStartAntagonists
+  name: game-rule-category-round-start-antagonists
+  priority: 14
+
+- type: gameRuleCategory
+  id: MidRoundAntagonists
+  name: game-rule-category-mid-round-antagonists
+  priority: 13
+
+- type: gameRuleCategory
+  id: Roles
+  name: game-rule-category-roles
+  priority: 12
+
+- type: gameRuleCategory
+  id: Incidents
+  name: game-rule-category-incidents
+  priority: 11
+
+- type: gameRuleCategory
+  id: DerelictCyborgs
+  name: game-rule-category-derelict-cyborgs
+  priority: 10
+
+- type: gameRuleCategory
+  id: Creatures
+  name: game-rule-category-creatures
+  priority: 9
+
+- type: gameRuleCategory
+  id: CargoGifts
+  name: game-rule-category-cargo-gifts
+  priority: 8
+
+- type: gameRuleCategory
+  id: Meteors
+  name: game-rule-category-meteors
+  priority: 7
+
+- type: gameRuleCategory
+  id: Shuttles
+  name: game-rule-category-shuttles
+  priority: 6
+
+- type: gameRuleCategory
+  id: RoundComposition
+  name: game-rule-category-round-composition
+  priority: 5
+
+- type: gameRuleCategory
+  id: StationVariations
+  name: game-rule-category-station-variations
+  priority: 4
+
+- type: gameRuleCategory
+  id: RoundControl
+  name: game-rule-category-round-control
+  priority: 3
+
+- type: gameRuleCategory
+  id: SpecialModes
+  name: game-rule-category-special-modes
+  priority: 2
+
+- type: gameRuleCategory
+  id: Other
+  name: game-rule-category-other
+  priority: 1

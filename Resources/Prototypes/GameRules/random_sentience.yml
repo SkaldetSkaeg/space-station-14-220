@@ -2,6 +2,8 @@
   id: RandomSentience
   parent: BaseGameRule
   components:
+  - type: GameRule
+    category: Incidents
   - type: StationEvent
     weight: 6
     duration: 1

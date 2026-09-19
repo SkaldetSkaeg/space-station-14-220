@@ -28,6 +28,7 @@
   - type: DynamicRuleCost
     cost: 75
   - type: GameRule
+    category: RoundStartAntagonists
     cancelPresetOnTooFewPlayers: false
 
 # Needs testing
@@ -36,6 +37,7 @@
   id: SubWizard
   components:
   - type: GameRule
+    category: RoundStartAntagonists
     cancelPresetOnTooFewPlayers: false
 
 - type: entity
@@ -43,5 +45,6 @@
   id: SubXenoborgs
   components:
   - type: GameRule
+    category: RoundStartAntagonists
     minPlayers: 30
     cancelPresetOnTooFewPlayers: false

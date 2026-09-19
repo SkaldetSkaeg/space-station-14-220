@@ -59,6 +59,7 @@
   id: MeteorSwarmScheduler
   components:
   - type: GameRule
+    category: Schedulers
   - type: BasicStationEventScheduler
     minimumTimeUntilFirstEvent: 600 # 10 min
     minMaxEventTiming:
@@ -72,6 +73,7 @@
   id: MeteorSwarmMildScheduler
   components:
   - type: GameRule
+    category: Schedulers
   - type: BasicStationEventScheduler
     minimumTimeUntilFirstEvent: 600 # 10 min
     minMaxEventTiming:
@@ -85,6 +87,7 @@
   id: KesslerSyndromeScheduler
   components:
   - type: GameRule
+    category: Schedulers
   - type: RampingStationEventScheduler
     scheduledGameRules: !type:NestedSelector
       tableId: BasicMeteorSwarmEventsTable
@@ -97,6 +100,7 @@
   abstract: true
   components:
   - type: GameRule
+    category: Meteors
   - type: StationEvent
     reoccurrenceDelay: 1
     earliestStart: 12
@@ -202,6 +206,8 @@
   id: ImmovableRodSpawn
   parent: BaseGameRule
   components:
+  - type: GameRule
+    category: Meteors
   - type: StationEvent
     startAnnouncement: station-event-immovable-rod-start-announcement
     startAudio:

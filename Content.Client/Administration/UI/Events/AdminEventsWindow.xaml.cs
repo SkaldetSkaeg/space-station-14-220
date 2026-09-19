@@ -19,7 +19,7 @@ public sealed partial class AdminEventsWindow : FancyWindow
     private AdminEventsEuiState _state = new();
     private NetEntity? _selectedRule;
     private NetEntity? _selectedEvent;
-    private AdminGameRuleCategory? _pickerCategory = AdminGameRuleCategory.Schedulers;
+    private bool _pickerSchedulersOnly = true;
     private readonly AdminEventDetailsWindow _detailsWindow = new();
     private string? _detailsPrototype;
     private NetEntity? _detailsScheduler;
@@ -43,19 +43,19 @@ public sealed partial class AdminEventsWindow : FancyWindow
         Tabs.OnTabChanged += _ => _timerPollRemaining = 0;
         OnClose += _detailsWindow.Close;
         OnClose += _rulePicker.Close;
-        AddRuleButton.OnPressed += _ => OpenPicker(AdminGameRuleCategory.Schedulers);
-        AddEventButton.OnPressed += _ => OpenPicker(null);
+        AddRuleButton.OnPressed += _ => OpenPicker(true);
+        AddEventButton.OnPressed += _ => OpenPicker(false);
         _rulePicker.AddRequested += id => AddRuleRequested?.Invoke(id);
         StopRuleButton.OnPressed += _ => RequestStop(_selectedRule);
         StopEventButton.OnPressed += _ => RequestStop(_selectedEvent);
     }
 
-    private void OpenPicker(AdminGameRuleCategory? category)
+    private void OpenPicker(bool schedulersOnly)
     {
         if (!_state.CanAddRules)
             return;
 
-        _pickerCategory = category;
+        _pickerSchedulersOnly = schedulersOnly;
         UpdatePicker();
         _rulePicker.OpenCentered();
         _rulePicker.MoveToFront();
@@ -63,7 +63,7 @@ public sealed partial class AdminEventsWindow : FancyWindow
 
     private void UpdatePicker()
     {
-        _rulePicker.UpdateRules([.. _state.AvailableRules.Where(rule => _pickerCategory == null || rule.Category == _pickerCategory)], _state.CanAddRules);
+        _rulePicker.UpdateRules([.. _state.AvailableRules.Where(rule => !_pickerSchedulersOnly || rule.IsScheduler)], _state.CanAddRules, _pickerSchedulersOnly);
     }
 
     private void RequestStop(NetEntity? entity)
@@ -92,7 +92,7 @@ public sealed partial class AdminEventsWindow : FancyWindow
         var added = state.Rules.FirstOrDefault(rule => rule.Entity == _addedRule);
         if (added != null)
         {
-            if (_pickerCategory == null || added.Category != AdminGameRuleCategory.Schedulers)
+            if (!_pickerSchedulersOnly || !added.IsScheduler)
             {
                 _selectedEvent = _addedRule;
                 Tabs.CurrentTab = 1;
@@ -108,7 +108,7 @@ public sealed partial class AdminEventsWindow : FancyWindow
             ? "admin-events-enabled"
             : "admin-events-disabled");
 
-        List<AdminEventRuleInfo> schedulers = [.. state.Rules.Where(rule => rule.Category == AdminGameRuleCategory.Schedulers)];
+        List<AdminEventRuleInfo> schedulers = [.. state.Rules.Where(rule => rule.IsScheduler)];
         var events = state.Rules;
         _selectedRule = schedulers.FirstOrDefault(rule => rule.Entity == _selectedRule)?.Entity ?? schedulers.FirstOrDefault()?.Entity;
         _selectedEvent = events.FirstOrDefault(rule => rule.Entity == _selectedEvent)?.Entity ?? events.FirstOrDefault()?.Entity;

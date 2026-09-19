@@ -1,0 +1,15 @@
+game-rule-category-schedulers = Schedulers
+game-rule-category-round-start-antagonists = Round-start antagonists
+game-rule-category-mid-round-antagonists = Mid-round antagonists
+game-rule-category-roles = Other roles
+game-rule-category-incidents = Incidents
+game-rule-category-derelict-cyborgs = Derelict cyborgs
+game-rule-category-creatures = Vent creatures
+game-rule-category-cargo-gifts = Cargo gifts
+game-rule-category-meteors = Meteors and space hazards
+game-rule-category-shuttles = Unknown shuttles
+game-rule-category-round-composition = Round composition
+game-rule-category-station-variations = Station variations
+game-rule-category-round-control = Round control
+game-rule-category-special-modes = Special modes
+game-rule-category-other = Other rules

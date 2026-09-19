@@ -15,6 +15,8 @@
   parent: BaseGameRule
   id: BaseUnknownShuttleRule
   components:
+  - type: GameRule
+    category: Shuttles
   - type: StationEvent
     weight: 10 # 10 default
     reoccurrenceDelay: 30

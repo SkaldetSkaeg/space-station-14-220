@@ -71,6 +71,8 @@
   parent: BaseGameRule
   id: BaseAntagGhostRoleRule
   components:
+  - type: GameRule
+    category: Roles
   - type: AntagSelection
     selectionTime: Never
 
@@ -108,6 +110,8 @@
   id: AnomalySpawn
   parent: BaseStationEventShortDelay
   components:
+  - type: GameRule
+    category: Incidents
   - type: StationEvent
     startAnnouncementColor: "#18abf5"
     startAudio:
@@ -121,6 +125,7 @@
   parent: BaseStationEventShortDelay
   components:
   - type: GameRule
+    category: Incidents
     delay:
       min:  30
       max:  30
@@ -136,6 +141,8 @@
   id: BluespaceLocker
   parent: BaseGameRule
   components:
+  - type: GameRule
+    category: Incidents
   - type: StationEvent
     weight: 2
     reoccurrenceDelay: 5
@@ -147,6 +154,8 @@
   id: BreakerFlip
   parent: BaseGameRule
   components:
+  - type: GameRule
+    category: Incidents
   - type: StationEvent
     weight: 7
     duration: 1
@@ -161,6 +170,8 @@
   id: BureaucraticError
   parent: BaseGameRule
   components:
+  - type: GameRule
+    category: Incidents
   - type: StationEvent
     startAnnouncement: station-event-bureaucratic-error-announcement
     minimumPlayers: 25
@@ -178,6 +189,8 @@
   id: ClericalError
   parent: BaseGameRule
   components:
+  - type: GameRule
+    category: Incidents
   - type: StationEvent
     startAnnouncement: station-event-clerical-error-announcement
     minimumPlayers: 15
@@ -189,8 +202,9 @@
   parent: BaseGameRule
   id: ClosetSkeleton
   components:
+  - type: GameRule
+    category: MidRoundAntagonists
   - type: StationEvent
-    category: Antagonists
     weight: 5
     duration: 1
     occursDuringRoundEnd: false
@@ -202,6 +216,8 @@
   parent: BaseAntagGhostRoleRule
   id: DragonSpawn
   components:
+  - type: GameRule
+    category: MidRoundAntagonists
   - type: StationEvent
     weight: 6.5
     earliestStart: 40
@@ -230,6 +246,8 @@
   parent: BaseAntagGhostRoleRule
   id: SpaceChangelingSpawn
   components:
+  - type: GameRule
+    category: MidRoundAntagonists
   - type: StationEvent
     weight: 6
     earliestStart: 20 # can start early since lings need time to start doing stuff
@@ -263,6 +281,8 @@
   parent: BaseAntagGhostRoleRule
   id: NinjaSpawn
   components:
+  - type: GameRule
+    category: MidRoundAntagonists
   - type: StationEvent
     weight: 6
     duration: null
@@ -292,6 +312,8 @@
   parent: BaseAntagGhostRoleRule
   id: ParadoxCloneSpawn
   components:
+  - type: GameRule
+    category: MidRoundAntagonists
   - type: StationEvent
     weight: 5
     duration: null
@@ -320,8 +342,9 @@
   parent: BaseGameRule
   id: RevenantSpawn
   components:
+  - type: GameRule
+    category: MidRoundAntagonists
   - type: StationEvent
-    category: Antagonists
     weight: 7.5
     duration: 1
     occursDuringRoundEnd: false
@@ -334,6 +357,8 @@
   parent: [ BaseAntagGhostRoleRule, BaseWizardRule ]
   id: WizardSpawn
   components:
+  - type: GameRule
+    category: MidRoundAntagonists
   - type: StationEvent
     weight: 1 # rare
     duration: null
@@ -356,6 +381,8 @@
   id: GasLeak
   parent: BaseStationEventShortDelay
   components:
+  - type: GameRule
+    category: Incidents
   - type: StationEvent
     startAnnouncement: station-event-gas-leak-start-announcement
     startAudio:
@@ -368,6 +395,8 @@
   id: KudzuGrowth
   parent: BaseStationEventLongDelay
   components:
+  - type: GameRule
+    category: Incidents
   - type: StationEvent
     earliestStart: 15
     minimumPlayers: 15
@@ -379,6 +408,8 @@
   id: PowerGridCheck
   parent: BaseStationEventShortDelay
   components:
+  - type: GameRule
+    category: Incidents
   - type: StationEvent
     weight: 5
     startAnnouncement: station-event-power-grid-check-start-announcement
@@ -395,6 +426,8 @@
   parent: BaseGameRule
   id: SolarFlare
   components:
+  - type: GameRule
+    category: Incidents
   - type: StationEvent
     weight: 8
     startAnnouncement: station-event-solar-flare-start-announcement
@@ -423,6 +456,8 @@
   id: VentClog
   parent: BaseStationEventLongDelay
   components:
+  - type: GameRule
+    category: Incidents
   - type: StationEvent
     startAnnouncement: station-event-vent-clog-start-announcement
     startAudio:
@@ -439,6 +474,8 @@
   id: SlimesSpawnHorde
   parent: BaseStationEventShortDelay
   components:
+  - type: GameRule
+    category: Creatures
   - type: StationEvent
     startAnnouncement: station-event-vent-creatures-start-horde-announcement
     startAudio:
@@ -460,6 +497,8 @@
   id: SnakeSpawnHorde
   parent: BaseStationEventShortDelay
   components:
+  - type: GameRule
+    category: Creatures
   - type: StationEvent
     startAnnouncement: station-event-vent-creatures-start-horde-announcement
     startAudio:
@@ -481,6 +520,8 @@
   id: SpiderSpawnHorde
   parent: BaseStationEventShortDelay
   components:
+  - type: GameRule
+    category: Creatures
   - type: StationEvent
     startAnnouncement: station-event-vent-creatures-start-horde-announcement
     startAudio:
@@ -500,6 +541,8 @@
   id: SpiderClownSpawnHorde
   parent: BaseStationEventShortDelay
   components:
+  - type: GameRule
+    category: Creatures
   - type: StationEvent
     startAnnouncement: station-event-vent-creatures-start-horde-announcement
     startAudio:
@@ -519,6 +562,8 @@
   id: ZombieOutbreak
   parent: BaseGameRule
   components:
+  - type: GameRule
+    category: MidRoundAntagonists
   - type: StationEvent
     earliestStart: 45
     minimumPlayers: 40
@@ -540,6 +585,8 @@
   parent: [ BaseAntagGhostRoleRule, BaseNukeopsRule ]
   id: LoneOpsSpawn
   components:
+  - type: GameRule
+    category: MidRoundAntagonists
   - type: StationEvent
     earliestStart: 35
     weight: 5.5
@@ -562,6 +609,8 @@
   parent: BaseTraitorRule
   id: SleeperAgents
   components:
+  - type: GameRule
+    category: MidRoundAntagonists
   - type: StationEvent
     earliestStart: 30
     weight: 8
@@ -585,6 +634,8 @@
   id: MassHallucinations
   parent: BaseGameRule
   components:
+  - type: GameRule
+    category: Incidents
   - type: StationEvent
     weight: 7
     duration: 150
@@ -601,6 +652,8 @@
   parent: BaseGameRule
   id: IonStorm
   components:
+  - type: GameRule
+    category: Incidents
   - type: StationEvent
     weight: 8
     reoccurrenceDelay: 20
@@ -611,6 +664,8 @@
   id: GreytideVirus
   parent: BaseStationEventShortDelay
   components:
+  - type: GameRule
+    category: Incidents
   - type: StationEvent
     startAudio:
       path: /Audio/Announcements/attention.ogg
@@ -632,6 +687,8 @@
   parent: BaseGameRule
   id: SmugglerStashVariationPass
   components:
+  - type: GameRule
+    category: Incidents
   - type: StationEvent
     earliestStart: 0
     duration: 1
@@ -646,8 +703,9 @@
   parent: BaseAntagGhostRoleRule
   id: BaseDerelictCyborgSpawn
   components:
-  - type: StationEvent
+  - type: GameRule
     category: DerelictCyborgs
+  - type: StationEvent
     weight: 2.5
     earliestStart: 15
     reoccurrenceDelay: 20

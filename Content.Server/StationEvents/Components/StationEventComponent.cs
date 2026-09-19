@@ -1,4 +1,3 @@
-using Content.Shared.GameTicking;
 using Robust.Shared.Audio;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom;
 
@@ -15,13 +14,6 @@ public sealed partial class StationEventComponent : Component
     public const float WeightNormal = 10.0f;
     public const float WeightHigh = 15.0f;
     public const float WeightVeryHigh = 20.0f;
-
-    /// <summary>
-    /// Optional category override for the event catalog. Otherwise inferred from the rule's components.
-    /// Inherited by child prototypes; does not affect event eligibility or selection.
-    /// </summary>
-    [DataField]
-    public StationEventCategory? Category;
 
     [DataField]
     public float Weight = WeightNormal;

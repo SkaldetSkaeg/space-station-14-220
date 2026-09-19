@@ -5,6 +5,8 @@
   parent: BaseSilentGameRule
   id: BaseVariationPass
   components:
+  - type: GameRule
+    category: StationVariations
   - type: StationVariationPassRule
 
 # Actual rules

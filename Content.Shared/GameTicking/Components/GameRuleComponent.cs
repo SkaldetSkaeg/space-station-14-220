@@ -1,4 +1,5 @@
 using Content.Shared.Destructible.Thresholds;
+using Content.Shared.GameTicking.Prototypes;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom;
 
@@ -11,6 +12,13 @@ namespace Content.Shared.GameTicking.Components;
 [RegisterComponent, EntityCategory("GameRules")]
 public sealed partial class GameRuleComponent : Component
 {
+    /// <summary>
+    /// Functional category, defined by the prototype or inherited from a parent.
+    /// Does not determine which rule systems execute.
+    /// </summary>
+    [DataField(required: true)]
+    public ProtoId<GameRuleCategoryPrototype> Category = GameRuleCategoryPrototype.Default;
+
     /// <summary>
     /// Game time when game rule was activated
     /// </summary>

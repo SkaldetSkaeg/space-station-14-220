@@ -246,7 +246,7 @@ public sealed class AdminEventsWindowTest : InteractionTest
             Assert.That(confirm.Disabled, Is.True);
             AssertDraws(picker);
         });
-        var eventCategories = GetControlFromField<OptionButton>("EventCategoryFilter", picker);
+        var categories = GetControlFromField<OptionButton>("CategoryFilter", picker);
         async Task SelectFilter(OptionButton filter, string key)
         {
             var text = string.Empty;
@@ -330,13 +330,24 @@ public sealed class AdminEventsWindowTest : InteractionTest
             Assert.That(choices.Children.OfType<Button>().Any(button => button.Text == "BasicStationEventScheduler"), Is.True);
             Assert.That(choices.Children.OfType<Button>().Any(button => button.Text == "Sandbox"), Is.True);
         });
-        await SelectFilter(eventCategories, "admin-events-subgroup-antagonists");
+        // This category only exists in test YAML; the filter and heading must discover it from data.
+        await SelectFilter(categories, "admin-events-title");
+        await Client.WaitAssertion(() =>
+        {
+            Assert.That(choices.Children.OfType<Button>().Select(button => button.Text), Is.EquivalentTo(new[]
+            {
+                "AdminEventsTestCustomCategory", "AdminEventsTestScheduler",
+            }));
+            Assert.That(choices.Children.OfType<RichTextLabel>().Single().GetMessage(),
+                Is.EqualTo(Loc.GetString("admin-events-title")));
+        });
+        await SelectFilter(categories, "game-rule-category-mid-round-antagonists");
         await Client.WaitAssertion(() =>
         {
             Assert.That(choices.Children.OfType<Button>().Any(button => button.Text == "DragonSpawn"), Is.True);
             Assert.That(choices.Children.OfType<Button>().Any(button => button.Text == "GiftsEngineering"), Is.False);
         });
-        await SelectFilter(eventCategories, "admin-events-add-all-events");
+        await SelectFilter(categories, "admin-events-add-all-categories");
         await Client.WaitPost(() => search.SetText("AdminEventsTestReady", invokeEvent: true));
         await RunUntilSynced();
         await ClickControl(choices.Children.OfType<Button>().Single());

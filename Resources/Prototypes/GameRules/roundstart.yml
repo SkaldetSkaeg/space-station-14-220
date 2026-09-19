@@ -3,12 +3,14 @@
   abstract: true
   components:
   - type: GameRule
+    category: Other
 
 - type: entity
   id: BaseSilentGameRule
   abstract: true
   components:
   - type: GameRule
+    category: Other
     silent: true
 
 - type: entity
@@ -16,6 +18,8 @@
   id: BaseRoundstartAntagRule
   abstract: true
   components:
+  - type: GameRule
+    category: RoundStartAntagonists
   - type: AntagSelection
     selectionTime: PrePlayerSpawn
 
@@ -23,6 +27,8 @@
   parent: BaseGameRule
   id: RespawnDeadRule
   components:
+  - type: GameRule
+    category: RoundControl
   - type: RespawnDeadRule
     alwaysRespawnDead: true
   - type: RespawnTracker
@@ -33,6 +39,8 @@
   parent: BaseGameRule
   id: SubGamemodesRule
   components:
+  - type: GameRule
+    category: RoundComposition
   - type: SubGamemodes
     rules:
     - id: Thief
@@ -48,6 +56,8 @@
   parent: BaseGameRule
   id: SubGamemodesRuleNoWizard
   components:
+  - type: GameRule
+    category: RoundComposition
   - type: SubGamemodes
     rules:
     - id: Thief
@@ -61,6 +71,8 @@
   parent: BaseGameRule
   id: SubGamemodesRuleNoXenoborg
   components:
+  - type: GameRule
+    category: RoundComposition
   - type: SubGamemodes
     rules:
     - id: Thief
@@ -74,6 +86,8 @@
   parent: BaseGameRule
   id: SubGamemodesRuleNoWizardNoXenoborg
   components:
+  - type: GameRule
+    category: RoundComposition
   - type: SubGamemodes
     rules:
     - id: Thief
@@ -85,6 +99,8 @@
   parent: BaseGameRule
   id: DummyNonAntagChance
   components:
+  - type: GameRule
+    category: RoundComposition
   - type: SubGamemodes
     rules:
     - id: DummyNonAntag
@@ -94,6 +110,8 @@
   id: DeathMatch31
   parent: BaseGameRule
   components:
+  - type: GameRule
+    category: SpecialModes
   - type: DeathMatchRule
     rewardSpawns: !type:AllSelector
       children:
@@ -118,6 +136,8 @@
   id: InactivityTimeRestart
   parent: BaseGameRule
   components:
+  - type: GameRule
+    category: RoundControl
   - type: InactivityRule
     inactivityMaxTime: 600
     roundEndDelay: 10
@@ -126,6 +146,8 @@
   id: MaxTimeRestart
   parent: BaseGameRule
   components:
+  - type: GameRule
+    category: RoundControl
   - type: MaxTimeRestartRule
     roundMaxTime: 300
     roundEndDelay: 10
@@ -135,6 +157,8 @@
   parent: BaseGameRule
   id: BaseNukeopsRule
   components:
+  - type: GameRule
+    category: Roles
   - type: RandomMetadata #this generates the random operation name cuz it's cool.
     nameSegments:
     - NamesOperationPrefix
@@ -156,6 +180,7 @@
   id: Nukeops
   components:
   - type: GameRule
+    category: RoundStartAntagonists
     minPlayers: 20
   - type: LoadMapRule
     mapPath: /Maps/Nonstations/nukieplanet.yml
@@ -178,6 +203,8 @@
   parent: BaseGameRule
   id: BaseTraitorRule
   components:
+  - type: GameRule
+    category: Roles
   - type: TraitorRule
   # TODO: codewords in yml
   # TODO: uplink in yml
@@ -195,6 +222,7 @@
   id: Traitor
   components:
   - type: GameRule
+    category: RoundStartAntagonists
     minPlayers: 5
     delay:
       min: 240
@@ -212,6 +240,8 @@
   id: TraitorReinforcement # This shouldn't be in here but I'm not sure where to put it :(
   parent: BaseTraitorRule
   components:
+  - type: GameRule
+    category: MidRoundAntagonists
   - type: TraitorRule
     giveUplink: false
     giveBriefing: false
@@ -226,6 +256,7 @@
   components:
   - type: ChangelingRule
   - type: GameRule
+    category: RoundStartAntagonists
     minPlayers: 20
     delay:
       min: 240
@@ -257,6 +288,7 @@
   parent: [BaseGameRule, BaseRoundstartAntagRule]
   components:
   - type: GameRule
+    category: RoundStartAntagonists
     minPlayers: 15
   - type: RevolutionaryRule
   - type: AntagSelection
@@ -275,12 +307,16 @@
   id: Sandbox
   parent: BaseGameRule
   components:
+  - type: GameRule
+    category: SpecialModes
   - type: SandboxRule
 
 - type: entity
   id: Secret
   parent: BaseGameRule
   components:
+  - type: GameRule
+    category: RoundComposition
   - type: SecretRule
 
 - type: entity
@@ -288,6 +324,8 @@
   parent: BaseGameRule
   id: BaseWizardRule
   components:
+  - type: GameRule
+    category: Roles
   - type: AntagObjectives
     objectives:
     - WizardSurviveObjective
@@ -308,6 +346,7 @@
   id: Wizard
   components:
   - type: GameRule
+    category: RoundStartAntagonists
     minPlayers: 10
   - type: DynamicRuleCost
     cost: 150
@@ -317,6 +356,7 @@
   parent: [ BaseGameRule, BaseRoundstartAntagRule]
   components:
   - type: GameRule
+    category: RoundStartAntagonists
     minPlayers: 20
     delay:
       min: 600
@@ -337,6 +377,8 @@
   parent: BaseGameRule
   id: BaseXenoborgsRule
   components:
+  - type: GameRule
+    category: Roles
   - type: XenoborgsRule
   - type: RuleGrids
   - type: LoadMapRule
@@ -362,6 +404,7 @@
   id: Xenoborgs
   components:
   - type: GameRule
+    category: RoundStartAntagonists
     minPlayers: 30
 
 # This rule makes the chosen players unable to get other antag rules, as a way to prevent metagaming job rolls.
@@ -371,6 +414,7 @@
   parent: BaseGameRule
   components:
   - type: GameRule
+    category: Roles
     minPlayers: 5
   - type: AntagSelection
     selectionTime: PrePlayerSpawn # Pre-selection before jobs; assignment doesn't really matter though, we only care about the pre-selection to block other antags.
@@ -435,6 +479,8 @@
   id: BasicStationEventScheduler
   parent: BaseGameRule
   components:
+  - type: GameRule
+    category: Schedulers
   - type: BasicStationEventScheduler
     scheduledGameRules: !type:NestedSelector
       tableId: BasicGameRulesTable
@@ -443,6 +489,8 @@
   id: DynamicStationEventScheduler # this isn't the dynamic mode, but rather the station event scheduler used for dynamic
   parent: BaseGameRule
   components:
+  - type: GameRule
+    category: Schedulers
   - type: BasicStationEventScheduler
     scheduledGameRules: !type:NestedSelector
       tableId: DynamicGameRulesTable
@@ -451,6 +499,8 @@
   id: RampingStationEventScheduler
   parent: BaseGameRule
   components:
+  - type: GameRule
+    category: Schedulers
   - type: RampingStationEventScheduler
     scheduledGameRules: !type:NestedSelector
       tableId: BasicGameRulesTable
@@ -459,6 +509,8 @@
   id: SpaceTrafficControlEventScheduler # iff we make a selector for EntityTables that can respect StationEventComp restrictions, or somehow impliment them otherwise in said tables,
   parent: BaseGameRule                  # we can remerge this with the other schedulers, but it will silently fail due to that limitation without a separate scheduler to balance atm.
   components:
+  - type: GameRule
+    category: Schedulers
   - type: BasicStationEventScheduler
     minimumTimeUntilFirstEvent: 2700 # 45 mins #shows up like half way through shift.
     maximumSpanUntilFirstEvent: 900 # At longest takes an hour to show up.
@@ -474,6 +526,8 @@
   id: BasicRoundstartVariation
   parent: BaseSilentGameRule
   components:
+  - type: GameRule
+    category: StationVariations
   - type: RoundstartStationVariationRule
     rules:
     - id: BasicPoweredLightVariationPass

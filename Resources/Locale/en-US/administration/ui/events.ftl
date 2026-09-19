@@ -58,45 +58,10 @@ admin-events-entry-round-end-blocked = No
 cmd-eventsui-desc = Opens the current round's GameRules and event tables.
 cmd-eventsui-help = Usage: eventsui
 
-admin-events-add-subcategory = Event category
-admin-events-add-all-events = All GameRules
+admin-events-add-category = Category
+admin-events-add-all-categories = All categories
 admin-events-group-gamerules = GameRules
-admin-events-group =
-    { $category ->
-        [Events] { admin-events-group-events }
-        [Schedulers] { admin-events-group-schedulers }
-        [Roles] { admin-events-group-roles }
-        [RoundComposition] { admin-events-group-round-composition }
-        [StationVariations] { admin-events-group-station-variations }
-        [RoundControl] { admin-events-group-round-control }
-        [SpecialModes] { admin-events-group-special-modes }
-       *[other] { admin-events-group-other }
-    }
-admin-events-subgroup =
-    { $category ->
-        [Antagonists] { admin-events-subgroup-antagonists }
-        [DerelictCyborgs] { admin-events-subgroup-cyborgs }
-        [Creatures] { admin-events-subgroup-creatures }
-        [CargoGifts] { admin-events-subgroup-cargo-gifts }
-        [Meteors] { admin-events-subgroup-meteors }
-        [Shuttles] { admin-events-subgroup-shuttles }
-       *[other] { admin-events-subgroup-effects }
-    }
-admin-events-group-events = Events
 admin-events-group-schedulers = Schedulers
-admin-events-group-roles = Roles and antagonists
-admin-events-group-round-composition = Round composition
-admin-events-group-station-variations = Station variations
-admin-events-group-round-control = Round control
-admin-events-group-special-modes = Special modes
-admin-events-group-other = Other rules
-admin-events-subgroup-effects = Incidents and effects
-admin-events-subgroup-antagonists = Antagonists and dangerous roles
-admin-events-subgroup-cyborgs = Derelict cyborgs
-admin-events-subgroup-creatures = Vent creatures
-admin-events-subgroup-cargo-gifts = Cargo gifts
-admin-events-subgroup-meteors = Meteors and space hazards
-admin-events-subgroup-shuttles = Unknown shuttles
 
 admin-events-stop = Stop selected
 admin-events-stop-tooltip = Ends the selected GameRule or cancels its pending start. Existing effects and spawned entities may remain, depending on the rule.

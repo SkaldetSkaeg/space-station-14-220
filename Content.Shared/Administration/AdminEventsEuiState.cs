@@ -1,5 +1,7 @@
 using Content.Shared.Eui;
 using Content.Shared.GameTicking;
+using Content.Shared.GameTicking.Prototypes;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
 
 namespace Content.Shared.Administration;
@@ -29,26 +31,10 @@ public sealed record AdminGameRulePrototypeInfo(
     string Id,
     string Name,
     string Description,
-    AdminGameRuleCategory Category,
-    StationEventCategory EventCategory,
+    ProtoId<GameRuleCategoryPrototype> Category,
+    bool IsScheduler,
     int? MinimumStartDelaySeconds,
     int? MaximumStartDelaySeconds);
-
-/// <summary>
-/// Functional groups in the administrator's rule picker. Other preserves access to unclassified rules.
-/// </summary>
-[Serializable, NetSerializable]
-public enum AdminGameRuleCategory : byte
-{
-    Events,
-    Schedulers,
-    Roles,
-    RoundComposition,
-    StationVariations,
-    RoundControl,
-    SpecialModes,
-    Other,
-}
 
 /// <summary>
 /// Requests that the server add a new instance of a GameRule to the round.
@@ -91,7 +77,7 @@ public sealed class StopAdminGameRuleResultMessage(bool success) : EuiMessageBas
 /// </summary>
 [Serializable, NetSerializable]
 public sealed record AdminEventRuleInfo(NetEntity Entity, string Prototype, string Name, AdminEventRuleStatus Status,
-    AdminGameRuleCategory Category);
+    ProtoId<GameRuleCategoryPrototype> Category, bool IsScheduler);
 
 /// <summary>
 /// One GameRule instance, retained after cancellation, completion or deletion.
