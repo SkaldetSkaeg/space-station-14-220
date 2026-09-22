@@ -53,4 +53,4 @@ cult-yogg-altar-used = Нерушимая конструкция теперь л
 
 cult-yogg-dropped-items = Вы избавились от грибных предметов.
 
-cult-yogg-teleport-user-whitelist-rejection = Плотные корни не пропускают вас.
+cult-yogg-teleport-target-whitelist-rejection = Плотные корни не пропускают вас.
