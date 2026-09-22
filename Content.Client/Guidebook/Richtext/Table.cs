@@ -38,7 +38,6 @@ public sealed class Table : TableContainer, IDocumentTag
             MinForcedColumnWidth = width;
         }
         // SS220-Cult_cleaning end
-
         return true;
     }
 }

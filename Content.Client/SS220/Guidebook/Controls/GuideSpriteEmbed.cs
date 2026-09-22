@@ -22,6 +22,9 @@ public sealed class GuideSpriteEmbed : TextureRect, IDocumentTag
 
     [Dependency] private readonly IEntitySystemManager _systemManager = default!;
 
+    /// <summary>
+    /// Creates a centered sprite display with padding around the image.
+    /// </summary>
     public GuideSpriteEmbed()
     {
         IoCManager.InjectDependencies(this);
@@ -29,7 +32,15 @@ public sealed class GuideSpriteEmbed : TextureRect, IDocumentTag
         Margin = new Thickness(8);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Configures the embed to display the first frame of the requested RSI state.
+    /// </summary>
+    /// <param name="args"> Tag attributes: required <c>Sprite</c> RSI path and <c>State</c> name, and optional <c>Scale</c>.</param>
+    /// <param name="control">This control on success; otherwise <see langword="null"/>.</param>
+    /// <returns>
+    /// <see langword="false"/> if a required attribute is missing or the scale is invalid;
+    /// otherwise <see langword="true"/> after configuring the image.
+    /// </returns>
     public bool TryParseTag(Dictionary<string, string> args, [NotNullWhen(true)] out Control? control)
     {
         control = null;
@@ -48,6 +59,12 @@ public sealed class GuideSpriteEmbed : TextureRect, IDocumentTag
         return true;
     }
 
+    /// <summary>
+    /// Reads a positive, finite scale using invariant culture, or uses <see cref="DefaultScale"/> when omitted.
+    /// </summary>
+    /// <param name="args">Tag attributes that may contain <c>Scale</c>.</param>
+    /// <param name="scale">The parsed or default scale on success; unspecified on failure.</param>
+    /// <returns><see langword="true"/> if the scale is omitted or valid; otherwise <see langword="false"/>.</returns>
     private static bool TryGetScale(Dictionary<string, string> args, out float scale)
     {
         scale = DefaultScale;
