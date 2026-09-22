@@ -22,7 +22,7 @@ using Robust.Shared.Serialization.Markdown.Mapping;
 
 namespace Content.IntegrationTests.Tests.Administration;
 
-public sealed class AdminEventsTest : GameTest
+public sealed class AdminGameRulesControlTest : GameTest
 {
     // DummyTicker skips round cleanup, so pooled pairs can retain another test's rule history.
     public override PoolSettings PoolSettings => new() { Connected = true, Dirty = true, Fresh = true };
@@ -30,11 +30,11 @@ public sealed class AdminEventsTest : GameTest
     [TestPrototypes]
     internal const string Prototypes = """
         - type: gameRuleCategory
-          id: AdminEventsTestCategory
-          name: admin-events-title
+          id: AdminGameRulesControlTestCategory
+          name: admin-gamerules-title
           priority: 100
         - type: entity
-          id: AdminEventsTestReady
+          id: AdminGameRulesControlTestReady
           parent: BaseGameRule
           description: An event description for the information window.
           components:
@@ -45,7 +45,7 @@ public sealed class AdminEventsTest : GameTest
             reoccurrenceDelay: 0
             maxOccurrences: 1
         - type: entity
-          id: AdminEventsTestRepeatable
+          id: AdminGameRulesControlTestRepeatable
           parent: BaseGameRule
           components:
           - type: GameRule
@@ -54,7 +54,7 @@ public sealed class AdminEventsTest : GameTest
             earliestStart: 0
             reoccurrenceDelay: 0
         - type: entity
-          id: AdminEventsTestCategoryParent
+          id: AdminGameRulesControlTestCategoryParent
           parent: BaseGameRule
           abstract: true
           components:
@@ -64,63 +64,63 @@ public sealed class AdminEventsTest : GameTest
           - type: AntagSelection
             antags: []
         - type: entity
-          id: AdminEventsTestCategoryInherited
-          parent: AdminEventsTestCategoryParent
+          id: AdminGameRulesControlTestCategoryInherited
+          parent: AdminGameRulesControlTestCategoryParent
           components:
           - type: StationEvent
             minimumPlayers: 1
         - type: entity
-          id: AdminEventsTestCategoryOverride
-          parent: AdminEventsTestCategoryParent
+          id: AdminGameRulesControlTestCategoryOverride
+          parent: AdminGameRulesControlTestCategoryParent
           components:
           - type: GameRule
             category: Incidents
         - type: entity
-          id: AdminEventsTestTooEarly
-          parent: AdminEventsTestReady
+          id: AdminGameRulesControlTestTooEarly
+          parent: AdminGameRulesControlTestReady
           components:
           - type: StationEvent
             earliestStart: 100000
         - type: entity
-          id: AdminEventsTestTooFew
-          parent: AdminEventsTestReady
+          id: AdminGameRulesControlTestTooFew
+          parent: AdminGameRulesControlTestReady
           components:
           - type: StationEvent
             minimumPlayers: 100000
         - type: entity
-          id: AdminEventsTestZeroWeight
-          parent: AdminEventsTestReady
+          id: AdminGameRulesControlTestZeroWeight
+          parent: AdminGameRulesControlTestReady
           components:
           - type: StationEvent
             weight: 0
         - type: entity
-          id: AdminEventsTestTableBlocked
-          parent: AdminEventsTestReady
+          id: AdminGameRulesControlTestTableBlocked
+          parent: AdminGameRulesControlTestReady
         - type: entity
-          id: AdminEventsTestScheduler
+          id: AdminGameRulesControlTestScheduler
           parent: BaseGameRule
           components:
           - type: GameRule
-            category: AdminEventsTestCategory
+            category: AdminGameRulesControlTestCategory
           - type: BasicStationEventScheduler
             scheduledGameRules: !type:NestedSelector
-              tableId: AdminEventsTestTable
+              tableId: AdminGameRulesControlTestTable
         - type: entity
-          id: AdminEventsTestCustomCategory
+          id: AdminGameRulesControlTestCustomCategory
           parent: BaseGameRule
           components:
           - type: GameRule
-            category: AdminEventsTestCategory
+            category: AdminGameRulesControlTestCategory
         - type: entityTable
-          id: AdminEventsTestTable
+          id: AdminGameRulesControlTestTable
           table: !type:AllSelector
             children:
-            - id: AdminEventsTestReady
-            - id: AdminEventsTestRepeatable
-            - id: AdminEventsTestTooEarly
-            - id: AdminEventsTestTooFew
-            - id: AdminEventsTestZeroWeight
-            - id: AdminEventsTestTableBlocked
+            - id: AdminGameRulesControlTestReady
+            - id: AdminGameRulesControlTestRepeatable
+            - id: AdminGameRulesControlTestTooEarly
+            - id: AdminGameRulesControlTestTooFew
+            - id: AdminGameRulesControlTestZeroWeight
+            - id: AdminGameRulesControlTestTableBlocked
               conditions:
               - !type:HasBudgetCondition
                 costOverride: 1
@@ -145,20 +145,20 @@ public sealed class AdminEventsTest : GameTest
     {
         await Server.WaitAssertion(() =>
         {
-            const string prototype = "AdminEventsTestCustomCategory";
+            const string prototype = "AdminGameRulesControlTestCustomCategory";
             var ticker = SEntMan.System<ServerGameTicker>();
-            var events = SEntMan.System<AdminEventsSystem>();
+            var events = SEntMan.System<AdminGameRulesControlSystem>();
             ticker.ClearGameRules();
             var uid = ticker.AddGameRule(prototype)!.Value.Owner;
             var state = events.GetSnapshot();
-            Assert.That(state.AvailableRules.Single(rule => rule.Id == prototype).Category.Id, Is.EqualTo("AdminEventsTestCategory"));
-            Assert.That(state.Rules.Single().Category.Id, Is.EqualTo("AdminEventsTestCategory"));
+            Assert.That(state.AvailableRules.Single(rule => rule.Id == prototype).Category.Id, Is.EqualTo("AdminGameRulesControlTestCategory"));
+            Assert.That(state.Rules.Single().Category.Id, Is.EqualTo("AdminGameRulesControlTestCategory"));
 
             // The live instance can override its prototype without changing its behavior components.
             SEntMan.GetComponent<GameRuleComponent>(uid).Category = "SpecialModes";
             state = events.GetSnapshot();
             Assert.That(state.Rules.Single().Category.Id, Is.EqualTo("SpecialModes"));
-            Assert.That(state.AvailableRules.Single(rule => rule.Id == prototype).Category.Id, Is.EqualTo("AdminEventsTestCategory"));
+            Assert.That(state.AvailableRules.Single(rule => rule.Id == prototype).Category.Id, Is.EqualTo("AdminGameRulesControlTestCategory"));
         });
     }
 
@@ -169,14 +169,14 @@ public sealed class AdminEventsTest : GameTest
         {
             var admins = Server.ResolveDependency<IAdminManager>();
             var ticker = SEntMan.System<ServerGameTicker>();
-            var events = SEntMan.System<AdminEventsSystem>();
+            var events = SEntMan.System<AdminGameRulesControlSystem>();
             ticker.ClearGameRules();
             admins.PromoteHost(ServerSession);
 
             var availableRules = events.GetSnapshot().AvailableRules;
             AdminGameRulePrototypeInfo Rule(string id) => availableRules.Single(rule => rule.Id == id);
-            Assert.That(Rule("AdminEventsTestReady").MinimumStartDelaySeconds, Is.Null);
-            Assert.That(Rule("AdminEventsTestReady").MaximumStartDelaySeconds, Is.Null);
+            Assert.That(Rule("AdminGameRulesControlTestReady").MinimumStartDelaySeconds, Is.Null);
+            Assert.That(Rule("AdminGameRulesControlTestReady").MaximumStartDelaySeconds, Is.Null);
             Assert.That(Rule("AnomalySpawn").MinimumStartDelaySeconds, Is.EqualTo(10));
             Assert.That(Rule("AnomalySpawn").MaximumStartDelaySeconds, Is.EqualTo(20));
             Assert.That(Rule("BluespaceArtifact").MinimumStartDelaySeconds, Is.EqualTo(30));
@@ -185,16 +185,16 @@ public sealed class AdminEventsTest : GameTest
             Assert.That(Rule("Traitor").Category.Id, Is.EqualTo("RoundStartAntagonists"));
             Assert.That(Rule("TraitorReinforcement").Category.Id, Is.EqualTo("MidRoundAntagonists"));
             Assert.That(Rule("Survivor").Category.Id, Is.EqualTo("Roles"));
-            Assert.That(Rule("AdminEventsTestScheduler").IsScheduler, Is.True);
-            Assert.That(Rule("AdminEventsTestCustomCategory").IsScheduler, Is.False);
+            Assert.That(Rule("AdminGameRulesControlTestScheduler").IsScheduler, Is.True);
+            Assert.That(Rule("AdminGameRulesControlTestCustomCategory").IsScheduler, Is.False);
             Assert.That(Rule("BasicStationEventScheduler").Category.Id, Is.EqualTo("Schedulers"));
             Assert.That(Rule("DynamicStationEventScheduler").Category.Id, Is.EqualTo("Schedulers"));
             Assert.That(Rule("ClericalError").Category.Id, Is.EqualTo("Incidents"));
             Assert.That(Rule("LoneOpsSpawn").Category.Id, Is.EqualTo("MidRoundAntagonists"));
             Assert.That(Rule("RevenantSpawn").Category.Id, Is.EqualTo("MidRoundAntagonists"));
             Assert.That(Rule("ClosetSkeleton").Category.Id, Is.EqualTo("MidRoundAntagonists"));
-            Assert.That(Rule("AdminEventsTestCategoryInherited").Category.Id, Is.EqualTo("DerelictCyborgs"));
-            Assert.That(Rule("AdminEventsTestCategoryOverride").Category.Id, Is.EqualTo("Incidents"));
+            Assert.That(Rule("AdminGameRulesControlTestCategoryInherited").Category.Id, Is.EqualTo("DerelictCyborgs"));
+            Assert.That(Rule("AdminGameRulesControlTestCategoryOverride").Category.Id, Is.EqualTo("Incidents"));
             Assert.That(Rule("DerelictEngineerCyborgSpawn").Category.Id, Is.EqualTo("DerelictCyborgs"));
             Assert.That(Rule("KingRatMigration").Category.Id, Is.EqualTo("Creatures"));
             Assert.That(Rule("GiftsMedical").Category.Id, Is.EqualTo("CargoGifts"));
@@ -209,7 +209,7 @@ public sealed class AdminEventsTest : GameTest
             Assert.That(catalog, Does.Contain("DynamicRule"));
             Assert.That(catalog, Does.Contain("InactivityTimeRestart"));
             Assert.That(catalog, Is.Unique);
-            Assert.That(events.TryAddRule(ServerSession, "MissingAdminEventsRule"), Is.Null);
+            Assert.That(events.TryAddRule(ServerSession, "MissingAdminGameRulesControlRule"), Is.Null);
             Assert.That(events.TryAddRule(ServerSession, "BaseGameRule"), Is.Null);
             Assert.That(events.TryAddRule(ServerSession, "MobHuman"), Is.Null);
             var sandbox = events.TryAddRule(ServerSession, "Sandbox");
@@ -221,14 +221,14 @@ public sealed class AdminEventsTest : GameTest
             var data = admins.GetAdminData(ServerSession)!;
             var flags = data.Flags;
             data.Flags &= ~AdminFlags.Fun;
-            Assert.That(events.TryAddRule(ServerSession, "AdminEventsTestScheduler"), Is.Null);
+            Assert.That(events.TryAddRule(ServerSession, "AdminGameRulesControlTestScheduler"), Is.Null);
             data.Flags = flags;
             admins.DeAdmin(ServerSession);
-            Assert.That(events.TryAddRule(ServerSession, "AdminEventsTestScheduler"), Is.Null);
+            Assert.That(events.TryAddRule(ServerSession, "AdminGameRulesControlTestScheduler"), Is.Null);
             admins.ReAdmin(ServerSession);
             Assert.That(ticker.GetAddedGameRules(), Is.Empty);
 
-            var entity = events.TryAddRule(ServerSession, "AdminEventsTestScheduler");
+            var entity = events.TryAddRule(ServerSession, "AdminGameRulesControlTestScheduler");
             Assert.That(entity, Is.Not.Null);
             var uid = SEntMan.GetEntity(entity.Value);
             Assert.That(ticker.GetAddedGameRules(), Is.EquivalentTo(new[] { uid }));
@@ -243,14 +243,14 @@ public sealed class AdminEventsTest : GameTest
         {
             var admins = Server.ResolveDependency<IAdminManager>();
             var ticker = SEntMan.System<ServerGameTicker>();
-            var events = SEntMan.System<AdminEventsSystem>();
+            var events = SEntMan.System<AdminGameRulesControlSystem>();
             ticker.ClearGameRules();
             admins.PromoteHost(ServerSession);
 
-            var active = ticker.AddGameRule("AdminEventsTestScheduler")!.Value.Owner;
+            var active = ticker.AddGameRule("AdminGameRulesControlTestScheduler")!.Value.Owner;
             ticker.StartGameRule(active);
-            var pending = ticker.AddGameRule("AdminEventsTestScheduler")!.Value.Owner;
-            var delayed = ticker.AddGameRule("AdminEventsTestScheduler")!.Value.Owner;
+            var pending = ticker.AddGameRule("AdminGameRulesControlTestScheduler")!.Value.Owner;
+            var delayed = ticker.AddGameRule("AdminGameRulesControlTestScheduler")!.Value.Owner;
             SEntMan.AddComponent<DelayedStartRuleComponent>(delayed).RuleStartTime = TimeSpan.MaxValue;
             var entity = SEntMan.GetNetEntity(active);
 
@@ -278,7 +278,7 @@ public sealed class AdminEventsTest : GameTest
             Assert.That(SEntMan.HasComponent<ActiveGameRuleComponent>(active), Is.False);
             Assert.That(events.TryStopRule(ServerSession, entity), Is.False);
             Assert.That(ticker.GetAddedGameRules(), Is.EquivalentTo(new[] { pending, delayed }));
-            Assert.That(events.GetSnapshot().History.Count(rule => rule.Prototype == "AdminEventsTestScheduler" && rule.StartedAt != null), Is.EqualTo(1));
+            Assert.That(events.GetSnapshot().History.Count(rule => rule.Prototype == "AdminGameRulesControlTestScheduler" && rule.StartedAt != null), Is.EqualTo(1));
 
             Assert.That(events.TryStopRule(ServerSession, SEntMan.GetNetEntity(pending)), Is.True);
             Assert.That(ticker.StartGameRule(pending), Is.False);
@@ -290,7 +290,7 @@ public sealed class AdminEventsTest : GameTest
         });
     }
 
-    [TestCase("AdminEventsTestScheduler")]
+    [TestCase("AdminGameRulesControlTestScheduler")]
     [TestCase("RampingStationEventScheduler")]
     public async Task SchedulerTimersFollowCountdownAndPause(string prototype)
     {
@@ -299,7 +299,7 @@ public sealed class AdminEventsTest : GameTest
             var config = Server.ResolveDependency<IConfigurationManager>();
             config.SetCVar(CCVars.EventsEnabled, true);
             var ticker = SEntMan.System<ServerGameTicker>();
-            var events = SEntMan.System<AdminEventsSystem>();
+            var events = SEntMan.System<AdminGameRulesControlSystem>();
             ticker.ClearGameRules();
             var uid = ticker.AddGameRule(prototype)!.Value.Owner;
             var entity = SEntMan.GetNetEntity(uid);
@@ -310,7 +310,7 @@ public sealed class AdminEventsTest : GameTest
             Assert.That(before.Paused, Is.False);
             void Advance()
             {
-                if (prototype == "AdminEventsTestScheduler")
+                if (prototype == "AdminGameRulesControlTestScheduler")
                     SEntMan.System<BasicStationEventSchedulerSystem>().Update(1);
                 else
                     SEntMan.System<RampingStationEventSchedulerSystem>().Update(1);
@@ -340,22 +340,22 @@ public sealed class AdminEventsTest : GameTest
             var config = Server.ResolveDependency<IConfigurationManager>();
             config.SetCVar(CCVars.EventsEnabled, true);
             var ticker = SEntMan.System<ServerGameTicker>();
-            var events = SEntMan.System<AdminEventsSystem>();
+            var events = SEntMan.System<AdminGameRulesControlSystem>();
             ticker.ClearGameRules();
-            var scheduler = ticker.AddGameRule("AdminEventsTestScheduler")!.Value.Owner;
+            var scheduler = ticker.AddGameRule("AdminGameRulesControlTestScheduler")!.Value.Owner;
 
             AdminEventAvailability Status(string id) => events.GetSnapshot().Tables.Single().Entries
                 .Single(entry => entry.Prototype == id).Availability;
             int Occurrences(string id) => events.GetSnapshot().Tables.Single().Entries
                 .Single(entry => entry.Prototype == id).Occurrences;
-            Assert.That(Occurrences("AdminEventsTestReady"), Is.Zero);
-            Assert.That(Status("AdminEventsTestReady"), Is.EqualTo(AdminEventAvailability.SchedulerInactive));
+            Assert.That(Occurrences("AdminGameRulesControlTestReady"), Is.Zero);
+            Assert.That(Status("AdminGameRulesControlTestReady"), Is.EqualTo(AdminEventAvailability.SchedulerInactive));
             ticker.StartGameRule(scheduler);
-            Assert.That(Status("AdminEventsTestReady"), Is.EqualTo(AdminEventAvailability.Available));
-            Assert.That(Status("AdminEventsTestTooEarly"), Is.EqualTo(AdminEventAvailability.ConditionsNotMet));
-            Assert.That(Status("AdminEventsTestTooFew"), Is.EqualTo(AdminEventAvailability.ConditionsNotMet));
-            Assert.That(Status("AdminEventsTestZeroWeight"), Is.EqualTo(AdminEventAvailability.ConditionsNotMet));
-            Assert.That(Status("AdminEventsTestTableBlocked"), Is.EqualTo(AdminEventAvailability.ConditionsNotMet));
+            Assert.That(Status("AdminGameRulesControlTestReady"), Is.EqualTo(AdminEventAvailability.Available));
+            Assert.That(Status("AdminGameRulesControlTestTooEarly"), Is.EqualTo(AdminEventAvailability.ConditionsNotMet));
+            Assert.That(Status("AdminGameRulesControlTestTooFew"), Is.EqualTo(AdminEventAvailability.ConditionsNotMet));
+            Assert.That(Status("AdminGameRulesControlTestZeroWeight"), Is.EqualTo(AdminEventAvailability.ConditionsNotMet));
+            Assert.That(Status("AdminGameRulesControlTestTableBlocked"), Is.EqualTo(AdminEventAvailability.ConditionsNotMet));
 
             var random = Server.ResolveDependency<IRobustRandom>();
             random.SetSeed(42);
@@ -364,47 +364,47 @@ public sealed class AdminEventsTest : GameTest
             events.GetSnapshot();
             Assert.That(random.Next(), Is.EqualTo(expected));
 
-            config.SetCVar(CCVars.GameTickerIgnoredPresets, "AdminEventsTestReady");
-            Assert.That(Status("AdminEventsTestReady"), Is.EqualTo(AdminEventAvailability.ConditionsNotMet));
+            config.SetCVar(CCVars.GameTickerIgnoredPresets, "AdminGameRulesControlTestReady");
+            Assert.That(Status("AdminGameRulesControlTestReady"), Is.EqualTo(AdminEventAvailability.ConditionsNotMet));
             config.SetCVar(CCVars.GameTickerIgnoredPresets, "");
-            Assert.That(Status("AdminEventsTestReady"), Is.EqualTo(AdminEventAvailability.Available));
+            Assert.That(Status("AdminGameRulesControlTestReady"), Is.EqualTo(AdminEventAvailability.Available));
             config.SetCVar(CCVars.EventsEnabled, false);
-            Assert.That(Status("AdminEventsTestReady"), Is.EqualTo(AdminEventAvailability.EventsDisabled));
+            Assert.That(Status("AdminGameRulesControlTestReady"), Is.EqualTo(AdminEventAvailability.EventsDisabled));
             config.SetCVar(CCVars.EventsEnabled, true);
 
-            var ready = ticker.AddGameRule("AdminEventsTestReady")!.Value.Owner;
-            Assert.That(Occurrences("AdminEventsTestReady"), Is.Zero, "Adding a pending rule does not trigger it.");
+            var ready = ticker.AddGameRule("AdminGameRulesControlTestReady")!.Value.Owner;
+            Assert.That(Occurrences("AdminGameRulesControlTestReady"), Is.Zero, "Adding a pending rule does not trigger it.");
             var pendingHistory = events.GetSnapshot().History.Single(entry => entry.Entity == SEntMan.GetNetEntity(ready));
             Assert.That(pendingHistory.Status, Is.EqualTo(GameRuleHistoryStatus.Pending));
             Assert.That(pendingHistory.StartedAt, Is.Null);
             ticker.StartGameRule(ready);
-            Assert.That(Occurrences("AdminEventsTestReady"), Is.EqualTo(1));
-            Assert.That(Status("AdminEventsTestReady"), Is.EqualTo(AdminEventAvailability.ConditionsNotMet));
+            Assert.That(Occurrences("AdminGameRulesControlTestReady"), Is.EqualTo(1));
+            Assert.That(Status("AdminGameRulesControlTestReady"), Is.EqualTo(AdminEventAvailability.ConditionsNotMet));
             ticker.EndGameRule(ready);
             // The one-per-round limit continues to block the event after it ends.
-            Assert.That(Status("AdminEventsTestReady"), Is.EqualTo(AdminEventAvailability.ConditionsNotMet));
-            Assert.That(Occurrences("AdminEventsTestReady"), Is.EqualTo(1), "Finished events remain in the round history.");
+            Assert.That(Status("AdminGameRulesControlTestReady"), Is.EqualTo(AdminEventAvailability.ConditionsNotMet));
+            Assert.That(Occurrences("AdminGameRulesControlTestReady"), Is.EqualTo(1), "Finished events remain in the round history.");
 
-            var repeatable = ticker.AddGameRule("AdminEventsTestRepeatable")!.Value.Owner;
+            var repeatable = ticker.AddGameRule("AdminGameRulesControlTestRepeatable")!.Value.Owner;
             ticker.StartGameRule(repeatable);
             ticker.EndGameRule(repeatable);
-            Assert.That(Occurrences("AdminEventsTestRepeatable"), Is.EqualTo(1));
-            Assert.That(Status("AdminEventsTestRepeatable"), Is.EqualTo(AdminEventAvailability.Available));
-            var repeated = ticker.AddGameRule("AdminEventsTestRepeatable")!.Value.Owner;
+            Assert.That(Occurrences("AdminGameRulesControlTestRepeatable"), Is.EqualTo(1));
+            Assert.That(Status("AdminGameRulesControlTestRepeatable"), Is.EqualTo(AdminEventAvailability.Available));
+            var repeated = ticker.AddGameRule("AdminGameRulesControlTestRepeatable")!.Value.Owner;
             ticker.StartGameRule(repeated);
             ticker.EndGameRule(repeated);
-            Assert.That(Occurrences("AdminEventsTestRepeatable"), Is.EqualTo(2));
+            Assert.That(Occurrences("AdminGameRulesControlTestRepeatable"), Is.EqualTo(2));
             SEntMan.DeleteEntity(ready);
             SEntMan.DeleteEntity(repeatable);
             SEntMan.DeleteEntity(repeated);
-            List<AdminEventHistoryEntry> history = [.. events.GetSnapshot().History.Where(entry => entry.Prototype == "AdminEventsTestReady" || entry.Prototype == "AdminEventsTestRepeatable")];
+            List<AdminGameRuleHistoryEntry> history = [.. events.GetSnapshot().History.Where(entry => entry.Prototype == "AdminGameRulesControlTestReady" || entry.Prototype == "AdminGameRulesControlTestRepeatable")];
             Assert.That(history.Select(entry => entry.Prototype), Is.EqualTo(new[]
             {
-                "AdminEventsTestRepeatable", "AdminEventsTestRepeatable", "AdminEventsTestReady",
+                "AdminGameRulesControlTestRepeatable", "AdminGameRulesControlTestRepeatable", "AdminGameRulesControlTestReady",
             }));
             Assert.That(history.Select(entry => entry.StartedAt), Is.All.Not.Null);
             Assert.That(history.Select(entry => entry.StartedAt), Is.Ordered.Descending);
-            Assert.That(events.GetSnapshot().History.Where(entry => entry.Prototype == "AdminEventsTestReady" || entry.Prototype == "AdminEventsTestRepeatable"), Is.EqualTo(history));
+            Assert.That(events.GetSnapshot().History.Where(entry => entry.Prototype == "AdminGameRulesControlTestReady" || entry.Prototype == "AdminGameRulesControlTestRepeatable"), Is.EqualTo(history));
         });
     }
 
@@ -414,7 +414,7 @@ public sealed class AdminEventsTest : GameTest
         await Server.WaitAssertion(() =>
         {
             var ticker = SEntMan.System<ServerGameTicker>();
-            var events = SEntMan.System<AdminEventsSystem>();
+            var events = SEntMan.System<AdminGameRulesControlSystem>();
             var history = SEntMan.System<GameRuleHistorySystem>();
             var admins = Server.ResolveDependency<IAdminManager>();
             admins.PromoteHost(ServerSession);
@@ -422,7 +422,7 @@ public sealed class AdminEventsTest : GameTest
 
             GameRuleHistoryEntry Entry(EntityUid uid) => history.GetHistory().Single(entry => entry.Entity == SEntMan.GetNetEntity(uid));
             var source = new GameRuleSource(GameRuleSourceKind.Administrator, ServerSession.Name);
-            var first = ticker.AddGameRule("AdminEventsTestRepeatable", source)!.Value.Owner;
+            var first = ticker.AddGameRule("AdminGameRulesControlTestRepeatable", source)!.Value.Owner;
             Assert.That(Entry(first).Status, Is.EqualTo(GameRuleHistoryStatus.Pending));
             Assert.That(Entry(first).Source, Is.EqualTo(source));
             ticker.StartGameRule(first);
@@ -443,7 +443,7 @@ public sealed class AdminEventsTest : GameTest
             Assert.That(displayed.EndReason, Is.EqualTo(GameRuleEndReason.DurationElapsed));
             Assert.That(displayed.EndedAt, Is.EqualTo(finished.EndedAt));
 
-            var delayed = ticker.AddGameRule("AdminEventsTestRepeatable", source)!.Value.Owner;
+            var delayed = ticker.AddGameRule("AdminGameRulesControlTestRepeatable", source)!.Value.Owner;
             SEntMan.GetComponent<GameRuleComponent>(delayed).Delay = new MinMax(30, 30);
             ticker.StartGameRule(delayed);
             Assert.That(Entry(delayed).Status, Is.EqualTo(GameRuleHistoryStatus.Delayed));
@@ -454,33 +454,33 @@ public sealed class AdminEventsTest : GameTest
             Assert.That(Entry(delayed).EndedBy, Is.EqualTo(ServerSession.Name));
             Assert.That(Entry(delayed).EndReason, Is.EqualTo(GameRuleEndReason.Administrator));
 
-            var manual = ticker.AddGameRule("AdminEventsTestRepeatable", source)!.Value.Owner;
+            var manual = ticker.AddGameRule("AdminGameRulesControlTestRepeatable", source)!.Value.Owner;
             ticker.StartGameRule(manual);
             events.TryStopRule(ServerSession, SEntMan.GetNetEntity(manual));
             Assert.That(Entry(manual).Status, Is.EqualTo(GameRuleHistoryStatus.Stopped));
 
-            var deleted = ticker.AddGameRule("AdminEventsTestRepeatable")!.Value.Owner;
+            var deleted = ticker.AddGameRule("AdminGameRulesControlTestRepeatable")!.Value.Owner;
             ticker.StartGameRule(deleted);
             var deletedId = Entry(deleted).Sequence;
             SEntMan.DeleteEntity(deleted);
             Assert.That(history.GetHistory().Single(entry => entry.Sequence == deletedId).EndReason, Is.EqualTo(GameRuleEndReason.EntityDeleted));
 
-            var unknown = ticker.AddGameRule("AdminEventsTestRepeatable")!.Value.Owner;
+            var unknown = ticker.AddGameRule("AdminGameRulesControlTestRepeatable")!.Value.Owner;
             ticker.StartGameRule(unknown);
             ticker.EndGameRule(unknown);
             Assert.That(Entry(unknown).Source.Kind, Is.EqualTo(GameRuleSourceKind.Unknown));
             Assert.That(Entry(unknown).EndReason, Is.EqualTo(GameRuleEndReason.Unknown));
 
-            var scheduler = ticker.AddGameRule("AdminEventsTestScheduler")!.Value.Owner;
-            SEntMan.System<EventManagerSystem>().RunRandomEvent(new NestedSelector { TableId = "AdminEventsTestTable" }, scheduler);
+            var scheduler = ticker.AddGameRule("AdminGameRulesControlTestScheduler")!.Value.Owner;
+            SEntMan.System<EventManagerSystem>().RunRandomEvent(new NestedSelector { TableId = "AdminGameRulesControlTestTable" }, scheduler);
             var scheduled = history.GetHistory().First();
             Assert.That(scheduled.Source.Kind, Is.EqualTo(GameRuleSourceKind.Scheduler));
             Assert.That(scheduled.Source.Scheduler, Is.EqualTo(SEntMan.GetNetEntity(scheduler)));
-            Assert.That(scheduled.Source.Name, Is.EqualTo("AdminEventsTestScheduler"));
-            Assert.That(scheduled.Source.Table, Is.EqualTo("AdminEventsTestTable"));
+            Assert.That(scheduled.Source.Name, Is.EqualTo("AdminGameRulesControlTestScheduler"));
+            Assert.That(scheduled.Source.Table, Is.EqualTo("AdminGameRulesControlTestTable"));
 
             var console = Server.ResolveDependency<IConsoleHost>();
-            console.ExecuteCommand("addgamerule AdminEventsTestRepeatable");
+            console.ExecuteCommand("addgamerule AdminGameRulesControlTestRepeatable");
             var consoleEntry = history.GetHistory().First();
             Assert.That(consoleEntry.Source.Kind, Is.EqualTo(GameRuleSourceKind.ServerConsole));
             console.ExecuteCommand($"endgamerule {consoleEntry.Entity}");
@@ -502,7 +502,7 @@ public sealed class AdminEventsTest : GameTest
         await Server.WaitAssertion(() =>
         {
             var ticker = SEntMan.System<ServerGameTicker>();
-            var events = SEntMan.System<AdminEventsSystem>();
+            var events = SEntMan.System<AdminGameRulesControlSystem>();
             ticker.ClearGameRules();
 
             var pending = ticker.AddGameRule(prototype)!.Value.Owner;
@@ -516,11 +516,11 @@ public sealed class AdminEventsTest : GameTest
             var state = events.GetSnapshot();
             Assert.That(state.Rules, Has.Count.EqualTo(3));
             Assert.That(state.Rules.Single(rule => rule.Entity == SEntMan.GetNetEntity(pending)).Status,
-                Is.EqualTo(AdminEventRuleStatus.Pending));
+                Is.EqualTo(AdminGameRuleStatus.Pending));
             Assert.That(state.Rules.Single(rule => rule.Entity == SEntMan.GetNetEntity(active)).Status,
-                Is.EqualTo(AdminEventRuleStatus.Active));
+                Is.EqualTo(AdminGameRuleStatus.Active));
             Assert.That(state.Rules.Single(rule => rule.Entity == SEntMan.GetNetEntity(delayed)).Status,
-                Is.EqualTo(AdminEventRuleStatus.Delayed));
+                Is.EqualTo(AdminGameRuleStatus.Delayed));
             Assert.That(state.Rules.Any(rule => rule.Entity == SEntMan.GetNetEntity(ended)), Is.False);
             Assert.That(state.Tables, Has.Count.EqualTo(3));
             foreach (var table in state.Tables)

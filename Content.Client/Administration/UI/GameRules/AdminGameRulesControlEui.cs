@@ -3,17 +3,17 @@ using Content.Shared.Administration;
 using Content.Shared.Eui;
 using JetBrains.Annotations;
 
-namespace Content.Client.Administration.UI.Events;
+namespace Content.Client.Administration.UI.GameRules;
 
 [UsedImplicitly]
-public sealed class AdminEventsEui : BaseEui
+public sealed class AdminGameRulesControlEui : BaseEui
 {
-    private readonly AdminEventsWindow _window = new();
+    private readonly AdminGameRulesControlWindow _window = new();
 
-    public AdminEventsEui()
+    public AdminGameRulesControlEui()
     {
         _window.OnClose += () => SendMessage(new CloseEuiMessage());
-        _window.RefreshButton.OnPressed += _ => SendMessage(new RefreshAdminEventsMessage());
+        _window.RefreshButton.OnPressed += _ => SendMessage(new RefreshAdminGameRulesControlMessage());
         _window.AddRuleRequested += id => SendMessage(new AddAdminGameRuleMessage(id));
         _window.StopRuleRequested += entity => SendMessage(new StopAdminGameRuleMessage(entity));
         _window.TimerRefreshRequested += entity => SendMessage(new RequestAdminSchedulerTimerMessage(entity));
@@ -31,7 +31,7 @@ public sealed class AdminEventsEui : BaseEui
 
     public override void HandleState(EuiStateBase state)
     {
-        if (state is AdminEventsEuiState events)
+        if (state is AdminGameRulesControlEuiState events)
             _window.UpdateState(events);
     }
 

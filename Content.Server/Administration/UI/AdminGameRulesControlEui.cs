@@ -8,9 +8,9 @@ using Robust.Shared.Timing;
 namespace Content.Server.Administration.UI;
 
 /// <summary>
-/// Sends round event information exclusively to the administrator who opened the viewer.
+/// Sends round GameRule information exclusively to the administrator who opened the viewer.
 /// </summary>
-public sealed partial class AdminEventsEui : BaseEui
+public sealed partial class AdminGameRulesControlEui : BaseEui
 {
     [Dependency] private IAdminManager _admins = default!;
     [Dependency] private IEntityManager _entities = default!;
@@ -31,9 +31,9 @@ public sealed partial class AdminEventsEui : BaseEui
     public override EuiStateBase GetNewState()
     {
         if (!_admins.HasAdminFlag(Player, AdminFlags.Admin))
-            return new AdminEventsEuiState();
+            return new AdminGameRulesControlEuiState();
 
-        var state = _entities.System<AdminEventsSystem>().GetSnapshot();
+        var state = _entities.System<AdminGameRulesControlSystem>().GetSnapshot();
         state.CanAddRules = _admins.HasAdminFlag(Player, AdminFlags.Fun);
         state.CanStopRules = _admins.HasAdminFlag(Player, AdminFlags.Fun);
         return state;
@@ -52,7 +52,7 @@ public sealed partial class AdminEventsEui : BaseEui
             return;
         }
 
-        if (msg is RefreshAdminEventsMessage)
+        if (msg is RefreshAdminGameRulesControlMessage)
             StateDirty();
 
         if (msg is RequestAdminSchedulerTimerMessage timer)
@@ -61,19 +61,19 @@ public sealed partial class AdminEventsEui : BaseEui
                 return;
 
             _nextTimerUpdate = _timing.RealTime + TimeSpan.FromSeconds(0.5);
-            SendMessage(new AdminSchedulerTimerMessage(_entities.System<AdminEventsSystem>().GetSchedulerTimer(timer.Scheduler)));
+            SendMessage(new AdminSchedulerTimerMessage(_entities.System<AdminGameRulesControlSystem>().GetSchedulerTimer(timer.Scheduler)));
         }
 
         if (msg is AddAdminGameRuleMessage add)
         {
-            var entity = _entities.System<AdminEventsSystem>().TryAddRule(Player, add.Prototype);
+            var entity = _entities.System<AdminGameRulesControlSystem>().TryAddRule(Player, add.Prototype);
             SendMessage(new AddAdminGameRuleResultMessage(entity));
             StateDirty();
         }
 
         if (msg is StopAdminGameRuleMessage stop)
         {
-            var success = _entities.System<AdminEventsSystem>().TryStopRule(Player, stop.Entity);
+            var success = _entities.System<AdminGameRulesControlSystem>().TryStopRule(Player, stop.Entity);
             SendMessage(new StopAdminGameRuleResultMessage(success));
             StateDirty();
         }

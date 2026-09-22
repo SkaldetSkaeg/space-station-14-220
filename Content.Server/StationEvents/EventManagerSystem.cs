@@ -320,7 +320,8 @@ public sealed partial class EventManagerSystem : EntitySystem
         if (stationEvent.MaxOccurrences.HasValue && count >= stationEvent.MaxOccurrences.Value)
             return false;
 
-        if (lastRun != TimeSpan.Zero && currentTime.TotalMinutes < stationEvent.ReoccurrenceDelay + lastRun.TotalMinutes)
+        // A start at round time zero still counts toward the repeat interval.
+        if (count > 0 && currentTime.TotalMinutes < stationEvent.ReoccurrenceDelay + lastRun.TotalMinutes)
             return false;
 
         return !_roundEnd.IsRoundEndRequested() || stationEvent.OccursDuringRoundEnd || _roundEnd.CanCallOrRecall();

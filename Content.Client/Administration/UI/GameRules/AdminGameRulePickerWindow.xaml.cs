@@ -8,7 +8,7 @@ using Robust.Client.UserInterface.XAML;
 using Robust.Shared.IoC;
 using Robust.Shared.Prototypes;
 
-namespace Content.Client.Administration.UI.Events;
+namespace Content.Client.Administration.UI.GameRules;
 
 /// <summary>
 /// Searches concrete GameRule prototypes and requests a new rule instance from the server.
@@ -54,7 +54,7 @@ public sealed partial class AdminGameRulePickerWindow : FancyWindow
             return;
 
         _waiting = true;
-        Status.SetMessage(Loc.GetString("admin-events-add-pending"));
+        Status.SetMessage(Loc.GetString("admin-gamerules-add-pending"));
         RebuildList();
         AddRequested?.Invoke(_selected);
     }
@@ -80,7 +80,7 @@ public sealed partial class AdminGameRulePickerWindow : FancyWindow
     {
         _waiting = false;
         RebuildList();
-        Status.SetMessage(success ? string.Empty : Loc.GetString("admin-events-add-failed"));
+        Status.SetMessage(success ? string.Empty : Loc.GetString("admin-gamerules-add-failed"));
         if (success)
             Close();
     }
@@ -101,7 +101,7 @@ public sealed partial class AdminGameRulePickerWindow : FancyWindow
             _category = null;
 
         CategoryFilter.Clear();
-        CategoryFilter.AddItem(Loc.GetString("admin-events-add-all-categories"), AllCategoriesId);
+        CategoryFilter.AddItem(Loc.GetString("admin-gamerules-add-all-categories"), AllCategoriesId);
         for (var index = 0; index < _categories.Count; index++)
             CategoryFilter.AddItem(GetCategoryName(_categories[index]), index);
         CategoryFilter.SelectId(_category == null ? AllCategoriesId : _categories.IndexOf(_category.Value));
@@ -141,7 +141,7 @@ public sealed partial class AdminGameRulePickerWindow : FancyWindow
         }
 
         if (matches.Count == 0)
-            RuleList.AddChild(new Label { Text = Loc.GetString("admin-events-add-empty") });
+            RuleList.AddChild(new Label { Text = Loc.GetString("admin-gamerules-add-empty") });
 
         Search.Editable = !_waiting;
         CategoryFilter.Disabled = _waiting;
@@ -160,7 +160,7 @@ public sealed partial class AdminGameRulePickerWindow : FancyWindow
         var button = new Button
         {
             Text = rule.Id,
-            ToolTip = AdminEventTooltip.Get(rule, rule.Id),
+            ToolTip = AdminGameRuleTooltip.Get(rule, rule.Id),
             ClipText = true,
             TextAlign = Label.AlignMode.Left,
             Group = group,
@@ -171,7 +171,7 @@ public sealed partial class AdminGameRulePickerWindow : FancyWindow
         button.OnPressed += _ =>
         {
             _selected = rule.Id;
-            Status.SetMessage(Loc.GetString("admin-events-add-selected", ("id", rule.Id)));
+            Status.SetMessage(Loc.GetString("admin-gamerules-add-selected", ("id", rule.Id)));
             ConfirmButton.Disabled = !_canAdd || _waiting;
         };
         RuleList.AddChild(button);

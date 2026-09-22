@@ -1,12 +1,12 @@
 using Content.Shared.Administration;
 using Robust.Shared.Localization;
 
-namespace Content.Client.Administration.UI.Events;
+namespace Content.Client.Administration.UI.GameRules;
 
 /// <summary>
 /// Consistent localized prototype descriptions and configured start delays across the event viewer.
 /// </summary>
-internal static class AdminEventTooltip
+internal static class AdminGameRuleTooltip
 {
     public static string Get(AdminGameRulePrototypeInfo? prototype, string fallback)
     {
@@ -14,12 +14,16 @@ internal static class AdminEventTooltip
             return fallback;
 
         // An explicit array avoids the span overload, which is rejected by the client sandbox.
-        return string.Join("\n", new[]
+        var description = string.Join("\n", new[]
         {
             GetName(prototype.Id, prototype.Name),
             GetDescription(prototype.Id, prototype.Description),
-            GetDelay(prototype),
         });
+        var delay = GetDelay(prototype);
+        if (delay == null)
+            return description;
+
+        return string.Join("\n", new[] { description, delay });
     }
 
     /// <summary>
@@ -43,21 +47,21 @@ internal static class AdminEventTooltip
             description = localized;
 
         if (string.IsNullOrWhiteSpace(description))
-            return Loc.GetString("admin-events-info-no-description");
+            return Loc.GetString("admin-gamerules-info-no-description");
 
         return description;
     }
 
-    private static string GetDelay(AdminGameRulePrototypeInfo prototype)
+    private static string? GetDelay(AdminGameRulePrototypeInfo prototype)
     {
         var minimum = prototype.MinimumStartDelaySeconds;
         var maximum = prototype.MaximumStartDelaySeconds;
         if (minimum == null || maximum == null || maximum <= 0)
-            return Loc.GetString("admin-events-delay-none");
+            return null;
 
         if (minimum == maximum)
-            return Loc.GetString("admin-events-delay-fixed", ("seconds", minimum.Value));
+            return Loc.GetString("admin-gamerules-delay-fixed", ("seconds", minimum.Value));
 
-        return Loc.GetString("admin-events-delay-range", ("min", minimum.Value), ("max", maximum.Value));
+        return Loc.GetString("admin-gamerules-delay-range", ("min", minimum.Value), ("max", maximum.Value));
     }
 }

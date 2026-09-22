@@ -8,17 +8,20 @@ using Robust.Client.UserInterface.Controls;
 using Robust.Client.UserInterface.XAML;
 using Robust.Shared.Timing;
 
-namespace Content.Client.Administration.UI.Events;
+namespace Content.Client.Administration.UI.GameRules;
 
 /// <summary>
 /// Displays current rules and their scheduler tables, and offers an authorized rule picker.
 /// </summary>
 [GenerateTypedNameReferences]
-public sealed partial class AdminEventsWindow : FancyWindow
+public sealed partial class AdminGameRulesControlWindow : FancyWindow
 {
-    private AdminEventsEuiState _state = new();
-    private NetEntity? _selectedRule;
-    private NetEntity? _selectedEvent;
+    private const int GameRulesTab = 0;
+    private const int SchedulersTab = 1;
+
+    private AdminGameRulesControlEuiState _state = new();
+    private NetEntity? _selectedScheduler;
+    private NetEntity? _selectedGameRule;
     private bool _pickerSchedulersOnly = true;
     private readonly AdminEventDetailsWindow _detailsWindow = new();
     private string? _detailsPrototype;
@@ -35,19 +38,19 @@ public sealed partial class AdminEventsWindow : FancyWindow
     public event Action<NetEntity>? StopRuleRequested;
     public event Action<NetEntity>? TimerRefreshRequested;
 
-    public AdminEventsWindow()
+    public AdminGameRulesControlWindow()
     {
         RobustXamlLoader.Load(this);
-        Tabs.SetTabTitle(0, Loc.GetString("admin-events-group-schedulers"));
-        Tabs.SetTabTitle(1, Loc.GetString("admin-events-group-gamerules"));
+        Tabs.SetTabTitle(GameRulesTab, Loc.GetString("admin-gamerules-group-gamerules"));
+        Tabs.SetTabTitle(SchedulersTab, Loc.GetString("admin-gamerules-group-schedulers"));
         Tabs.OnTabChanged += _ => _timerPollRemaining = 0;
         OnClose += _detailsWindow.Close;
         OnClose += _rulePicker.Close;
-        AddRuleButton.OnPressed += _ => OpenPicker(true);
-        AddEventButton.OnPressed += _ => OpenPicker(false);
+        AddSchedulerButton.OnPressed += _ => OpenPicker(true);
+        AddGameRuleButton.OnPressed += _ => OpenPicker(false);
         _rulePicker.AddRequested += id => AddRuleRequested?.Invoke(id);
-        StopRuleButton.OnPressed += _ => RequestStop(_selectedRule);
-        StopEventButton.OnPressed += _ => RequestStop(_selectedEvent);
+        StopSchedulerButton.OnPressed += _ => RequestStop(_selectedScheduler);
+        StopGameRuleButton.OnPressed += _ => RequestStop(_selectedGameRule);
     }
 
     private void OpenPicker(bool schedulersOnly)
@@ -73,7 +76,7 @@ public sealed partial class AdminEventsWindow : FancyWindow
 
         _stoppingRule = true;
         UpdateStopButton();
-        ActionStatus.SetMessage(Loc.GetString("admin-events-stop-waiting"));
+        ActionStatus.SetMessage(Loc.GetString("admin-gamerules-stop-waiting"));
         ActionStatus.Visible = true;
         StopRuleRequested?.Invoke(entity.Value);
     }
@@ -81,46 +84,46 @@ public sealed partial class AdminEventsWindow : FancyWindow
     /// <summary>
     /// Replaces the displayed snapshot while preserving the selected rule when it still exists.
     /// </summary>
-    public void UpdateState(AdminEventsEuiState state)
+    public void UpdateState(AdminGameRulesControlEuiState state)
     {
         _state = state;
         _timers = state.Timers.ToDictionary(timer => timer.Scheduler);
         _collapsedCategories.RemoveWhere(key => !state.Rules.Any(rule => rule.Entity == key.Scheduler));
-        AddRuleButton.Disabled = !state.CanAddRules;
-        AddEventButton.Disabled = !state.CanAddRules;
+        AddSchedulerButton.Disabled = !state.CanAddRules;
+        AddGameRuleButton.Disabled = !state.CanAddRules;
         UpdatePicker();
         var added = state.Rules.FirstOrDefault(rule => rule.Entity == _addedRule);
         if (added != null)
         {
             if (!_pickerSchedulersOnly || !added.IsScheduler)
             {
-                _selectedEvent = _addedRule;
-                Tabs.CurrentTab = 1;
+                _selectedGameRule = _addedRule;
+                Tabs.CurrentTab = GameRulesTab;
             }
             else
             {
-                _selectedRule = _addedRule;
-                Tabs.CurrentTab = 0;
+                _selectedScheduler = _addedRule;
+                Tabs.CurrentTab = SchedulersTab;
             }
             _addedRule = null;
         }
         EventsStatus.Text = Loc.GetString(state.EventsEnabled
-            ? "admin-events-enabled"
-            : "admin-events-disabled");
+            ? "admin-gamerules-enabled"
+            : "admin-gamerules-disabled");
 
-        List<AdminEventRuleInfo> schedulers = [.. state.Rules.Where(rule => rule.IsScheduler)];
-        var events = state.Rules;
-        _selectedRule = schedulers.FirstOrDefault(rule => rule.Entity == _selectedRule)?.Entity ?? schedulers.FirstOrDefault()?.Entity;
-        _selectedEvent = events.FirstOrDefault(rule => rule.Entity == _selectedEvent)?.Entity ?? events.FirstOrDefault()?.Entity;
-        RebuildRules(RulesList, schedulers, _selectedRule, entity =>
+        List<AdminGameRuleInfo> schedulers = [.. state.Rules.Where(rule => rule.IsScheduler)];
+        var gameRules = state.Rules;
+        _selectedScheduler = schedulers.FirstOrDefault(rule => rule.Entity == _selectedScheduler)?.Entity ?? schedulers.FirstOrDefault()?.Entity;
+        _selectedGameRule = gameRules.FirstOrDefault(rule => rule.Entity == _selectedGameRule)?.Entity ?? gameRules.FirstOrDefault()?.Entity;
+        RebuildRules(SchedulersList, schedulers, _selectedScheduler, entity =>
         {
-            _selectedRule = entity;
+            _selectedScheduler = entity;
             _timerPollRemaining = 0;
             UpdateTables();
         });
-        RebuildRules(EventRulesList, events, _selectedEvent, entity =>
+        RebuildRules(GameRulesList, gameRules, _selectedGameRule, entity =>
         {
-            _selectedEvent = entity;
+            _selectedGameRule = entity;
             UpdateStopButton();
         });
         UpdateHistory();
@@ -128,7 +131,7 @@ public sealed partial class AdminEventsWindow : FancyWindow
         UpdateDetails();
     }
 
-    private void RebuildRules(BoxContainer list, List<AdminEventRuleInfo> rules, NetEntity? selected, Action<NetEntity> select)
+    private void RebuildRules(BoxContainer list, List<AdminGameRuleInfo> rules, NetEntity? selected, Action<NetEntity> select)
     {
         list.RemoveAllChildren();
         var group = new ButtonGroup();
@@ -143,14 +146,14 @@ public sealed partial class AdminEventsWindow : FancyWindow
                 ClipText = true,
                 TextAlign = Label.AlignMode.Left,
                 Text = $"{rule.Prototype} ({rule.Entity})\n{GetStatus(rule.Status)}",
-                ToolTip = $"{GetEventTooltip(rule.Prototype)}\n{rule.Prototype} ({rule.Entity})",
+                ToolTip = $"{GetGameRuleTooltip(rule.Prototype)}\n{rule.Prototype} ({rule.Entity})",
             };
             button.OnPressed += _ => select(rule.Entity);
             list.AddChild(button);
         }
 
         if (rules.Count == 0)
-            AddText(list, Loc.GetString("admin-events-no-rules"));
+            AddText(list, Loc.GetString("admin-gamerules-no-rules"));
     }
 
     private void UpdateHistory()
@@ -167,7 +170,7 @@ public sealed partial class AdminEventsWindow : FancyWindow
             {
                 Name = "HistoryToggle",
                 Text = $"{(expanded ? "▼" : "▶")} {entry.Prototype} ({entry.Entity})",
-                ToolTip = GetEventTooltip(entry.Prototype),
+                ToolTip = GetGameRuleTooltip(entry.Prototype),
                 HorizontalExpand = true,
                 ClipText = true,
                 TextAlign = Label.AlignMode.Left,
@@ -178,8 +181,8 @@ public sealed partial class AdminEventsWindow : FancyWindow
             heading.AddChild(new Label
             {
                 Name = "HistoryStatus",
-                Text = AdminEventHistoryText.Status(entry.Status),
-                Modulate = AdminEventHistoryText.StatusColor(entry.Status),
+                Text = AdminGameRuleHistoryText.Status(entry.Status),
+                Modulate = AdminGameRuleHistoryText.StatusColor(entry.Status),
             });
             contents.AddChild(heading);
             var fields = new TableContainer { Name = "HistoryFields", Columns = 2, HorizontalExpand = true, Visible = expanded };
@@ -192,18 +195,18 @@ public sealed partial class AdminEventsWindow : FancyWindow
                 else
                     _expandedHistory.Remove(entry.Entity);
             };
-            AddHistoryField(fields, "admin-events-history-added", AdminEventHistoryText.Time(entry.AddedAt));
-            AddHistoryField(fields, "admin-events-history-started", AdminEventHistoryText.Time(entry.StartedAt));
-            AddHistoryField(fields, "admin-events-history-ended", AdminEventHistoryText.Time(entry.EndedAt));
-            AddHistoryField(fields, "admin-events-history-source", AdminEventHistoryText.Source(entry.Source));
-            AddHistoryField(fields, "admin-events-history-reason", AdminEventHistoryText.EndReason(entry));
+            AddHistoryField(fields, "admin-gamerules-history-added", AdminGameRuleHistoryText.Time(entry.AddedAt));
+            AddHistoryField(fields, "admin-gamerules-history-started", AdminGameRuleHistoryText.Time(entry.StartedAt));
+            AddHistoryField(fields, "admin-gamerules-history-ended", AdminGameRuleHistoryText.Time(entry.EndedAt));
+            AddHistoryField(fields, "admin-gamerules-history-source", AdminGameRuleHistoryText.Source(entry.Source));
+            AddHistoryField(fields, "admin-gamerules-history-reason", AdminGameRuleHistoryText.EndReason(entry));
             contents.AddChild(fields);
             card.AddChild(contents);
             HistoryList.AddChild(card);
         }
 
         if (_state.History.Count == 0)
-            AddText(HistoryList, Loc.GetString("admin-events-history-empty"));
+            AddText(HistoryList, Loc.GetString("admin-gamerules-history-empty"));
     }
 
     private static void AddHistoryField(TableContainer table, string key, string value)
@@ -219,37 +222,37 @@ public sealed partial class AdminEventsWindow : FancyWindow
         UpdateStopButton();
         UpdateTimerLabel();
         EntriesList.RemoveAllChildren();
-        var rule = _state.Rules.FirstOrDefault(rule => rule.Entity == _selectedRule);
+        var rule = _state.Rules.FirstOrDefault(rule => rule.Entity == _selectedScheduler);
         if (rule == null)
         {
-            SelectedRuleLabel.SetMessage(string.Empty);
-            AddText(EntriesList, Loc.GetString("admin-events-select-rule"));
+            SelectedSchedulerLabel.SetMessage(string.Empty);
+            AddText(EntriesList, Loc.GetString("admin-gamerules-select-rule"));
             return;
         }
 
-        SelectedRuleLabel.SetMessage($"{rule.Prototype} ({rule.Entity}) — {GetStatus(rule.Status)}");
+        SelectedSchedulerLabel.SetMessage($"{rule.Prototype} ({rule.Entity}) — {GetStatus(rule.Status)}");
         List<AdminEventTableInfo> tables = [.. _state.Tables.Where(table => table.Scheduler == rule.Entity)];
         if (tables.Count == 0)
         {
-            AddText(EntriesList, Loc.GetString("admin-events-rule-no-table"));
+            AddText(EntriesList, Loc.GetString("admin-gamerules-rule-no-table"));
             return;
         }
 
         foreach (var table in tables)
         {
-            AddText(EntriesList, table.Table.Length == 0 ? Loc.GetString("admin-events-inline-table") : table.Table);
+            AddText(EntriesList, table.Table.Length == 0 ? Loc.GetString("admin-gamerules-inline-table") : table.Table);
             AddLikelihoodChart(table);
             if (table.Entries.Count == 0)
             {
-                AddText(EntriesList, Loc.GetString("admin-events-empty-table"));
+                AddText(EntriesList, Loc.GetString("admin-gamerules-empty-table"));
                 continue;
             }
 
-            AddCategory(table, "admin-events-category-triggered",
+            AddCategory(table, "admin-gamerules-category-triggered",
                 [.. table.Entries.Where(entry => entry.Occurrences > 0)]);
-            AddCategory(table, "admin-events-category-waiting",
+            AddCategory(table, "admin-gamerules-category-waiting",
                 [.. table.Entries.Where(entry => entry.Occurrences == 0 && entry.Availability == AdminEventAvailability.Available)]);
-            AddCategory(table, "admin-events-category-unavailable",
+            AddCategory(table, "admin-gamerules-category-unavailable",
                 [.. table.Entries.Where(entry => entry.Occurrences == 0 && entry.Availability != AdminEventAvailability.Available)]);
         }
     }
@@ -267,17 +270,17 @@ public sealed partial class AdminEventsWindow : FancyWindow
         var contents = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Vertical, SeparationOverride = 4, Margin = new Thickness(8) };
         chart.AddChild(contents);
         EntriesList.AddChild(chart);
-        AddText(contents, Loc.GetString("admin-events-likelihood-title"));
+        AddText(contents, Loc.GetString("admin-gamerules-likelihood-title"));
         if (candidates.Count == 0)
         {
-            AddText(contents, Loc.GetString("admin-events-likelihood-empty"));
+            AddText(contents, Loc.GetString("admin-gamerules-likelihood-empty"));
             return;
         }
 
         foreach (var entry in candidates.Take(3))
         {
             var row = new BoxContainer { Name = entry.Prototype, SeparationOverride = 8 };
-            row.AddChild(new Label { Text = entry.Prototype, ToolTip = GetEventTooltip(entry.Prototype), ClipText = true, HorizontalExpand = true });
+            row.AddChild(new Label { Text = entry.Prototype, ToolTip = GetGameRuleTooltip(entry.Prototype), ClipText = true, HorizontalExpand = true });
             row.AddChild(new ProgressBar
             {
                 MinWidth = 100,
@@ -288,16 +291,16 @@ public sealed partial class AdminEventsWindow : FancyWindow
             });
             row.AddChild(new Label
             {
-                Text = Loc.GetString("admin-events-likelihood-weight", ("weight", entry.Weight.ToString("0.###"))),
+                Text = Loc.GetString("admin-gamerules-likelihood-weight", ("weight", entry.Weight.ToString("0.###"))),
                 MinWidth = 80,
             });
             contents.AddChild(row);
         }
 
         if (candidates.Count > 3)
-            AddText(contents, Loc.GetString("admin-events-likelihood-more", ("count", candidates.Count - 3)));
+            AddText(contents, Loc.GetString("admin-gamerules-likelihood-more", ("count", candidates.Count - 3)));
 
-        AddText(contents, Loc.GetString("admin-events-likelihood-hint"));
+        AddText(contents, Loc.GetString("admin-gamerules-likelihood-hint"));
     }
 
     /// <summary>
@@ -314,25 +317,25 @@ public sealed partial class AdminEventsWindow : FancyWindow
 
     private void UpdateTimerLabel()
     {
-        NextAttemptLabel.Visible = _selectedRule != null;
-        if (_selectedRule == null)
+        NextAttemptLabel.Visible = _selectedScheduler != null;
+        if (_selectedScheduler == null)
             return;
 
-        if (!_timers.TryGetValue(_selectedRule.Value, out var timer) || timer.Seconds == null)
+        if (!_timers.TryGetValue(_selectedScheduler.Value, out var timer) || timer.Seconds == null)
         {
-            NextAttemptLabel.Text = Loc.GetString("admin-events-next-attempt-inactive");
+            NextAttemptLabel.Text = Loc.GetString("admin-gamerules-next-attempt-inactive");
             return;
         }
 
         var remaining = TimeSpan.FromSeconds(Math.Ceiling(timer.Seconds.Value));
         var time = $"{(int)remaining.TotalMinutes:00}:{remaining.Seconds:00}";
-        NextAttemptLabel.Text = Loc.GetString(timer.Paused ? "admin-events-next-attempt-paused" : "admin-events-next-attempt", ("time", time));
+        NextAttemptLabel.Text = Loc.GetString(timer.Paused ? "admin-gamerules-next-attempt-paused" : "admin-gamerules-next-attempt", ("time", time));
     }
 
     protected override void FrameUpdate(FrameEventArgs args)
     {
         base.FrameUpdate(args);
-        if (!IsOpen || Tabs.CurrentTab != 0 || _selectedRule == null)
+        if (!IsOpen || Tabs.CurrentTab != SchedulersTab || _selectedScheduler == null)
             return;
 
         _timerPollRemaining -= args.DeltaSeconds;
@@ -340,7 +343,7 @@ public sealed partial class AdminEventsWindow : FancyWindow
             return;
 
         _timerPollRemaining = 1;
-        TimerRefreshRequested?.Invoke(_selectedRule.Value);
+        TimerRefreshRequested?.Invoke(_selectedScheduler.Value);
     }
 
     private void AddCategory(AdminEventTableInfo table, string title, List<AdminEventTableEntry> entries)
@@ -381,7 +384,7 @@ public sealed partial class AdminEventsWindow : FancyWindow
             HorizontalExpand = true,
             VerticalAlignment = VAlignment.Center,
             Modulate = entry.Availability == AdminEventAvailability.Available ? Color.White : Color.LightCoral,
-            ToolTip = $"{GetEventTooltip(entry.Prototype)}\n{AdminEventDetailsWindow.GetAvailabilityText(entry.Availability)}",
+            ToolTip = $"{GetGameRuleTooltip(entry.Prototype)}\n{AdminEventDetailsWindow.GetAvailabilityText(entry.Availability)}",
         };
         label.SetMessage(entry.Prototype);
         row.AddChild(label);
@@ -390,7 +393,7 @@ public sealed partial class AdminEventsWindow : FancyWindow
             Text = "i",
             MinSize = new Vector2(28, 28),
             VerticalAlignment = VAlignment.Center,
-            ToolTip = $"{Loc.GetString("admin-events-info-button", ("id", entry.Prototype))}\n{GetEventTooltip(entry.Prototype)}",
+            ToolTip = $"{Loc.GetString("admin-gamerules-info-button", ("id", entry.Prototype))}\n{GetGameRuleTooltip(entry.Prototype)}",
         };
         info.OnPressed += _ =>
         {
@@ -419,15 +422,15 @@ public sealed partial class AdminEventsWindow : FancyWindow
         _stoppingRule = false;
         ActionStatus.Visible = !success;
         if (!success)
-            ActionStatus.SetMessage(Loc.GetString("admin-events-stop-failed"));
+            ActionStatus.SetMessage(Loc.GetString("admin-gamerules-stop-failed"));
 
         UpdateStopButton();
     }
 
     private void UpdateStopButton()
     {
-        StopRuleButton.Disabled = !_state.CanStopRules || _stoppingRule || _selectedRule == null;
-        StopEventButton.Disabled = !_state.CanStopRules || _stoppingRule || _selectedEvent == null;
+        StopSchedulerButton.Disabled = !_state.CanStopRules || _stoppingRule || _selectedScheduler == null;
+        StopGameRuleButton.Disabled = !_state.CanStopRules || _stoppingRule || _selectedGameRule == null;
     }
 
     private void UpdateDetails()
@@ -460,18 +463,18 @@ public sealed partial class AdminEventsWindow : FancyWindow
         base.Dispose(disposing);
     }
 
-    private string GetEventTooltip(string prototype)
+    private string GetGameRuleTooltip(string prototype)
     {
-        return AdminEventTooltip.Get(_state.AvailableRules.FirstOrDefault(rule => rule.Id == prototype), prototype);
+        return AdminGameRuleTooltip.Get(_state.AvailableRules.FirstOrDefault(rule => rule.Id == prototype), prototype);
     }
 
-    private static string GetStatus(AdminEventRuleStatus status)
+    private static string GetStatus(AdminGameRuleStatus status)
     {
         return Loc.GetString(status switch
         {
-            AdminEventRuleStatus.Active => "admin-events-active",
-            AdminEventRuleStatus.Delayed => "admin-events-delayed",
-            _ => "admin-events-pending",
+            AdminGameRuleStatus.Active => "admin-gamerules-active",
+            AdminGameRuleStatus.Delayed => "admin-gamerules-delayed",
+            _ => "admin-gamerules-pending",
         });
     }
 

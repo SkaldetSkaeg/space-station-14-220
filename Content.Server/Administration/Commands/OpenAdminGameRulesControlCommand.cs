@@ -6,11 +6,11 @@ using Robust.Shared.Console;
 namespace Content.Server.Administration.Commands;
 
 [AdminCommand(AdminFlags.Admin)]
-public sealed partial class OpenAdminEventsCommand : LocalizedCommands
+public sealed partial class OpenAdminGameRulesControlCommand : LocalizedCommands
 {
     [Dependency] private EuiManager _eui = default!;
 
-    public override string Command => "eventsui";
+    public override string Command => "gamerulesui";
 
     public override void Execute(IConsoleShell shell, string argStr, string[] args)
     {
@@ -20,6 +20,6 @@ public sealed partial class OpenAdminEventsCommand : LocalizedCommands
             return;
         }
 
-        _eui.OpenEui(new AdminEventsEui(), shell.Player);
+        _eui.OpenEui(new AdminGameRulesControlEui(), shell.Player);
     }
 }

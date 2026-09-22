@@ -1,12 +1,12 @@
 <ui:FancyWindow xmlns="https://spacestation14.io"
                 xmlns:ui="clr-namespace:Content.Client.UserInterface.Controls"
-                Title="{Loc admin-events-add-title}"
+                Title="{Loc admin-gamerules-add-title}"
                 MinSize="520 360" SetSize="650 520">
     <BoxContainer Orientation="Vertical" Margin="8" SeparationOverride="8">
-        <RichTextLabel Text="{Loc admin-events-add-hint}"/>
-        <LineEdit Name="Search" PlaceHolder="{Loc admin-events-add-search}"/>
+        <RichTextLabel Text="{Loc admin-gamerules-add-hint}"/>
+        <LineEdit Name="Search" PlaceHolder="{Loc admin-gamerules-add-search}"/>
         <BoxContainer Name="CategoryFilterBox" Orientation="Vertical" HorizontalExpand="True" Visible="False">
-            <Label Text="{Loc admin-events-add-category}"/>
+            <Label Text="{Loc admin-gamerules-add-category}"/>
             <OptionButton Name="CategoryFilter"/>
         </BoxContainer>
         <PanelContainer StyleClasses="PanelDeep" VerticalExpand="True">
@@ -16,8 +16,8 @@
         </PanelContainer>
         <RichTextLabel Name="Status"/>
         <BoxContainer Orientation="Horizontal" SeparationOverride="8">
-            <Button Name="CancelButton" Text="{Loc admin-events-add-cancel}" HorizontalExpand="True"/>
-            <Button Name="ConfirmButton" Text="{Loc admin-events-add}" HorizontalExpand="True" Disabled="True"/>
+            <Button Name="CancelButton" Text="{Loc admin-gamerules-add-cancel}" HorizontalExpand="True"/>
+            <Button Name="ConfirmButton" Text="{Loc admin-gamerules-add}" HorizontalExpand="True" Disabled="True"/>
         </BoxContainer>
     </BoxContainer>
 </ui:FancyWindow>

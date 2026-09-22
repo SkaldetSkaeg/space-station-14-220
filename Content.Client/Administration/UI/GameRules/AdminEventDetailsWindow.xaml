@@ -1,6 +1,6 @@
 <ui:FancyWindow xmlns="https://spacestation14.io"
                 xmlns:ui="clr-namespace:Content.Client.UserInterface.Controls"
-                Title="{Loc admin-events-info-title}"
+                Title="{Loc admin-gamerules-info-title}"
                 MinSize="420 300" SetSize="600 540">
     <PanelContainer StyleClasses="PanelDeep" Margin="8">
         <ScrollContainer HScrollEnabled="False" Margin="8">
@@ -11,55 +11,55 @@
                 <PanelContainer StyleClasses="LowDivider"/>
                 <TableContainer Name="ConditionsTable" Columns="2" HorizontalExpand="True">
                     <PanelContainer StyleClasses="PanelLight" Margin="0 0 2 2">
-                        <RichTextLabel Text="{Loc admin-events-info-parameter}" Margin="8 6"/>
+                        <RichTextLabel Text="{Loc admin-gamerules-info-parameter}" Margin="8 6"/>
                     </PanelContainer>
                     <PanelContainer StyleClasses="PanelLight" Margin="0 0 2 2">
-                        <RichTextLabel Text="{Loc admin-events-info-value}" Margin="8 6"/>
+                        <RichTextLabel Text="{Loc admin-gamerules-info-value}" Margin="8 6"/>
                     </PanelContainer>
                     <PanelContainer StyleClasses="PanelDark" Margin="0 0 2 2">
-                        <RichTextLabel Text="{Loc admin-events-info-weight-label}" Margin="8 6"/>
+                        <RichTextLabel Text="{Loc admin-gamerules-info-weight-label}" Margin="8 6"/>
                     </PanelContainer>
                     <PanelContainer StyleClasses="PanelDark" Margin="0 0 2 2">
                         <RichTextLabel Name="WeightValue" Margin="8 6"/>
                     </PanelContainer>
                     <PanelContainer StyleClasses="PanelDark" Margin="0 0 2 2">
-                        <RichTextLabel Text="{Loc admin-events-info-occurrences-label}" Margin="8 6"/>
+                        <RichTextLabel Text="{Loc admin-gamerules-info-occurrences-label}" Margin="8 6"/>
                     </PanelContainer>
                     <PanelContainer StyleClasses="PanelDark" Margin="0 0 2 2">
                         <RichTextLabel Name="OccurrencesValue" Margin="8 6"/>
                     </PanelContainer>
                     <PanelContainer StyleClasses="PanelDark" Margin="0 0 2 2">
-                        <RichTextLabel Text="{Loc admin-events-info-players-label}" Margin="8 6"/>
+                        <RichTextLabel Text="{Loc admin-gamerules-info-players-label}" Margin="8 6"/>
                     </PanelContainer>
                     <PanelContainer StyleClasses="PanelDark" Margin="0 0 2 2">
                         <RichTextLabel Name="PlayersValue" Margin="8 6"/>
                     </PanelContainer>
                     <PanelContainer StyleClasses="PanelDark" Margin="0 0 2 2">
-                        <RichTextLabel Text="{Loc admin-events-info-earliest-label}" Margin="8 6"/>
+                        <RichTextLabel Text="{Loc admin-gamerules-info-earliest-label}" Margin="8 6"/>
                     </PanelContainer>
                     <PanelContainer StyleClasses="PanelDark" Margin="0 0 2 2">
                         <RichTextLabel Name="EarliestValue" Margin="8 6"/>
                     </PanelContainer>
                     <PanelContainer StyleClasses="PanelDark" Margin="0 0 2 2">
-                        <RichTextLabel Text="{Loc admin-events-info-repeat-label}" Margin="8 6"/>
+                        <RichTextLabel Text="{Loc admin-gamerules-info-repeat-label}" Margin="8 6"/>
                     </PanelContainer>
                     <PanelContainer StyleClasses="PanelDark" Margin="0 0 2 2">
                         <RichTextLabel Name="RepeatValue" Margin="8 6"/>
                     </PanelContainer>
                     <PanelContainer StyleClasses="PanelDark" Margin="0 0 2 2">
-                        <RichTextLabel Text="{Loc admin-events-info-limit-label}" Margin="8 6"/>
+                        <RichTextLabel Text="{Loc admin-gamerules-info-limit-label}" Margin="8 6"/>
                     </PanelContainer>
                     <PanelContainer StyleClasses="PanelDark" Margin="0 0 2 2">
                         <RichTextLabel Name="LimitValue" Margin="8 6"/>
                     </PanelContainer>
                     <PanelContainer StyleClasses="PanelDark" Margin="0 0 2 2">
-                        <RichTextLabel Text="{Loc admin-events-info-round-end-label}" Margin="8 6"/>
+                        <RichTextLabel Text="{Loc admin-gamerules-info-round-end-label}" Margin="8 6"/>
                     </PanelContainer>
                     <PanelContainer StyleClasses="PanelDark" Margin="0 0 2 2">
                         <RichTextLabel Name="RoundEndValue" Margin="8 6"/>
                     </PanelContainer>
                 </TableContainer>
-                <RichTextLabel Text="{Loc admin-events-info-snapshot}"/>
+                <RichTextLabel Text="{Loc admin-gamerules-info-snapshot}"/>
             </BoxContainer>
         </ScrollContainer>
     </PanelContainer>

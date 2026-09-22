@@ -10,15 +10,15 @@ namespace Content.Shared.Administration;
 /// A read-only snapshot of the round's unfinished rules and their event tables.
 /// </summary>
 [Serializable, NetSerializable]
-public sealed class AdminEventsEuiState : EuiStateBase
+public sealed class AdminGameRulesControlEuiState : EuiStateBase
 {
     public bool EventsEnabled;
     public bool CanAddRules;
     public bool CanStopRules;
-    public List<AdminEventRuleInfo> Rules = [];
+    public List<AdminGameRuleInfo> Rules = [];
     public List<AdminEventTableInfo> Tables = [];
     public List<AdminGameRulePrototypeInfo> AvailableRules = [];
-    public List<AdminEventHistoryEntry> History = [];
+    public List<AdminGameRuleHistoryEntry> History = [];
     public List<AdminSchedulerTimerInfo> Timers = [];
 }
 
@@ -76,7 +76,7 @@ public sealed class StopAdminGameRuleResultMessage(bool success) : EuiMessageBas
 /// Identifies a current rule instance and its lifecycle status.
 /// </summary>
 [Serializable, NetSerializable]
-public sealed record AdminEventRuleInfo(NetEntity Entity, string Prototype, string Name, AdminEventRuleStatus Status,
+public sealed record AdminGameRuleInfo(NetEntity Entity, string Prototype, string Name, AdminGameRuleStatus Status,
     ProtoId<GameRuleCategoryPrototype> Category, bool IsScheduler);
 
 /// <summary>
@@ -84,7 +84,7 @@ public sealed record AdminEventRuleInfo(NetEntity Entity, string Prototype, stri
 /// Times are elapsed round time. Null means that transition has not been recorded.
 /// </summary>
 [Serializable, NetSerializable]
-public sealed record AdminEventHistoryEntry(
+public sealed record AdminGameRuleHistoryEntry(
     int Sequence,
     NetEntity Entity,
     string Prototype,
@@ -102,7 +102,7 @@ public sealed record AdminEventHistoryEntry(
 /// The lifecycle states shown for unfinished rules.
 /// </summary>
 [Serializable, NetSerializable]
-public enum AdminEventRuleStatus : byte
+public enum AdminGameRuleStatus : byte
 {
     Pending,
     Delayed,
@@ -149,10 +149,10 @@ public enum AdminEventAvailability : byte
 }
 
 /// <summary>
-/// Requests a fresh snapshot for an already open event viewer.
+/// Requests a fresh snapshot for an already open GameRule control window.
 /// </summary>
 [Serializable, NetSerializable]
-public sealed class RefreshAdminEventsMessage : EuiMessageBase;
+public sealed class RefreshAdminGameRulesControlMessage : EuiMessageBase;
 
 /// <summary>
 /// Server countdown to the scheduler's next selection attempt. Null means it is not running.

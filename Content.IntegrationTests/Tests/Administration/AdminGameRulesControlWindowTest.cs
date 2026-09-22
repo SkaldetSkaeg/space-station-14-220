@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
-using Content.Client.Administration.UI.Events;
+using Content.Client.Administration.UI.GameRules;
 using Content.IntegrationTests.Tests.Interaction;
 using Content.Server.Administration.Managers;
 using Content.Server.GameTicking;
@@ -21,7 +21,7 @@ using Robust.Shared.Maths;
 
 namespace Content.IntegrationTests.Tests.Administration;
 
-public sealed class AdminEventsWindowTest : InteractionTest
+public sealed class AdminGameRulesControlWindowTest : InteractionTest
 {
     // DummyTicker skips round cleanup, so pooled pairs can retain another test's rule history.
     public override PoolSettings PoolSettings => new() { Connected = true, Dirty = true, Fresh = true };
@@ -42,31 +42,41 @@ public sealed class AdminEventsWindowTest : InteractionTest
         {
             admins.PromoteHost(ServerSession);
             SEntMan.System<ServerGameTicker>().ClearGameRules();
-            var basic = SEntMan.System<ServerGameTicker>().AddGameRule("AdminEventsTestScheduler")!.Value.Owner;
+            var basic = SEntMan.System<ServerGameTicker>().AddGameRule("AdminGameRulesControlTestScheduler")!.Value.Owner;
             SEntMan.System<ServerGameTicker>().StartGameRule(basic);
             Server.ResolveDependency<IConfigurationManager>().SetCVar(CCVars.EventsEnabled, true);
             dynamicRule = SEntMan.System<ServerGameTicker>().AddGameRule("DynamicStationEventScheduler")!.Value.Owner;
             SEntMan.System<ServerGameTicker>().AddGameRule("InactivityTimeRestart");
-            Server.ResolveDependency<IConsoleHost>().ExecuteCommand(ServerSession, "eventsui");
+            Server.ResolveDependency<IConsoleHost>().ExecuteCommand(ServerSession, "gamerulesui");
         });
         await RunUntilSynced();
 
-        var window = GetWindow<AdminEventsWindow>();
+        var window = GetWindow<AdminGameRulesControlWindow>();
         await Client.WaitPost(() => window.SetSize = new Vector2(900, 550));
         await RunUntilSynced();
-        var rules = GetControlFromField<BoxContainer>("RulesList", window);
+        var rules = GetControlFromField<BoxContainer>("SchedulersList", window);
         var entries = GetControlFromField<BoxContainer>("EntriesList", window);
         var entriesScroll = GetControlFromField<ScrollContainer>("EntriesScroll", window);
-        var add = GetControlFromField<Button>("AddRuleButton", window);
-        var stop = GetControlFromField<Button>("StopRuleButton", window);
+        var add = GetControlFromField<Button>("AddSchedulerButton", window);
+        var stop = GetControlFromField<Button>("StopSchedulerButton", window);
         var tabs = GetControlFromField<TabContainer>("Tabs", window);
-        var eventRules = GetControlFromField<BoxContainer>("EventRulesList", window);
+        var gameRules = GetControlFromField<BoxContainer>("GameRulesList", window);
         var history = GetControlFromField<BoxContainer>("HistoryList", window);
+        await Client.WaitAssertion(() =>
+        {
+            Assert.That(tabs.CurrentTab, Is.EqualTo(0));
+            Assert.That(gameRules.VisibleInTree, Is.True);
+            Assert.That(rules.VisibleInTree, Is.False);
+            Assert.That(TabContainer.GetTabTitle(tabs.Children.First()),
+                Is.EqualTo(Loc.GetString("admin-gamerules-group-gamerules")));
+        });
+        await Client.WaitPost(() => tabs.CurrentTab = 1);
+        await RunUntilSynced();
         BoxContainer LatestHistory() => history.Children.OfType<PanelContainer>().First().Children.OfType<BoxContainer>().Single();
         string HistoryValue(string key) => LatestHistory().Children.OfType<TableContainer>().Single()
             .Children.OfType<RichTextLabel>().Single(label => label.Name == key).GetMessage();
-        var addEvent = GetControlFromField<Button>("AddEventButton", window);
-        var stopEvent = GetControlFromField<Button>("StopEventButton", window);
+        var addGameRule = GetControlFromField<Button>("AddGameRuleButton", window);
+        var stopGameRule = GetControlFromField<Button>("StopGameRuleButton", window);
         var nextAttempt = GetControlFromField<Label>("NextAttemptLabel", window);
         IEnumerable<BoxContainer> LikelihoodRows() => entries.Children.OfType<PanelContainer>()
             .Where(panel => panel.Name == "LikelihoodPanel").SelectMany(panel => panel.Children.OfType<BoxContainer>())
@@ -87,7 +97,7 @@ public sealed class AdminEventsWindowTest : InteractionTest
             .Single(section => SectionRows(section).Any(row => row.Name == prototype)).Name;
         void AssertPaneLayout()
         {
-            var left = GetControlFromField<PanelContainer>("RulesPane", window);
+            var left = GetControlFromField<PanelContainer>("SchedulersPane", window);
             var right = GetControlFromField<PanelContainer>("TablePane", window);
             Assert.That(left.Size.X, Is.GreaterThanOrEqualTo(250));
             Assert.That(right.Size.X, Is.GreaterThan(left.Size.X));
@@ -104,42 +114,44 @@ public sealed class AdminEventsWindowTest : InteractionTest
 
         await Client.WaitAssertion(() =>
         {
-            Assert.That(RuleButton("AdminEventsTestScheduler").Pressed, Is.True);
+            Assert.That(RuleButton("AdminGameRulesControlTestScheduler").Pressed, Is.True);
             Assert.That(rules.Children.OfType<Button>().Any(button => button.Text.Contains("InactivityTimeRestart")), Is.False);
-            Assert.That(eventRules.Children.OfType<Button>().Any(button => button.Text.StartsWith("AdminEventsTestReady (")), Is.False);
+            Assert.That(gameRules.Children.OfType<Button>().Any(button => button.Text.StartsWith("AdminGameRulesControlTestReady (")), Is.False);
             Assert.That(history.Children.OfType<PanelContainer>().Select(row => row.Name), Is.EqualTo(new[]
             {
-                "InactivityTimeRestart", "DynamicStationEventScheduler", "AdminEventsTestScheduler",
+                "InactivityTimeRestart", "DynamicStationEventScheduler", "AdminGameRulesControlTestScheduler",
             }));
             Assert.That(entries.VisibleInTree, Is.True);
-            Assert.That(HasEntry("AdminEventsTestTable"), Is.True);
+            Assert.That(HasEntry("AdminGameRulesControlTestTable"), Is.True);
             Assert.That(HasEntry("PowerGridCheck"), Is.True);
-            Assert.That(EntryLabel("AdminEventsTestReady").Modulate, Is.EqualTo(Color.White));
-            Assert.That(EntryLabel("AdminEventsTestReady").ToolTip, Does.Contain(Loc.GetString("admin-events-delay-none")));
+            Assert.That(EntryLabel("AdminGameRulesControlTestReady").Modulate, Is.EqualTo(Color.White));
+            Assert.That(EntryLabel("AdminGameRulesControlTestReady").ToolTip,
+                Is.EqualTo("AdminGameRulesControlTestReady\nAn event description for the information window.\n"
+                    + Loc.GetString("admin-gamerules-available")));
             Assert.That(EntryLabel("KingRatMigration").Modulate, Is.EqualTo(Color.LightCoral));
             Assert.That(EntryLabel("KingRatMigration").GetMessage(), Is.EqualTo("KingRatMigration"));
-            Assert.That(EntryCategory("AdminEventsTestReady"), Is.EqualTo("admin-events-category-waiting"));
-            Assert.That(EntryCategory("KingRatMigration"), Is.EqualTo("admin-events-category-unavailable"));
+            Assert.That(EntryCategory("AdminGameRulesControlTestReady"), Is.EqualTo("admin-gamerules-category-waiting"));
+            Assert.That(EntryCategory("KingRatMigration"), Is.EqualTo("admin-gamerules-category-unavailable"));
             Assert.That(nextAttempt.VisibleInTree, Is.True);
             Assert.That(nextAttempt.Text, Does.Match(@"\d+:\d{2}"));
             Assert.That(LikelihoodRows(), Is.Not.Empty);
             Assert.That(LikelihoodRows().Select(row => row.Name), Does.Not.Contain("KingRatMigration"));
-            Assert.That(LikelihoodRows().Select(row => row.Name), Does.Not.Contain("AdminEventsTestZeroWeight"));
+            Assert.That(LikelihoodRows().Select(row => row.Name), Does.Not.Contain("AdminGameRulesControlTestZeroWeight"));
             Assert.That(LikelihoodRows().All(row => EntryLabel(row.Name).Modulate == Color.White), Is.True);
-            Assert.That(HasEntry(Loc.GetString("admin-events-category-triggered", ("count", 0))), Is.True);
+            Assert.That(HasEntry(Loc.GetString("admin-gamerules-category-triggered", ("count", 0))), Is.True);
             AssertPaneLayout();
         });
 
-        await ClickControl(Section("admin-events-category-waiting").Heading!);
-        await Client.WaitAssertion(() => Assert.That(EntryRow("AdminEventsTestReady").VisibleInTree, Is.False));
+        await ClickControl(Section("admin-gamerules-category-waiting").Heading!);
+        await Client.WaitAssertion(() => Assert.That(EntryRow("AdminGameRulesControlTestReady").VisibleInTree, Is.False));
         await ClickControl(window.RefreshButton);
         await RunUntilSynced();
-        await Client.WaitAssertion(() => Assert.That(Section("admin-events-category-waiting").BodyVisible, Is.False));
+        await Client.WaitAssertion(() => Assert.That(Section("admin-gamerules-category-waiting").BodyVisible, Is.False));
         await ClickControl(RuleButton("DynamicStationEventScheduler"));
-        await ClickControl(RuleButton("AdminEventsTestScheduler"));
-        await Client.WaitAssertion(() => Assert.That(Section("admin-events-category-waiting").BodyVisible, Is.False));
-        await ClickControl(Section("admin-events-category-waiting").Heading!);
-        await Client.WaitAssertion(() => Assert.That(EntryRow("AdminEventsTestReady").VisibleInTree, Is.True));
+        await ClickControl(RuleButton("AdminGameRulesControlTestScheduler"));
+        await Client.WaitAssertion(() => Assert.That(Section("admin-gamerules-category-waiting").BodyVisible, Is.False));
+        await ClickControl(Section("admin-gamerules-category-waiting").Heading!);
+        await Client.WaitAssertion(() => Assert.That(EntryRow("AdminGameRulesControlTestReady").VisibleInTree, Is.True));
 
         async Task OpenInfo(string prototype)
         {
@@ -157,13 +169,13 @@ public sealed class AdminEventsWindowTest : InteractionTest
             Assert.That(description, Is.Not.Empty);
             Assert.That(GetControlFromField<RichTextLabel>("PlayersValue", details).GetMessage(), Is.EqualTo("30"));
             Assert.That(GetControlFromField<RichTextLabel>("EarliestValue", details).GetMessage(),
-                Is.EqualTo(Loc.GetString("admin-events-info-minutes", ("minutes", 15))));
+                Is.EqualTo(Loc.GetString("admin-gamerules-info-minutes", ("minutes", 15))));
             Assert.That(GetControlFromField<RichTextLabel>("RepeatValue", details).GetMessage(),
-                Is.EqualTo(Loc.GetString("admin-events-info-minutes", ("minutes", 30))));
+                Is.EqualTo(Loc.GetString("admin-gamerules-info-minutes", ("minutes", 30))));
             Assert.That(GetControlFromField<RichTextLabel>("LimitValue", details).GetMessage(),
-                Is.EqualTo(Loc.GetString("admin-events-entry-unlimited")));
+                Is.EqualTo(Loc.GetString("admin-gamerules-entry-unlimited")));
             Assert.That(GetControlFromField<RichTextLabel>("RoundEndValue", details).GetMessage(),
-                Is.EqualTo(Loc.GetString("admin-events-entry-round-end-blocked")));
+                Is.EqualTo(Loc.GetString("admin-gamerules-entry-round-end-blocked")));
             AssertDraws(details);
         });
         await Client.WaitPost(() => details.SetSize = new Vector2(420, 300));
@@ -187,10 +199,10 @@ public sealed class AdminEventsWindowTest : InteractionTest
         {
             Assert.That(GetControlFromField<RichTextLabel>("LimitValue", details).GetMessage(), Is.EqualTo("1"));
             Assert.That(GetControlFromField<RichTextLabel>("RoundEndValue", details).GetMessage(),
-                Is.EqualTo(Loc.GetString("admin-events-entry-round-end-allowed")));
+                Is.EqualTo(Loc.GetString("admin-gamerules-entry-round-end-allowed")));
         });
         await Client.WaitPost(details.Close);
-        await OpenInfo("AdminEventsTestReady");
+        await OpenInfo("AdminGameRulesControlTestReady");
         await Client.WaitAssertion(() => Assert.That(
             GetControlFromField<RichTextLabel>("Description", details).GetMessage(),
             Is.EqualTo("An event description for the information window.")));
@@ -198,10 +210,10 @@ public sealed class AdminEventsWindowTest : InteractionTest
         await Server.WaitPost(() =>
         {
             var ticker = SEntMan.System<ServerGameTicker>();
-            var ready = ticker.AddGameRule("AdminEventsTestReady")!.Value.Owner;
+            var ready = ticker.AddGameRule("AdminGameRulesControlTestReady")!.Value.Owner;
             ticker.StartGameRule(ready);
             ticker.EndGameRule(ready);
-            var repeatable = ticker.AddGameRule("AdminEventsTestRepeatable")!.Value.Owner;
+            var repeatable = ticker.AddGameRule("AdminGameRulesControlTestRepeatable")!.Value.Owner;
             ticker.StartGameRule(repeatable);
             ticker.EndGameRule(repeatable);
         });
@@ -211,11 +223,11 @@ public sealed class AdminEventsWindowTest : InteractionTest
         await RunUntilSynced();
         await Client.WaitAssertion(() =>
         {
-            Assert.That(EntryCategory("AdminEventsTestReady"), Is.EqualTo("admin-events-category-triggered"));
-            Assert.That(EntryCategory("AdminEventsTestRepeatable"), Is.EqualTo("admin-events-category-triggered"));
-            Assert.That(EntryLabel("AdminEventsTestReady").Modulate, Is.EqualTo(Color.LightCoral));
-            Assert.That(EntryLabel("AdminEventsTestRepeatable").Modulate, Is.EqualTo(Color.White));
-            Assert.That(HasEntry(Loc.GetString("admin-events-category-triggered", ("count", 2))), Is.True);
+            Assert.That(EntryCategory("AdminGameRulesControlTestReady"), Is.EqualTo("admin-gamerules-category-triggered"));
+            Assert.That(EntryCategory("AdminGameRulesControlTestRepeatable"), Is.EqualTo("admin-gamerules-category-triggered"));
+            Assert.That(EntryLabel("AdminGameRulesControlTestReady").Modulate, Is.EqualTo(Color.LightCoral));
+            Assert.That(EntryLabel("AdminGameRulesControlTestRepeatable").Modulate, Is.EqualTo(Color.White));
+            Assert.That(HasEntry(Loc.GetString("admin-gamerules-category-triggered", ("count", 2))), Is.True);
             Assert.That(EntryRows().Select(row => row.Name), Is.Unique);
             Assert.That(GetControlFromField<RichTextLabel>("OccurrencesValue", details).GetMessage(), Is.EqualTo("1"));
         });
@@ -225,12 +237,12 @@ public sealed class AdminEventsWindowTest : InteractionTest
         await RunUntilSynced();
         await Client.WaitAssertion(() =>
         {
-            Assert.That(EntryCategory("AdminEventsTestRepeatable"), Is.EqualTo("admin-events-category-triggered"));
-            Assert.That(EntryLabel("AdminEventsTestRepeatable").Modulate, Is.EqualTo(Color.LightCoral));
-            Assert.That(HasEntry(Loc.GetString("admin-events-category-waiting", ("count", 0))), Is.True);
-            Assert.That(EntryLabel("AdminEventsTestReady").Modulate, Is.EqualTo(Color.LightCoral));
+            Assert.That(EntryCategory("AdminGameRulesControlTestRepeatable"), Is.EqualTo("admin-gamerules-category-triggered"));
+            Assert.That(EntryLabel("AdminGameRulesControlTestRepeatable").Modulate, Is.EqualTo(Color.LightCoral));
+            Assert.That(HasEntry(Loc.GetString("admin-gamerules-category-waiting", ("count", 0))), Is.True);
+            Assert.That(EntryLabel("AdminGameRulesControlTestReady").Modulate, Is.EqualTo(Color.LightCoral));
             Assert.That(GetControlFromField<RichTextLabel>("Availability", details).GetMessage(),
-                Is.EqualTo(Loc.GetString("admin-events-unavailable-disabled")));
+                Is.EqualTo(Loc.GetString("admin-gamerules-unavailable-disabled")));
         });
         await Client.WaitPost(details.Close);
 
@@ -276,9 +288,9 @@ public sealed class AdminEventsWindowTest : InteractionTest
         await ClickControl(RuleButton("DynamicStationEventScheduler"));
         await Client.WaitAssertion(() =>
         {
-            Assert.That(RuleButton("AdminEventsTestScheduler").Pressed, Is.False);
+            Assert.That(RuleButton("AdminGameRulesControlTestScheduler").Pressed, Is.False);
             Assert.That(HasEntry("DynamicGameRulesTable"), Is.True);
-            Assert.That(HasEntry("AdminEventsTestTable"), Is.False);
+            Assert.That(HasEntry("AdminGameRulesControlTestTable"), Is.False);
         });
 
         await ClickControl(window.RefreshButton);
@@ -299,47 +311,47 @@ public sealed class AdminEventsWindowTest : InteractionTest
         await Server.WaitAssertion(() => Assert.That(SEntMan.HasComponent<GameRuleComponent>(dynamicRule), Is.False));
         await Client.WaitAssertion(() =>
         {
-            Assert.That(RuleButton("AdminEventsTestScheduler").Pressed, Is.True);
+            Assert.That(RuleButton("AdminGameRulesControlTestScheduler").Pressed, Is.True);
             Assert.That(HasEntry("DynamicGameRulesTable"), Is.False);
-            Assert.That(HasEntry("AdminEventsTestTable"), Is.True);
+            Assert.That(HasEntry("AdminGameRulesControlTestTable"), Is.True);
         });
 
-        await Client.WaitPost(() => tabs.CurrentTab = 1);
+        await Client.WaitPost(() => tabs.CurrentTab = 0);
         await RunUntilSynced();
         await Client.WaitAssertion(() =>
         {
-            Assert.That(eventRules.VisibleInTree, Is.True);
-            Assert.That(eventRules.Children.OfType<Button>().Any(button => button.Text.StartsWith("InactivityTimeRestart (")), Is.True);
+            Assert.That(gameRules.VisibleInTree, Is.True);
+            Assert.That(gameRules.Children.OfType<Button>().Any(button => button.Text.StartsWith("InactivityTimeRestart (")), Is.True);
             Assert.That(rules.VisibleInTree, Is.False);
             Assert.That(history.Children.OfType<PanelContainer>().Select(row => row.Name), Is.SupersetOf(new[]
             {
-                "AdminEventsTestRepeatable", "AdminEventsTestReady",
+                "AdminGameRulesControlTestRepeatable", "AdminGameRulesControlTestReady",
             }));
-            Assert.That(stopEvent.Disabled, Is.False);
+            Assert.That(stopGameRule.Disabled, Is.False);
             AssertDraws(window);
         });
         var historyBeforeAdd = history.Children.OfType<PanelContainer>().Count();
-        await ClickControl(addEvent);
+        await ClickControl(addGameRule);
         await Client.WaitAssertion(() =>
         {
             Assert.That(choices.Children.OfType<Button>().Any(button => button.Text == "DragonSpawn"), Is.True);
             Assert.That(choices.Children.OfType<Button>().Single(button => button.Text == "AnomalySpawn").ToolTip,
-                Does.Contain(Loc.GetString("admin-events-delay-range", ("min", 10), ("max", 20))));
+                Does.Contain(Loc.GetString("admin-gamerules-delay-range", ("min", 10), ("max", 20))));
             Assert.That(choices.Children.OfType<Button>().Single(button => button.Text == "BluespaceArtifact").ToolTip,
-                Does.Contain(Loc.GetString("admin-events-delay-fixed", ("seconds", 30))));
+                Does.Contain(Loc.GetString("admin-gamerules-delay-fixed", ("seconds", 30))));
             Assert.That(choices.Children.OfType<Button>().Any(button => button.Text == "BasicStationEventScheduler"), Is.True);
             Assert.That(choices.Children.OfType<Button>().Any(button => button.Text == "Sandbox"), Is.True);
         });
         // This category only exists in test YAML; the filter and heading must discover it from data.
-        await SelectFilter(categories, "admin-events-title");
+        await SelectFilter(categories, "admin-gamerules-title");
         await Client.WaitAssertion(() =>
         {
             Assert.That(choices.Children.OfType<Button>().Select(button => button.Text), Is.EquivalentTo(new[]
             {
-                "AdminEventsTestCustomCategory", "AdminEventsTestScheduler",
+                "AdminGameRulesControlTestCustomCategory", "AdminGameRulesControlTestScheduler",
             }));
             Assert.That(choices.Children.OfType<RichTextLabel>().Single().GetMessage(),
-                Is.EqualTo(Loc.GetString("admin-events-title")));
+                Is.EqualTo(Loc.GetString("admin-gamerules-title")));
         });
         await SelectFilter(categories, "game-rule-category-mid-round-antagonists");
         await Client.WaitAssertion(() =>
@@ -347,48 +359,48 @@ public sealed class AdminEventsWindowTest : InteractionTest
             Assert.That(choices.Children.OfType<Button>().Any(button => button.Text == "DragonSpawn"), Is.True);
             Assert.That(choices.Children.OfType<Button>().Any(button => button.Text == "GiftsEngineering"), Is.False);
         });
-        await SelectFilter(categories, "admin-events-add-all-categories");
-        await Client.WaitPost(() => search.SetText("AdminEventsTestReady", invokeEvent: true));
+        await SelectFilter(categories, "admin-gamerules-add-all-categories");
+        await Client.WaitPost(() => search.SetText("AdminGameRulesControlTestReady", invokeEvent: true));
         await RunUntilSynced();
         await ClickControl(choices.Children.OfType<Button>().Single());
         await ClickControl(confirm);
         await RunUntilSynced();
         await Client.WaitAssertion(() =>
         {
-            Assert.That(tabs.CurrentTab, Is.EqualTo(1));
-            Assert.That(eventRules.Children.OfType<Button>().Single(button => button.Text.StartsWith("AdminEventsTestReady (")).Pressed, Is.True);
-            Assert.That(stopEvent.Disabled, Is.False);
+            Assert.That(tabs.CurrentTab, Is.EqualTo(0));
+            Assert.That(gameRules.Children.OfType<Button>().Single(button => button.Text.StartsWith("AdminGameRulesControlTestReady (")).Pressed, Is.True);
+            Assert.That(stopGameRule.Disabled, Is.False);
             Assert.That(history.Children.OfType<PanelContainer>().Count(), Is.EqualTo(historyBeforeAdd + 1));
             Assert.That(LatestHistory().Children.OfType<TableContainer>().Single().Visible, Is.False);
         });
         await ClickControl(LatestHistory().Children.OfType<BoxContainer>().Single().Children.OfType<Button>().Single());
         await Client.WaitAssertion(() => Assert.That(LatestHistory().Children.OfType<TableContainer>().Single().Visible, Is.True));
-        await ClickControl(stopEvent);
+        await ClickControl(stopGameRule);
         await RunUntilSynced();
         await Client.WaitAssertion(() =>
         {
-            Assert.That(eventRules.Children.OfType<Button>().Any(button => button.Text.StartsWith("AdminEventsTestReady (")), Is.False);
-            Assert.That(stopEvent.Disabled, Is.False);
+            Assert.That(gameRules.Children.OfType<Button>().Any(button => button.Text.StartsWith("AdminGameRulesControlTestReady (")), Is.False);
+            Assert.That(stopGameRule.Disabled, Is.False);
             Assert.That(history.Children.OfType<PanelContainer>().Count(), Is.EqualTo(historyBeforeAdd + 1));
-            Assert.That(history.Children.OfType<PanelContainer>().First().Name, Is.EqualTo("AdminEventsTestReady"));
+            Assert.That(history.Children.OfType<PanelContainer>().First().Name, Is.EqualTo("AdminGameRulesControlTestReady"));
             Assert.That(LatestHistory().Children.OfType<TableContainer>().Single().Visible, Is.True,
                 "Expanded details should survive a state refresh.");
             Assert.That(LatestHistory().Children.OfType<BoxContainer>().Single().Children.OfType<Label>()
-                .Single(label => label.Name == "HistoryStatus").Text, Is.EqualTo(Loc.GetString("admin-events-history-status", ("status", GameRuleHistoryStatus.Stopped.ToString()))));
-            Assert.That(HistoryValue("admin-events-history-source"),
-                Is.EqualTo(Loc.GetString("admin-events-history-source-admin", ("name", ServerSession.Name))));
-            Assert.That(HistoryValue("admin-events-history-reason"), Does.Contain(ServerSession.Name));
-            Assert.That(HistoryValue("admin-events-history-started"), Does.Match(@"\d+:\d{2}:\d{2}"));
-            Assert.That(HistoryValue("admin-events-history-ended"), Does.Match(@"\d+:\d{2}:\d{2}"));
+                .Single(label => label.Name == "HistoryStatus").Text, Is.EqualTo(Loc.GetString("admin-gamerules-history-status", ("status", GameRuleHistoryStatus.Stopped.ToString()))));
+            Assert.That(HistoryValue("admin-gamerules-history-source"),
+                Is.EqualTo(Loc.GetString("admin-gamerules-history-source-admin", ("name", ServerSession.Name))));
+            Assert.That(HistoryValue("admin-gamerules-history-reason"), Does.Contain(ServerSession.Name));
+            Assert.That(HistoryValue("admin-gamerules-history-started"), Does.Match(@"\d+:\d{2}:\d{2}"));
+            Assert.That(HistoryValue("admin-gamerules-history-ended"), Does.Match(@"\d+:\d{2}:\d{2}"));
             AssertDraws(window);
         });
         await ClickControl(LatestHistory().Children.OfType<BoxContainer>().Single().Children.OfType<Button>().Single());
         await Client.WaitAssertion(() => Assert.That(LatestHistory().Children.OfType<TableContainer>().Single().Visible, Is.False));
         await Server.WaitAssertion(() => Assert.That(SEntMan.System<ServerGameTicker>().GetAddedGameRules()
-            .Any(uid => SEntMan.GetComponent<MetaDataComponent>(uid).EntityPrototype?.ID == "AdminEventsTestReady"), Is.False));
-        await Client.WaitPost(() => tabs.CurrentTab = 0);
+            .Any(uid => SEntMan.GetComponent<MetaDataComponent>(uid).EntityPrototype?.ID == "AdminGameRulesControlTestReady"), Is.False));
+        await Client.WaitPost(() => tabs.CurrentTab = 1);
         await RunUntilSynced();
-        await Client.WaitAssertion(() => Assert.That(RuleButton("AdminEventsTestScheduler").Pressed, Is.True));
+        await Client.WaitAssertion(() => Assert.That(RuleButton("AdminGameRulesControlTestScheduler").Pressed, Is.True));
 
         await Server.WaitPost(() => SEntMan.System<ServerGameTicker>().ClearGameRules());
         await ClickControl(window.RefreshButton);
@@ -397,7 +409,7 @@ public sealed class AdminEventsWindowTest : InteractionTest
         {
             Assert.That(rules.Children.OfType<Button>(), Is.Empty);
             Assert.That(stop.Disabled, Is.True);
-            Assert.That(HasEntry("AdminEventsTestTable"), Is.False);
+            Assert.That(HasEntry("AdminGameRulesControlTestTable"), Is.False);
         });
 
         await Server.WaitPost(() => SEntMan.System<ServerGameTicker>().AddGameRule("BasicStationEventScheduler"));
@@ -418,7 +430,7 @@ public sealed class AdminEventsWindowTest : InteractionTest
             Assert.That(picker.IsOpen, Is.False);
         });
         await Server.WaitAssertion(() => Assert.That(
-            Server.ResolveDependency<IConGroupController>().CanCommand(ServerSession, "eventsui"), Is.False));
+            Server.ResolveDependency<IConGroupController>().CanCommand(ServerSession, "gamerulesui"), Is.False));
     }
 
     private void AssertDraws(Control control)

@@ -1,0 +1,62 @@
+<ui:FancyWindow xmlns="https://spacestation14.io"
+                xmlns:ui="clr-namespace:Content.Client.UserInterface.Controls"
+                Title="{Loc admin-gamerules-title}"
+                MinSize="760 420" SetSize="1050 650">
+    <BoxContainer Orientation="Vertical" Margin="8" SeparationOverride="8">
+        <BoxContainer Orientation="Horizontal">
+            <Label Name="EventsStatus" HorizontalExpand="True"/>
+            <Button Name="RefreshButton" Text="{Loc admin-gamerules-refresh}" Access="Public"/>
+        </BoxContainer>
+        <TabContainer Name="Tabs" VerticalExpand="True">
+            <BoxContainer Orientation="Horizontal" SeparationOverride="10">
+                <PanelContainer MinWidth="250" HorizontalExpand="True" StyleClasses="PanelDeep">
+                    <BoxContainer Orientation="Vertical" Margin="8" SeparationOverride="8">
+                        <Label Text="{Loc admin-gamerules-current-rules}"/>
+                        <ScrollContainer HScrollEnabled="False" VerticalExpand="True">
+                            <BoxContainer Name="GameRulesList" Orientation="Vertical" SeparationOverride="4"/>
+                        </ScrollContainer>
+                        <Button Name="AddGameRuleButton" Text="{Loc admin-gamerules-add}" Disabled="True"/>
+                        <Button Name="StopGameRuleButton" Text="{Loc admin-gamerules-stop}" ToolTip="{Loc admin-gamerules-stop-tooltip}" Disabled="True"/>
+                    </BoxContainer>
+                </PanelContainer>
+                <PanelContainer MinWidth="440" HorizontalExpand="True" SizeFlagsStretchRatio="2" StyleClasses="PanelDeep">
+                    <BoxContainer Orientation="Vertical" Margin="8" SeparationOverride="8">
+                        <Label Text="{Loc admin-gamerules-history}"/>
+                        <RichTextLabel Text="{Loc admin-gamerules-history-hint}"/>
+                        <ScrollContainer HScrollEnabled="False" VerticalExpand="True">
+                            <BoxContainer Name="HistoryList" Orientation="Vertical" SeparationOverride="4"/>
+                        </ScrollContainer>
+                    </BoxContainer>
+                </PanelContainer>
+            </BoxContainer>
+            <BoxContainer Orientation="Horizontal" SeparationOverride="10">
+                <PanelContainer Name="SchedulersPane" MinWidth="250" HorizontalExpand="True" StyleClasses="PanelDeep">
+                    <BoxContainer Orientation="Vertical" Margin="8" SeparationOverride="8">
+                        <Label Text="{Loc admin-gamerules-current-schedulers}"/>
+                        <ScrollContainer HScrollEnabled="False" VerticalExpand="True">
+                            <BoxContainer Name="SchedulersList" Orientation="Vertical" SeparationOverride="4"/>
+                        </ScrollContainer>
+                        <Button Name="AddSchedulerButton" Text="{Loc admin-gamerules-add}" ToolTip="{Loc admin-gamerules-add-title}" Disabled="True"/>
+                        <Button Name="StopSchedulerButton" Text="{Loc admin-gamerules-stop}" ToolTip="{Loc admin-gamerules-stop-tooltip}" Disabled="True"/>
+                    </BoxContainer>
+                </PanelContainer>
+                <PanelContainer Name="TablePane" MinWidth="440" HorizontalExpand="True" SizeFlagsStretchRatio="2" StyleClasses="PanelDeep">
+                    <BoxContainer Orientation="Vertical" Margin="8" SeparationOverride="8">
+                        <PanelContainer StyleClasses="PanelDark" Margin="0 0 0 4">
+                            <BoxContainer Orientation="Vertical" Margin="8" SeparationOverride="8">
+                                <Label Text="{Loc admin-gamerules-tables}"/>
+                                <RichTextLabel Name="SelectedSchedulerLabel" HorizontalExpand="True"/>
+                                <Label Name="NextAttemptLabel" ToolTip="{Loc admin-gamerules-next-attempt-tooltip}"/>
+                                <RichTextLabel Text="{Loc admin-gamerules-tables-hint}" HorizontalExpand="True"/>
+                            </BoxContainer>
+                        </PanelContainer>
+                        <ScrollContainer Name="EntriesScroll" HScrollEnabled="False" VerticalExpand="True">
+                            <BoxContainer Name="EntriesList" Orientation="Vertical" SeparationOverride="6"/>
+                        </ScrollContainer>
+                    </BoxContainer>
+                </PanelContainer>
+            </BoxContainer>
+        </TabContainer>
+        <RichTextLabel Name="ActionStatus" HorizontalExpand="True" Visible="False"/>
+    </BoxContainer>
+</ui:FancyWindow>

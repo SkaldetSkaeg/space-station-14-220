@@ -5,7 +5,7 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Server.Administration.Systems;
 
-public sealed partial class AdminEventsSystem
+public sealed partial class AdminGameRulesControlSystem
 {
     private ProtoId<GameRuleCategoryPrototype> GetCategory(EntityPrototype prototype)
     {

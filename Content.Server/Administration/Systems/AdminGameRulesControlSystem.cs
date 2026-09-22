@@ -16,9 +16,9 @@ using Robust.Shared.Prototypes;
 namespace Content.Server.Administration.Systems;
 
 /// <summary>
-/// Builds snapshots for the admin event viewer without sampling the round's random event tables.
+/// Builds snapshots for the admin GameRule control window without sampling the round's random event tables.
 /// </summary>
-public sealed partial class AdminEventsSystem : EntitySystem
+public sealed partial class AdminGameRulesControlSystem : EntitySystem
 {
     [Dependency] private ServerGameTicker _ticker = default!;
     [Dependency] private EventManagerSystem _events = default!;
@@ -88,12 +88,12 @@ public sealed partial class AdminEventsSystem : EntitySystem
     /// Returns unfinished rules and the possible events in each attached scheduler's table.
     /// This data must only be sent to authorized administrators.
     /// </summary>
-    public AdminEventsEuiState GetSnapshot()
+    public AdminGameRulesControlEuiState GetSnapshot()
     {
-        var state = new AdminEventsEuiState
+        var state = new AdminGameRulesControlEuiState
         {
             EventsEnabled = _events.EventsEnabled,
-            History = [.. _history.GetHistory().Select(entry => new AdminEventHistoryEntry(
+            History = [.. _history.GetHistory().Select(entry => new AdminGameRuleHistoryEntry(
                 entry.Sequence,
                 entry.Entity,
                 entry.Prototype,
@@ -123,7 +123,7 @@ public sealed partial class AdminEventsSystem : EntitySystem
             var status = GetRuleStatus(uid);
 
             var netEntity = GetNetEntity(uid);
-            state.Rules.Add(new AdminEventRuleInfo(netEntity,
+            state.Rules.Add(new AdminGameRuleInfo(netEntity,
                 prototype?.ID ?? metadata.EntityName, metadata.EntityName, status, category, isScheduler));
 
             if (isScheduler)
@@ -176,15 +176,15 @@ public sealed partial class AdminEventsSystem : EntitySystem
         return new AdminSchedulerTimerInfo(scheduler, Math.Max(0, seconds.Value), !_events.EventsEnabled);
     }
 
-    private AdminEventRuleStatus GetRuleStatus(EntityUid uid)
+    private AdminGameRuleStatus GetRuleStatus(EntityUid uid)
     {
         if (_ticker.IsGameRuleActive(uid))
-            return AdminEventRuleStatus.Active;
+            return AdminGameRuleStatus.Active;
 
         if (HasComp<DelayedStartRuleComponent>(uid))
-            return AdminEventRuleStatus.Delayed;
+            return AdminGameRuleStatus.Delayed;
 
-        return AdminEventRuleStatus.Pending;
+        return AdminGameRuleStatus.Pending;
     }
 
     private AdminGameRulePrototypeInfo GetPrototypeInfo(EntityPrototype prototype)
@@ -202,7 +202,7 @@ public sealed partial class AdminEventsSystem : EntitySystem
     private AdminEventTableInfo GetTable(
         NetEntity scheduler,
         EntityTableSelector selector,
-        AdminEventRuleStatus status,
+        AdminGameRuleStatus status,
         Dictionary<string, int> occurrences)
     {
         // Enumerate eligible paths without drawing random numbers or starting any rules.
@@ -242,12 +242,12 @@ public sealed partial class AdminEventsSystem : EntitySystem
         return new AdminEventTableInfo(scheduler, table, entries);
     }
 
-    private AdminEventAvailability GetEventAvailability(AdminEventRuleStatus schedulerStatus, float weight, bool eligible)
+    private AdminEventAvailability GetEventAvailability(AdminGameRuleStatus schedulerStatus, float weight, bool eligible)
     {
         if (!_events.EventsEnabled)
             return AdminEventAvailability.EventsDisabled;
 
-        if (schedulerStatus != AdminEventRuleStatus.Active)
+        if (schedulerStatus != AdminGameRuleStatus.Active)
             return AdminEventAvailability.SchedulerInactive;
 
         if (weight <= 0 || !eligible)
