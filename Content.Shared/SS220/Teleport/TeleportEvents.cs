@@ -66,3 +66,14 @@ public record struct TeleportedEvent(EntityUid Teleporter);
 /// <param name="Cancelled">Whether the teleporter use has been prevented.</param>
 [ByRefEvent, Serializable]
 public record struct TeleportUseAttemptEvent(EntityUid Target, EntityUid User, bool Cancelled = false);
+
+/// <summary>
+/// Requests optional radius modification before a teleport destination is selected.
+/// Raised on the teleporter with the provider's base radius; modifiers may change <see cref="Radius"/>.
+/// Without matching component handlers, the supplied radius remains unchanged.
+/// </summary>
+/// <param name="Target">The entity being teleported.</param>
+/// <param name="User">The entity that activated the teleporter.</param>
+/// <param name="Radius">The maximum distance in metres, initially supplied by the destination provider.</param>
+[ByRefEvent]
+public record struct TryModifyRadiusEvent(EntityUid Target, EntityUid User, float Radius);

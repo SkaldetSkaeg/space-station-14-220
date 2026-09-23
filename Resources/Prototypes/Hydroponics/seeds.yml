@@ -561,6 +561,10 @@
   packetPrototype: BlueTomatoSeeds
   productPrototypes:
     - FoodBlueTomato
+  # SS220-bluespace-tomato begin
+  mutationPrototypes:
+    - bluespaceTomato
+  # SS220-bluespace-tomato end
   harvestRepeat: Repeat
   lifespan: 25
   maturation: 8

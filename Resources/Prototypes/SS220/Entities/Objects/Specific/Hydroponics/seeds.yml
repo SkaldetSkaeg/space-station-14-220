@@ -157,3 +157,13 @@
     seedId: peashootersyndi
   - type: Sprite
     sprite: SS220/Objects/Specific/Hydroponics/peashooter_syndi.rsi
+
+- type: entity
+  parent: BlueTomatoSeeds
+  id: BluespaceTomatoSeeds
+  name: packet of bluespace tomato seeds
+  components:
+  - type: Seed
+    seedId: bluespaceTomato
+  - type: Sprite
+    color: "#80E8FF"

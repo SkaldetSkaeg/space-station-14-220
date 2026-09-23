@@ -329,3 +329,28 @@
   - type: Tag
     tags:
     - Vegetable
+
+- type: entity
+  parent: FoodBlueTomato
+  id: FoodBluespaceTomato
+  name: bluespace tomato
+  description: A tomato that can take you places. Literally.
+  components:
+  - type: Sprite
+    color: "#80E8FF"
+  - type: Produce
+    seedId: bluespaceTomato
+  - type: IngestedTeleportTrigger
+  - type: ThrownHitTeleportTrigger
+    targetWhitelist:
+      components:
+      - MobState
+  - type: RandomTeleportInRadius
+    radius: 5
+  - type: TeleportRadiusFromPotency
+  - type: DeleteTeleporterOnUse
+  - type: TeleportSound
+    departureSound:
+      path: /Audio/Effects/teleport_departure.ogg
+    arrivalSound:
+      path: /Audio/Effects/teleport_arrival.ogg
