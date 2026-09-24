@@ -581,7 +581,7 @@ public sealed partial class ChatUIController : UIController
         CanSendChannelsChanged?.Invoke(CanSendChannels);
         FilterableChannelsChanged?.Invoke(FilterableChannels);
         SelectableChannelsChanged?.Invoke(SelectableChannels);
-        _typingIndicator?.RefreshChatChannel(IsTelepathyChatFocused()); //SS220 telepathy
+        _typingIndicator?.RefreshChatChannel(GetFocusedChatChannel()); //SS220 chat presentation
     }
 
     public void ClearUnfilteredUnreads(ChatChannel channels)
@@ -709,7 +709,7 @@ public sealed partial class ChatUIController : UIController
             box.ChatInput.ChannelSelector.UpdateChannelSelectButton(box.SelectedChannel, null);
         else
             box.ChatInput.ChannelSelector.UpdateChannelSelectButton(prefixChannel, radioChannel, frequency  /*SS220-add-frequency-radio */);
-        RefreshTelepathyTyping(box, prefixChannel); //SS220 telepathy
+        RefreshChatTyping(box, prefixChannel); //SS220 chat presentation
     }
 
     public (ChatSelectChannel chatChannel, string text, RadioChannelPrototype? radioChannel, FixedPoint2? frequency /*SS220-add-frequency-radio */) SplitInputContents(string text)
@@ -891,33 +891,7 @@ public sealed partial class ChatUIController : UIController
         if (!speechBubble || msg.SenderEntity == default)
             return;
 
-        AddTelepathySpeechBubble(msg); //SS220 telepathy
-        switch (msg.Channel)
-        {
-            case ChatChannel.Local:
-                AddSpeechBubble(msg, SpeechBubble.SpeechType.Say);
-                break;
-
-            case ChatChannel.Whisper:
-                AddSpeechBubble(msg, SpeechBubble.SpeechType.Whisper);
-                break;
-
-            case ChatChannel.Dead:
-                if (_ghost is not {IsGhost: true})
-                    break;
-
-                AddSpeechBubble(msg, SpeechBubble.SpeechType.Say);
-                break;
-
-            case ChatChannel.Emotes:
-                AddSpeechBubble(msg, SpeechBubble.SpeechType.Emote);
-                break;
-
-            case ChatChannel.LOOC:
-                if (_config.GetCVar(CCVars.LoocAboveHeadShow))
-                    AddSpeechBubble(msg, SpeechBubble.SpeechType.Looc);
-                break;
-        }
+        AddChannelSpeechBubble(msg); //SS220 chat presentation
     }
 
     public void OnDeleteChatMessagesBy(MsgDeleteChatMessagesBy msg)
@@ -952,7 +926,7 @@ public sealed partial class ChatUIController : UIController
 
     public void NotifyChatFocus(bool isFocused)
     {
-        _typingIndicator?.ClientChangedChatFocus(isFocused, isFocused && IsTelepathyChatFocused()); //SS220 telepathy
+        _typingIndicator?.ClientChangedChatFocus(isFocused, isFocused ? GetFocusedChatChannel() : ChatSelectChannel.None); //SS220 chat presentation
     }
 
     public void Repopulate()
