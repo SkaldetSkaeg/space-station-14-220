@@ -188,6 +188,7 @@ public sealed partial class ChatUIController : UIController
         _net.RegisterNetMessage<MsgChatMessage>(OnChatMessage);
         _net.RegisterNetMessage<MsgDeleteChatMessagesBy>(OnDeleteChatMessagesBy);
         SubscribeNetworkEvent<DamageForceSayEvent>(OnDamageForceSay);
+        // SubscribeNetworkEvent<UpdateChannelEvent>(OnUpdateChannel); //SS220 telepathy
         _config.OnValueChanged(CCVars.ChatEnableColorName, (value) => { _chatNameColorsEnabled = value; });
         _chatNameColorsEnabled = _config.GetCVar(CCVars.ChatEnableColorName);
 
@@ -559,8 +560,19 @@ public sealed partial class ChatUIController : UIController
         }
 
         //ss220 add hidden channel for telepathy for normal player start
+        //SS220 telepathy start
+        // var hasTelepathy = _player.LocalSession?.AttachedEntity is {} entityUid
+        //                    && EntityManager.HasComponent<TelepathyComponent>(entityUid);
+        //SS220 telepathy end
         var isAdmin = _admin.HasFlag(AdminFlags.Admin) || _admin.HasFlag(AdminFlags.Adminchat);
+        //SS220 telepathy start
+        // if (hasTelepathy || isAdmin)
+        // {
+        //     FilterableChannels |= ChatChannel.Telepathy;
+        //     CanSendChannels |= ChatSelectChannel.Telepathy;
+        // }
         UpdateTelepathyChannelPermissions(isAdmin);
+        //SS220 telepathy end
 
         // only admins can see / filter asay
         if (isAdmin)
@@ -708,6 +720,8 @@ public sealed partial class ChatUIController : UIController
             box.ChatInput.ChannelSelector.UpdateChannelSelectButton(box.SelectedChannel, null);
         else
             box.ChatInput.ChannelSelector.UpdateChannelSelectButton(prefixChannel, radioChannel, frequency  /*SS220-add-frequency-radio */);
+
+        RefreshTelepathyTyping(box, prefixChannel); //SS220 telepathy
     }
 
     public (ChatSelectChannel chatChannel, string text, RadioChannelPrototype? radioChannel, FixedPoint2? frequency /*SS220-add-frequency-radio */) SplitInputContents(string text)
@@ -813,6 +827,13 @@ public sealed partial class ChatUIController : UIController
         chatBox.ChatInput.Input.SetText(modifiedText);
         chatBox.ChatInput.Input.ForceSubmitText();
     }
+
+    //SS220 telepathy start
+    // private void OnUpdateChannel(UpdateChannelEvent ev, EntitySessionEventArgs _)
+    // {
+    //     UpdateChannelPermissions();
+    // }
+    //SS220 telepathy end
 
     private void OnChatMessage(MsgChatMessage message)
     {

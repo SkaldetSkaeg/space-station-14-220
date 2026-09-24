@@ -200,7 +200,11 @@ public partial class ChatBox : UIWidget
         _controller.UpdateSelectedChannel(this);
 
         // Warn typing indicator about change
-        if ((SelectedChannel & (ChatSelectChannel.OOC | ChatSelectChannel.LOOC)) == 0)
+        //SS220 telepathy start
+        // if ((SelectedChannel & (ChatSelectChannel.OOC | ChatSelectChannel.LOOC)) == 0)
+        if ((SelectedChannel & (ChatSelectChannel.OOC | ChatSelectChannel.LOOC)) == 0
+            || (ChatInput.Input.HasKeyboardFocus() && _controller.IsTelepathyChatFocused()))
+        //SS220 telepathy end
         {
             _controller.NotifyChatTextChange();
         }
