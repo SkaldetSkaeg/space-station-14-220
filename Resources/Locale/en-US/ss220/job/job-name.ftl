@@ -17,3 +17,7 @@ job-name-nt-admiral = NanoTrasen Admiral
 job-name-nt-politician = NanoTrasen Diplomat
 job-name-ussp = USSP
 job-name-migo = Mi-Go
+
+job-name-senior-service = service administrator
+job-name-security-pilot = security pilot
+job-name-ghost-role = Ghost role
