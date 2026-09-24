@@ -188,7 +188,6 @@ public sealed partial class ChatUIController : UIController
         _net.RegisterNetMessage<MsgChatMessage>(OnChatMessage);
         _net.RegisterNetMessage<MsgDeleteChatMessagesBy>(OnDeleteChatMessagesBy);
         SubscribeNetworkEvent<DamageForceSayEvent>(OnDamageForceSay);
-        // SubscribeNetworkEvent<UpdateChannelEvent>(OnUpdateChannel); //SS220 telepathy
         _config.OnValueChanged(CCVars.ChatEnableColorName, (value) => { _chatNameColorsEnabled = value; });
         _chatNameColorsEnabled = _config.GetCVar(CCVars.ChatEnableColorName);
 
@@ -560,19 +559,8 @@ public sealed partial class ChatUIController : UIController
         }
 
         //ss220 add hidden channel for telepathy for normal player start
-        //SS220 telepathy start
-        // var hasTelepathy = _player.LocalSession?.AttachedEntity is {} entityUid
-        //                    && EntityManager.HasComponent<TelepathyComponent>(entityUid);
-        //SS220 telepathy end
         var isAdmin = _admin.HasFlag(AdminFlags.Admin) || _admin.HasFlag(AdminFlags.Adminchat);
-        //SS220 telepathy start
-        // if (hasTelepathy || isAdmin)
-        // {
-        //     FilterableChannels |= ChatChannel.Telepathy;
-        //     CanSendChannels |= ChatSelectChannel.Telepathy;
-        // }
-        UpdateTelepathyChannelPermissions(isAdmin);
-        //SS220 telepathy end
+        UpdateTelepathyChannelPermissions(isAdmin); //SS220 telepathy
 
         // only admins can see / filter asay
         if (isAdmin)
@@ -593,6 +581,7 @@ public sealed partial class ChatUIController : UIController
         CanSendChannelsChanged?.Invoke(CanSendChannels);
         FilterableChannelsChanged?.Invoke(FilterableChannels);
         SelectableChannelsChanged?.Invoke(SelectableChannels);
+        _typingIndicator?.RefreshChatChannel(IsTelepathyChatFocused()); //SS220 telepathy
     }
 
     public void ClearUnfilteredUnreads(ChatChannel channels)
@@ -828,13 +817,6 @@ public sealed partial class ChatUIController : UIController
         chatBox.ChatInput.Input.ForceSubmitText();
     }
 
-    //SS220 telepathy start
-    // private void OnUpdateChannel(UpdateChannelEvent ev, EntitySessionEventArgs _)
-    // {
-    //     UpdateChannelPermissions();
-    // }
-    //SS220 telepathy end
-
     private void OnChatMessage(MsgChatMessage message)
     {
         var msg = message.Message;
@@ -972,7 +954,7 @@ public sealed partial class ChatUIController : UIController
 
     public void NotifyChatFocus(bool isFocused)
     {
-        _typingIndicator?.ClientChangedChatFocus(isFocused);
+        _typingIndicator?.ClientChangedChatFocus(isFocused, isFocused && IsTelepathyChatFocused()); //SS220 telepathy
     }
 
     public void Repopulate()

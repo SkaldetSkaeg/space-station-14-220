@@ -1,16 +1,12 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
-using Content.Client.UserInterface.Systems.Chat;
 using Content.Shared.CCVar;
 using Content.Shared.Chat.TypingIndicator;
-using Robust.Client.UserInterface;
 
 namespace Content.Client.Chat.TypingIndicator;
 
 public sealed partial class TypingIndicatorSystem
 {
-    [Dependency] private readonly IUserInterfaceManager _ui = default!;
-
     private bool _telepathyInput;
     private bool _typingUpdateQueued;
 
@@ -32,19 +28,28 @@ public sealed partial class TypingIndicatorSystem
     }
 
     /// <summary>
-    /// Updates the indicator when the effective channel changes without a focus or typing event.
+    /// Stores the effective input channel supplied by the UI and updates the indicator when it changes.
     /// </summary>
     public void RefreshChatChannel(bool telepathyInput)
     {
         if (_telepathyInput == telepathyInput)
             return;
 
+        _telepathyInput = telepathyInput;
         ClientUpdateTyping();
+    }
+
+    /// <summary>
+    /// Updates the input channel before the focus change emits a typing event.
+    /// </summary>
+    public void ClientChangedChatFocus(bool isFocused, bool telepathyInput)
+    {
+        _telepathyInput = telepathyInput;
+        ClientChangedChatFocus(isFocused);
     }
 
     private TypingChangedEvent CreateTypingChangedEvent(TypingIndicatorState state)
     {
-        _telepathyInput = _ui.GetUIController<ChatUIController>().IsTelepathyChatFocused();
         if (!_cfg.GetCVar(CCVars.ChatShowTypingIndicator))
             state = TypingIndicatorState.None;
 
