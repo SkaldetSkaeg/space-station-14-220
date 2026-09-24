@@ -709,7 +709,6 @@ public sealed partial class ChatUIController : UIController
             box.ChatInput.ChannelSelector.UpdateChannelSelectButton(box.SelectedChannel, null);
         else
             box.ChatInput.ChannelSelector.UpdateChannelSelectButton(prefixChannel, radioChannel, frequency  /*SS220-add-frequency-radio */);
-
         RefreshTelepathyTyping(box, prefixChannel); //SS220 telepathy
     }
 
