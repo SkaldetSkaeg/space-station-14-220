@@ -910,6 +910,8 @@ public sealed partial class ChatUIController : UIController
         if (!speechBubble || msg.SenderEntity == default)
             return;
 
+        AddTelepathySpeechBubble(msg); //SS220 telepathy
+
         switch (msg.Channel)
         {
             case ChatChannel.Local:

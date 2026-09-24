@@ -155,7 +155,7 @@ public sealed partial class TelepathySystem : SharedTelepathySystem
 
     private void SendMessageToChat(EntityUid receiverUid, string messageString, EntityUid? senderUid, ChannelParameters telepathyChannelParameters)
     {
-        var netSource = _entityManager.GetNetEntity(receiverUid);
+        var netSource = senderUid == null ? NetEntity.Invalid : _entityManager.GetNetEntity(senderUid.Value);
         var wrappedMessage = GetWrappedTelepathyMessage(messageString, senderUid, telepathyChannelParameters);
         var message = new ChatMessage(
             ChatChannel.Telepathy,
