@@ -186,11 +186,13 @@ public sealed partial class TelepathySystem : SharedTelepathySystem
             );
         }
 
+        var senderName = GetSenderName(senderUid);
         return Loc.GetString(
             "chat-manager-send-telepathy-message",
             ("channel", $"\\[{Loc.GetString(telepathyChannelParameters.Name)}\\]"),
             ("message", FormattedMessage.EscapeText(messageString)),
-            ("senderName", GetSenderName(senderUid)),
+            ("senderName", senderName),
+            ("hasSenderName", !string.IsNullOrWhiteSpace(senderName)),
             ("color", telepathyChannelParameters.Color)
         );
     }
