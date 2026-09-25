@@ -9,6 +9,14 @@ namespace Content.Server.Forensics
         [DataField("fibers")]
         public HashSet<string> Fibers = new();
 
+        // SS220 glove prints begin
+        /// <summary>
+        /// Identities of gloves that touched this entity, independent of their fiber descriptions.
+        /// </summary>
+        [DataField]
+        public HashSet<string> GlovePrints = [];
+        // SS220 glove prints end
+
 		//SS220 Micro_fibers start
         //Smth left from backpacks and pockets
         [DataField("microFibers")]

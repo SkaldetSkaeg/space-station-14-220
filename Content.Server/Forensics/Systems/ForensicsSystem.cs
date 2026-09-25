@@ -27,6 +27,7 @@ using Robust.Shared.Containers;
 using Content.Server.SS220.Forensics.Components;
 using Content.Shared.Cloning.Events;
 using Content.Shared.Hands.Components;
+using Content.Server.SS220.Forensics.Systems; // SS220 glove prints
 
 namespace Content.Server.Forensics
 {
@@ -37,6 +38,7 @@ namespace Content.Server.Forensics
         [Dependency] private readonly DoAfterSystem _doAfterSystem = default!;
         [Dependency] private readonly PopupSystem _popupSystem = default!;
         [Dependency] private readonly SharedSolutionContainerSystem _solutionContainerSystem = default!;
+        [Dependency] private readonly GlovePrintSystem _glovePrint = default!; // SS220 glove prints
 
         public override void Initialize()
         {
@@ -152,6 +154,7 @@ namespace Content.Server.Forensics
         public void CopyForensicsFrom(ForensicsComponent src, EntityUid target)
         {
             var dest = EnsureComp<ForensicsComponent>(target);
+            dest.GlovePrints.UnionWith(src.GlovePrints); // SS220 glove prints
             foreach (var dna in src.DNAs)
             {
                 dest.DNAs.Add(dna);
@@ -255,6 +258,8 @@ namespace Content.Server.Forensics
             var totalPrintsAndFibers = forensicsComp.Fingerprints.Count + forensicsComp.Fibers.Count + forensicsComp.MicroFibers.Count;//SS220 Micro_fibers
             var hasRemovableDNA = forensicsComp.DNAs.Count > 0 && forensicsComp.CanDnaBeCleaned;
 
+            totalPrintsAndFibers += forensicsComp.GlovePrints.Count; // SS220 glove prints
+
             if (hasRemovableDNA || totalPrintsAndFibers > 0)
             {
                 var cleanDelay = cleanForensicsEntity.Comp.CleanDelay;
@@ -290,6 +295,7 @@ namespace Content.Server.Forensics
                 return;
 
             targetComp.Fibers = new();
+            targetComp.GlovePrints.Clear(); // SS220 glove prints
             targetComp.MicroFibers = new();//SS220 Micro_fibers
             targetComp.Fingerprints = new();
 
@@ -298,7 +304,7 @@ namespace Content.Server.Forensics
 
             // leave behind evidence it was cleaned
             if (TryComp<FiberComponent>(args.Used, out var fiber))
-                targetComp.Fibers.Add(string.IsNullOrEmpty(fiber.FiberColor) ? Loc.GetString("forensic-fibers", ("material", fiber.FiberMaterial)) : Loc.GetString("forensic-fibers-colored", ("color", fiber.FiberColor), ("material", fiber.FiberMaterial)));
+                _glovePrint.AddFiberEvidence((args.Target.Value, targetComp), (args.Used.Value, fiber)); // SS220 glove prints
 
             if (TryComp<ResidueComponent>(args.Used, out var residue))
                 targetComp.Residues.Add(string.IsNullOrEmpty(residue.ResidueColor) ? Loc.GetString("forensic-residue", ("adjective", residue.ResidueAdjective)) : Loc.GetString("forensic-residue-colored", ("color", residue.ResidueColor), ("adjective", residue.ResidueAdjective)));
@@ -333,7 +339,7 @@ namespace Content.Server.Forensics
             if (_inventory.TryGetSlotEntity(user, "gloves", out var gloves))
             {
                 if (TryComp<FiberComponent>(gloves, out var fiber) && !string.IsNullOrEmpty(fiber.FiberMaterial))
-                    component.Fibers.Add(string.IsNullOrEmpty(fiber.FiberColor) ? Loc.GetString("forensic-fibers", ("material", fiber.FiberMaterial)) : Loc.GetString("forensic-fibers-colored", ("color", fiber.FiberColor), ("material", fiber.FiberMaterial)));
+                    _glovePrint.AddFiberEvidence((target, component), (gloves.Value, fiber)); // SS220 glove prints
             }
 
             if (TryComp<FingerprintComponent>(user, out var fingerprint) && CanAccessFingerprint(user, out _))

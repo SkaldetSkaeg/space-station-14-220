@@ -79,6 +79,7 @@ namespace Content.Server.Forensics
                 {
                     scanner.Fingerprints = new();
                     scanner.Fibers = new();
+                    scanner.GlovePrints = []; // SS220 glove prints
                     scanner.MicroFibers = new();//SS220 Micro_fibers
                     scanner.TouchDNAs = new();
                     scanner.Residues = new();
@@ -87,6 +88,7 @@ namespace Content.Server.Forensics
                 {
                     scanner.Fingerprints = forensics.Fingerprints.ToList();
                     scanner.Fibers = forensics.Fibers.ToList();
+                    scanner.GlovePrints = [.. forensics.GlovePrints]; // SS220 glove prints
                     scanner.MicroFibers = forensics.MicroFibers.ToList();//SS220 Micro_fibers
                     scanner.TouchDNAs = forensics.DNAs.ToList();
                     scanner.Residues = forensics.Residues.ToList();
@@ -151,6 +153,15 @@ namespace Content.Server.Forensics
 
             if (!TryComp<ForensicPadComponent>(args.Used, out var pad))
                 return;
+
+            // SS220 glove prints begin
+            if (pad.GlovePrint != null && component.GlovePrints.Contains(pad.GlovePrint))
+            {
+                _audioSystem.PlayPvs(component.SoundMatch, uid);
+                _popupSystem.PopupEntity(Loc.GetString("forensic-scanner-match-fiber"), uid, args.User);
+                return;
+            }
+            // SS220 glove prints end
 
             foreach (var fiber in component.Fibers)
             {
@@ -278,6 +289,7 @@ namespace Content.Server.Forensics
         {
             component.Fingerprints = new();
             component.Fibers = new();
+            component.GlovePrints = []; // SS220 glove prints
             component.MicroFibers = new();//SS220 Micro_fibers
             component.TouchDNAs = new();
             component.SolutionDNAs = new();

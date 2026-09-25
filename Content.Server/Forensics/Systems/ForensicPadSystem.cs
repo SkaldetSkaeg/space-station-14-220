@@ -9,6 +9,7 @@ using Content.Shared.Inventory;
 using Content.Shared.Labels.EntitySystems;
 using Content.Shared.Verbs;
 using Content.Server.SS220.Forensics.Components;
+using Content.Server.SS220.Forensics.Systems; // SS220 glove prints
 
 namespace Content.Server.Forensics
 {
@@ -22,6 +23,7 @@ namespace Content.Server.Forensics
         //[Dependency] private readonly ForensicsSystem _forensics = default!; // ss220 remove unused dep
         [Dependency] private readonly LabelSystem _label = default!;
         [Dependency] private readonly InventorySystem _inventory = default!;
+        [Dependency] private readonly GlovePrintSystem _glovePrint = default!; // SS220 glove prints
 
         public override void Initialize()
         {
@@ -99,6 +101,10 @@ namespace Content.Server.Forensics
         private void StartScan(EntityUid used, EntityUid user, EntityUid target, ForensicPadComponent pad, string sample)
         {
             var ev = new ForensicPadDoAfterEvent(sample);
+            // SS220 glove prints begin
+            if (TryComp<GlovePrintComponent>(target, out var print))
+                ev.GlovePrint = print.Print;
+            // SS220 glove prints end
 
             var doAfterEventArgs = new DoAfterArgs(EntityManager, user, pad.ScanDelay, ev, used, target: target, used: used)
             {
@@ -172,7 +178,7 @@ namespace Content.Server.Forensics
 
             if (TryComp<FiberComponent>(ent, out var fiber))
             {
-                sample = string.IsNullOrEmpty(fiber.FiberColor) ? Loc.GetString("forensic-fibers", ("material", fiber.FiberMaterial)) : Loc.GetString("forensic-fibers-colored", ("color", fiber.FiberColor), ("material", fiber.FiberMaterial));
+                sample = _glovePrint.GetFiberSample((ent, fiber)); // SS220 glove prints
                 return true;
             }
 
@@ -201,6 +207,7 @@ namespace Content.Server.Forensics
             }
 
             padComponent.Sample = args.Sample;
+            padComponent.GlovePrint = args.GlovePrint; // SS220 glove prints
             padComponent.Used = true;
 
             args.Handled = true;

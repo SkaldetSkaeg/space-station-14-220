@@ -3,6 +3,7 @@
   parent: Clothing
   id: ClothingHandsBase
   components:
+  - type: GlovePrint # SS220 glove prints
   - type: Sprite
     state: icon
   - type: Clothing

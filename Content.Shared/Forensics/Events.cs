@@ -14,6 +14,14 @@ public sealed partial class ForensicPadDoAfterEvent : DoAfterEvent
 {
     [DataField("sample", required: true)] public  string Sample = default!;
 
+    // SS220 glove prints begin
+    /// <summary>
+    /// Glove identity at the start of sampling, independent of the displayed material and color.
+    /// </summary>
+    [DataField]
+    public string? GlovePrint;
+    // SS220 glove prints end
+
     private ForensicPadDoAfterEvent()
     {
     }

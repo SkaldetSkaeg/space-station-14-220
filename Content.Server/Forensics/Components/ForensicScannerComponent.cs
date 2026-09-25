@@ -22,6 +22,14 @@ namespace Content.Server.Forensics
         [ViewVariables(VVAccess.ReadOnly), DataField("fibers")]
         public List<string> Fibers = new();
 
+        // SS220 glove prints begin
+        /// <summary>
+        /// Glove identities from the last scan, used to compare samples even if the fibers change.
+        /// </summary>
+        [DataField]
+        public List<string> GlovePrints = [];
+        // SS220 glove prints end
+
         //SS220 Micro_fibers start
         /// </summary>
         /// A list of backpack and pockets of clothes fibers that the forensic scanner found from the <see cref="ForensicsComponent"/> on an entity.
