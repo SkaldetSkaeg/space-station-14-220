@@ -49,7 +49,7 @@ public abstract partial class SharedDoorSystem : EntitySystem
     [Dependency] protected readonly SharedPopupSystem Popup = default!;
     [Dependency] private readonly SharedMapSystem _mapSystem = default!;
     [Dependency] private readonly SharedPowerReceiverSystem _powerReceiver = default!;
-    [Dependency] private readonly SharedInteractionSystem _interaction = default!; //SS220 Detective_update
+    [Dependency] private readonly SharedInteractionSystem _interaction = default!;//SS220 Detective_update
 
     public static readonly ProtoId<TagPrototype> DoorBumpTag = "DoorBumpOpener";
 
@@ -647,10 +647,10 @@ public abstract partial class SharedDoorSystem : EntitySystem
         if (!Tags.HasTag(otherUid, DoorBumpTag))
             return;
 
+        _interaction.DoContactInteraction(otherUid, uid);
+
         if (!TryOpen(uid, door, otherUid, quiet: door.State == DoorState.Denying, predicted: true))
             return;
-
-        _interaction.DoContactInteraction(otherUid, uid);
         //SS220 Detective_update end
     }
     #endregion
@@ -783,10 +783,11 @@ public abstract partial class SharedDoorSystem : EntitySystem
             if (!Tags.HasTag(other, DoorBumpTag))
                 continue;
 
+            _interaction.DoContactInteraction(other, uid);
+
             if (!TryOpen(uid, door, other, quiet: true))
                 continue;
 
-            _interaction.DoContactInteraction(other, uid);
             break;
         }
         //SS220 Detective_update end

@@ -33,6 +33,15 @@ namespace Content.Shared.Interaction
         /// </summary>
         public bool CanReach { get; }
 
+        //SS220 Detective_update begin
+        /// <summary>
+        /// Whether this interaction should register contact with the target.
+        /// Set to false for non-contact interactions such as forensic scanning.
+        /// Contact with the used item is unaffected.
+        /// </summary>
+        public bool DoContactInteraction = true;
+        //SS220 Detective_update end
+
         public InteractEvent(EntityUid user, EntityUid used, EntityUid? target,
             EntityCoordinates clickLocation, bool canReach)
         {

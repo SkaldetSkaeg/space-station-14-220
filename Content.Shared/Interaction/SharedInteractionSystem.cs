@@ -1158,7 +1158,7 @@ namespace Content.Shared.Interaction
             var afterInteractEvent = new AfterInteractEvent(user, used, target, clickLocation, canReach);
             RaiseLocalEvent(used, afterInteractEvent);
             DoContactInteraction(user, used, afterInteractEvent);
-            if (canReach)
+            if (canReach && afterInteractEvent.DoContactInteraction)//SS220 Detective_update
             {
                 DoContactInteraction(user, target, afterInteractEvent);
                 // Contact interactions are currently only used for forensics, so we don't raise used -> target
@@ -1174,12 +1174,10 @@ namespace Content.Shared.Interaction
             var afterInteractUsingEvent = new AfterInteractUsingEvent(user, used, target, clickLocation, canReach);
             RaiseLocalEvent(target.Value, afterInteractUsingEvent);
 
-            DoContactInteraction(user, used, afterInteractUsingEvent);
-            if (canReach)
-            {
-                DoContactInteraction(user, target, afterInteractUsingEvent);
-                // Contact interactions are currently only used for forensics, so we don't raise used -> target
-            }
+            // Reaching the final handler still means the user attempted contact, even if nothing handled the action.
+            DoContactInteraction(user, used);//SS220 Detective_update
+            if (canReach && afterInteractEvent.DoContactInteraction && afterInteractUsingEvent.DoContactInteraction)//SS220 Detective_update
+                DoContactInteraction(user, target);//SS220 Detective_update
 
             return afterInteractUsingEvent.Handled;
         }
@@ -1266,10 +1264,11 @@ namespace Content.Shared.Interaction
             DebugTools.Assert(!IsDeleted(user) && !IsDeleted(used));
             var userEv = new UserActivateInWorldEvent(user, used, complexInteractions.Value);
             RaiseLocalEvent(user, userEv, true);
+            DoContactInteraction(user, used);//SS220 Detective_update
             if (!userEv.Handled)
                 return false;
 
-            DoContactInteraction(user, used);
+            //DoContactInteraction(user, used);//SS220 Detective_update
             // Still need to call this even without checkUseDelay in case this gets relayed from Activate.
             if (delayComponent != null)
                 _useDelay.TryResetDelay(used, component: delayComponent);

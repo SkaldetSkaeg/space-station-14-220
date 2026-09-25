@@ -138,6 +138,7 @@ namespace Content.Server.Forensics
 
         private void OnAfterInteract(EntityUid uid, ForensicScannerComponent component, AfterInteractEvent args)
         {
+            args.DoContactInteraction = false;//SS220 Detective_update
             if (component.CancelToken != null || args.Target == null || !args.CanReach)
                 return;
 
