@@ -49,6 +49,7 @@ public abstract partial class SharedDoorSystem : EntitySystem
     [Dependency] protected readonly SharedPopupSystem Popup = default!;
     [Dependency] private readonly SharedMapSystem _mapSystem = default!;
     [Dependency] private readonly SharedPowerReceiverSystem _powerReceiver = default!;
+    [Dependency] private readonly SharedInteractionSystem _interaction = default!; //SS220 Detective_update
 
     public static readonly ProtoId<TagPrototype> DoorBumpTag = "DoorBumpOpener";
 
@@ -640,8 +641,17 @@ public abstract partial class SharedDoorSystem : EntitySystem
 
         var otherUid = args.OtherEntity;
 
-        if (Tags.HasTag(otherUid, DoorBumpTag))
-            TryOpen(uid, door, otherUid, quiet: door.State == DoorState.Denying, predicted: true);
+        //if (Tags.HasTag(otherUid, DoorBumpTag))
+            //TryOpen(uid, door, otherUid, quiet: door.State == DoorState.Denying, predicted: true);
+        //SS220 Detective_update begin
+        if (!Tags.HasTag(otherUid, DoorBumpTag))
+            return;
+
+        if (!TryOpen(uid, door, otherUid, quiet: door.State == DoorState.Denying, predicted: true))
+            return;
+
+        _interaction.DoContactInteraction(otherUid, uid);
+        //SS220 Detective_update end
     }
     #endregion
 
@@ -756,14 +766,30 @@ public abstract partial class SharedDoorSystem : EntitySystem
     protected void CheckDoorBump(Entity<DoorComponent, PhysicsComponent> ent)
     {
         var (uid, door, physics) = ent;
-        if (door.BumpOpen)
+        //if (door.BumpOpen)
+        //{
+            //foreach (var other in PhysicsSystem.GetContactingEntities(uid, physics))
+            //{
+                //if (Tags.HasTag(other, DoorBumpTag) && TryOpen(uid, door, other, quiet: true))
+                    //break;
+            //}
+        //}
+        //SS220 Detective_update begin
+        if (!door.BumpOpen)
+            return;
+
+        foreach (var other in PhysicsSystem.GetContactingEntities(uid, physics))
         {
-            foreach (var other in PhysicsSystem.GetContactingEntities(uid, physics))
-            {
-                if (Tags.HasTag(other, DoorBumpTag) && TryOpen(uid, door, other, quiet: true))
-                    break;
-            }
+            if (!Tags.HasTag(other, DoorBumpTag))
+                continue;
+
+            if (!TryOpen(uid, door, other, quiet: true))
+                continue;
+
+            _interaction.DoContactInteraction(other, uid);
+            break;
         }
+        //SS220 Detective_update end
     }
 
     /// <summary>
