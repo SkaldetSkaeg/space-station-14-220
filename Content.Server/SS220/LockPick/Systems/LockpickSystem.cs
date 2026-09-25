@@ -24,10 +24,16 @@ public sealed partial class LockpickSystem : EntitySystem
 
     private void OnAfterInteract(Entity<LockpickComponent> ent, ref AfterInteractEvent args)
     {
+        if (args.Handled)
+            return;
+
+        if (!args.CanReach)
+            return;
+
         if (args.Target == null || !TryComp<TargetLockPickComponent>(args.Target, out var targetLockPickComponent))
             return;
 
-        _doAfter.TryStartDoAfter(new DoAfterArgs(EntityManager,
+        args.Handled = _doAfter.TryStartDoAfter(new DoAfterArgs(EntityManager,
             args.User,
             targetLockPickComponent.TimeToLockPick * ent.Comp.LockPickSpeedModifier,
             new LockPickEvent(),
