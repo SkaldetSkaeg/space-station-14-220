@@ -11,11 +11,15 @@ public sealed partial class CutStuckDoAfterEvent : DoAfterEvent
     /// <summary>
     /// Original equipment container; cutting stops if the item moves to a different container.
     /// </summary>
-    [DataField]
-    public string ContainerId = string.Empty;
+    public readonly string ContainerId;
+
+    public CutStuckDoAfterEvent(string containerId)
+    {
+        ContainerId = containerId;
+    }
 
     public override DoAfterEvent Clone()
     {
-        return (CutStuckDoAfterEvent)MemberwiseClone();
+        return this;
     }
 }

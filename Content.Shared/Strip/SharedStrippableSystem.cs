@@ -16,7 +16,7 @@ using Content.Shared.Inventory;
 using Content.Shared.Inventory.VirtualItem;
 using Content.Shared.Popups;
 using Content.Shared.Strip.Components;
-using Content.Shared.SS220.StuckOnEquip; // SS220-StuckOnEquip
+using Content.Shared.SS220.StuckOnEquip;
 using Content.Shared.Verbs;
 using Robust.Shared.Utility;
 
@@ -293,7 +293,6 @@ public abstract class SharedStrippableSystem : EntitySystem
         if (TryAdminGhostRemoveStuckItem(user, target, item, inHand: false))
             return;
         // SS220-StuckOnEquip end
-
         if (!CanStripRemoveInventory(user, target, item, slot))
             return;
 
@@ -526,7 +525,6 @@ public abstract class SharedStrippableSystem : EntitySystem
         if (TryAdminGhostRemoveStuckItem(user, target, item, inHand: true))
             return;
         // SS220-StuckOnEquip end
-
         if (!CanStripRemoveHand(user, target, item, handName))
             return;
 
@@ -598,7 +596,6 @@ public abstract class SharedStrippableSystem : EntitySystem
         return true;
     }
     // SS220-StuckOnEquip end
-
     private void OnStrippableDoAfterRunning(Entity<HandsComponent> entity, ref DoAfterAttemptEvent<StrippableDoAfterEvent> ev)
     {
         var args = ev.DoAfter.Args;

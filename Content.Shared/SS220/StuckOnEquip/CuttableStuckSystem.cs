@@ -73,7 +73,7 @@ public sealed partial class CuttableStuckSystem : EntitySystem
             EntityManager,
             user,
             item.Comp.Delay,
-            new CutStuckDoAfterEvent { ContainerId = containerId },
+            new CutStuckDoAfterEvent(containerId),
             item,
             target: wearer,
             used: tool)
