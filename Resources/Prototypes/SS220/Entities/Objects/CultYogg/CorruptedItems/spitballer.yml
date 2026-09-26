@@ -2,7 +2,7 @@
 
 - type: entity
   name: spitballer cult yogg
-  parent: [BaseItem, CultYoggRestrictedItem]
+  parent: [BaseItem, CultYoggRestrictedItem, BaseCultYoggCuttableEquipment]
   id: Spitballer
   suffix: CultYogg
   components:
@@ -40,7 +40,6 @@
         right:
         - state: fullammo-inhand-right
           shader: unshaded
-    - type: CuttableStuck
     - type: StuckOnEquip
       inHandItem: true
     - type: Tag

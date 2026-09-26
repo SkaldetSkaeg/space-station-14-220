@@ -32,6 +32,16 @@
         - MiGo
 
 - type: entity
+  abstract: true
+  id: BaseCultYoggCuttableEquipment
+  components:
+  - type: CuttableStuck
+    damage:
+      types:
+        Slash: 25
+        Blunt: 10
+
+- type: entity
   id: BaseAutoLinkingPortalCult
   parent: BaseStructure
   suffix: CultYogg

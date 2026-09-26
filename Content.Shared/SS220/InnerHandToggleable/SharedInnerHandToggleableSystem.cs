@@ -208,9 +208,12 @@ public sealed partial class SharedInnerHandToggleableSystem : EntitySystem
 
         // Unequip handlers need to know that the item is being stored, not lost.
         innerToggle.InnerItemUid = activeHandHeldItem;
-        var inserted = TryComp<StuckOnEquipComponent>(activeHandHeldItem, out var stuckOnEquip)
-            ? _stuckOnEquip.TryInsertUnstuckItem((activeHandHeldItem.Value, stuckOnEquip), innerToggle.Container)
-            : _containerSystem.Insert((activeHandHeldItem.Value, null, null), innerToggle.Container);
+        var item = activeHandHeldItem.Value;
+        bool inserted;
+        if (TryComp<StuckOnEquipComponent>(item, out var stuckOnEquip))
+            inserted = _stuckOnEquip.TryInsertUnstuckItem((item, stuckOnEquip), innerToggle.Container);
+        else
+            inserted = _containerSystem.Insert((item, null, null), innerToggle.Container);
 
         if (!inserted)
         {

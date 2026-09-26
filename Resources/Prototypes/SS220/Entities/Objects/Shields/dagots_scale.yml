@@ -2,7 +2,7 @@
 
 - type: entity
   id: DagonsScale
-  parent: BaseShieldAlt
+  parent: [BaseShieldAlt, BaseCultYoggCuttableEquipment]
   name: Dagon's Scale
   description: Dagon scale used by cultists as protection
   suffix: CultYogg
@@ -12,7 +12,6 @@
     state: icon
   - type: CultYoggWeapon
     item: CocoonDagonsScale
-  - type: CuttableStuck
   - type: StuckOnEquip
     inHandItem: true
   - type: Tag

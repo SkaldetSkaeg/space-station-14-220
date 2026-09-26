@@ -20,6 +20,6 @@ public sealed partial class CuttableStuckComponent : Component
     /// <summary>
     /// Damage dealt to the wearer after successful removal, ignoring resistances.
     /// </summary>
-    [DataField]
-    public DamageSpecifier Damage = new() { DamageDict = { ["Slash"] = 25, ["Blunt"] = 10 } };
+    [DataField(required: true)]
+    public DamageSpecifier Damage = new();
 }

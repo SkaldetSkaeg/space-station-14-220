@@ -2,7 +2,7 @@
 
 - type: entity
   name: beach
-  parent: [BaseItem, CultYoggRestrictedItem]
+  parent: [BaseItem, CultYoggRestrictedItem, BaseCultYoggCuttableEquipment]
   id: BeachCultYogg
   suffix: CultYogg
   description: description
@@ -21,7 +21,6 @@
       right:
       - state: inhand-right
 #      - state: inhand-right-vox
-  - type: CuttableStuck
   - type: StuckOnEquip
     inHandItem: true
   - type: MeleeWeapon

@@ -2,7 +2,7 @@
 
 - type: entity
   name: venomancer
-  parent: [BaseItem, CultYoggRestrictedItem]
+  parent: [BaseItem, CultYoggRestrictedItem, BaseCultYoggCuttableEquipment]
   suffix: CultYogg
   id: Venomancer
   components:
@@ -43,7 +43,6 @@
       right:
       - state: fullammo-inhand-right
         shader: unshaded
-  - type: CuttableStuck
   - type: StuckOnEquip
     inHandItem: true
   - type: Tag
