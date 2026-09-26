@@ -99,14 +99,17 @@ public sealed partial class SharedStuckOnEquipSystem : EntitySystem
     /// <summary>
     /// Moves an item into its internal storage, restoring its lock if insertion fails.
     /// </summary>
-    public bool TryInsertUnstuckItem(Entity<StuckOnEquipComponent> ent, BaseContainer container)
+    public bool TryInsertUnstuckItem(Entity<StuckOnEquipComponent?> ent, BaseContainer container)
     {
+        if (!Resolve(ent.Owner, ref ent.Comp, false))
+            return false;
+
         var wasStuck = ent.Comp.IsStuck;
-        UnstuckItem(ent);
+        UnstuckItem((ent.Owner, ent.Comp));
         if (_containers.Insert(ent.Owner, container))
             return true;
 
-        SetStuck(ent, wasStuck);
+        SetStuck((ent.Owner, ent.Comp), wasStuck);
         return false;
     }
 
@@ -116,9 +119,13 @@ public sealed partial class SharedStuckOnEquipSystem : EntitySystem
     /// </summary>
     public bool TryAdminGhostRemove(EntityUid user, EntityUid item)
     {
-        if (!IsAdminGhost(user)
-            || !TryComp<StuckOnEquipComponent>(item, out var stuck)
-            || !stuck.IsStuck)
+        if (!IsAdminGhost(user))
+            return false;
+
+        if (!TryComp<StuckOnEquipComponent>(item, out var stuck))
+            return false;
+
+        if (!stuck.IsStuck)
             return false;
 
         return TryRemoveItem((item, stuck), user);
@@ -128,8 +135,11 @@ public sealed partial class SharedStuckOnEquipSystem : EntitySystem
     /// Releases and removes an equipped item. Restores its lock if removal fails.
     /// Callers must authorize the removal before calling this method.
     /// </summary>
-    public bool TryRemoveItem(Entity<StuckOnEquipComponent> ent, EntityUid user, bool force = false)
+    public bool TryRemoveItem(Entity<StuckOnEquipComponent?> ent, EntityUid user, bool force = false)
     {
+        if (!Resolve(ent.Owner, ref ent.Comp, false))
+            return false;
+
         if (!_containers.TryGetContainingContainer((ent.Owner, null, null), out var container))
             return false;
 
@@ -142,18 +152,24 @@ public sealed partial class SharedStuckOnEquipSystem : EntitySystem
             return false;
 
         var wasStuck = ent.Comp.IsStuck;
-        UnstuckItem(ent);
+        UnstuckItem((ent.Owner, ent.Comp));
 
         // Use the inventory API so dependent slots and attached hardsuit helmets are handled correctly.
         var removed = (inHand, force) switch
         {
-            (false, _) => _inventory.TryUnequip(user, owner, container.ID, silent: true, force: force, triggerHandContact: true),
+            (false, _) => _inventory.TryUnequip(
+                user,
+                owner,
+                container.ID,
+                silent: true,
+                force: force,
+                triggerHandContact: true),
             (true, true) => _containers.Remove(ent.Owner, container, force: true),
             (true, false) => _hands.TryDrop(owner, ent.Owner, checkActionBlocker: false),
         };
 
         if (!removed)
-            SetStuck(ent, wasStuck);
+            SetStuck((ent.Owner, ent.Comp), wasStuck);
 
         return removed;
     }
@@ -185,8 +201,10 @@ public sealed partial class SharedStuckOnEquipSystem : EntitySystem
         // Unequipping may also remove dependent slots, so take a snapshot before modifying the inventory.
         foreach (var item in _inventory.GetHandOrInventoryEntities(target).ToArray())
         {
-            if (!TryComp<StuckOnEquipComponent>(item, out var stuck)
-                || onDeath && !stuck.ShouldDropOnDeath)
+            if (!TryComp<StuckOnEquipComponent>(item, out var stuck))
+                continue;
+
+            if (onDeath && !stuck.ShouldDropOnDeath)
                 continue;
 
             // Keep the cult cleanup behavior: remove matching items even when they were not stuck (e.g. pockets).

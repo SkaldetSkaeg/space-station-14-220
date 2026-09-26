@@ -8,12 +8,11 @@ using Content.Shared.Database;
 using Content.Shared.DoAfter;
 using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Inventory;
+using Content.Shared.Kitchen.Components;
 using Content.Shared.Popups;
-using Content.Shared.Tag;
 using Content.Shared.Verbs;
 using Robust.Shared.Containers;
 using Robust.Shared.Network;
-using Robust.Shared.Prototypes;
 
 namespace Content.Shared.SS220.StuckOnEquip;
 
@@ -26,12 +25,9 @@ public sealed partial class CuttableStuckSystem : EntitySystem
     [Dependency] private SharedDoAfterSystem _doAfter = default!;
     [Dependency] private SharedStuckOnEquipSystem _stuck = default!;
     [Dependency] private DamageableSystem _damage = default!;
-    [Dependency] private TagSystem _tags = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private ISharedAdminLogManager _adminLogger = default!;
     [Dependency] private INetManager _net = default!;
-
-    private static readonly ProtoId<TagPrototype> KnifeTag = "Knife";
 
     public override void Initialize()
     {
@@ -44,29 +40,43 @@ public sealed partial class CuttableStuckSystem : EntitySystem
     private void OnItemVerbs(Entity<CuttableStuckComponent> ent, ref GetVerbsEvent<EquipmentVerb> args)
     {
         // Generic equipment access excludes another person's hand slots; CanCut checks the wearer and item together.
-        if (!args.CanInteract || args.Using is not { } knife
-            || !CanCut(args.User, ent, knife, out _, out _))
+        if (!args.CanInteract)
+            return;
+
+        if (args.Using == null)
+            return;
+
+        var tool = args.Using.Value;
+        if (!CanCut(args.User, ent, tool, out _, out _))
             return;
 
         var user = args.User;
         args.Verbs.Add(new EquipmentVerb
         {
             Text = Loc.GetString("cuttable-stuck-verb"),
-            Act = () => TryStartCut(user, ent, knife),
+            Act = () => TryStartCut(user, (ent.Owner, ent.Comp), tool),
         });
     }
 
     /// <summary>
-    /// Starts cutting from the attachment's own verb menu, rechecking access and the held knife.
+    /// Starts cutting from the attachment's own verb menu, rechecking access and the held sharp tool.
     /// </summary>
-    public bool TryStartCut(EntityUid user, EntityUid item, EntityUid knife)
+    public bool TryStartCut(EntityUid user, Entity<CuttableStuckComponent?> item, EntityUid tool)
     {
-        if (!TryComp<CuttableStuckComponent>(item, out var cuttable)
-            || !CanCut(user, item, knife, out var wearer, out var containerId))
+        if (!Resolve(item.Owner, ref item.Comp, false))
             return false;
 
-        var args = new DoAfterArgs(EntityManager, user, cuttable.Delay,
-            new CutStuckDoAfterEvent { ContainerId = containerId }, item, target: wearer, used: knife)
+        if (!CanCut(user, item, tool, out var wearer, out var containerId))
+            return false;
+
+        var args = new DoAfterArgs(
+            EntityManager,
+            user,
+            item.Comp.Delay,
+            new CutStuckDoAfterEvent { ContainerId = containerId },
+            item,
+            target: wearer,
+            used: tool)
         {
             NeedHand = true,
             BreakOnHandChange = true,
@@ -80,21 +90,29 @@ public sealed partial class CuttableStuckSystem : EntitySystem
         if (!_doAfter.TryStartDoAfter(args))
             return false;
 
-        _popup.PopupPredicted(Loc.GetString("cuttable-stuck-start", ("user", user), ("item", item), ("wearer", wearer)), wearer, user);
+        var message = Loc.GetString("cuttable-stuck-start", ("user", user), ("item", item.Owner), ("wearer", wearer));
+        _popup.PopupPredicted(message, wearer, user);
         return true;
     }
 
-    private bool CanCut(EntityUid user, EntityUid item, EntityUid knife, out EntityUid wearer, out string containerId)
+    private bool CanCut(EntityUid user, EntityUid item, EntityUid tool, out EntityUid wearer, out string containerId)
     {
         wearer = default;
         containerId = string.Empty;
 
-        if (_hands.GetActiveItem(user) != knife
-            || !_tags.HasTag(knife, KnifeTag)
-            || !_blocker.CanUseHeldEntity(user, knife))
+        if (_hands.GetActiveItem(user) != tool)
             return false;
 
-        if (!TryComp<StuckOnEquipComponent>(item, out var stuck) || !stuck.IsStuck)
+        if (!HasComp<SharpComponent>(tool))
+            return false;
+
+        if (!_blocker.CanUseHeldEntity(user, tool))
+            return false;
+
+        if (!TryComp<StuckOnEquipComponent>(item, out var stuck))
+            return false;
+
+        if (!stuck.IsStuck)
             return false;
 
         if (!_containers.TryGetContainingContainer((item, null, null), out var container))
@@ -102,7 +120,10 @@ public sealed partial class CuttableStuckSystem : EntitySystem
 
         wearer = container.Owner;
         containerId = container.ID;
-        if (!HasComp<DamageableComponent>(wearer) || !_blocker.CanInteract(user, wearer))
+        if (!HasComp<DamageableComponent>(wearer))
+            return false;
+
+        if (!_blocker.CanInteract(user, wearer))
             return false;
 
         return _inventory.CanAccess(user, wearer, item);
@@ -110,10 +131,16 @@ public sealed partial class CuttableStuckSystem : EntitySystem
 
     private bool CanContinue(EntityUid item, DoAfterArgs args, CutStuckDoAfterEvent ev)
     {
-        return args.Used is { } knife
-            && CanCut(args.User, item, knife, out var wearer, out var containerId)
-            && wearer == args.Target
-            && containerId == ev.ContainerId;
+        if (args.Used == null)
+            return false;
+
+        if (!CanCut(args.User, item, args.Used.Value, out var wearer, out var containerId))
+            return false;
+
+        if (wearer != args.Target)
+            return false;
+
+        return containerId == ev.ContainerId;
     }
 
     private void OnCutAttempt(Entity<CuttableStuckComponent> ent, ref DoAfterAttemptEvent<CutStuckDoAfterEvent> args)
@@ -124,12 +151,20 @@ public sealed partial class CuttableStuckSystem : EntitySystem
 
     private void OnCutFinished(Entity<CuttableStuckComponent> ent, ref CutStuckDoAfterEvent args)
     {
-        if (args.Cancelled || args.Handled || _net.IsClient)
+        if (args.Cancelled || args.Handled)
             return;
 
-        if (!CanContinue(ent, args.Args, args)
-            || args.Target is not { } wearer
-            || !TryComp<StuckOnEquipComponent>(ent, out var stuck))
+        if (_net.IsClient)
+            return;
+
+        if (!CanContinue(ent, args.Args, args))
+            return;
+
+        if (args.Target == null)
+            return;
+
+        var wearer = args.Target.Value;
+        if (!TryComp<StuckOnEquipComponent>(ent, out var stuck))
             return;
 
         args.Handled = true;
@@ -137,9 +172,15 @@ public sealed partial class CuttableStuckSystem : EntitySystem
             return;
 
         // The blade cuts the attachment at the body, underneath any worn protection.
-        _damage.TryChangeDamage(wearer, ent.Comp.Damage, out var damage, ignoreResistances: true, origin: args.User);
-        _popup.PopupEntity(Loc.GetString("cuttable-stuck-finish", ("user", args.User), ("item", ent.Owner), ("wearer", wearer)), wearer);
+        var damage = _damage.ChangeDamage(wearer, ent.Comp.Damage, ignoreResistances: true, origin: args.User);
+        var message = Loc.GetString(
+            "cuttable-stuck-finish",
+            ("user", args.User),
+            ("item", ent.Owner),
+            ("wearer", wearer));
+        _popup.PopupEntity(message, wearer);
         _adminLogger.Add(LogType.Stripping, LogImpact.High,
-            $"{ToPrettyString(args.User):actor} cut {ToPrettyString(ent):item} off {ToPrettyString(wearer):target} with {ToPrettyString(args.Used):tool}, dealing {damage.GetTotal()} damage");
+            $"{ToPrettyString(args.User):actor} cut {ToPrettyString(ent):item} off {ToPrettyString(wearer):target} " +
+            $"with {ToPrettyString(args.Used):tool}, dealing {damage.GetTotal()} damage");
     }
 }

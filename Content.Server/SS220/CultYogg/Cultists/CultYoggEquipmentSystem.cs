@@ -38,14 +38,23 @@ public sealed partial class CultYoggEquipmentSystem : EntitySystem
 
     private void OnRoleRemoved(RoleRemovedEvent args)
     {
-        if (args.Mind.OwnedEntity is not { } owner
-            || !HasComp<CultYoggComponent>(owner)
-            || _roles.MindHasRole<CultYoggRoleComponent>(args.MindId, out _))
+        if (args.Mind.OwnedEntity == null)
+            return;
+
+        var owner = args.Mind.OwnedEntity.Value;
+        if (!HasComp<CultYoggComponent>(owner))
+            return;
+
+        if (_roles.MindHasRole<CultYoggRoleComponent>(args.MindId, out _))
             return;
 
         DropCultEquipment(owner);
     }
 
+    /// <summary>
+    /// Drops tagged cult equipment from the owner's hands, inventory and hidden hand containers.
+    /// </summary>
+    /// <returns>Whether at least one item was dropped.</returns>
     public bool DropCultEquipment(EntityUid owner)
     {
         var dropped = false;
@@ -68,8 +77,10 @@ public sealed partial class CultYoggEquipmentSystem : EntitySystem
         if (_inventory.TryGetContainingSlot(item, out var slot))
             return _inventory.TryUnequip(owner, slot.Name, silent: true, force: true, triggerHandContact: true);
 
-        if (!_hands.IsHolding(owner, item, out _)
-            || !_containers.TryGetContainingContainer((item, null, null), out var container))
+        if (!_hands.IsHolding(owner, item, out _))
+            return false;
+
+        if (!_containers.TryGetContainingContainer((item, null, null), out var container))
             return false;
 
         return _containers.Remove(item, container, force: true);
@@ -89,13 +100,26 @@ public sealed partial class CultYoggEquipmentSystem : EntitySystem
         return dropped;
     }
 
-    private bool TryDropHiddenItem(EntityUid owner, InnerHandToggleableComponent inner, string hand, InnerContainerInfo info)
+    private bool TryDropHiddenItem(
+        EntityUid owner,
+        InnerHandToggleableComponent inner,
+        string hand,
+        InnerContainerInfo info)
     {
-        if (info.InnerItemUid is not { } item
-            || info.Container == null
-            || !_tags.HasTag(item, EquipmentTag)
-            || !info.Container.Contains(item)
-            || !_containers.Remove(item, info.Container, force: true))
+        if (info.InnerItemUid == null)
+            return false;
+
+        var item = info.InnerItemUid.Value;
+        if (info.Container == null)
+            return false;
+
+        if (!_tags.HasTag(item, EquipmentTag))
+            return false;
+
+        if (!info.Container.Contains(item))
+            return false;
+
+        if (!_containers.Remove(item, info.Container, force: true))
             return false;
 
         info.InnerItemUid = null;

@@ -6,14 +6,20 @@ using Robust.Shared.GameStates;
 namespace Content.Shared.SS220.StuckOnEquip;
 
 /// <summary>
-/// Allows a stuck item to be cut off with a held knife, injuring its wearer upon successful removal.
+/// Allows a stuck item to be cut off with a held sharp tool, injuring its wearer upon successful removal.
 /// </summary>
 [RegisterComponent, NetworkedComponent]
 public sealed partial class CuttableStuckComponent : Component
 {
+    /// <summary>
+    /// Time required to cut the item free.
+    /// </summary>
     [DataField]
     public TimeSpan Delay = TimeSpan.FromSeconds(5);
 
+    /// <summary>
+    /// Damage dealt to the wearer after successful removal, ignoring resistances.
+    /// </summary>
     [DataField]
-    public DamageSpecifier Damage = new() { DamageDict = { ["Slash"] = 20 } };
+    public DamageSpecifier Damage = new() { DamageDict = { ["Slash"] = 25, ["Blunt"] = 10 } };
 }

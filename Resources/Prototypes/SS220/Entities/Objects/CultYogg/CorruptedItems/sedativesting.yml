@@ -24,7 +24,8 @@
   - type: CuttableStuck
     damage:
       types:
-        Slash: 5
+        Slash: 10
+        Blunt: 5
   - type: StuckOnEquip
     inHandItem: true
   - type: Tag

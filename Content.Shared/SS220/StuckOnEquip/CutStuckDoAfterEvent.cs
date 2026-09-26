@@ -8,6 +8,9 @@ namespace Content.Shared.SS220.StuckOnEquip;
 [Serializable, NetSerializable]
 public sealed partial class CutStuckDoAfterEvent : DoAfterEvent
 {
+    /// <summary>
+    /// Original equipment container; cutting stops if the item moves to a different container.
+    /// </summary>
     [DataField]
     public string ContainerId = string.Empty;
 
