@@ -11,5 +11,8 @@ public sealed partial class CutStuckDoAfterEvent : DoAfterEvent
     [DataField]
     public string ContainerId = string.Empty;
 
-    public override DoAfterEvent Clone() => (CutStuckDoAfterEvent) MemberwiseClone();
+    public override DoAfterEvent Clone()
+    {
+        return (CutStuckDoAfterEvent)MemberwiseClone();
+    }
 }
