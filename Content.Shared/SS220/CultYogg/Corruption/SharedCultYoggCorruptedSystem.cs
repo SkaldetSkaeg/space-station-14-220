@@ -7,6 +7,7 @@ using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Popups;
 using Content.Shared.Stacks;
 using Content.Shared.SS220.CultYogg.Cultists;
+using Content.Shared.SS220.ItemShell;
 using Content.Shared.SS220.SoftDelete;
 using Content.Shared.Tag;
 using Robust.Shared.Containers;
@@ -77,6 +78,9 @@ public sealed partial class SharedCultYoggCorruptedSystem : EntitySystem
     /// <returns><see langword="true"/> if entity is corrupted, otherwise <see langword="false"/></returns>
     public bool IsCorrupted(EntityUid entity)
     {
+        if (TryComp<ShellableItemComponent>(entity, out var item) && item.Shell != null)
+            return HasComp<CultYoggCorruptedComponent>(item.Shell.Value);
+
         return _entityManager.HasComponent<CultYoggCorruptedComponent>(entity);
     }
 
@@ -111,6 +115,11 @@ public sealed partial class SharedCultYoggCorruptedSystem : EntitySystem
         {
             return null;
         }
+
+        // The retained item is part of the corrupted form, not loot to release during cleansing.
+        // Detaching the shell above also makes deleting an unfolded item safe.
+        if (TryComp<ItemShellComponent>(corruptedEntity, out var shell) && shell.ContainedItem != null)
+            QueueDel(shell.ContainedItem.Value);
 
         TryDropAllContainedEntities(corruptedEntity);
         _entityManager.DeleteEntity(corruptedEntity);
@@ -401,6 +410,9 @@ public sealed partial class SharedCultYoggCorruptedSystem : EntitySystem
         var coords = Transform(entity).Coordinates;
         foreach (var container in _containerSystem.GetAllContainers(entity, containerManager))
         {
+            if (container.ID == ItemShellComponent.ContentContainerId && HasComp<ItemShellComponent>(entity))
+                continue;
+
             foreach (var item in container.ContainedEntities)
             {
                 _dropEntitiesBuffer.Add(item);

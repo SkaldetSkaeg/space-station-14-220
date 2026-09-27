@@ -20,8 +20,8 @@
   id: CocoonSpikegun
   parent: [CultYoggCocoonBase, BaseItem]
   components:
-  - type: CultYoggCocoon
-    item: SpikegunCultYogg
+  - type: ItemShell
+    itemPrototype: SpikegunCultYogg
     sound:
       path: /Audio/Effects/unwrap.ogg
 
@@ -29,8 +29,8 @@
   id: CocoonVenomancer
   parent: [CultYoggCocoonBase, BaseItem]
   components:
-  - type: CultYoggCocoon
-    item: Venomancer
+  - type: ItemShell
+    itemPrototype: Venomancer
     sound:
       path: /Audio/Effects/unwrap.ogg
 
@@ -38,8 +38,8 @@
   id: CocoonSpitballer
   parent: [CultYoggCocoonBase, BaseItem]
   components:
-  - type: CultYoggCocoon
-    item: Spitballer
+  - type: ItemShell
+    itemPrototype: Spitballer
     sound:
       path: /Audio/Effects/unwrap.ogg
 
@@ -47,8 +47,8 @@
   id: CocoonClaw
   parent: [CultYoggCocoonBase, BaseItem]
   components:
-  - type: CultYoggCocoon
-    item: ClawCultYogg
+  - type: ItemShell
+    itemPrototype: ClawCultYogg
     sound:
       path: /Audio/Effects/unwrap.ogg
 
@@ -56,8 +56,8 @@
   id: CocoonBeach
   parent: [CultYoggCocoonBase, BaseItem]
   components:
-  - type: CultYoggCocoon
-    item: BeachCultYogg
+  - type: ItemShell
+    itemPrototype: BeachCultYogg
     sound:
       path: /Audio/Effects/unwrap.ogg
 
@@ -65,8 +65,8 @@
   id: CocoonSedativeSting
   parent: [CultYoggCocoonBase, BaseItem]
   components:
-  - type: CultYoggCocoon
-    item: SedativeStingCultYogg
+  - type: ItemShell
+    itemPrototype: SedativeStingCultYogg
     sound:
       path: /Audio/Effects/unwrap.ogg
 
@@ -74,7 +74,7 @@
   id: CocoonDagonsScale
   parent: [CultYoggCocoonBase, BaseItem]
   components:
-  - type: CultYoggCocoon
-    item: DagonsScale
+  - type: ItemShell
+    itemPrototype: DagonsScale
     sound:
       path: /Audio/Effects/unwrap.ogg

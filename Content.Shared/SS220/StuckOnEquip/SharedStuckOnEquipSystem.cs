@@ -4,7 +4,6 @@ using System.Linq;
 using Content.Shared.Ghost;
 using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Inventory;
-using Content.Shared.Mobs;
 using Robust.Shared.Containers;
 using Robust.Shared.Timing;
 
@@ -25,7 +24,6 @@ public sealed partial class SharedStuckOnEquipSystem : EntitySystem
         SubscribeLocalEvent<StuckOnEquipComponent, ContainerGettingRemovedAttemptEvent>(OnRemoveAttempt);
         SubscribeLocalEvent<StuckOnEquipComponent, EntGotInsertedIntoContainerMessage>(OnInserted);
         SubscribeLocalEvent<StuckOnEquipComponent, EntGotRemovedFromContainerMessage>(OnRemoved);
-        SubscribeLocalEvent<MobStateChangedEvent>(OnDeath);
     }
 
     private void OnStartup(Entity<StuckOnEquipComponent> ent, ref ComponentStartup args)
@@ -174,37 +172,18 @@ public sealed partial class SharedStuckOnEquipSystem : EntitySystem
         return removed;
     }
 
-    private void OnDeath(MobStateChangedEvent ev)
-    {
-        if (ev.NewMobState == MobState.Dead && !_timing.ApplyingState)
-            RemoveAllStuckItemsByDeath(ev.Target);
-    }
-
     public void RemoveAllStuckItems(EntityUid target)
     {
         TryRemoveStuckItems(target);
     }
 
-    public void RemoveAllStuckItemsByDeath(EntityUid target)
-    {
-        TryRemoveStuckItems(target, onDeath: true);
-    }
-
     public bool TryRemoveStuckItems(EntityUid target)
-    {
-        return TryRemoveStuckItems(target, onDeath: false);
-    }
-
-    private bool TryRemoveStuckItems(EntityUid target, bool onDeath)
     {
         var removed = false;
         // Unequipping may also remove dependent slots, so take a snapshot before modifying the inventory.
         foreach (var item in _inventory.GetHandOrInventoryEntities(target).ToArray())
         {
             if (!TryComp<StuckOnEquipComponent>(item, out var stuck))
-                continue;
-
-            if (onDeath && !stuck.ShouldDropOnDeath)
                 continue;
 
             // Keep the cult cleanup behavior: remove matching items even when they were not stuck (e.g. pockets).

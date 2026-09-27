@@ -9,6 +9,7 @@ using Content.Shared.Database;
 using Content.Shared.Popups;
 using Content.Shared.SS220.Bible;
 using Content.Shared.SS220.CultYogg.Corruption;
+using Content.Shared.SS220.ItemShell;
 using Robust.Server.GameObjects;
 using Robust.Shared.Timing;
 using Robust.Shared.Spawners;
@@ -16,6 +17,7 @@ using Robust.Shared.Player;
 using Robust.Shared.Containers;
 using Content.Shared.Actions.Components;
 using Content.Shared.Chat;
+using Content.Server.SS220.ItemShell;
 
 namespace Content.Server.SS220.Bible;
 
@@ -32,6 +34,7 @@ public sealed partial class ExorcismPerformerSystem : SharedExorcismPerformerSys
     [Dependency] private AppearanceSystem _appearanceSystem = default!;
     [Dependency] private SharedPopupSystem _popupSystem = default!;
     [Dependency] private SharedContainerSystem _container = default!;
+    [Dependency] private ItemShellSystem _itemShell = default!;
 
     public override void Initialize()
     {
@@ -71,12 +74,16 @@ public sealed partial class ExorcismPerformerSystem : SharedExorcismPerformerSys
 
         _chat.TrySendInGameICMessage(user, sanitazedMessage, InGameICChatType.Speak, ChatTransmitRange.Normal);
 
-        var entitiesInRange = _entityLookupSystem.GetEntitiesInRange<CultYoggCorruptedComponent>(Transform(user).Coordinates, entity.Comp.Range);
+        // Include shells inside items even when the outer entity has no corruption component.
+        var entitiesInRange = _entityLookupSystem.GetEntitiesInRange(Transform(user).Coordinates, entity.Comp.Range);
         var args = new ExorcismPerformedEvent(entity, entity.Comp, user);
         RaiseLocalEvent(ref args);
         foreach (var other in entitiesInRange)
         {
-            if (_container.TryGetOuterContainer(other, Transform(other), out var container))
+            if (!HasComp<CultYoggCorruptedComponent>(other))
+                continue;
+
+            if (!IsExposedForExorcism(other))
                 continue;
 
             RaiseLocalEvent(other, ref args);
@@ -86,6 +93,25 @@ public sealed partial class ExorcismPerformerSystem : SharedExorcismPerformerSys
         var exorcismAction = entity.Comp.ExorcismActionEntity;
         if (exorcismAction != null && TryComp(exorcismAction, out ActionComponent? actionComponent))
             _actionsSystem.SetCooldown(exorcismAction, actionComponent.UseDelay ?? TimeSpan.FromSeconds(1));
+    }
+
+    private bool IsExposedForExorcism(EntityUid entity)
+    {
+        if (!_container.TryGetOuterContainer(entity, Transform(entity), out var container))
+            return true;
+
+        // A just-dropped item may still contain its shell until the queued folding check runs.
+        // Settle that pair before checking whether the shell is exposed to the prayer.
+        if (!TryComp<ShellableItemComponent>(container.Owner, out var item))
+            return false;
+
+        if (item.Shell != entity)
+            return false;
+
+        if (!_itemShell.TryFold((container.Owner, item)))
+            return false;
+
+        return !_container.TryGetOuterContainer(entity, Transform(entity), out _);
     }
 
     private void OnExorcismPerformedOnCorrupted(Entity<CultYoggCorruptedComponent> entity, ref ExorcismPerformedEvent args)

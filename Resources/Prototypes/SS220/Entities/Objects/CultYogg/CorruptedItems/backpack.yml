@@ -18,6 +18,7 @@
       components:
       - CultYogg
       - MiGo
+  - type: DropOnDeath
   - type: StuckOnEquip
   - type: Tag
     tags:

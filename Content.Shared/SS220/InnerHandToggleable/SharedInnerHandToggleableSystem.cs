@@ -1,5 +1,6 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
+using System.Linq;
 using Content.Shared.Actions;
 using Content.Shared.Actions.Components;
 using Content.Shared.Body.Systems;
@@ -31,6 +32,7 @@ public sealed partial class SharedInnerHandToggleableSystem : EntitySystem
         base.Initialize();
 
         SubscribeLocalEvent<InnerHandToggleableComponent, MapInitEvent>(OnMapInit);
+        SubscribeLocalEvent<InnerHandToggleableComponent, HandCountChangedEvent>(OnHandCountChanged);
         SubscribeLocalEvent<InnerHandToggleableComponent, DidEquipHandEvent>(OnDidEquipHand);
         SubscribeLocalEvent<InnerHandToggleableComponent, DidUnequipHandEvent>(OnDidUnequipHand);
         SubscribeLocalEvent<InnerHandToggleableComponent, DidSwitchHandEvent>(OnDidSwitchHand);
@@ -43,26 +45,55 @@ public sealed partial class SharedInnerHandToggleableSystem : EntitySystem
         if (!TryComp<HandsComponent>(ent, out var handsComp))
             return;
 
-        var manager = EnsureComp<ContainerManagerComponent>(ent);
-
-        //pre-creating everything required
-        foreach (var hand in handsComp.SortedHands)
-        {
-            // TODO UPSTREAM: wtf is here
-            var name = string.Concat(InnerHandPrefix, hand);
-            var handInfo = new InnerContainerInfo
-            {
-                Container = _containerSystem.EnsureContainer<ContainerSlot>(ent, name, manager),
-                ContainerId = name
-            };
-
-            ent.Comp.HandsContainers.Add(hand, handInfo);
-        }
+        UpdateHandContainers(ent, handsComp);
 
         if (!_actionContainer.EnsureAction(ent, ref ent.Comp.ActionEntity, out _, ent.Comp.Action))
             return;
 
         Dirty(ent, ent.Comp);
+    }
+
+    private void OnHandCountChanged(Entity<InnerHandToggleableComponent> ent, ref HandCountChangedEvent args)
+    {
+        if (!TryComp<HandsComponent>(ent, out var hands))
+            return;
+
+        UpdateHandContainers(ent, hands);
+        if (hands.ActiveHandId == null)
+            _actionsSystem.RemoveAction(ent.Comp.ActionEntity);
+    }
+
+    private void UpdateHandContainers(Entity<InnerHandToggleableComponent> ent, HandsComponent hands)
+    {
+        // Removing a hand does not remove its separate hidden container.
+        foreach (var (hand, info) in ent.Comp.HandsContainers.ToArray())
+        {
+            if (_hand.TryGetHand((ent.Owner, hands), hand, out _))
+                continue;
+
+            info.InnerItemUid = null;
+            if (info.Container != null)
+            {
+                _containerSystem.EmptyContainer(info.Container, force: true);
+                _containerSystem.ShutdownContainer(info.Container);
+            }
+
+            ent.Comp.HandsContainers.Remove(hand);
+        }
+
+        var manager = EnsureComp<ContainerManagerComponent>(ent);
+        foreach (var hand in hands.SortedHands)
+        {
+            if (ent.Comp.HandsContainers.ContainsKey(hand))
+                continue;
+
+            var name = string.Concat(InnerHandPrefix, hand);
+            ent.Comp.HandsContainers.Add(hand, new InnerContainerInfo
+            {
+                Container = _containerSystem.EnsureContainer<ContainerSlot>(ent, name, manager),
+                ContainerId = name
+            });
+        }
     }
 
     private void OnComponentShutdown(Entity<InnerHandToggleableComponent> ent, ref ComponentShutdown args)

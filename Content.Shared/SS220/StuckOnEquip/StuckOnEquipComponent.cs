@@ -17,12 +17,6 @@ public sealed partial class StuckOnEquipComponent : Component
     public bool InHandItem = false;
 
     /// <summary>
-    /// If true, drop blocked entities upon the death of the owner
-    /// </summary>
-    [DataField]
-    public bool ShouldDropOnDeath = true;
-
-    /// <summary>
     /// Whether the item is currently locked in its equipment slot or hand.
     /// Admin privileges do not affect this state; authorized removal is handled separately.
     /// </summary>
