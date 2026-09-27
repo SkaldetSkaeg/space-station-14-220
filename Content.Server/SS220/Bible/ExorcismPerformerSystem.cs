@@ -9,7 +9,6 @@ using Content.Shared.Database;
 using Content.Shared.Popups;
 using Content.Shared.SS220.Bible;
 using Content.Shared.SS220.CultYogg.Corruption;
-using Content.Shared.SS220.ItemShell;
 using Robust.Server.GameObjects;
 using Robust.Shared.Timing;
 using Robust.Shared.Spawners;
@@ -81,7 +80,7 @@ public sealed partial class ExorcismPerformerSystem : SharedExorcismPerformerSys
         RaiseLocalEvent(ref args);
         foreach (var other in entitiesInRange)
         {
-            if (!IsExposedForExorcism(other))
+            if (_container.TryGetOuterContainer(other, Transform(other), out _))
                 continue;
 
             RaiseLocalEvent(other, ref args);
@@ -91,25 +90,6 @@ public sealed partial class ExorcismPerformerSystem : SharedExorcismPerformerSys
         var exorcismAction = entity.Comp.ExorcismActionEntity;
         if (exorcismAction != null && TryComp(exorcismAction, out ActionComponent? actionComponent))
             _actionsSystem.SetCooldown(exorcismAction, actionComponent.UseDelay ?? TimeSpan.FromSeconds(1));
-    }
-
-    private bool IsExposedForExorcism(EntityUid entity)
-    {
-        if (!_container.TryGetOuterContainer(entity, Transform(entity), out var container))
-            return true;
-
-        // A just-dropped item may still contain its shell until the queued folding check runs.
-        // Settle that pair before checking whether the shell is exposed to the prayer.
-        if (!TryComp<ShellableItemComponent>(container.Owner, out var item))
-            return false;
-
-        if (item.Shell != entity)
-            return false;
-
-        if (!_itemShell.TryFold((container.Owner, item)))
-            return false;
-
-        return !_container.TryGetOuterContainer(entity, Transform(entity), out _);
     }
 
     private void OnExorcismPerformedOnCorrupted(Entity<CultYoggCorruptedComponent> entity, ref ExorcismPerformedEvent args)
