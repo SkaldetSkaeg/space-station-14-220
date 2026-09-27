@@ -94,7 +94,7 @@ public sealed partial class ItemShellSystem : EntitySystem
         if (!_containers.Insert(ent.Owner, shellContainer))
         {
             // The item has already left the shell, so folding can safely restore the pair.
-            if (Fold((item, Comp<ShellableItemComponent>(item)), ent))
+            if (TryFold((item, Comp<ShellableItemComponent>(item)), ent))
                 _hands.PickupOrDrop(args.User, ent);
             return;
         }
@@ -151,7 +151,7 @@ public sealed partial class ItemShellSystem : EntitySystem
         if (!TryGetShell((ent.Owner, ent.Comp), out var shell))
             return false;
 
-        return Fold((ent.Owner, ent.Comp), shell);
+        return TryFold((ent.Owner, ent.Comp), shell);
     }
 
     private bool CanRemainUnfolded(EntityUid item)
@@ -198,7 +198,7 @@ public sealed partial class ItemShellSystem : EntitySystem
         return true;
     }
 
-    private bool Fold(Entity<ShellableItemComponent> item, Entity<ItemShellComponent> shell)
+    private bool TryFold(Entity<ShellableItemComponent> item, Entity<ItemShellComponent> shell)
     {
         var contents = _containers.EnsureContainer<ContainerSlot>(shell, ItemShellComponent.ContentContainerId);
         if (contents.Contains(item))
@@ -242,12 +242,18 @@ public sealed partial class ItemShellSystem : EntitySystem
     /// </summary>
     public void ProcessPendingFolds()
     {
+        if (_pending.Count == 0)
+            return;
+
         // Insertion also raises removal events. Inspect only the settled state, without a gameplay timer.
         var pending = _pending.ToArray();
         _pending.Clear();
         foreach (var uid in pending)
         {
-            if (TerminatingOrDeleted(uid) || EntityManager.IsQueuedForDeletion(uid))
+            if (TerminatingOrDeleted(uid))
+                continue;
+
+            if (EntityManager.IsQueuedForDeletion(uid))
                 continue;
 
             if (!TryComp<ShellableItemComponent>(uid, out var item))
