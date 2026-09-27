@@ -11,6 +11,7 @@ using Content.Shared.Inventory;
 using Content.Shared.Kitchen.Components;
 using Content.Shared.Popups;
 using Content.Shared.Verbs;
+using Robust.Shared.Audio.Systems;
 using Robust.Shared.Containers;
 using Robust.Shared.Network;
 
@@ -28,10 +29,13 @@ public sealed partial class CuttableStuckSystem : EntitySystem
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private ISharedAdminLogManager _adminLogger = default!;
     [Dependency] private INetManager _net = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
 
     public override void Initialize()
     {
         base.Initialize();
+        SubscribeLocalEvent<CuttableStuckComponent, ComponentShutdown>(OnShutdown);
+        SubscribeLocalEvent<DoAfterComponent, ComponentShutdown>(OnDoAfterShutdown);
         SubscribeLocalEvent<CuttableStuckComponent, GetVerbsEvent<EquipmentVerb>>(OnItemVerbs);
         SubscribeLocalEvent<CuttableStuckComponent, CutStuckDoAfterEvent>(OnCutFinished);
         SubscribeLocalEvent<CuttableStuckComponent, DoAfterAttemptEvent<CutStuckDoAfterEvent>>(OnCutAttempt);
@@ -87,12 +91,75 @@ public sealed partial class CuttableStuckSystem : EntitySystem
             DuplicateCondition = DuplicateConditions.SameEvent,
         };
 
-        if (!_doAfter.TryStartDoAfter(args))
+        if (!_doAfter.TryStartDoAfter(args, out var id))
             return false;
+
+        StartCuttingSound((item.Owner, item.Comp), id.Value, wearer);
 
         var message = Loc.GetString("cuttable-stuck-start", ("user", user), ("item", item.Owner), ("wearer", wearer));
         _popup.PopupPredicted(message, wearer, user);
         return true;
+    }
+
+    private void StartCuttingSound(Entity<CuttableStuckComponent> item, DoAfterId id, EntityUid wearer)
+    {
+        if (_net.IsClient)
+            return;
+
+        // Instant DoAfters have already raised their completion event before TryStartDoAfter returns.
+        if (!_doAfter.IsRunning(id))
+            return;
+
+        if (item.Comp.CuttingSound == null)
+            return;
+
+        var stream = _audio.PlayPvs(item.Comp.CuttingSound, wearer, item.Comp.CuttingSound.Params.WithLoop(true));
+        if (stream == null)
+            return;
+
+        item.Comp.CuttingStreams.Add(id, stream.Value.Entity);
+    }
+
+    private void StopCuttingSound(CuttableStuckComponent component, DoAfterId id)
+    {
+        if (!component.CuttingStreams.Remove(id, out var stream))
+            return;
+
+        _audio.Stop(stream);
+    }
+
+    private void OnShutdown(Entity<CuttableStuckComponent> ent, ref ComponentShutdown args)
+    {
+        if (_net.IsClient)
+            return;
+
+        foreach (var stream in ent.Comp.CuttingStreams.Values)
+        {
+            _audio.Stop(stream);
+        }
+
+        ent.Comp.CuttingStreams.Clear();
+    }
+
+    private void OnDoAfterShutdown(Entity<DoAfterComponent> ent, ref ComponentShutdown args)
+    {
+        if (_net.IsClient)
+            return;
+
+        // Deleting the cutter removes its DoAfters without raising their cancellation events.
+        foreach (var doAfter in ent.Comp.DoAfters.Values)
+        {
+            if (doAfter.Args.Event is not CutStuckDoAfterEvent)
+                continue;
+
+            if (doAfter.Args.EventTarget == null)
+                continue;
+
+            if (!TryComp<CuttableStuckComponent>(doAfter.Args.EventTarget.Value, out var item))
+                continue;
+
+            StopCuttingSound(item, doAfter.Id);
+        }
     }
 
     private bool CanCut(EntityUid user, EntityUid item, EntityUid tool, out EntityUid wearer, out string containerId)
@@ -151,10 +218,11 @@ public sealed partial class CuttableStuckSystem : EntitySystem
 
     private void OnCutFinished(Entity<CuttableStuckComponent> ent, ref CutStuckDoAfterEvent args)
     {
-        if (args.Cancelled || args.Handled)
+        if (_net.IsClient)
             return;
 
-        if (_net.IsClient)
+        StopCuttingSound(ent.Comp, args.DoAfter.Id);
+        if (args.Cancelled || args.Handled)
             return;
 
         if (!CanContinue(ent, args.Args, args))
@@ -170,6 +238,9 @@ public sealed partial class CuttableStuckSystem : EntitySystem
         args.Handled = true;
         if (!_stuck.TryRemoveItem((ent.Owner, stuck), args.User))
             return;
+
+        // Use the drop position so folding the item into a shell does not swallow the sound source.
+        _audio.PlayPvs(ent.Comp.RemovalSound, Transform(ent).Coordinates, ent.Comp.RemovalSound?.Params.WithLoop(false));
 
         // The blade cuts the attachment at the body, underneath any worn protection.
         var damage = _damage.ChangeDamage(wearer, ent.Comp.Damage, ignoreResistances: true, origin: args.User);

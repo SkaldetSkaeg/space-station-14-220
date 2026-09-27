@@ -1,6 +1,8 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
 using Content.Shared.Damage;
+using Content.Shared.DoAfter;
+using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
 
 namespace Content.Shared.SS220.StuckOnEquip;
@@ -22,4 +24,22 @@ public sealed partial class CuttableStuckComponent : Component
     /// </summary>
     [DataField(required: true)]
     public DamageSpecifier Damage = new();
+
+    /// <summary>
+    /// Optional sound loop played during cutting and stopped when the DoAfter ends.
+    /// </summary>
+    [DataField]
+    public SoundSpecifier? CuttingSound;
+
+    /// <summary>
+    /// Optional one-shot sound played at the item after it is successfully cut free.
+    /// </summary>
+    [DataField]
+    public SoundSpecifier? RemovalSound;
+
+    /// <summary>
+    /// Server-side audio entities for each active cutting DoAfter. Different users can cut the same item.
+    /// </summary>
+    [ViewVariables]
+    public Dictionary<DoAfterId, EntityUid> CuttingStreams = [];
 }

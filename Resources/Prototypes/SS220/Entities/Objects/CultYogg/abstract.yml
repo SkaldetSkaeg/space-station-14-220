@@ -36,6 +36,10 @@
   id: BaseCultYoggCuttableEquipment
   components:
   - type: CuttableStuck
+    cuttingSound:
+      path: /Audio/SS220/Items/CultYogg/equipment_cutting.ogg
+    removalSound:
+      path: /Audio/SS220/Items/CultYogg/equipment_detach.ogg
     damage:
       types:
         Slash: 25
