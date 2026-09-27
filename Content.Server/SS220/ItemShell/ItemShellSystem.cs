@@ -99,7 +99,7 @@ public sealed partial class ItemShellSystem : EntitySystem
             return;
         }
 
-        _audio.PlayPredicted(ent.Comp.Sound, args.User, args.User);
+        _audio.PlayPvs(ent.Comp.Sound, args.User);
         args.Handled = true;
     }
 
@@ -234,6 +234,14 @@ public sealed partial class ItemShellSystem : EntitySystem
     {
         base.Update(frameTime);
 
+        ProcessPendingFolds();
+    }
+
+    /// <summary>
+    /// Processes queued folding checks after container operations have finished.
+    /// </summary>
+    public void ProcessPendingFolds()
+    {
         // Insertion also raises removal events. Inspect only the settled state, without a gameplay timer.
         var pending = _pending.ToArray();
         _pending.Clear();

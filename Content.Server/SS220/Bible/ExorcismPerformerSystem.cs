@@ -74,15 +74,13 @@ public sealed partial class ExorcismPerformerSystem : SharedExorcismPerformerSys
 
         _chat.TrySendInGameICMessage(user, sanitazedMessage, InGameICChatType.Speak, ChatTransmitRange.Normal);
 
-        // Include shells inside items even when the outer entity has no corruption component.
-        var entitiesInRange = _entityLookupSystem.GetEntitiesInRange(Transform(user).Coordinates, entity.Comp.Range);
+        // Expose shells of just-dropped items before looking up corrupted entities.
+        _itemShell.ProcessPendingFolds();
+        var entitiesInRange = _entityLookupSystem.GetEntitiesInRange<CultYoggCorruptedComponent>(Transform(user).Coordinates, entity.Comp.Range);
         var args = new ExorcismPerformedEvent(entity, entity.Comp, user);
         RaiseLocalEvent(ref args);
         foreach (var other in entitiesInRange)
         {
-            if (!HasComp<CultYoggCorruptedComponent>(other))
-                continue;
-
             if (!IsExposedForExorcism(other))
                 continue;
 
