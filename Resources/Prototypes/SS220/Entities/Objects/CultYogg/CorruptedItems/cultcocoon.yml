@@ -7,6 +7,9 @@
   suffix: CultYogg
   abstract: true
   components:
+  - type: ContainerContainer
+    containers:
+      item-shell-content: !type:ContainerSlot
   - type: Sprite
     sprite: SS220/Objects/CultYogg/CorruptedItems/cocoon.rsi
     layers:
