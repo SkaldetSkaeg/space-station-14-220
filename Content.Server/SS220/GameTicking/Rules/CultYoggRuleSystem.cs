@@ -388,7 +388,7 @@ public sealed partial class CultYoggRuleSystem : GameRuleSystem<CultYoggRuleComp
 
     public void DeMakeCultist(EntityUid uid, CultYoggRuleComponent component)
     {
-        _cultEquipment.DropCultEquipment(uid);
+        _cultEquipment.TryDropCultEquipment(uid);
 
         // Change the faction
         _npcFaction.RemoveFaction(uid, component.CultYoggFaction, false);

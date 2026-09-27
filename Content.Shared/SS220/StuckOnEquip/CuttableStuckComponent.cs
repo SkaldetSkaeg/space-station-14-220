@@ -38,8 +38,14 @@ public sealed partial class CuttableStuckComponent : Component
     public SoundSpecifier? RemovalSound;
 
     /// <summary>
-    /// Server-side audio entities for each active cutting DoAfter. Different users can cut the same item.
+    /// Server-side cutting DoAfter reserving this item until completion or cancellation.
     /// </summary>
     [ViewVariables]
-    public Dictionary<DoAfterId, EntityUid> CuttingStreams = [];
+    public DoAfterId? CuttingDoAfter;
+
+    /// <summary>
+    /// Server-side audio entity for the current cutting DoAfter.
+    /// </summary>
+    [ViewVariables]
+    public EntityUid? CuttingStream;
 }

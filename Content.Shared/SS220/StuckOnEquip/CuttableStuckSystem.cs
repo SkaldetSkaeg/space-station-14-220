@@ -73,6 +73,12 @@ public sealed partial class CuttableStuckSystem : EntitySystem
         if (!CanCut(user, item, tool, out var wearer, out var containerId))
             return false;
 
+        if (item.Comp.CuttingDoAfter != null)
+        {
+            _popup.PopupPredicted(Loc.GetString("cuttable-stuck-busy"), wearer, user);
+            return false;
+        }
+
         var args = new DoAfterArgs(
             EntityManager,
             user,
@@ -94,38 +100,34 @@ public sealed partial class CuttableStuckSystem : EntitySystem
         if (!_doAfter.TryStartDoAfter(args, out var id))
             return false;
 
-        StartCuttingSound((item.Owner, item.Comp), id.Value, wearer);
+        // Instant DoAfters have already raised their completion event before TryStartDoAfter returns.
+        if (!_net.IsClient && _doAfter.IsRunning(id))
+        {
+            item.Comp.CuttingDoAfter = id;
+            StartCuttingSound((item.Owner, item.Comp), wearer);
+        }
 
         var message = Loc.GetString("cuttable-stuck-start", ("user", user), ("item", item.Owner), ("wearer", wearer));
         _popup.PopupPredicted(message, wearer, user);
         return true;
     }
 
-    private void StartCuttingSound(Entity<CuttableStuckComponent> item, DoAfterId id, EntityUid wearer)
+    private void StartCuttingSound(Entity<CuttableStuckComponent> item, EntityUid wearer)
     {
-        if (_net.IsClient)
-            return;
-
-        // Instant DoAfters have already raised their completion event before TryStartDoAfter returns.
-        if (!_doAfter.IsRunning(id))
-            return;
-
         if (item.Comp.CuttingSound == null)
             return;
 
-        var stream = _audio.PlayPvs(item.Comp.CuttingSound, wearer, item.Comp.CuttingSound.Params.WithLoop(true));
-        if (stream == null)
-            return;
-
-        item.Comp.CuttingStreams.Add(id, stream.Value.Entity);
+        item.Comp.CuttingStream = _audio.PlayPvs(item.Comp.CuttingSound, wearer,
+            item.Comp.CuttingSound.Params.WithLoop(true))?.Entity;
     }
 
-    private void StopCuttingSound(CuttableStuckComponent component, DoAfterId id)
+    private void StopCutting(CuttableStuckComponent component, DoAfterId? id)
     {
-        if (!component.CuttingStreams.Remove(id, out var stream))
+        if (component.CuttingDoAfter != id)
             return;
 
-        _audio.Stop(stream);
+        component.CuttingDoAfter = null;
+        component.CuttingStream = _audio.Stop(component.CuttingStream);
     }
 
     private void OnShutdown(Entity<CuttableStuckComponent> ent, ref ComponentShutdown args)
@@ -133,12 +135,7 @@ public sealed partial class CuttableStuckSystem : EntitySystem
         if (_net.IsClient)
             return;
 
-        foreach (var stream in ent.Comp.CuttingStreams.Values)
-        {
-            _audio.Stop(stream);
-        }
-
-        ent.Comp.CuttingStreams.Clear();
+        StopCutting(ent.Comp, ent.Comp.CuttingDoAfter);
     }
 
     private void OnDoAfterShutdown(Entity<DoAfterComponent> ent, ref ComponentShutdown args)
@@ -158,7 +155,7 @@ public sealed partial class CuttableStuckSystem : EntitySystem
             if (!TryComp<CuttableStuckComponent>(doAfter.Args.EventTarget.Value, out var item))
                 continue;
 
-            StopCuttingSound(item, doAfter.Id);
+            StopCutting(item, doAfter.Id);
         }
     }
 
@@ -221,7 +218,10 @@ public sealed partial class CuttableStuckSystem : EntitySystem
         if (_net.IsClient)
             return;
 
-        StopCuttingSound(ent.Comp, args.DoAfter.Id);
+        if (ent.Comp.CuttingDoAfter != null && ent.Comp.CuttingDoAfter != args.DoAfter.Id)
+            return;
+
+        StopCutting(ent.Comp, args.DoAfter.Id);
         if (args.Cancelled || args.Handled)
             return;
 

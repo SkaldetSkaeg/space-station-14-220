@@ -224,7 +224,7 @@ public sealed partial class CultYoggSystem : SharedCultYoggSystem
 
         ent.Comp.ConsumedAscensionReagent = 0;
 
-        if (_cultEquipment.DropCultEquipment(ent))
+        if (_cultEquipment.TryDropCultEquipment(ent))
             _popup.PopupEntity(Loc.GetString("cult-yogg-dropped-items"), ent, ent);
 
         Dirty(ent, ent.Comp);

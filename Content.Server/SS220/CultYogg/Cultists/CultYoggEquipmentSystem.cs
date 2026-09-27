@@ -4,10 +4,7 @@ using System.Linq;
 using Content.Shared.Actions;
 using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Inventory;
-using Content.Shared.Roles;
-using Content.Shared.SS220.CultYogg.Cultists;
 using Content.Shared.SS220.InnerHandToggleable;
-using Content.Shared.SS220.Roles;
 using Content.Shared.SS220.StuckOnEquip;
 using Content.Shared.Tag;
 using Robust.Shared.Containers;
@@ -16,7 +13,7 @@ using Robust.Shared.Prototypes;
 namespace Content.Server.SS220.CultYogg.Cultists;
 
 /// <summary>
-/// Removes only explicitly tagged cult equipment when its owner is cleansed or loses their cult role.
+/// Handles explicit removal of tagged cult equipment.
 /// </summary>
 public sealed partial class CultYoggEquipmentSystem : EntitySystem
 {
@@ -24,38 +21,16 @@ public sealed partial class CultYoggEquipmentSystem : EntitySystem
     [Dependency] private SharedContainerSystem _containers = default!;
     [Dependency] private SharedHandsSystem _hands = default!;
     [Dependency] private SharedStuckOnEquipSystem _stuck = default!;
-    [Dependency] private SharedRoleSystem _roles = default!;
     [Dependency] private SharedActionsSystem _actions = default!;
     [Dependency] private TagSystem _tags = default!;
 
     public static readonly ProtoId<TagPrototype> EquipmentTag = "CultYoggEquipment";
 
-    public override void Initialize()
-    {
-        base.Initialize();
-        SubscribeLocalEvent<RoleRemovedEvent>(OnRoleRemoved);
-    }
-
-    private void OnRoleRemoved(RoleRemovedEvent args)
-    {
-        if (args.Mind.OwnedEntity == null)
-            return;
-
-        var owner = args.Mind.OwnedEntity.Value;
-        if (!HasComp<CultYoggComponent>(owner))
-            return;
-
-        if (_roles.MindHasRole<CultYoggRoleComponent>(args.MindId, out _))
-            return;
-
-        DropCultEquipment(owner);
-    }
-
     /// <summary>
-    /// Drops tagged cult equipment from the owner's hands, inventory and hidden hand containers.
+    /// Attempts to drop tagged cult equipment from the owner's hands, inventory and hidden hand containers.
     /// </summary>
     /// <returns>Whether at least one item was dropped.</returns>
-    public bool DropCultEquipment(EntityUid owner)
+    public bool TryDropCultEquipment(EntityUid owner)
     {
         var dropped = false;
         foreach (var item in _inventory.GetHandOrInventoryEntities(owner).ToArray())
@@ -63,7 +38,7 @@ public sealed partial class CultYoggEquipmentSystem : EntitySystem
             dropped |= TryDropItem(owner, item);
         }
 
-        return DropHiddenEquipment(owner) || dropped;
+        return TryDropHiddenEquipment(owner) || dropped;
     }
 
     private bool TryDropItem(EntityUid owner, EntityUid item)
@@ -86,7 +61,7 @@ public sealed partial class CultYoggEquipmentSystem : EntitySystem
         return _containers.Remove(item, container, force: true);
     }
 
-    private bool DropHiddenEquipment(EntityUid owner)
+    private bool TryDropHiddenEquipment(EntityUid owner)
     {
         if (!TryComp<InnerHandToggleableComponent>(owner, out var inner))
             return false;
