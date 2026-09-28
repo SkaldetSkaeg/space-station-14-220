@@ -47,6 +47,6 @@ job-name-senior-service = сервисный администратор
 
 job-name-security-pilot = пилот СБ
 
-job-name-ghost-role = Ghost role
+job-name-ghost-role = гост роль
 
 job-name-derelict-borg = заброшенный киборг
