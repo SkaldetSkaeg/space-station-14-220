@@ -20,10 +20,10 @@ public sealed partial class ItemShellComponent : Component
     public EntProtoId ItemPrototype;
 
     /// <summary>
-    /// Item retained across subsequent changes of form.
+    /// Item paired with this shell, including while unfolded outside its container.
     /// </summary>
     [ViewVariables]
-    public EntityUid? ContainedItem;
+    public EntityUid? LinkedItem;
 
     /// <summary>
     /// Sound played when the item is unfolded into a hand.

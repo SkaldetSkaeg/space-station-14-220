@@ -55,7 +55,7 @@ public sealed partial class ItemShellSystem : EntitySystem
             return;
 
         var contents = _containers.EnsureContainer<ContainerSlot>(ent, ItemShellComponent.ContentContainerId);
-        if (ent.Comp.ContainedItem == null)
+        if (ent.Comp.LinkedItem == null)
         {
             var spawned = Spawn(ent.Comp.ItemPrototype, Transform(ent).Coordinates);
             if (!TryComp<ShellableItemComponent>(spawned, out var itemComp))
@@ -105,7 +105,7 @@ public sealed partial class ItemShellSystem : EntitySystem
 
     private void Link(Entity<ItemShellComponent> shell, Entity<ShellableItemComponent> item)
     {
-        shell.Comp.ContainedItem = item;
+        shell.Comp.LinkedItem = item;
         item.Comp.Shell = shell;
         Dirty(item);
     }
@@ -122,8 +122,8 @@ public sealed partial class ItemShellSystem : EntitySystem
 
     private void OnShellTerminating(Entity<ItemShellComponent> ent, ref EntityTerminatingEvent args)
     {
-        if (ent.Comp.ContainedItem != null && !TerminatingOrDeleted(ent.Comp.ContainedItem.Value))
-            QueueDel(ent.Comp.ContainedItem.Value);
+        if (ent.Comp.LinkedItem != null && !TerminatingOrDeleted(ent.Comp.LinkedItem.Value))
+            QueueDel(ent.Comp.LinkedItem.Value);
     }
 
     private void OnItemTerminating(Entity<ShellableItemComponent> ent, ref EntityTerminatingEvent args)

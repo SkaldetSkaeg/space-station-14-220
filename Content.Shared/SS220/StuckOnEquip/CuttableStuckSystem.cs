@@ -121,7 +121,10 @@ public sealed partial class CuttableStuckSystem : EntitySystem
             item.Comp.CuttingSound.Params.WithLoop(true))?.Entity;
     }
 
-    private void StopCutting(CuttableStuckComponent component, DoAfterId? id)
+    /// <summary>
+    /// Clears the matching cutting reservation and stops its sound without cancelling the DoAfter.
+    /// </summary>
+    private void CleanupCutting(CuttableStuckComponent component, DoAfterId? id)
     {
         if (component.CuttingDoAfter != id)
             return;
@@ -135,7 +138,7 @@ public sealed partial class CuttableStuckSystem : EntitySystem
         if (_net.IsClient)
             return;
 
-        StopCutting(ent.Comp, ent.Comp.CuttingDoAfter);
+        CleanupCutting(ent.Comp, ent.Comp.CuttingDoAfter);
     }
 
     private void OnDoAfterShutdown(Entity<DoAfterComponent> ent, ref ComponentShutdown args)
@@ -155,7 +158,7 @@ public sealed partial class CuttableStuckSystem : EntitySystem
             if (!TryComp<CuttableStuckComponent>(doAfter.Args.EventTarget.Value, out var item))
                 continue;
 
-            StopCutting(item, doAfter.Id);
+            CleanupCutting(item, doAfter.Id);
         }
     }
 
@@ -221,7 +224,7 @@ public sealed partial class CuttableStuckSystem : EntitySystem
         if (ent.Comp.CuttingDoAfter != null && ent.Comp.CuttingDoAfter != args.DoAfter.Id)
             return;
 
-        StopCutting(ent.Comp, args.DoAfter.Id);
+        CleanupCutting(ent.Comp, args.DoAfter.Id);
         if (args.Cancelled || args.Handled)
             return;
 

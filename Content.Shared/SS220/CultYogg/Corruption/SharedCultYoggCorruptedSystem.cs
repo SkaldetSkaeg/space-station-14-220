@@ -118,8 +118,8 @@ public sealed partial class SharedCultYoggCorruptedSystem : EntitySystem
 
         // The retained item is part of the corrupted form, not loot to release during cleansing.
         // Detaching the shell above also makes deleting an unfolded item safe.
-        if (TryComp<ItemShellComponent>(corruptedEntity, out var shell) && shell.ContainedItem != null)
-            QueueDel(shell.ContainedItem.Value);
+        if (TryComp<ItemShellComponent>(corruptedEntity, out var shell) && shell.LinkedItem != null)
+            QueueDel(shell.LinkedItem.Value);
 
         TryDropAllContainedEntities(corruptedEntity);
         _entityManager.DeleteEntity(corruptedEntity);
