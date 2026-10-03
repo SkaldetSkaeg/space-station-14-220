@@ -8,7 +8,9 @@
   description: description
   components:
   - type: ShellableItem
-    shellPrototype: CocoonBeach
+  - type: ContainerContainer
+    containers:
+      item-shell: !type:ContainerSlot
   - type: Sprite
     sprite: SS220/Objects/Weapons/Melee/CultYogg/beach.rsi
     state: icon

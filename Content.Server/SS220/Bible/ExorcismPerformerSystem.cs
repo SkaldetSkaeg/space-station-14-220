@@ -16,7 +16,6 @@ using Robust.Shared.Player;
 using Robust.Shared.Containers;
 using Content.Shared.Actions.Components;
 using Content.Shared.Chat;
-using Content.Server.SS220.ItemShell;
 
 namespace Content.Server.SS220.Bible;
 
@@ -33,7 +32,6 @@ public sealed partial class ExorcismPerformerSystem : SharedExorcismPerformerSys
     [Dependency] private AppearanceSystem _appearanceSystem = default!;
     [Dependency] private SharedPopupSystem _popupSystem = default!;
     [Dependency] private SharedContainerSystem _container = default!;
-    [Dependency] private ItemShellSystem _itemShell = default!;
 
     public override void Initialize()
     {
@@ -73,8 +71,6 @@ public sealed partial class ExorcismPerformerSystem : SharedExorcismPerformerSys
 
         _chat.TrySendInGameICMessage(user, sanitazedMessage, InGameICChatType.Speak, ChatTransmitRange.Normal);
 
-        // Expose shells of just-dropped items before looking up corrupted entities.
-        _itemShell.ProcessPendingFolds();
         var entitiesInRange = _entityLookupSystem.GetEntitiesInRange<CultYoggCorruptedComponent>(Transform(user).Coordinates, entity.Comp.Range);
         var args = new ExorcismPerformedEvent(entity, entity.Comp, user);
         RaiseLocalEvent(ref args);
@@ -116,7 +112,7 @@ public sealed partial class ExorcismPerformerSystem : SharedExorcismPerformerSys
     private void PlayPerformanceEffects(Entity<ExorcismPerformerComponent> entity)
     {
         _appearanceSystem.SetData(entity, ExorcismPerformerVisualState.State, ExorcismPerformerVisualState.Performing);
-        _timerManager.AddTimer(new Timer((int) (entity.Comp.LightEffectDurationSeconds * 1000), false, () =>
+        _timerManager.AddTimer(new Timer((int)(entity.Comp.LightEffectDurationSeconds * 1000), false, () =>
         {
             _appearanceSystem.SetData(entity, ExorcismPerformerVisualState.State, ExorcismPerformerVisualState.None);
         }));

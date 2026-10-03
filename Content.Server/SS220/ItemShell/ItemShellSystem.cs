@@ -27,23 +27,11 @@ public sealed partial class ItemShellSystem : EntitySystem
     {
         base.Initialize();
 
-        SubscribeLocalEvent<ItemShellComponent, ComponentInit>(OnShellInit);
         SubscribeLocalEvent<ItemShellComponent, UseInHandEvent>(OnUseInHand);
         SubscribeLocalEvent<ItemShellComponent, EntityTerminatingEvent>(OnShellTerminating);
-        SubscribeLocalEvent<ShellableItemComponent, MapInitEvent>(OnItemInit);
         SubscribeLocalEvent<ShellableItemComponent, EntGotRemovedFromContainerMessage>(OnRemove);
         SubscribeLocalEvent<ShellableItemComponent, EntGotInsertedIntoContainerMessage>(OnInsert);
         SubscribeLocalEvent<ShellableItemComponent, EntityTerminatingEvent>(OnItemTerminating);
-    }
-
-    private void OnShellInit(Entity<ItemShellComponent> ent, ref ComponentInit args)
-    {
-        _containers.EnsureContainer<ContainerSlot>(ent, ItemShellComponent.ContentContainerId);
-    }
-
-    private void OnItemInit(Entity<ShellableItemComponent> ent, ref MapInitEvent args)
-    {
-        _pending.Add(ent);
     }
 
     private void OnUseInHand(Entity<ItemShellComponent> ent, ref UseInHandEvent args)
@@ -54,25 +42,7 @@ public sealed partial class ItemShellSystem : EntitySystem
         if (!_hands.IsHolding(args.User, ent, out var hand))
             return;
 
-        var contents = _containers.EnsureContainer<ContainerSlot>(ent, ItemShellComponent.ContentContainerId);
-        if (ent.Comp.LinkedItem == null)
-        {
-            var spawned = Spawn(ent.Comp.ItemPrototype, Transform(ent).Coordinates);
-            if (!TryComp<ShellableItemComponent>(spawned, out var itemComp))
-            {
-                Del(spawned);
-                return;
-            }
-
-            if (!_containers.Insert(spawned, contents))
-            {
-                Del(spawned);
-                return;
-            }
-
-            Link(ent, (spawned, itemComp));
-        }
-
+        var contents = (ContainerSlot)_containers.GetContainer(ent, ItemShellComponent.ContentContainerId);
         if (contents.ContainedEntity == null)
             return;
 
@@ -90,7 +60,7 @@ public sealed partial class ItemShellSystem : EntitySystem
             return;
         }
 
-        var shellContainer = _containers.EnsureContainer<ContainerSlot>(item, ShellableItemComponent.ShellContainerId);
+        var shellContainer = (ContainerSlot)_containers.GetContainer(item, ShellableItemComponent.ShellContainerId);
         if (!_containers.Insert(ent.Owner, shellContainer))
         {
             // The item has already left the shell, so folding can safely restore the pair.
@@ -118,6 +88,20 @@ public sealed partial class ItemShellSystem : EntitySystem
     private void OnInsert(Entity<ShellableItemComponent> ent, ref EntGotInsertedIntoContainerMessage args)
     {
         _pending.Add(ent);
+
+        if (ent.Comp.Shell != null)
+            return;
+
+        if (args.Container.ID != ItemShellComponent.ContentContainerId)
+            return;
+
+        if (!TryComp<ItemShellComponent>(args.Container.Owner, out var shell))
+            return;
+
+        if (shell.LinkedItem != null)
+            return;
+
+        Link((args.Container.Owner, shell), ent);
     }
 
     private void OnShellTerminating(Entity<ItemShellComponent> ent, ref EntityTerminatingEvent args)
@@ -135,9 +119,8 @@ public sealed partial class ItemShellSystem : EntitySystem
 
     /// <summary>
     /// Folds an item outside hands and registered hidden hand containers.
-    /// May also be called before the queued check when immediate folding is needed.
     /// </summary>
-    public bool TryFold(Entity<ShellableItemComponent?> ent)
+    private bool TryFold(Entity<ShellableItemComponent?> ent)
     {
         if (!Resolve(ent, ref ent.Comp))
             return false;
@@ -179,28 +162,23 @@ public sealed partial class ItemShellSystem : EntitySystem
     private bool TryGetShell(Entity<ShellableItemComponent> item, out Entity<ItemShellComponent> shell)
     {
         shell = default;
-        if (item.Comp.Shell != null)
-        {
-            var uid = item.Comp.Shell.Value;
-            if (TerminatingOrDeleted(uid) || EntityManager.IsQueuedForDeletion(uid))
-                return false;
+        if (item.Comp.Shell == null)
+            return false;
 
-            if (!TryComp<ItemShellComponent>(uid, out var component))
-                return false;
+        var uid = item.Comp.Shell.Value;
+        if (TerminatingOrDeleted(uid) || EntityManager.IsQueuedForDeletion(uid))
+            return false;
 
-            shell = (uid, component);
-            return true;
-        }
+        if (!TryComp<ItemShellComponent>(uid, out var component))
+            return false;
 
-        var spawned = Spawn(item.Comp.ShellPrototype, Transform(item).Coordinates);
-        shell = (spawned, Comp<ItemShellComponent>(spawned));
-        Link(shell, item);
+        shell = (uid, component);
         return true;
     }
 
     private bool TryFold(Entity<ShellableItemComponent> item, Entity<ItemShellComponent> shell)
     {
-        var contents = _containers.EnsureContainer<ContainerSlot>(shell, ItemShellComponent.ContentContainerId);
+        var contents = (ContainerSlot)_containers.GetContainer(shell, ItemShellComponent.ContentContainerId);
         if (contents.Contains(item))
             return true;
 
@@ -240,7 +218,7 @@ public sealed partial class ItemShellSystem : EntitySystem
     /// <summary>
     /// Processes queued folding checks after container operations have finished.
     /// </summary>
-    public void ProcessPendingFolds()
+    private void ProcessPendingFolds()
     {
         if (_pending.Count == 0)
             return;

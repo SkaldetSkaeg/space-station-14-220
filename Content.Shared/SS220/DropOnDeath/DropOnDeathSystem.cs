@@ -12,12 +12,12 @@ namespace Content.Shared.SS220.DropOnDeath;
 /// <summary>
 /// Forcibly unequips items marked to drop when their wearer dies.
 /// </summary>
-public sealed class DropOnDeathSystem : EntitySystem
+public sealed partial class DropOnDeathSystem : EntitySystem
 {
-    [Dependency] private readonly InventorySystem _inventory = default!;
-    [Dependency] private readonly SharedHandsSystem _hands = default!;
-    [Dependency] private readonly SharedContainerSystem _containers = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private InventorySystem _inventory = default!;
+    [Dependency] private SharedHandsSystem _hands = default!;
+    [Dependency] private SharedContainerSystem _containers = default!;
+    [Dependency] private IGameTiming _timing = default!;
 
     public override void Initialize()
     {

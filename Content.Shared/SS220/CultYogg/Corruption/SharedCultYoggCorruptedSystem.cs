@@ -16,7 +16,6 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Serialization;
 using System.Diagnostics.CodeAnalysis;
-using Robust.Shared.GameObjects;
 
 namespace Content.Shared.SS220.CultYogg.Corruption;
 
@@ -410,6 +409,7 @@ public sealed partial class SharedCultYoggCorruptedSystem : EntitySystem
         var coords = Transform(entity).Coordinates;
         foreach (var container in _containerSystem.GetAllContainers(entity, containerManager))
         {
+            //We do not drop the hidden shell or object, as it is essentially part of it.
             if (container.ID == ItemShellComponent.ContentContainerId && HasComp<ItemShellComponent>(entity))
                 continue;
 

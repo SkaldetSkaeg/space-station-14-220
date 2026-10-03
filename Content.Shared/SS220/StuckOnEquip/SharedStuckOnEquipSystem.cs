@@ -1,6 +1,5 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
-using System.Linq;
 using Content.Shared.Ghost;
 using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Inventory;
@@ -168,27 +167,6 @@ public sealed partial class SharedStuckOnEquipSystem : EntitySystem
 
         if (!removed)
             SetStuck((ent.Owner, ent.Comp), wasStuck);
-
-        return removed;
-    }
-
-    public void RemoveAllStuckItems(EntityUid target)
-    {
-        TryRemoveStuckItems(target);
-    }
-
-    public bool TryRemoveStuckItems(EntityUid target)
-    {
-        var removed = false;
-        // Unequipping may also remove dependent slots, so take a snapshot before modifying the inventory.
-        foreach (var item in _inventory.GetHandOrInventoryEntities(target).ToArray())
-        {
-            if (!TryComp<StuckOnEquipComponent>(item, out var stuck))
-                continue;
-
-            // Keep the cult cleanup behavior: remove matching items even when they were not stuck (e.g. pockets).
-            removed |= TryRemoveItem((item, stuck), target, force: true);
-        }
 
         return removed;
     }

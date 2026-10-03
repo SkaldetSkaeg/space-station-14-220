@@ -36,7 +36,7 @@ public abstract class SharedStrippableSystem : EntitySystem
     [Dependency] private readonly SharedPopupSystem _popupSystem = default!;
 
     [Dependency] private readonly ISharedAdminLogManager _adminLogger = default!;
-    [Dependency] private readonly SharedStuckOnEquipSystem _stuckOnEquip = default!; // SS220-StuckOnEquip
+    [Dependency] private SharedStuckOnEquipSystem _stuckOnEquip = default!; // SS220-StuckOnEquip
 
     public override void Initialize()
     {

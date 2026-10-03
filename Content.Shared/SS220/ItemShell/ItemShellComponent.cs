@@ -1,7 +1,6 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
 using Robust.Shared.Audio;
-using Robust.Shared.Prototypes;
 
 namespace Content.Shared.SS220.ItemShell;
 
@@ -14,15 +13,9 @@ public sealed partial class ItemShellComponent : Component
     public const string ContentContainerId = "item-shell-content";
 
     /// <summary>
-    /// Item created on the first attempt to unfold this shell.
-    /// </summary>
-    [DataField(required: true)]
-    public EntProtoId ItemPrototype;
-
-    /// <summary>
     /// Item paired with this shell, including while unfolded outside its container.
     /// </summary>
-    [ViewVariables]
+    [DataField]
     public EntityUid? LinkedItem;
 
     /// <summary>

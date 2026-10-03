@@ -7,6 +7,9 @@
   suffix: CultYogg
   abstract: true
   components:
+  - type: ItemShell
+    sound:
+      path: /Audio/Effects/unwrap.ogg
   - type: ContainerContainer
     containers:
       item-shell-content: !type:ContainerSlot
@@ -23,61 +26,61 @@
   id: CocoonSpikegun
   parent: [CultYoggCocoonBase, BaseItem]
   components:
-  - type: ItemShell
-    itemPrototype: SpikegunCultYogg
-    sound:
-      path: /Audio/Effects/unwrap.ogg
+  - type: ContainerFill
+    containers:
+      item-shell-content:
+      - SpikegunCultYogg
 
 - type: entity
   id: CocoonVenomancer
   parent: [CultYoggCocoonBase, BaseItem]
   components:
-  - type: ItemShell
-    itemPrototype: Venomancer
-    sound:
-      path: /Audio/Effects/unwrap.ogg
+  - type: ContainerFill
+    containers:
+      item-shell-content:
+      - Venomancer
 
 - type: entity
   id: CocoonSpitballer
   parent: [CultYoggCocoonBase, BaseItem]
   components:
-  - type: ItemShell
-    itemPrototype: Spitballer
-    sound:
-      path: /Audio/Effects/unwrap.ogg
+  - type: ContainerFill
+    containers:
+      item-shell-content:
+      - Spitballer
 
 - type: entity
   id: CocoonClaw
   parent: [CultYoggCocoonBase, BaseItem]
   components:
-  - type: ItemShell
-    itemPrototype: ClawCultYogg
-    sound:
-      path: /Audio/Effects/unwrap.ogg
+  - type: ContainerFill
+    containers:
+      item-shell-content:
+      - ClawCultYogg
 
 - type: entity
   id: CocoonBeach
   parent: [CultYoggCocoonBase, BaseItem]
   components:
-  - type: ItemShell
-    itemPrototype: BeachCultYogg
-    sound:
-      path: /Audio/Effects/unwrap.ogg
+  - type: ContainerFill
+    containers:
+      item-shell-content:
+      - BeachCultYogg
 
 - type: entity
   id: CocoonSedativeSting
   parent: [CultYoggCocoonBase, BaseItem]
   components:
-  - type: ItemShell
-    itemPrototype: SedativeStingCultYogg
-    sound:
-      path: /Audio/Effects/unwrap.ogg
+  - type: ContainerFill
+    containers:
+      item-shell-content:
+      - SedativeStingCultYogg
 
 - type: entity
   id: CocoonDagonsScale
   parent: [CultYoggCocoonBase, BaseItem]
   components:
-  - type: ItemShell
-    itemPrototype: DagonsScale
-    sound:
-      path: /Audio/Effects/unwrap.ogg
+  - type: ContainerFill
+    containers:
+      item-shell-content:
+      - DagonsScale
