@@ -120,7 +120,7 @@ public sealed partial class SharedCultYoggCorruptedSystem : EntitySystem
         if (TryComp<ItemShellComponent>(corruptedEntity, out var shell) && shell.LinkedItem != null)
             QueueDel(shell.LinkedItem.Value);
 
-        TryDropAllContainedEntities(corruptedEntity);
+        TryDropContainedEntities(corruptedEntity);
         _entityManager.DeleteEntity(corruptedEntity);
 
         return normalEntity;
@@ -361,7 +361,7 @@ public sealed partial class SharedCultYoggCorruptedSystem : EntitySystem
             _hands.TryDrop(user, entity);
 
         if (recipe.EmptyStorage)
-            TryDropAllContainedEntities(entity);
+            TryDropContainedEntities(entity);
 
         EnsureComp<CultYoggCorruptedComponent>(corruptedEntity, out var corrupted);
 
@@ -398,9 +398,9 @@ public sealed partial class SharedCultYoggCorruptedSystem : EntitySystem
     }
 
     /// <summary>
-    /// Drops entities from all attached containers
+    /// Drops contained entities, preserving the contents of an item shell.
     /// </summary>
-    private bool TryDropAllContainedEntities(EntityUid entity)
+    private bool TryDropContainedEntities(EntityUid entity)
     {
         if (!TryComp<ContainerManagerComponent>(entity, out var containerManager))
             return false;

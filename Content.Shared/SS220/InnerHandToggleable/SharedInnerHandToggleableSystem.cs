@@ -242,7 +242,7 @@ public sealed partial class SharedInnerHandToggleableSystem : EntitySystem
         var item = activeHandHeldItem.Value;
         bool inserted;
         if (TryComp<StuckOnEquipComponent>(item, out var stuckOnEquip))
-            inserted = _stuckOnEquip.TryInsertUnstuckItem((item, stuckOnEquip), innerToggle.Container);
+            inserted = _stuckOnEquip.TryUnstickAndInsertItem((item, stuckOnEquip), innerToggle.Container);
         else
             inserted = _containerSystem.Insert((item, null, null), innerToggle.Container);
 

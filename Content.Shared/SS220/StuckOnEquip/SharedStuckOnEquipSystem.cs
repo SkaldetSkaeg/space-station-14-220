@@ -94,9 +94,10 @@ public sealed partial class SharedStuckOnEquipSystem : EntitySystem
     }
 
     /// <summary>
-    /// Moves an item into its internal storage, restoring its lock if insertion fails.
+    /// Releases the item's equipment lock and attempts insertion into the specified container.
+    /// Restores the previous lock if insertion fails.
     /// </summary>
-    public bool TryInsertUnstuckItem(Entity<StuckOnEquipComponent?> ent, BaseContainer container)
+    public bool TryUnstickAndInsertItem(Entity<StuckOnEquipComponent?> ent, BaseContainer container)
     {
         if (!Resolve(ent.Owner, ref ent.Comp, false))
             return false;
