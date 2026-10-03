@@ -10,9 +10,6 @@
   - type: ItemShell
     sound:
       path: /Audio/Effects/unwrap.ogg
-  - type: ContainerContainer
-    containers:
-      item-shell-content: !type:ContainerSlot
   - type: Sprite
     sprite: SS220/Objects/CultYogg/CorruptedItems/cocoon.rsi
     layers:
@@ -26,61 +23,47 @@
   id: CocoonSpikegun
   parent: [CultYoggCocoonBase, BaseItem]
   components:
-  - type: ContainerFill
-    containers:
-      item-shell-content:
-      - SpikegunCultYogg
+  - type: ItemShell
+    itemPrototype: SpikegunCultYogg
 
 - type: entity
   id: CocoonVenomancer
   parent: [CultYoggCocoonBase, BaseItem]
   components:
-  - type: ContainerFill
-    containers:
-      item-shell-content:
-      - Venomancer
+  - type: ItemShell
+    itemPrototype: Venomancer
 
 - type: entity
   id: CocoonSpitballer
   parent: [CultYoggCocoonBase, BaseItem]
   components:
-  - type: ContainerFill
-    containers:
-      item-shell-content:
-      - Spitballer
+  - type: ItemShell
+    itemPrototype: Spitballer
 
 - type: entity
   id: CocoonClaw
   parent: [CultYoggCocoonBase, BaseItem]
   components:
-  - type: ContainerFill
-    containers:
-      item-shell-content:
-      - ClawCultYogg
+  - type: ItemShell
+    itemPrototype: ClawCultYogg
 
 - type: entity
   id: CocoonBeach
   parent: [CultYoggCocoonBase, BaseItem]
   components:
-  - type: ContainerFill
-    containers:
-      item-shell-content:
-      - BeachCultYogg
+  - type: ItemShell
+    itemPrototype: BeachCultYogg
 
 - type: entity
   id: CocoonSedativeSting
   parent: [CultYoggCocoonBase, BaseItem]
   components:
-  - type: ContainerFill
-    containers:
-      item-shell-content:
-      - SedativeStingCultYogg
+  - type: ItemShell
+    itemPrototype: SedativeStingCultYogg
 
 - type: entity
   id: CocoonDagonsScale
   parent: [CultYoggCocoonBase, BaseItem]
   components:
-  - type: ContainerFill
-    containers:
-      item-shell-content:
-      - DagonsScale
+  - type: ItemShell
+    itemPrototype: DagonsScale

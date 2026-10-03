@@ -7,9 +7,6 @@
   id: Venomancer
   components:
   - type: ShellableItem
-  - type: ContainerContainer
-    containers:
-      item-shell: !type:ContainerSlot
   - type: AmmoCounter
   - type: Gun
     soundGunshot: /Audio/Weapons/Xeno/alien_spitacid.ogg

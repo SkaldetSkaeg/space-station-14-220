@@ -11,9 +11,6 @@
     sprite: SS220/Objects/Weapons/Melee/CultYogg/shield.rsi
     state: icon
   - type: ShellableItem
-  - type: ContainerContainer
-    containers:
-      item-shell: !type:ContainerSlot
   - type: DropOnDeath
   - type: StuckOnEquip
     inHandItem: true
