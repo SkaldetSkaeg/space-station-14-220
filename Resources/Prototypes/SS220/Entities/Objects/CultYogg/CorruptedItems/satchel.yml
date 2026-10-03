@@ -1,8 +1,8 @@
 # © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
 - type: entity
-  parent: [ClothingBackpack, CultYoggWideRestrictedItem, BaseCultYoggCuttableEquipment]
-  id: ClothingBackpackSatchelCultYogg
+  parent: [ClothingBackpack, BaseRestrictedLivingItemMiGo, BaseLivingCuttableEquipment]
+  id: ClothingBackpackSatchelLiving
   suffix: CultYogg
   name: cult satchel
   description: description
@@ -22,5 +22,5 @@
   - type: StuckOnEquip
   - type: Tag
     tags:
-    - CultYoggEquipment
+    - CultEquipment
     - CultYoggStealthProvidable

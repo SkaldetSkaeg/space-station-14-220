@@ -2,8 +2,8 @@
 
 - type: entity
   name: sedative sting
-  parent: [BaseItem, CultYoggRestrictedItem, BaseCultYoggCuttableEquipment]
-  id: SedativeStingCultYogg
+  parent: [BaseItem, BaseRestrictedLivingItem, BaseLivingCuttableEquipment]
+  id: SedativeSting
   suffix: CultYogg
   components:
   - type: ShellableItem
@@ -30,6 +30,6 @@
     inHandItem: true
   - type: Tag
     tags:
-    - CultYoggEquipment
+    - CultEquipment
     - CultYoggStealthProvidable
-    - CultYoggInnerHandToggleable
+    - CultInnerHandEquipment

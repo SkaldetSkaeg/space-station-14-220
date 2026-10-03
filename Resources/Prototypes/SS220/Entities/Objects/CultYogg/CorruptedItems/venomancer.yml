@@ -2,7 +2,7 @@
 
 - type: entity
   name: venomancer
-  parent: [BaseItem, CultYoggRestrictedItem, BaseCultYoggCuttableEquipment]
+  parent: [BaseItem, BaseRestrictedLivingItem, BaseLivingCuttableEquipment]
   suffix: CultYogg
   id: Venomancer
   components:
@@ -47,7 +47,7 @@
     inHandItem: true
   - type: Tag
     tags:
-    - CultYoggEquipment
+    - CultEquipment
     - CultYoggStealthProvidable
 
 
@@ -55,7 +55,7 @@
   id: VenomancerThorn
   name: venomancer thorn
   categories: [ HideSpawnMenu ]
-  parent: [BaseItem, CultYoggRestrictedItem]
+  parent: [BaseItem, BaseRestrictedLivingItem]
   components:
   - type: Sprite
     sprite: SS220/Objects/Weapons/Guns/Ammunition/CultYogg/venomancer_thorn.rsi

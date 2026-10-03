@@ -2,13 +2,13 @@
 
 - type: entity
   abstract: true
-  id: CultYoggRestrictedItem
+  id: BaseRestrictedLivingItem
   suffix: CultYogg
   name: abstract cult restricted
   components:
   - type: Tag
     tags:
-    - CultYoggEquipment
+    - CultEquipment
   - type: RestrictedItem
     localizedPopup: "cult-yogg-role-item-popup"
     whitelist:
@@ -17,13 +17,13 @@
 
 - type: entity
   abstract: true
-  id: CultYoggWideRestrictedItem
+  id: BaseRestrictedLivingItemMiGo
   suffix: CultYogg
   name: abstract cult restricted
   components:
   - type: Tag
     tags:
-    - CultYoggEquipment
+    - CultEquipment
   - type: RestrictedItem
     localizedPopup: "cult-yogg-role-item-popup"
     whitelist:
@@ -33,7 +33,7 @@
 
 - type: entity
   abstract: true
-  id: BaseCultYoggCuttableEquipment
+  id: BaseLivingCuttableEquipment
   components:
   - type: CuttableStuck
     cuttingSound:
