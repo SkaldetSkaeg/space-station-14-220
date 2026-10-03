@@ -243,7 +243,10 @@ public sealed partial class CuttableStuckSystem : EntitySystem
             return;
 
         // Use the drop position so folding the item into a shell does not swallow the sound source.
-        _audio.PlayPvs(ent.Comp.RemovalSound, Transform(ent).Coordinates, ent.Comp.RemovalSound?.Params.WithLoop(false));
+        _audio.PlayPvs(
+            ent.Comp.RemovalSound,
+            Transform(ent).Coordinates,
+            ent.Comp.RemovalSound?.Params.WithLoop(false));
 
         // The blade cuts the attachment at the body, underneath any worn protection.
         var damage = _damage.ChangeDamage(wearer, ent.Comp.Damage, ignoreResistances: true, origin: args.User);

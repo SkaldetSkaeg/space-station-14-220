@@ -115,18 +115,18 @@ public sealed partial class SharedStuckOnEquipSystem : EntitySystem
     /// Allows an acting admin ghost to remove a stuck item through the stripping UI.
     /// Does not bypass other equipment restrictions or grant an exception to an admin's living body.
     /// </summary>
-    public bool TryAdminGhostRemove(EntityUid user, EntityUid item)
+    public bool TryAdminGhostRemove(EntityUid user, Entity<StuckOnEquipComponent?> item)
     {
         if (!IsAdminGhost(user))
             return false;
 
-        if (!TryComp<StuckOnEquipComponent>(item, out var stuck))
+        if (!Resolve(item.Owner, ref item.Comp, false))
             return false;
 
-        if (!stuck.IsStuck)
+        if (!item.Comp.IsStuck)
             return false;
 
-        return TryRemoveItem((item, stuck), user);
+        return TryRemoveItem(item, user);
     }
 
     /// <summary>

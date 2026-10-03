@@ -6,14 +6,14 @@
   suffix: CultYogg
   name: abstract cult restricted
   components:
-    - type: Tag
-      tags:
-      - CultYoggEquipment
-    - type: RestrictedItem
-      localizedPopup: "cult-yogg-role-item-popup"
-      whitelist:
-        components:
-        - CultYogg
+  - type: Tag
+    tags:
+    - CultYoggEquipment
+  - type: RestrictedItem
+    localizedPopup: "cult-yogg-role-item-popup"
+    whitelist:
+      components:
+      - CultYogg
 
 - type: entity
   abstract: true
@@ -21,15 +21,15 @@
   suffix: CultYogg
   name: abstract cult restricted
   components:
-    - type: Tag
-      tags:
-      - CultYoggEquipment
-    - type: RestrictedItem
-      localizedPopup: "cult-yogg-role-item-popup"
-      whitelist:
-        components:
-        - CultYogg
-        - MiGo
+  - type: Tag
+    tags:
+    - CultYoggEquipment
+  - type: RestrictedItem
+    localizedPopup: "cult-yogg-role-item-popup"
+    whitelist:
+      components:
+      - CultYogg
+      - MiGo
 
 - type: entity
   abstract: true

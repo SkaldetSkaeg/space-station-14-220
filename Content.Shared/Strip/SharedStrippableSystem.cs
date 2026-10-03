@@ -592,7 +592,8 @@ public abstract class SharedStrippableSystem : EntitySystem
             RaiseLocalEvent(item, new DroppedEvent(user), true);
         _handsSystem.PickupOrDrop(user, item);
         _adminLogger.Add(LogType.Stripping, LogImpact.High,
-            $"{ToPrettyString(user):actor} has stripped the stuck item {ToPrettyString(item):item} from {ToPrettyString(target):target}");
+            $"{ToPrettyString(user):actor} has stripped the stuck item {ToPrettyString(item):item} " +
+            $"from {ToPrettyString(target):target}");
         return true;
     }
     // SS220-StuckOnEquip end

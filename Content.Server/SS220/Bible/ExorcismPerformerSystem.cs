@@ -95,7 +95,8 @@ public sealed partial class ExorcismPerformerSystem : SharedExorcismPerformerSys
         var effectPrototype = recipe?.CorruptionReverseEffect;
         _adminLogger.Add(LogType.EntitySpawn, LogImpact.Low, $"{ToPrettyString(args.Performer)} used exorcism on {previousEntityString} and made {ToPrettyString(uncorruptedEntity)}");
 
-        if (uncorruptedEntity == null) return;
+        if (uncorruptedEntity == null)
+            return;
 
         if (effectPrototype != null)
         {

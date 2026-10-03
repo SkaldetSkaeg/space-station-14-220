@@ -13,7 +13,7 @@
   - type: Sprite
     sprite: SS220/Objects/CultYogg/CorruptedItems/cocoon.rsi
     layers:
-      - state: icon
+    - state: icon
   - type: Tag
     tags:
     - CultYoggEquipment
