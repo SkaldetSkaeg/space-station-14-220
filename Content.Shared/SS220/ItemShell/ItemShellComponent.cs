@@ -1,9 +1,12 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
 using Robust.Shared.Audio;
+using Robust.Shared.Containers;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
 using Robust.Shared.Serialization.Manager;
+using Robust.Shared.Serialization.Markdown.Mapping;
+using Robust.Shared.Serialization.Markdown.Sequence;
 using Robust.Shared.Serialization.Markdown.Value;
 
 namespace Content.Shared.SS220.ItemShell;
@@ -50,5 +53,42 @@ public sealed partial class ItemShellComponent : Component, ISerializationHooks
         var itemNode = new ValueDataNode(ItemPrototype.Id);
         if (!serialization.ValidateNode<EntProtoId<ShellableItemComponent>>(itemNode).Valid)
             throw new InvalidOperationException($"ItemShell item prototype '{ItemPrototype}' must have ShellableItem.");
+
+        // Hooks also run for prototype templates, before entity components are available.
+        if (!mapping.TryGet<SequenceDataNode>("components", out var components))
+            throw new InvalidOperationException(
+                $"ItemShell item prototype '{ItemPrototype}' must have ContainerContainer.");
+
+        var factory = IoCManager.Resolve<IComponentFactory>();
+        var containerName = factory.GetRegistration<ContainerManagerComponent>().Name;
+        var containerId = ShellableItemComponent.ShellContainerId;
+        foreach (var node in components)
+        {
+            if (node is not MappingDataNode component)
+                continue;
+
+            if (!component.TryGet<ValueDataNode>("type", out var type))
+                continue;
+
+            if (type.Value != containerName)
+                continue;
+
+            if (!component.TryGet<MappingDataNode>("containers", out var containers))
+                throw new InvalidOperationException(
+                    $"ItemShell item prototype '{ItemPrototype}' must have container '{containerId}'.");
+
+            if (!containers.TryGet(containerId, out var slot))
+                throw new InvalidOperationException(
+                    $"ItemShell item prototype '{ItemPrototype}' must have container '{containerId}'.");
+
+            if (slot.Tag != "!type:" + nameof(ContainerSlot))
+                throw new InvalidOperationException(
+                    $"ItemShell item prototype '{ItemPrototype}' container '{containerId}' must be a ContainerSlot.");
+
+            return;
+        }
+
+        throw new InvalidOperationException(
+            $"ItemShell item prototype '{ItemPrototype}' must have ContainerContainer.");
     }
 }
