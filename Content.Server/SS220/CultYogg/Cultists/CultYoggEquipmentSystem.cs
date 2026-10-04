@@ -24,7 +24,7 @@ public sealed partial class CultYoggEquipmentSystem : EntitySystem
     [Dependency] private SharedActionsSystem _actions = default!;
     [Dependency] private TagSystem _tags = default!;
 
-    public static readonly ProtoId<TagPrototype> EquipmentTag = "CultEquipment";
+    public static readonly ProtoId<TagPrototype> EquipmentTag = "YoggEquipment";
 
     /// <summary>
     /// Attempts to drop tagged cult equipment from the owner's hands, inventory and hidden hand containers.

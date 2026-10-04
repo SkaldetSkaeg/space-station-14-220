@@ -40,6 +40,6 @@
     heavyAttackChance: 0.2
   - type: Tag
     tags:
-    - CultEquipment
+    - YoggEquipment
     - CultYoggStealthProvidable
-    - CultInnerHandEquipment
+    - YoggInnerHandEquipment

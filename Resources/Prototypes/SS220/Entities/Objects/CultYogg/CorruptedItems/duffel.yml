@@ -26,6 +26,6 @@
   - type: StuckOnEquip
   - type: Tag
     tags:
-    - CultEquipment
+    - YoggEquipment
     - CultYoggStealthProvidable
     - WhitelistChameleon

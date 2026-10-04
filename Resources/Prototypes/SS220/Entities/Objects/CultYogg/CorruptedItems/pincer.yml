@@ -45,8 +45,8 @@
   - type: Insulated # заглушка на будущее, защищает только от перерезания решеток под напряжением
   - type: Tag
     tags:
-    - CultEquipment
+    - YoggEquipment
     - PlantSampleTaker
     - Wirecutter
     - CultYoggStealthProvidable
-    - CultInnerHandEquipment
+    - YoggInnerHandEquipment

@@ -8,7 +8,7 @@
   components:
   - type: Tag
     tags:
-    - CultEquipment
+    - YoggEquipment
   - type: RestrictedItem
     localizedPopup: "cult-yogg-role-item-popup"
     whitelist:
@@ -23,7 +23,7 @@
   components:
   - type: Tag
     tags:
-    - CultEquipment
+    - YoggEquipment
   - type: RestrictedItem
     localizedPopup: "cult-yogg-role-item-popup"
     whitelist:

@@ -42,7 +42,7 @@
     grindableSolutionName: food
   - type: Tag
     tags:
-    - CultEquipment
+    - YoggEquipment
     - Omnivorous
     - CultYoggStealthProvidable
     - WhitelistChameleon

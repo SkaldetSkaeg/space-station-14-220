@@ -8,7 +8,7 @@
   components:
   - type: Tag
     tags:
-    - CultEquipment
+    - YoggEquipment
   - type: Sprite
     sprite: SS220/Objects/CultYogg/CorruptedItems/voidkey.rsi
     state: icon

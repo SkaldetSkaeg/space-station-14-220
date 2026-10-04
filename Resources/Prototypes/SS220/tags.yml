@@ -327,7 +327,7 @@
 
 # ss220 Cult_update2 start
 - type: Tag
-  id: CultInnerHandEquipment
+  id: YoggInnerHandEquipment
 
 # ss220 Cult_update2 end
 
@@ -411,4 +411,4 @@
   id: WeaponShotgunDoubleBarreled
 
 - type: Tag
-  id: CultEquipment
+  id: YoggEquipment

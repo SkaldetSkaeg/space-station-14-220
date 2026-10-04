@@ -16,7 +16,7 @@
     - state: icon
   - type: Tag
     tags:
-    - CultEquipment
+    - YoggEquipment
     - CultYoggStealthProvidable
 
 - type: entity

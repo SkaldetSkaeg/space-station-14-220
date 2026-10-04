@@ -16,6 +16,6 @@
     inHandItem: true
   - type: Tag
     tags:
-    - CultEquipment
+    - YoggEquipment
     - CultYoggStealthProvidable
-    - CultInnerHandEquipment
+    - YoggInnerHandEquipment
