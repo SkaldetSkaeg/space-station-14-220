@@ -1,6 +1,5 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
-using Content.Shared.Containers;
 using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Interaction.Events;
 using Content.Shared.SS220.ItemShell;
@@ -10,7 +9,7 @@ using Robust.Shared.Containers;
 namespace Content.Server.SS220.ItemShell;
 
 /// <summary>
-/// Initializes and unfolds persistent item shells.
+/// Unfolds persistent item shells.
 /// </summary>
 public sealed partial class ItemShellSystem : EntitySystem
 {
@@ -23,17 +22,8 @@ public sealed partial class ItemShellSystem : EntitySystem
     {
         base.Initialize();
 
-        SubscribeLocalEvent<ItemShellComponent, ComponentInit>(OnShellInit);
         SubscribeLocalEvent<ItemShellComponent, UseInHandEvent>(OnUseInHand);
         SubscribeLocalEvent<ItemShellComponent, EntityTerminatingEvent>(OnShellTerminating);
-    }
-
-    private void OnShellInit(Entity<ItemShellComponent> ent, ref ComponentInit args)
-    {
-        _containers.EnsureContainer<ContainerSlot>(ent, ItemShellComponent.ContentContainerId);
-
-        var fill = EnsureComp<ContainerFillComponent>(ent);
-        fill.Containers[ItemShellComponent.ContentContainerId] = [ent.Comp.ItemPrototype.Id];
     }
 
     private void OnUseInHand(Entity<ItemShellComponent> ent, ref UseInHandEvent args)

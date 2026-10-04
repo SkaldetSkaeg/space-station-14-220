@@ -7,6 +7,9 @@
   suffix: CultYogg
   abstract: true
   components:
+  - type: ContainerContainer
+    containers:
+      item-shell-content: !type:ContainerSlot {}
   - type: ItemShell
     sound:
       path: /Audio/Effects/unwrap.ogg
@@ -25,6 +28,10 @@
   components:
   - type: ItemShell
     itemPrototype: Spikegun
+  - type: ContainerFill
+    containers:
+      item-shell-content:
+      - Spikegun
 
 - type: entity
   id: ShellVenomancer
@@ -32,6 +39,10 @@
   components:
   - type: ItemShell
     itemPrototype: Venomancer
+  - type: ContainerFill
+    containers:
+      item-shell-content:
+      - Venomancer
 
 - type: entity
   id: ShellSpitballer
@@ -39,6 +50,10 @@
   components:
   - type: ItemShell
     itemPrototype: Spitballer
+  - type: ContainerFill
+    containers:
+      item-shell-content:
+      - Spitballer
 
 - type: entity
   id: ShellPincer
@@ -46,6 +61,10 @@
   components:
   - type: ItemShell
     itemPrototype: Pincer
+  - type: ContainerFill
+    containers:
+      item-shell-content:
+      - Pincer
 
 - type: entity
   id: ShellScourge
@@ -53,6 +72,10 @@
   components:
   - type: ItemShell
     itemPrototype: Scourge
+  - type: ContainerFill
+    containers:
+      item-shell-content:
+      - Scourge
 
 - type: entity
   id: ShellSedativeSting
@@ -60,6 +83,10 @@
   components:
   - type: ItemShell
     itemPrototype: SedativeSting
+  - type: ContainerFill
+    containers:
+      item-shell-content:
+      - SedativeSting
 
 - type: entity
   id: ShellDagonsScale
@@ -67,3 +94,7 @@
   components:
   - type: ItemShell
     itemPrototype: DagonsScale
+  - type: ContainerFill
+    containers:
+      item-shell-content:
+      - DagonsScale

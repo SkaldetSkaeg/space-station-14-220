@@ -23,15 +23,9 @@ public sealed partial class ShellableItemSystem : EntitySystem
     {
         base.Initialize();
 
-        SubscribeLocalEvent<ShellableItemComponent, ComponentInit>(OnItemInit);
         SubscribeLocalEvent<ShellableItemComponent, EntGotRemovedFromContainerMessage>(OnRemove);
         SubscribeLocalEvent<ShellableItemComponent, EntGotInsertedIntoContainerMessage>(OnInsert);
         SubscribeLocalEvent<ShellableItemComponent, EntityTerminatingEvent>(OnItemTerminating);
-    }
-
-    private void OnItemInit(Entity<ShellableItemComponent> ent, ref ComponentInit args)
-    {
-        _containers.EnsureContainer<ContainerSlot>(ent, ShellableItemComponent.ShellContainerId);
     }
 
     private void Link(Entity<ItemShellComponent> shell, Entity<ShellableItemComponent> item)
