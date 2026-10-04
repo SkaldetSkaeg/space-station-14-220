@@ -21,7 +21,7 @@ job-description-syndicate-reinforcement = { ghost-role-information-syndicate-rei
 
 job-description-security-pilot = Ловите преступников на станции, бороздите просторы космоса в поисках... Чего-нибудь.
 
-job-description-ghost-role = Utility job for correct work job ban.
+job-description-ghost-role = Вспомогательная роль для корректной работы джоб банов
 
 job-description-derelict-borg = Вы — давно заброшенный киборг.
 job-description-ninja = Выполните задания клана, используя снаряжение космического ниндзя.
