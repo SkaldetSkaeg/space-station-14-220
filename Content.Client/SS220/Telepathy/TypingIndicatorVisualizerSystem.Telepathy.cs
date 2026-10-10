@@ -38,11 +38,13 @@ public sealed partial class TypingIndicatorVisualizerSystem
 
     private void QueueTelepathyAppearance(EntityUid uid)
     {
-        if (TryComp<AppearanceComponent>(uid, out var appearance))
-            AppearanceSystem.QueueUpdate(uid, appearance);
+        if (!TryComp<AppearanceComponent>(uid, out var appearance))
+            return;
+
+        AppearanceSystem.QueueUpdate(uid, appearance);
     }
 
-    private TypingIndicatorState GetTelepathyTypingState(EntityUid uid, TypingIndicatorState publicState)
+    private TypingIndicatorState GetTypingStateForDisplay(EntityUid uid, TypingIndicatorState publicState)
     {
         if (publicState != TypingIndicatorState.None)
             return publicState;

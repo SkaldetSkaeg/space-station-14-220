@@ -199,7 +199,14 @@ public partial class ChatBox : UIWidget
         // Update channel select button to correct channel if we have a prefix.
         _controller.UpdateSelectedChannel(this);
 
-        _controller.NotifyChatTextChange(this); //SS220 chat presentation
+        // Warn typing indicator about change
+        //SS220 Telepathy tweaks start
+        //if ((SelectedChannel & (ChatSelectChannel.OOC | ChatSelectChannel.LOOC)) == 0)
+        //{
+        //    _controller.NotifyChatTextChange();
+        //}
+        _controller.NotifyChatTextChange(this);
+        //SS220 Telepathy tweaks end
     }
 
     private void OnFocusEnter(LineEditEventArgs args)

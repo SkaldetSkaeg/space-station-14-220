@@ -50,15 +50,6 @@ public sealed partial class TypingIndicatorSystem
         ClientChangedChatFocus(isFocused);
     }
 
-    private TypingChangedEvent CreateTypingChangedEvent(TypingIndicatorState state)
-    {
-        var presentation = ChatChannelPresentation.ForChannel((ChatChannel)_inputChannel);
-        if (!presentation.ShowTyping || !_cfg.GetCVar(CCVars.ChatShowTypingIndicator))
-            state = TypingIndicatorState.None;
-
-        return new TypingChangedEvent(state) { IsTelepathy = _inputChannel == ChatSelectChannel.Telepathy };
-    }
-
     private void SendTypingChangedEvent(TypingIndicatorState state)
     {
         // Replicated CVar changes may run while applying server state, outside prediction.
@@ -75,6 +66,14 @@ public sealed partial class TypingIndicatorSystem
         }
 
         _typingUpdateQueued = false;
-        RaisePredictiveEvent(CreateTypingChangedEvent(state));
+
+        var presentation = ChatChannelPresentation.ForChannel((ChatChannel)_inputChannel);
+        if (!presentation.ShowTyping || !_cfg.GetCVar(CCVars.ChatShowTypingIndicator))
+            state = TypingIndicatorState.None;
+
+        RaisePredictiveEvent(new TypingChangedEvent(state)
+        {
+            IsTelepathy = _inputChannel == ChatSelectChannel.Telepathy,
+        });
     }
 }

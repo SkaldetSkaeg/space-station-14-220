@@ -42,7 +42,7 @@ public sealed partial class TypingIndicatorVisualizerSystem : VisualizerSystem<T
         SpriteSystem.LayerSetOffset((uid, args.Sprite), layer, proto.Offset);
 
         AppearanceSystem.TryGetData<TypingIndicatorState>(uid, TypingIndicatorVisuals.State, out var state);
-        state = GetTelepathyTypingState(uid, state); //SS220 telepathy
+        state = GetTypingStateForDisplay(uid, state); //SS220 telepathy
         SpriteSystem.LayerSetVisible((uid, args.Sprite), layer, state != TypingIndicatorState.None);
         switch (state)
         {
