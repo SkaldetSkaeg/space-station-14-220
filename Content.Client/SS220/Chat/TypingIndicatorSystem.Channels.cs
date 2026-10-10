@@ -4,11 +4,14 @@ using Content.Client.SS220.Chat;
 using Content.Shared.CCVar;
 using Content.Shared.Chat;
 using Content.Shared.Chat.TypingIndicator;
+using Robust.Shared.Prototypes;
 
 namespace Content.Client.Chat.TypingIndicator;
 
 public sealed partial class TypingIndicatorSystem
 {
+    [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
+
     private ChatSelectChannel _inputChannel;
     private bool _typingUpdateQueued;
 
@@ -67,13 +70,16 @@ public sealed partial class TypingIndicatorSystem
 
         _typingUpdateQueued = false;
 
-        var presentation = ChatChannelPresentation.ForChannel((ChatChannel)_inputChannel);
-        if (!presentation.ShowTyping || !_cfg.GetCVar(CCVars.ChatShowTypingIndicator))
+        var channel = (ChatChannel)_inputChannel;
+        var showTyping = _prototypeManager.TryIndex<ChatChannelPresentationPrototype>(
+            channel.ToString(), out var presentation) && presentation.ShowTyping;
+
+        if (!showTyping || !_cfg.GetCVar(CCVars.ChatShowTypingIndicator))
             state = TypingIndicatorState.None;
 
         RaisePredictiveEvent(new TypingChangedEvent(state)
         {
-            IsTelepathy = _inputChannel == ChatSelectChannel.Telepathy,
+            Channel = channel,
         });
     }
 }

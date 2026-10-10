@@ -1,6 +1,8 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
+using Content.Shared.Chat;
 using Content.Shared.Chat.TypingIndicator;
+using Content.Shared.SS220.Chat;
 using Content.Shared.SS220.Telepathy;
 using Robust.Shared.GameStates;
 using Robust.Shared.Player;
@@ -26,7 +28,7 @@ public sealed class TelepathyTypingIndicatorSystem : EntitySystem
         SubscribeLocalEvent<TelepathyTypingIndicatorComponent, PlayerDetachedEvent>(OnDetached);
         SubscribeLocalEvent<PlayerAttachedEvent>(OnAttached);
         SubscribeLocalEvent<TelepathyChangedEvent>(OnTelepathyChanged);
-        SubscribeLocalEvent<TelepathyTypingChangedEvent>(OnTypingChanged);
+        SubscribeLocalEvent<ChatTypingChangedEvent>(OnTypingChanged);
     }
 
     private void OnIndicatorStartup(Entity<TypingIndicatorComponent> ent, ref ComponentStartup args)
@@ -51,12 +53,12 @@ public sealed class TelepathyTypingIndicatorSystem : EntitySystem
         _permissionsDirty = true;
     }
 
-    private void OnTypingChanged(ref TelepathyTypingChangedEvent args)
+    private void OnTypingChanged(ref ChatTypingChangedEvent args)
     {
         if (!TryComp<TelepathyTypingIndicatorComponent>(args.Sender, out var indicator))
             return;
 
-        if (!args.IsTelepathy)
+        if (args.Channel != ChatChannel.Telepathy)
         {
             SetState((args.Sender, indicator), TypingIndicatorState.None);
             return;

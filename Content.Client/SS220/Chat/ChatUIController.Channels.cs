@@ -11,7 +11,10 @@ public sealed partial class ChatUIController
 {
     private void AddChannelSpeechBubble(ChatMessage message)
     {
-        var presentation = ChatChannelPresentation.ForChannel(message.Channel);
+        if (!_prototypeManager.TryIndex<ChatChannelPresentationPrototype>(
+                message.Channel.ToString(), out var presentation))
+            return;
+
         if (presentation.BubbleType == null)
             return;
 

@@ -24,9 +24,3 @@ public sealed class TelepathyTypingIndicatorState(TypingIndicatorState state) : 
 {
     public readonly TypingIndicatorState State = state;
 }
-
-/// <summary>
-/// Routes validated sender identity and input mode from the ordinary typing event to the private indicator.
-/// </summary>
-[ByRefEvent]
-public readonly record struct TelepathyTypingChangedEvent(EntityUid Sender, TypingIndicatorState State, bool IsTelepathy);
