@@ -6,22 +6,22 @@ using Robust.Client.UserInterface;
 namespace Content.Client.SS220.Forensics;
 
 /// <summary>
-/// Displays private scan results sent to users of the glove-print scanner.
+/// Displays private results from the swab physically inserted into the analyzer.
 /// </summary>
-public sealed class GlovePrintScannerBoundUserInterface : BoundUserInterface
+public sealed class GlovePrintAnalyzerBoundUserInterface : BoundUserInterface
 {
-    private GlovePrintScannerMenu? _window;
+    private GlovePrintAnalyzerMenu? _window;
 
-    public GlovePrintScannerBoundUserInterface(EntityUid owner, Enum uiKey) : base(owner, uiKey)
+    public GlovePrintAnalyzerBoundUserInterface(EntityUid owner, Enum uiKey) : base(owner, uiKey)
     {
     }
 
     protected override void Open()
     {
         base.Open();
-        _window = this.CreateWindow<GlovePrintScannerMenu>();
-        _window.Clear.OnPressed += _ => SendMessage(new GlovePrintScannerClearMessage());
-        SendMessage(new GlovePrintScannerRequestResultsMessage());
+        _window = this.CreateWindow<GlovePrintAnalyzerMenu>();
+        _window.Eject.OnPressed += _ => SendMessage(new GlovePrintAnalyzerEjectMessage());
+        SendMessage(new GlovePrintAnalyzerRequestResultsMessage());
     }
 
     protected override void ReceiveMessage(BoundUserInterfaceMessage message)
@@ -30,7 +30,7 @@ public sealed class GlovePrintScannerBoundUserInterface : BoundUserInterface
         if (_window == null)
             return;
 
-        if (message is not GlovePrintScannerResultsMessage results)
+        if (message is not GlovePrintAnalyzerResultsMessage results)
             return;
 
         _window.UpdateResults(results);

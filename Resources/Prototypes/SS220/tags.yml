@@ -408,3 +408,6 @@
 
 - type: Tag
   id: WeaponShotgunDoubleBarreled
+
+- type: Tag
+  id: GlovePrintSwab

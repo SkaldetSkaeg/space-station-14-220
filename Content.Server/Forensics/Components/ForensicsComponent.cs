@@ -1,3 +1,5 @@
+using Content.Shared.SS220.Forensics; // SS220 glove prints
+
 namespace Content.Server.Forensics
 {
     [RegisterComponent]
@@ -11,10 +13,10 @@ namespace Content.Server.Forensics
 
         // SS220 glove prints begin
         /// <summary>
-        /// Identities of gloves that touched this entity, independent of their fiber descriptions.
+        /// Identities and types of gloves that touched this entity, independent of fiber descriptions.
         /// </summary>
         [DataField]
-        public HashSet<string> GlovePrints = [];
+        public HashSet<GlovePrintTrace> GlovePrints = [];
         // SS220 glove prints end
 
 		//SS220 Micro_fibers start

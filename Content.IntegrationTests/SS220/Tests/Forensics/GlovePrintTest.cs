@@ -1,9 +1,11 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
+using System.Collections.Generic;
 using Content.IntegrationTests.Fixtures;
 using Content.Server.Forensics;
 using Content.Server.Forensics.Components;
 using Content.Server.SS220.Forensics.Components;
+using Content.Shared.Containers.ItemSlots;
 using Content.Shared.Forensics;
 using Content.Shared.Forensics.Components;
 using Content.Shared.Hands.EntitySystems;
@@ -11,9 +13,6 @@ using Content.Shared.Interaction;
 using Content.Shared.Inventory;
 using Content.Shared.Nutrition.Components;
 using Content.Shared.SS220.Forensics;
-using Robust.Server.GameObjects;
-using Robust.Shared.Audio;
-using Robust.Shared.Audio.Components;
 using Robust.Shared.GameObjects;
 using System.Linq;
 
@@ -33,7 +32,11 @@ public sealed class GlovePrintTest : GameTest
             var firstGloves = SEntMan.SpawnEntity("ClothingHandsGlovesColorBlack", map.GridCoords);
             var secondGloves = SEntMan.SpawnEntity("ClothingHandsGlovesColorBlack", map.GridCoords);
             var evidence = SEntMan.SpawnEntity("Crowbar", map.GridCoords);
+            var firstTrace = GetTrace(firstGloves);
+            var secondTrace = GetTrace(secondGloves);
 
+            Assert.That(firstTrace.Code, Is.Not.EqualTo(secondTrace.Code));
+            Assert.That(firstTrace.Prototype, Is.EqualTo(secondTrace.Prototype));
             Assert.That(inventory.TryEquip(wearer, firstGloves, "gloves"), Is.True);
             interaction.DoContactInteraction(wearer, evidence);
             Assert.That(inventory.TryUnequip(wearer, "gloves"), Is.True);
@@ -41,7 +44,7 @@ public sealed class GlovePrintTest : GameTest
             interaction.DoContactInteraction(wearer, evidence);
 
             var traces = SEntMan.GetComponent<ForensicsComponent>(evidence);
-            Assert.That(traces.GlovePrints, Has.Count.EqualTo(2));
+            Assert.That(traces.GlovePrints, Is.EquivalentTo(new[] { firstTrace, secondTrace }));
             Assert.That(traces.Fibers, Has.Count.EqualTo(1), "Identical fibers must not contain individual glove codes.");
 
             SEntMan.RemoveComponent<FiberComponent>(secondGloves);
@@ -49,7 +52,8 @@ public sealed class GlovePrintTest : GameTest
             interaction.DoContactInteraction(wearer, otherEvidence);
             var otherTraces = SEntMan.GetComponent<ForensicsComponent>(otherEvidence);
             Assert.That(otherTraces.Fibers, Is.Empty);
-            Assert.That(otherTraces.GlovePrints, Has.Count.EqualTo(1), "Glove traces must not depend on a Fiber component.");
+            Assert.That(otherTraces.GlovePrints, Is.EquivalentTo(new[] { secondTrace }),
+                "Glove traces must not depend on a Fiber component.");
         });
     }
 
@@ -65,14 +69,13 @@ public sealed class GlovePrintTest : GameTest
             var wearer = SEntMan.SpawnEntity("MobHuman", map.GridCoords);
             var gloves = SEntMan.SpawnEntity(prototype, map.GridCoords);
             var evidence = SEntMan.SpawnEntity("Crowbar", map.GridCoords);
-            var print = SEntMan.GetComponent<GlovePrintComponent>(gloves).Print;
-            Assert.That(print, Is.Not.Null.And.Not.Empty);
+            var trace = GetTrace(gloves);
 
             Assert.That(inventory.TryEquip(wearer, gloves, "gloves"), Is.True);
             interaction.DoContactInteraction(wearer, evidence);
             interaction.DoContactInteraction(wearer, evidence);
             var traces = SEntMan.GetComponent<ForensicsComponent>(evidence);
-            Assert.That(traces.GlovePrints, Is.EquivalentTo(new[] { print }));
+            Assert.That(traces.GlovePrints, Is.EquivalentTo(new[] { trace }));
             Assert.That(traces.Fingerprints.Count, Is.EqualTo(leavesFingerprints ? 1 : 0));
 
             Assert.That(inventory.TryUnequip(wearer, "gloves"), Is.True);
@@ -81,12 +84,12 @@ public sealed class GlovePrintTest : GameTest
             var otherEvidence = SEntMan.SpawnEntity("Crowbar", map.GridCoords);
             interaction.DoContactInteraction(secondWearer, otherEvidence);
             Assert.That(SEntMan.GetComponent<ForensicsComponent>(otherEvidence).GlovePrints,
-                Is.EquivalentTo(new[] { print }));
+                Is.EquivalentTo(new[] { trace }));
         });
     }
 
     [Test]
-    public async Task ForensicGlovesLeaveNoTraces()
+    public async Task ForensicGlovesLeaveNoTracesOrDirectSample()
     {
         var map = await Pair.CreateTestMap();
         await Server.WaitAssertion(() =>
@@ -100,10 +103,12 @@ public sealed class GlovePrintTest : GameTest
             Assert.That(traces.GlovePrints, Is.Empty);
             Assert.That(traces.Fibers, Is.Empty);
             Assert.That(traces.Fingerprints, Is.Empty);
-            var scanner = SEntMan.SpawnEntity("GlovePrintScanner", map.GridCoords);
-            SEntMan.GetComponent<GlovePrintScannerComponent>(scanner).ScanDelay = TimeSpan.Zero;
-            Scan(scanner, wearer, gloves);
-            Assert.That(SEntMan.GetComponent<GlovePrintScannerComponent>(scanner).Sample, Is.Null);
+
+            var swab = CollectSample(wearer, gloves);
+            var sample = SEntMan.GetComponent<GlovePrintSwabComponent>(swab);
+            Assert.That(sample.Used, Is.True);
+            Assert.That(sample.GlovePrints, Is.Empty);
+            Assert.That(sample.SourceName, Is.EqualTo(SEntMan.GetComponent<MetaDataComponent>(gloves).EntityName));
         });
     }
 
@@ -118,7 +123,7 @@ public sealed class GlovePrintTest : GameTest
             var wearer = SEntMan.SpawnEntity("MobHuman", map.GridCoords);
             var gloves = SEntMan.SpawnEntity("ClothingHandsGlovesColorBlack", map.GridCoords);
             SEntMan.RemoveComponent<FiberComponent>(gloves);
-            var print = SEntMan.GetComponent<GlovePrintComponent>(gloves).Print;
+            var trace = GetTrace(gloves);
             var evidence = SEntMan.SpawnEntity("Crowbar", map.GridCoords);
             Assert.That(inventory.TryEquip(wearer, gloves, "gloves"), Is.True);
             interaction.DoContactInteraction(wearer, evidence);
@@ -126,12 +131,12 @@ public sealed class GlovePrintTest : GameTest
             var traces = SEntMan.GetComponent<ForensicsComponent>(evidence);
             Assert.That(traces.Fibers, Is.Empty);
             Assert.That(traces.Fingerprints, Is.Empty);
-            Assert.That(traces.GlovePrints, Does.Contain(print));
+            Assert.That(traces.GlovePrints, Does.Contain(trace));
 
             var forensics = SEntMan.System<ForensicsSystem>();
             var copiedEvidence = SEntMan.SpawnEntity("Crowbar", map.GridCoords);
             forensics.CopyForensicsFrom(traces, copiedEvidence);
-            Assert.That(SEntMan.GetComponent<ForensicsComponent>(copiedEvidence).GlovePrints, Does.Contain(print));
+            Assert.That(SEntMan.GetComponent<ForensicsComponent>(copiedEvidence).GlovePrints, Does.Contain(trace));
 
             var soap = SEntMan.SpawnEntity("Soap", map.GridCoords);
             interaction.DoContactInteraction(wearer, soap);
@@ -139,116 +144,139 @@ public sealed class GlovePrintTest : GameTest
             cleaner.CleanDelay = 0;
             Assert.That(forensics.TryStartCleaning((soap, cleaner), wearer, evidence), Is.True);
             Assert.That(traces.GlovePrints, Is.Empty);
-            Assert.That(SEntMan.GetComponent<ForensicsComponent>(copiedEvidence).GlovePrints, Does.Contain(print));
+            Assert.That(SEntMan.GetComponent<ForensicsComponent>(copiedEvidence).GlovePrints, Does.Contain(trace));
 
             interaction.DoContactInteraction(wearer, gloves);
             Assert.That(forensics.TryStartCleaning((soap, cleaner), wearer, gloves), Is.True);
-            Assert.That(SEntMan.GetComponent<GlovePrintComponent>(gloves).Print, Is.EqualTo(print));
+            Assert.That(GetTrace(gloves), Is.EqualTo(trace));
             Assert.That(inventory.TryEquip(wearer, gloves, "gloves"), Is.True);
             interaction.DoContactInteraction(wearer, evidence);
-            Assert.That(traces.GlovePrints, Is.EquivalentTo(new[] { print }));
+            Assert.That(traces.GlovePrints, Is.EquivalentTo(new[] { trace }));
         });
     }
 
     [Test]
-    public async Task OnlyDedicatedScannerReadsAndComparesGloveTraces()
+    public async Task OnlyAnalyzerReadsCollectedGloveTraces()
     {
         var map = await Pair.CreateTestMap();
         await Server.WaitAssertion(() =>
         {
             var wearer = SEntMan.SpawnEntity("MobHuman", map.GridCoords);
             var gloves = SEntMan.SpawnEntity("ClothingHandsGlovesColorBlack", map.GridCoords);
-            var otherGloves = SEntMan.SpawnEntity("ClothingHandsGlovesColorBlack", map.GridCoords);
+            var investigatorGloves = SEntMan.SpawnEntity("ClothingHandsGlovesColorBlack", map.GridCoords);
             var evidence = SEntMan.SpawnEntity("Crowbar", map.GridCoords);
-            var print = SEntMan.GetComponent<GlovePrintComponent>(gloves).Print;
+            var trace = GetTrace(gloves);
             var inventory = SEntMan.System<InventorySystem>();
+            var interaction = SEntMan.System<SharedInteractionSystem>();
             Assert.That(inventory.TryEquip(wearer, gloves, "gloves"), Is.True);
-            SEntMan.System<SharedInteractionSystem>().DoContactInteraction(wearer, evidence);
+            interaction.DoContactInteraction(wearer, evidence);
             Assert.That(inventory.TryUnequip(wearer, "gloves"), Is.True);
 
             var ordinaryScanner = SEntMan.SpawnEntity("ForensicScanner", map.GridCoords);
             var ordinary = SEntMan.GetComponent<ForensicScannerComponent>(ordinaryScanner);
             ordinary.ScanDelay = 0;
-            Scan(ordinaryScanner, wearer, evidence);
-            Assert.That(ordinary.Fibers.Single(), Does.Not.Contain(print));
+            AfterInteract(ordinaryScanner, wearer, evidence);
+            Assert.That(ordinary.Fibers.Single(), Does.Not.Contain(trace.Code));
             var pad = SEntMan.SpawnEntity("ForensicPad", map.GridCoords);
-            var sample = SEntMan.GetComponent<ForensicPadComponent>(pad);
-            sample.ScanDelay = 0;
-            Scan(pad, wearer, gloves);
-            Assert.That(sample.Used, Is.True);
-            Assert.That(sample.Sample, Is.EqualTo(ordinary.Fibers.Single()));
+            var padSample = SEntMan.GetComponent<ForensicPadComponent>(pad);
+            padSample.ScanDelay = 0;
+            AfterInteract(pad, wearer, gloves);
+            Assert.That(padSample.Used, Is.True);
+            Assert.That(padSample.Sample, Is.EqualTo(ordinary.Fibers.Single()));
 
-            var scanner = SEntMan.SpawnEntity("GlovePrintScanner", map.GridCoords);
-            var scan = SEntMan.GetComponent<GlovePrintScannerComponent>(scanner);
-            scan.ScanDelay = TimeSpan.Zero;
-            Assert.That(inventory.TryEquip(wearer, otherGloves, "gloves"), Is.True);
-            Assert.That(SEntMan.System<SharedInteractionSystem>().InteractDoAfter(
-                wearer, scanner, evidence, map.GridCoords, canReach: true), Is.False);
-            Assert.That(scan.GlovePrints, Is.EquivalentTo(new[] { print }));
+            Assert.That(inventory.TryEquip(wearer, investigatorGloves, "gloves"), Is.True);
+            var swab = CollectSample(wearer, evidence);
+            var sample = SEntMan.GetComponent<GlovePrintSwabComponent>(swab);
+            Assert.That(sample.GlovePrints, Is.EquivalentTo(new[] { trace }));
             Assert.That(SEntMan.GetComponent<ForensicsComponent>(evidence).GlovePrints,
-                Is.EquivalentTo(new[] { print }), "Scanning must not add the investigator's glove traces.");
-            Scan(scanner, wearer, otherGloves);
-            Assert.That(scan.Sample, Is.Not.EqualTo(print));
-            Assert.That(HasSound(scan.SoundNoMatch), Is.True);
-            Scan(scanner, wearer, gloves);
-            Assert.That(scan.Sample, Is.EqualTo(print));
-            Assert.That(HasSound(scan.SoundMatch), Is.True);
-            Assert.That(scan.GlovePrints, Is.EquivalentTo(new[] { print }), "Sampling must retain the scanned evidence.");
+                Is.EquivalentTo(new[] { trace }), "Collecting must not add the investigator's glove traces.");
 
-            Assert.That(SEntMan.GetComponent<UserInterfaceComponent>(scanner).States, Is.Empty,
+            var analyzer = SEntMan.SpawnEntity("GlovePrintAnalyzer", map.GridCoords);
+            var machine = SEntMan.GetComponent<GlovePrintAnalyzerComponent>(analyzer);
+            var slots = SEntMan.System<ItemSlotsSystem>();
+            Assert.That(slots.TryGetSlot(analyzer, machine.SampleSlot, out var slot), Is.True);
+            Assert.That(slot.Item, Is.Null);
+            var crowbar = SEntMan.SpawnEntity("Crowbar", map.GridCoords);
+            Assert.That(slots.CanInsert(analyzer, crowbar, wearer, slot), Is.False,
+                "The analyzer must only accept a glove trace swab.");
+            Assert.That(interaction.InteractUsing(wearer, swab, analyzer, map.GridCoords), Is.True);
+            Assert.That(slot.Item, Is.EqualTo(swab), "Analyzing requires insertion of the physical collected swab.");
+            Assert.That(sample.GlovePrints, Is.EquivalentTo(new[] { trace }));
+            Assert.That(SEntMan.GetComponent<UserInterfaceComponent>(analyzer).States, Is.Empty,
                 "Private results must not enter component state replicated to nearby clients.");
-            SEntMan.EventBus.RaiseLocalEvent(scanner, new GlovePrintScannerClearMessage());
-            Assert.That(scan.GlovePrints, Is.Empty);
-            Assert.That(scan.Sample, Is.Null);
-            Assert.That(scan.LastScannedName, Is.Empty);
-
-            Scan(scanner, wearer, SEntMan.SpawnEntity("Crowbar", map.GridCoords));
-            Assert.That(scan.GlovePrints, Is.Empty, "Scanning a clean object must not retain earlier traces.");
         });
     }
 
     [Test]
-    public async Task ScannerResultsRequireHoldingTheDevice()
+    public async Task SampleSurvivesCleaningAndDeletedGloves()
     {
         var map = await Pair.CreateTestMap();
         await Server.WaitAssertion(() =>
         {
-            var user = SEntMan.SpawnEntity("MobHuman", map.GridCoords);
-            var scanner = SEntMan.SpawnEntity("GlovePrintScanner", map.GridCoords);
-            var ui = SEntMan.System<UserInterfaceSystem>();
+            var wearer = SEntMan.SpawnEntity("MobHuman", map.GridCoords);
+            var gloves = SEntMan.SpawnEntity("ClothingHandsGlovesColorBlack", map.GridCoords);
+            var evidence = SEntMan.SpawnEntity("Crowbar", map.GridCoords);
+            var trace = GetTrace(gloves);
+            var inventory = SEntMan.System<InventorySystem>();
+            Assert.That(inventory.TryEquip(wearer, gloves, "gloves"), Is.True);
+            SEntMan.System<SharedInteractionSystem>().DoContactInteraction(wearer, evidence);
+            var swab = CollectSample(wearer, evidence);
+            var sample = SEntMan.GetComponent<GlovePrintSwabComponent>(swab);
+            var sourceName = sample.SourceName;
+            Assert.That(sample.GlovePrints, Is.EquivalentTo(new[] { trace }));
+
             var hands = SEntMan.System<SharedHandsSystem>();
-            Assert.That(ui.TryOpenUi(scanner, GlovePrintScannerUiKey.Key, user), Is.False,
-                "A raw UI open must not expose results from a scanner lying nearby.");
+            Assert.That(hands.TryDrop(wearer, swab), Is.True);
+            var soap = SEntMan.SpawnEntity("Soap", map.GridCoords);
+            Assert.That(hands.TryPickupAnyHand(wearer, soap), Is.True);
+            var cleaner = SEntMan.GetComponent<CleansForensicsComponent>(soap);
+            cleaner.CleanDelay = 0;
+            Assert.That(SEntMan.System<ForensicsSystem>().TryStartCleaning((soap, cleaner), wearer, evidence), Is.True);
+            Assert.That(SEntMan.GetComponent<ForensicsComponent>(evidence).GlovePrints, Is.Empty);
+            Assert.That(inventory.TryUnequip(wearer, "gloves"), Is.True);
+            SEntMan.DeleteEntity(gloves);
+            SEntMan.DeleteEntity(evidence);
 
-            var otherUser = SEntMan.SpawnEntity("MobHuman", map.GridCoords);
-            Assert.That(ui.TryOpenUi(scanner, GlovePrintScannerUiKey.Key, otherUser), Is.False);
-            Assert.That(hands.TryPickup(user, scanner), Is.True);
-            Assert.That(ui.TryOpenUi(scanner, GlovePrintScannerUiKey.Key, user), Is.True);
+            Assert.That(sample.GlovePrints, Is.EquivalentTo(new[] { trace }),
+                "A collected sample must retain the glove type and code after its source and gloves are gone.");
+            Assert.That(sample.SourceName, Is.EqualTo(sourceName));
+        });
+    }
 
-            var request = new GlovePrintScannerRequestResultsMessage { Actor = user };
-            ui.RaiseUiMessage(scanner, GlovePrintScannerUiKey.Key, request);
-            Assert.That(request.Entity, Is.EqualTo(SEntMan.GetNetEntity(scanner)));
-            var scan = SEntMan.GetComponent<GlovePrintScannerComponent>(scanner);
-            scan.GlovePrints.Add("stored glove print");
-            scan.Sample = "sample";
-            scan.LastScannedName = "evidence";
-            ui.RaiseUiMessage(scanner, GlovePrintScannerUiKey.Key, new GlovePrintScannerClearMessage { Actor = user });
-            Assert.That(scan.GlovePrints, Is.Empty);
-            Assert.That(scan.Sample, Is.Null);
-            Assert.That(scan.LastScannedName, Is.Empty);
+    [TestCase(false)]
+    [TestCase(true)]
+    public async Task UsedSwabsCannotOverwriteEmptyOrCollectedSamples(bool firstSourceHasTraces)
+    {
+        var map = await Pair.CreateTestMap();
+        await Server.WaitAssertion(() =>
+        {
+            var wearer = SEntMan.SpawnEntity("MobHuman", map.GridCoords);
+            var firstGloves = SEntMan.SpawnEntity("ClothingHandsGlovesColorBlack", map.GridCoords);
+            var secondGloves = SEntMan.SpawnEntity("ClothingHandsGlovesColorBlack", map.GridCoords);
+            var firstEvidence = SEntMan.SpawnEntity("Crowbar", map.GridCoords);
+            var secondEvidence = SEntMan.SpawnEntity("Wrench", map.GridCoords);
+            var inventory = SEntMan.System<InventorySystem>();
+            var interaction = SEntMan.System<SharedInteractionSystem>();
+            Assert.That(inventory.TryEquip(wearer, firstGloves, "gloves"), Is.True);
+            if (firstSourceHasTraces)
+                interaction.DoContactInteraction(wearer, firstEvidence);
 
-            scan.GlovePrints.Add("stored glove print");
-            scan.Sample = "sample";
-            scan.LastScannedName = "evidence";
-            Assert.That(hands.TryDrop(user, scanner), Is.True);
-            Assert.That(ui.TryOpenUi(scanner, GlovePrintScannerUiKey.Key, user), Is.False);
-            var blockedRequest = new GlovePrintScannerRequestResultsMessage { Actor = user };
-            ui.RaiseUiMessage(scanner, GlovePrintScannerUiKey.Key, blockedRequest);
-            Assert.That(blockedRequest.Entity, Is.EqualTo(NetEntity.Invalid));
-            ui.RaiseUiMessage(scanner, GlovePrintScannerUiKey.Key, new GlovePrintScannerClearMessage { Actor = user });
-            Assert.That(scan.GlovePrints, Is.EquivalentTo(new[] { "stored glove print" }));
-            Assert.That(scan.Sample, Is.EqualTo("sample"));
-            Assert.That(scan.LastScannedName, Is.EqualTo("evidence"));
+            var swab = CollectSample(wearer, firstEvidence);
+            var sample = SEntMan.GetComponent<GlovePrintSwabComponent>(swab);
+            List<GlovePrintTrace> originalTraces = [.. sample.GlovePrints];
+            Assert.That(originalTraces.Count, Is.EqualTo(firstSourceHasTraces ? 1 : 0));
+            var originalSourceName = sample.SourceName;
+            Assert.That(originalSourceName, Is.EqualTo(SEntMan.GetComponent<MetaDataComponent>(firstEvidence).EntityName));
+            Assert.That(inventory.TryUnequip(wearer, "gloves"), Is.True);
+            Assert.That(inventory.TryEquip(wearer, secondGloves, "gloves"), Is.True);
+            interaction.DoContactInteraction(wearer, secondEvidence);
+
+            Assert.That(interaction.InteractDoAfter(wearer, swab, secondEvidence, map.GridCoords, canReach: true),
+                Is.False);
+            Assert.That(sample.Used, Is.True);
+            Assert.That(sample.GlovePrints, Is.EquivalentTo(originalTraces));
+            Assert.That(sample.SourceName, Is.EqualTo(originalSourceName),
+                "Even an empty collection consumes the swab and must not be replaced by a later sample.");
         });
     }
 
@@ -256,29 +284,29 @@ public sealed class GlovePrintTest : GameTest
     [TestCase("ClothingHandsGlovesColorBlack", "ClothingHandsGlovesFingerless", true)]
     [TestCase("ClothingHandsGlovesColorYellowBudget", "ClothingHandsGlovesFingerlessInsulated", false)]
     [TestCase("ClothingHandsGlovesCombat", "ClothingHandsGlovesFingerless", false)]
-    public async Task CuttingPreservesIdentityAndMatching(string prototype, string resultPrototype, bool equipped)
+    public async Task CuttingPreservesPairCodeAndOriginalTypeSnapshot(string prototype, string resultPrototype, bool equipped)
     {
         var map = await Pair.CreateTestMap();
         await Server.WaitAssertion(() =>
         {
             var wearer = SEntMan.SpawnEntity("MobHuman", map.GridCoords);
             var gloves = SEntMan.SpawnEntity(prototype, map.GridCoords);
-            var print = SEntMan.GetComponent<GlovePrintComponent>(gloves).Print;
+            var originalTrace = GetTrace(gloves);
             var inventory = SEntMan.System<InventorySystem>();
+            var interaction = SEntMan.System<SharedInteractionSystem>();
             Assert.That(inventory.TryEquip(wearer, gloves, "gloves"), Is.True);
             var evidence = SEntMan.SpawnEntity("Crowbar", map.GridCoords);
-            SEntMan.System<SharedInteractionSystem>().DoContactInteraction(wearer, evidence);
+            interaction.DoContactInteraction(wearer, evidence);
             if (!equipped)
                 Assert.That(inventory.TryUnequip(wearer, "gloves"), Is.True);
 
-            var scanner = SEntMan.SpawnEntity("GlovePrintScanner", map.GridCoords);
-            var scan = SEntMan.GetComponent<GlovePrintScannerComponent>(scanner);
-            scan.ScanDelay = TimeSpan.Zero;
-            Scan(scanner, wearer, evidence);
+            var originalSwab = CollectSample(wearer, evidence);
+            var originalSample = SEntMan.GetComponent<GlovePrintSwabComponent>(originalSwab);
+            Assert.That(originalSample.GlovePrints, Is.EquivalentTo(new[] { originalTrace }));
 
             SEntMan.GetComponent<ButcherableComponent>(gloves).ButcherDelay = 0;
             var knife = SEntMan.SpawnEntity("KitchenKnife", map.GridCoords);
-            Scan(knife, wearer, gloves);
+            AfterInteract(knife, wearer, gloves);
             EntityUid? cutGloves = null;
             var query = SEntMan.EntityQueryEnumerator<GlovePrintComponent, MetaDataComponent>();
             while (query.MoveNext(out var uid, out _, out var meta))
@@ -291,29 +319,55 @@ public sealed class GlovePrintTest : GameTest
             }
 
             Assert.That(cutGloves, Is.Not.Null);
-            Scan(scanner, wearer, cutGloves.Value);
-            Assert.That(scan.Sample, Is.EqualTo(print));
-            Assert.That(scan.GlovePrints, Does.Contain(print));
-            Assert.That(HasSound(scan.SoundMatch), Is.True);
+            var cutTrace = GetTrace(cutGloves.Value);
+            Assert.That(cutTrace.Code, Is.EqualTo(originalTrace.Code));
+            Assert.That(cutTrace.Prototype, Is.Not.EqualTo(originalTrace.Prototype));
+            Assert.That(SEntMan.System<SharedHandsSystem>().TryDrop(wearer, originalSwab), Is.True);
+            var cutSwab = CollectSample(wearer, cutGloves.Value);
+            Assert.That(SEntMan.GetComponent<GlovePrintSwabComponent>(cutSwab).GlovePrints,
+                Is.EquivalentTo(new[] { cutTrace }));
+
+            if (equipped)
+                Assert.That(inventory.TryUnequip(wearer, "gloves"), Is.True);
+
+            Assert.That(inventory.TryEquip(wearer, cutGloves.Value, "gloves"), Is.True);
+
+            Assert.That(inventory.TryGetSlotEntity(wearer, "gloves", out var equippedGloves), Is.True);
+            Assert.That(equippedGloves, Is.EqualTo(cutGloves));
+            interaction.DoContactInteraction(wearer, evidence);
+            Assert.That(SEntMan.GetComponent<ForensicsComponent>(evidence).GlovePrints,
+                Is.EquivalentTo(new[] { originalTrace, cutTrace }),
+                "Contacts before and after cutting must retain their original type for the same pair code.");
+            Assert.That(originalSample.GlovePrints, Is.EquivalentTo(new[] { originalTrace }),
+                "Later contacts must not change a previously collected type snapshot.");
         });
     }
 
-    private void Scan(EntityUid scanner, EntityUid user, EntityUid target)
+    private EntityUid CollectSample(EntityUid user, EntityUid target)
     {
         var coordinates = SEntMan.GetComponent<TransformComponent>(user).Coordinates;
-        SEntMan.EventBus.RaiseLocalEvent(scanner, new AfterInteractEvent(user, scanner, target, coordinates, true));
+        var swab = SEntMan.SpawnEntity("GlovePrintSwab", coordinates);
+        var sample = SEntMan.GetComponent<GlovePrintSwabComponent>(swab);
+        sample.SampleDelay = TimeSpan.Zero;
+        Assert.That(SEntMan.System<SharedHandsSystem>().TryPickupAnyHand(user, swab), Is.True);
+        Assert.That(SEntMan.System<SharedInteractionSystem>().InteractDoAfter(
+            user, swab, target, coordinates, canReach: true), Is.False);
+        Assert.That(sample.Used, Is.True, "The real interaction must finish collecting a physical sample.");
+        return swab;
     }
 
-    private bool HasSound(SoundSpecifier sound)
+    private GlovePrintTrace GetTrace(EntityUid gloves)
     {
-        var path = ((SoundPathSpecifier)sound).Path.ToString();
-        var query = SEntMan.EntityQueryEnumerator<AudioComponent>();
-        while (query.MoveNext(out var audio))
-        {
-            if (audio.FileName == path)
-                return true;
-        }
+        var print = SEntMan.GetComponent<GlovePrintComponent>(gloves).Print;
+        Assert.That(print, Is.Not.Null.And.Not.Empty);
+        var prototype = SEntMan.GetComponent<MetaDataComponent>(gloves).EntityPrototype;
+        Assert.That(prototype, Is.Not.Null);
+        return new GlovePrintTrace(print!, prototype!.ID);
+    }
 
-        return false;
+    private void AfterInteract(EntityUid used, EntityUid user, EntityUid target)
+    {
+        var coordinates = SEntMan.GetComponent<TransformComponent>(user).Coordinates;
+        SEntMan.EventBus.RaiseLocalEvent(used, new AfterInteractEvent(user, used, target, coordinates, true));
     }
 }

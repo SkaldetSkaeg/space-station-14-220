@@ -6,6 +6,8 @@ using Content.Server.SS220.Forensics.Components;
 using Content.Shared.Hands.Components;
 using Content.Shared.Interaction.Events;
 using Content.Shared.Inventory;
+using Content.Shared.SS220.Forensics;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 
 namespace Content.Server.SS220.Forensics.Systems;
@@ -71,7 +73,9 @@ public sealed class GlovePrintSystem : EntitySystem
         if (!TryGetPrint(gloves.Value, out var print) || print == null)
             return;
 
-        EnsureComp<ForensicsComponent>(args.Other).GlovePrints.Add(print);
+        var prototype = MetaData(gloves.Value).EntityPrototype;
+        EntProtoId? prototypeId = prototype == null ? (EntProtoId?)null : new EntProtoId(prototype.ID);
+        EnsureComp<ForensicsComponent>(args.Other).GlovePrints.Add(new GlovePrintTrace(print, prototypeId));
     }
 
     /// <summary>

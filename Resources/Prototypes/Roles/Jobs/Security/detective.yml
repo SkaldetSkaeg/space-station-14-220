@@ -38,7 +38,11 @@
     - Flash
     - ForensicPad
     - ForensicScanner
-    - GlovePrintScanner # SS220 glove prints
+    # SS220 glove prints begin
+    - BoxGlovePrintSwabs
+    - GlovePrintAnalyzerFlatpack
+    - Multitool
+    # SS220 glove prints end
 
 - type: chameleonOutfit
   id: DetectiveChameleonOutfit

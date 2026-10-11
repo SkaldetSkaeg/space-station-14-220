@@ -6,9 +6,9 @@ using Robust.Shared.Serialization;
 namespace Content.Shared.SS220.Forensics;
 
 /// <summary>
-/// Completes a scan without transmitting the target's glove identity in the do-after state.
+/// Completes collection of glove traces into a single-use swab.
 /// </summary>
 [Serializable, NetSerializable]
-public sealed partial class GlovePrintScannerDoAfterEvent : SimpleDoAfterEvent
+public sealed partial class GlovePrintSwabDoAfterEvent : SimpleDoAfterEvent
 {
 }

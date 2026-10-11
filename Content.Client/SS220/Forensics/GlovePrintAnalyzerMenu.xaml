@@ -1,0 +1,19 @@
+<!-- © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt -->
+<DefaultWindow xmlns="https://spacestation14.io"
+               Title="{Loc 'glove-print-analyzer-interface-title'}"
+               MinSize="400 250"
+               SetSize="400 400">
+    <BoxContainer Orientation="Vertical" SeparationOverride="8">
+        <Button Name="Eject"
+                Access="Public"
+                Disabled="True"
+                TextAlign="Center"
+                Text="{Loc 'glove-print-analyzer-interface-eject'}" />
+        <RichTextLabel Name="SourceLabel" />
+        <Label Name="StatusLabel" />
+        <Label Text="{Loc 'glove-print-analyzer-interface-traces'}" />
+        <ScrollContainer VerticalExpand="True" HorizontalExpand="True" HScrollEnabled="False">
+            <RichTextLabel Name="TracesLabel" VerticalAlignment="Top" />
+        </ScrollContainer>
+    </BoxContainer>
+</DefaultWindow>
