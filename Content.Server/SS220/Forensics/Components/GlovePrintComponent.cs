@@ -4,11 +4,17 @@ namespace Content.Server.SS220.Forensics.Components;
 
 /// <summary>
 /// Persistent identity of a pair of gloves, separate from removable evidence on its surface.
-/// Only gloves that leave fibers expose this identity in forensic samples.
+/// This identity is sampled by the dedicated glove-print scanner.
 /// </summary>
 [RegisterComponent]
 public sealed partial class GlovePrintComponent : Component
 {
+    /// <summary>
+    /// Whether the gloves leave an identifiable trace and can be sampled by the scanner.
+    /// </summary>
+    [DataField]
+    public bool Enabled = true;
+
     /// <summary>
     /// Random identifier generated once for this pair and retained when its fingertips are cut off.
     /// </summary>

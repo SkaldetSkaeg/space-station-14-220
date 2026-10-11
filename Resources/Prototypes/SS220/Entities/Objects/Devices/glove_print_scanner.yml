@@ -1,0 +1,31 @@
+# © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
+
+- type: entity
+  id: GlovePrintScanner
+  name: glove print scanner
+  parent: [BaseItem, BaseSecurityContraband]
+  description: A handheld device for identifying glove prints and comparing them with a pair of gloves.
+  components:
+  - type: Sprite
+    sprite: Objects/Devices/forensic_scanner.rsi
+    state: icon
+  - type: Item
+    size: Small
+    storedRotation: 90
+  - type: Clothing
+    sprite: Objects/Devices/forensic_scanner.rsi
+    quickEquip: false
+    slots:
+    - Belt
+  - type: ActivatableUI
+    key: enum.GlovePrintScannerUiKey.Key
+    inHandsOnly: true
+    requireActiveHand: false
+  - type: UserInterface
+    interfaces:
+      enum.GlovePrintScannerUiKey.Key:
+        type: GlovePrintScannerBoundUserInterface
+  - type: GlovePrintScanner
+  - type: GuideHelp
+    guides:
+    - Forensics

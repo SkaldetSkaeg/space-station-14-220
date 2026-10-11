@@ -38,6 +38,7 @@
     - Flash
     - ForensicPad
     - ForensicScanner
+    - GlovePrintScanner # SS220 glove prints
 
 - type: chameleonOutfit
   id: DetectiveChameleonOutfit

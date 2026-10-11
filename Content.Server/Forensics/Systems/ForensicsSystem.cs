@@ -27,7 +27,6 @@ using Robust.Shared.Containers;
 using Content.Server.SS220.Forensics.Components;
 using Content.Shared.Cloning.Events;
 using Content.Shared.Hands.Components;
-using Content.Server.SS220.Forensics.Systems; // SS220 glove prints
 
 namespace Content.Server.Forensics
 {
@@ -38,7 +37,6 @@ namespace Content.Server.Forensics
         [Dependency] private readonly DoAfterSystem _doAfterSystem = default!;
         [Dependency] private readonly PopupSystem _popupSystem = default!;
         [Dependency] private readonly SharedSolutionContainerSystem _solutionContainerSystem = default!;
-        [Dependency] private readonly GlovePrintSystem _glovePrint = default!; // SS220 glove prints
 
         public override void Initialize()
         {
@@ -304,7 +302,7 @@ namespace Content.Server.Forensics
 
             // leave behind evidence it was cleaned
             if (TryComp<FiberComponent>(args.Used, out var fiber))
-                _glovePrint.AddFiberEvidence((args.Target.Value, targetComp), (args.Used.Value, fiber)); // SS220 glove prints
+                targetComp.Fibers.Add(string.IsNullOrEmpty(fiber.FiberColor) ? Loc.GetString("forensic-fibers", ("material", fiber.FiberMaterial)) : Loc.GetString("forensic-fibers-colored", ("color", fiber.FiberColor), ("material", fiber.FiberMaterial)));
 
             if (TryComp<ResidueComponent>(args.Used, out var residue))
                 targetComp.Residues.Add(string.IsNullOrEmpty(residue.ResidueColor) ? Loc.GetString("forensic-residue", ("adjective", residue.ResidueAdjective)) : Loc.GetString("forensic-residue-colored", ("color", residue.ResidueColor), ("adjective", residue.ResidueAdjective)));
@@ -339,7 +337,7 @@ namespace Content.Server.Forensics
             if (_inventory.TryGetSlotEntity(user, "gloves", out var gloves))
             {
                 if (TryComp<FiberComponent>(gloves, out var fiber) && !string.IsNullOrEmpty(fiber.FiberMaterial))
-                    _glovePrint.AddFiberEvidence((target, component), (gloves.Value, fiber)); // SS220 glove prints
+                    component.Fibers.Add(string.IsNullOrEmpty(fiber.FiberColor) ? Loc.GetString("forensic-fibers", ("material", fiber.FiberMaterial)) : Loc.GetString("forensic-fibers-colored", ("color", fiber.FiberColor), ("material", fiber.FiberMaterial)));
             }
 
             if (TryComp<FingerprintComponent>(user, out var fingerprint) && CanAccessFingerprint(user, out _))

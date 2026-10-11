@@ -1,22 +1,28 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
 using Content.Server.Forensics;
+using Content.Server.Forensics.Components;
 using Content.Server.SS220.Forensics.Components;
+using Content.Shared.Hands.Components;
+using Content.Shared.Interaction.Events;
+using Content.Shared.Inventory;
 using Robust.Shared.Random;
 
 namespace Content.Server.SS220.Forensics.Systems;
 
 /// <summary>
-/// Assigns persistent glove identities and includes them in forensic fiber samples.
+/// Records individual glove contact traces independently of fingerprints and fibers.
 /// </summary>
 public sealed class GlovePrintSystem : EntitySystem
 {
     [Dependency] private readonly IRobustRandom _random = default!;
+    [Dependency] private readonly InventorySystem _inventory = default!;
 
     public override void Initialize()
     {
         base.Initialize();
         SubscribeLocalEvent<GlovePrintComponent, MapInitEvent>(OnMapInit);
+        SubscribeLocalEvent<InventoryComponent, ContactInteractionEvent>(OnContact);
     }
 
     private void OnMapInit(Entity<GlovePrintComponent> ent, ref MapInitEvent args)
@@ -36,31 +42,36 @@ public sealed class GlovePrintSystem : EntitySystem
     }
 
     /// <summary>
-    /// Formats the same sample for contact evidence, cleaning residue and forensic pads.
-    /// Items without a glove identity retain their ordinary fiber description.
+    /// Obtains the permanent identity of gloves that leave identifiable contact traces.
     /// </summary>
-    public string GetFiberSample(Entity<FiberComponent> ent)
+    public bool TryGetPrint(EntityUid uid, out string? print)
     {
-        var fibers = string.IsNullOrEmpty(ent.Comp.FiberColor)
-            ? Loc.GetString("forensic-fibers", ("material", ent.Comp.FiberMaterial))
-            : Loc.GetString("forensic-fibers-colored", ("color", ent.Comp.FiberColor), ("material", ent.Comp.FiberMaterial));
+        print = null;
+        if (!TryComp<GlovePrintComponent>(uid, out var component))
+            return false;
 
-        if (!TryComp<GlovePrintComponent>(ent, out var print))
-            return fibers;
+        if (!component.Enabled)
+            return false;
 
-        return Loc.GetString("forensic-fibers-glove-print", ("fibers", fibers), ("print", EnsurePrint(print)));
+        print = EnsurePrint(component);
+        return true;
     }
 
-    /// <summary>
-    /// Records the visible fibers and, for gloves, the identity used for matching samples.
-    /// </summary>
-    public void AddFiberEvidence(Entity<ForensicsComponent> target, Entity<FiberComponent> source)
+    private void OnContact(Entity<InventoryComponent> ent, ref ContactInteractionEvent args)
     {
-        target.Comp.Fibers.Add(GetFiberSample(source));
-        if (!TryComp<GlovePrintComponent>(source, out var print))
+        if (!HasComp<HandsComponent>(ent))
             return;
 
-        target.Comp.GlovePrints.Add(EnsurePrint(print));
+        if (HasComp<IgnoresFingerprintsComponent>(args.Other))
+            return;
+
+        if (!_inventory.TryGetSlotEntity(ent, "gloves", out var gloves))
+            return;
+
+        if (!TryGetPrint(gloves.Value, out var print) || print == null)
+            return;
+
+        EnsureComp<ForensicsComponent>(args.Other).GlovePrints.Add(print);
     }
 
     /// <summary>
