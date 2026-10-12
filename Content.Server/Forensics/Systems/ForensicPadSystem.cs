@@ -8,7 +8,6 @@ using Content.Shared.Interaction;
 using Content.Shared.Inventory;
 using Content.Shared.Labels.EntitySystems;
 using Content.Shared.Verbs;
-using Content.Server.SS220.Forensics.Components;
 
 namespace Content.Server.Forensics
 {
@@ -19,7 +18,6 @@ namespace Content.Server.Forensics
     {
         [Dependency] private readonly SharedDoAfterSystem _doAfterSystem = default!;
         [Dependency] private readonly PopupSystem _popupSystem = default!;
-        //[Dependency] private readonly ForensicsSystem _forensics = default!; // ss220 remove unused dep
         [Dependency] private readonly LabelSystem _label = default!;
         [Dependency] private readonly InventorySystem _inventory = default!;
 
@@ -29,7 +27,7 @@ namespace Content.Server.Forensics
             SubscribeLocalEvent<ForensicPadComponent, ExaminedEvent>(OnExamined);
             SubscribeLocalEvent<ForensicPadComponent, AfterInteractEvent>(OnAfterInteract);
             SubscribeLocalEvent<ForensicPadComponent, ForensicPadDoAfterEvent>(OnDoAfter);
-            SubscribeLocalEvent<ForensicPadComponent, GetVerbsEvent<UtilityVerb>>(OnUtilityVerb);//SS220 Micro_fibers
+            SubscribeLocalEvent<ForensicPadComponent, GetVerbsEvent<UtilityVerb>>(OnUtilityVerb); // SS220 sample collection
         }
 
         private void OnExamined(EntityUid uid, ForensicPadComponent component, ExaminedEvent args)
@@ -62,38 +60,13 @@ namespace Content.Server.Forensics
                 return;
             }
 
-            //SS200 MicroFibers start
-			/*
-            if (!_forensics.CanAccessFingerprint(args.Target.Value, out var blocker))
-            {
-
-                if (blocker is { } item)
-                    _popupSystem.PopupEntity(Loc.GetString("forensic-pad-no-access-due", ("entity", Identity.Entity(item, EntityManager))), args.Target.Value, args.User);
-                else
-                    _popupSystem.PopupEntity(Loc.GetString("forensic-pad-no-access"), args.Target.Value, args.User);
-
-                return;
-            }
-
-            if (TryComp<FingerprintComponent>(args.Target, out var fingerprint) && fingerprint.Fingerprint != null)
-            {
-                if (args.User != args.Target)
-                {
-                    _popupSystem.PopupEntity(Loc.GetString("forensic-pad-start-scan-user", ("target", Identity.Entity(args.Target.Value, EntityManager))), args.Target.Value, args.User);
-                    _popupSystem.PopupEntity(Loc.GetString("forensic-pad-start-scan-target", ("user", Identity.Entity(args.User, EntityManager))), args.Target.Value, args.Target.Value);
-                }
-                StartScan(uid, args.User, args.Target.Value, component, fingerprint.Fingerprint);
-                return;
-            }
-
-            if (TryComp<FiberComponent>(args.Target, out var fiber))
-                StartScan(uid, args.User, args.Target.Value, component, string.IsNullOrEmpty(fiber.FiberColor) ? Loc.GetString("forensic-fibers", ("material", fiber.FiberMaterial)) : Loc.GetString("forensic-fibers-colored", ("color", fiber.FiberColor), ("material", fiber.FiberMaterial)));
-			*/
-			if (!TryGetSample(args.Target.Value, args.User, out var sample) || sample is null)//SS220 Micro_fibers
+            if (!TryGetSample(args.Target.Value, args.User, out var sample))
                 return;
 
-            StartScan(uid, args.User, args.Target.Value, component, sample);//SS220 Micro_fibers
-			//SS200 MicroFibers end
+            if (sample == null)
+                return;
+
+            StartScan(uid, args.User, args.Target.Value, component, sample);
         }
 
         private void StartScan(EntityUid used, EntityUid user, EntityUid target, ForensicPadComponent pad, string sample)
@@ -109,7 +82,7 @@ namespace Content.Server.Forensics
             _doAfterSystem.TryStartDoAfter(doAfterEventArgs);
         }
 
-        //SS220 Micro_fibers start
+        // SS220 sample collection begin
         private void OnUtilityVerb(Entity<ForensicPadComponent> ent, ref GetVerbsEvent<UtilityVerb> args)
         {
             if (!args.CanInteract || !args.CanAccess)
@@ -142,7 +115,10 @@ namespace Content.Server.Forensics
                 return;
             }
 
-            if (!TryGetSample(target, user, out var sample) || sample is null)
+            if (!TryGetSample(target, user, out var sample))
+                return;
+
+            if (sample == null)
                 return;
 
             StartScan(ent, user, target, ent.Comp, sample);
@@ -176,16 +152,10 @@ namespace Content.Server.Forensics
                 return true;
             }
 
-            if (TryComp<MicroFiberComponent>(ent, out var microFiber))
-            {
-                sample = string.IsNullOrEmpty(microFiber.MicroFiberColor) ? Loc.GetString("forensic-micro-fibers", ("material", microFiber.MicroFiberMaterial)) : Loc.GetString("forensic-micro-fibers-colored", ("color", microFiber.MicroFiberColor), ("material", microFiber.MicroFiberMaterial));
-                return true;
-            }
-
             _popupSystem.PopupEntity(Loc.GetString("forensic-pad-verb-no-sapmles"), ent, user);
             return false;
         }
-        //SS220 Micro_fibers end
+        // SS220 sample collection end
 
         private void OnDoAfter(EntityUid uid, ForensicPadComponent padComponent, ForensicPadDoAfterEvent args)
         {

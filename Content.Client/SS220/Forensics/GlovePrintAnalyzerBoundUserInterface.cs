@@ -6,7 +6,7 @@ using Robust.Client.UserInterface;
 namespace Content.Client.SS220.Forensics;
 
 /// <summary>
-/// Displays private results from the swab physically inserted into the analyzer.
+/// Displays private analysis progress and stored samples from the analyzer.
 /// </summary>
 public sealed class GlovePrintAnalyzerBoundUserInterface : BoundUserInterface
 {
@@ -22,16 +22,36 @@ public sealed class GlovePrintAnalyzerBoundUserInterface : BoundUserInterface
         _window = this.CreateWindow<GlovePrintAnalyzerMenu>();
         _window.Eject.OnPressed += _ => SendMessage(new GlovePrintAnalyzerEjectMessage());
         _window.Print.OnPressed += _ => Print();
+        _window.Analyze.OnPressed += _ => Analyze();
+        _window.SaveDescription.OnPressed += _ => SaveDescription();
         SendMessage(new GlovePrintAnalyzerRequestResultsMessage());
+    }
+
+    private void Analyze()
+    {
+        if (_window == null || _window.Analyze.Disabled || _window.SelectedSampleId != null)
+            return;
+
+        SendMessage(new GlovePrintAnalyzerAnalyzeMessage(_window.DescriptionEdit.Text, _window.PendingSwab));
+    }
+
+    private void SaveDescription()
+    {
+        if (_window == null || _window.SaveDescription.Disabled)
+            return;
+
+        var swab = _window.SelectedSampleId == null ? _window.PendingSwab : null;
+        SendMessage(new GlovePrintAnalyzerSetDescriptionMessage(
+            _window.SelectedSampleId, _window.DescriptionEdit.Text, swab));
     }
 
     private void Print()
     {
-        if (_window == null)
+        if (_window == null || _window.Print.Disabled || _window.SelectedSampleId == null)
             return;
 
         _window.StartPrintCooldown();
-        SendMessage(new GlovePrintAnalyzerPrintMessage());
+        SendMessage(new GlovePrintAnalyzerPrintMessage(_window.SelectedSampleId));
     }
 
     protected override void ReceiveMessage(BoundUserInterfaceMessage message)

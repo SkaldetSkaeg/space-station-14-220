@@ -2,6 +2,7 @@
 
 using Content.Server.SS220.Forensics.Components;
 using Content.Shared.Examine;
+using Robust.Shared.Utility;
 
 namespace Content.Server.SS220.Forensics.Systems;
 
@@ -23,5 +24,9 @@ public sealed class GlovePrintSwabSystem : EntitySystem
             return;
 
         args.PushText(Loc.GetString(ent.Comp.Used ? "glove-print-swab-used" : "glove-print-swab-unused"));
+        if (!ent.Comp.Used || string.IsNullOrEmpty(ent.Comp.SourceName))
+            return;
+
+        args.PushText(Loc.GetString("glove-print-swab-source", ("source", FormattedMessage.EscapeText(ent.Comp.SourceName))));
     }
 }

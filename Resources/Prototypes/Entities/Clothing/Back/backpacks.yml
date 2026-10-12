@@ -37,8 +37,6 @@
     damageCoefficient: 0.9
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-textile
-    microFiberColor: micro-fibers-grey
 #SS220 Micro_fibers end
   - type: Tag
     tags:
@@ -65,8 +63,6 @@
         variation: 0.125
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-textile
-    microFiberColor: micro-fibers-green
 #SS220 Micro_fibers end
 
 - type: entity
@@ -83,8 +79,6 @@
       collection: IanBark
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-textile
-    microFiberColor: micro-fibers-orange
 #SS220 Micro_fibers end
 
 - type: entity
@@ -97,8 +91,6 @@
     sprite: Clothing/Back/Backpacks/security.rsi
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-reinforced-textile
-    microFiberColor: micro-fibers-black
 #SS220 Micro_fibers end
 
 - type: entity
@@ -111,8 +103,6 @@
     sprite: Clothing/Back/Backpacks/brigmedic.rsi
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic
-    microFiberColor: micro-fibers-white
 #SS220 Micro_fibers end
 
 - type: entity
@@ -125,8 +115,6 @@
     sprite: Clothing/Back/Backpacks/engineering.rsi
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-rubber
-    microFiberColor: micro-fibers-yellow
 #SS220 Micro_fibers end
 
 - type: entity
@@ -139,8 +127,6 @@
     sprite: Clothing/Back/Backpacks/atmospherics.rsi
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-rubber
-    microFiberColor: micro-fibers-light-blue
 #SS220 Micro_fibers end
 
 - type: entity
@@ -153,8 +139,6 @@
     sprite: Clothing/Back/Backpacks/medical.rsi
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic
-    microFiberColor: micro-fibers-white
 #SS220 Micro_fibers end
 
 - type: entity
@@ -167,8 +151,6 @@
     sprite: Clothing/Back/Backpacks/captain.rsi
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-reinforced-textile
-    microFiberColor: micro-fibers-blue
 
 - type: entity
   parent: ClothingBackpack
@@ -180,8 +162,6 @@
     sprite: Clothing/Back/Backpacks/mime.rsi
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-textile
-    microFiberColor: micro-fibers-white
 #SS220 Micro_fibers end
   - type: Storage
     storageOpenSound: null
@@ -197,8 +177,6 @@
     sprite: Clothing/Back/Backpacks/chemistry.rsi
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic
-    microFiberColor: micro-fibers-orange
 #SS220 Micro_fibers end
 
 - type: entity
@@ -211,8 +189,6 @@
     sprite: Clothing/Back/Backpacks/hydroponics.rsi
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-floral
-    microFiberColor: micro-fibers-green
 #SS220 Micro_fibers end
 
 - type: entity
@@ -225,8 +201,6 @@
     sprite: Clothing/Back/Backpacks/science.rsi
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic
-    microFiberColor: micro-fibers-purple
 #SS220 Micro_fibers end
 
 - type: entity
@@ -239,8 +213,6 @@
     sprite: Clothing/Back/Backpacks/virology.rsi
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic
-    microFiberColor: micro-fibers-green
 #SS220 Micro_fibers end
 
 - type: entity
@@ -253,8 +225,6 @@
     sprite: Clothing/Back/Backpacks/genetics.rsi
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic
-    microFiberColor: micro-fibers-blue
 #SS220 Micro_fibers end
 
 - type: entity
@@ -267,8 +237,6 @@
       sprite: Clothing/Back/Backpacks/cargo.rsi
 #SS220 Micro_fibers start
     - type: MicroFiber
-      microFiberMaterial: micro-fibers-textile
-      microFiberColor: micro-fibers-yellow
 #SS220 Micro_fibers end
 
 - type: entity
@@ -281,8 +249,6 @@
       sprite: Clothing/Back/Backpacks/salvage.rsi
 #SS220 Micro_fibers start
     - type: MicroFiber
-      microFiberMaterial: micro-fibers-leather
-      microFiberColor: micro-fibers-brown
 #SS220 Micro_fibers end
 
 - type: entity
@@ -295,8 +261,6 @@
       sprite: Clothing/Back/Backpacks/merc.rsi
 #SS220 Micro_fibers start
     - type: MicroFiber
-      microFiberMaterial: micro-fibers-reinforced-textile
-      microFiberColor: micro-fibers-moss
 #SS220 Micro_fibers end
 
 #ERT
@@ -313,8 +277,6 @@
     - 0,0,10,4 # SS220 bigger-ert-backpack
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-reinforced-textile
-    microFiberColor: micro-fibers-black
 #SS220 Micro_fibers end
 #SS220 ERT-ExplosionResistance-fix start
   - type: ExplosionResistance
@@ -331,8 +293,6 @@
     sprite: Clothing/Back/Backpacks/ertsec.rsi
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-reinforced-textile
-    microFiberColor: micro-fibers-black
 #SS220 Micro_fibers end
 
 - type: entity
@@ -345,8 +305,6 @@
     sprite: Clothing/Back/Backpacks/ertmed.rsi
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-reinforced-textile
-    microFiberColor: micro-fibers-black
 #SS220 Micro_fibers end
 
 - type: entity
@@ -359,8 +317,6 @@
     sprite: Clothing/Back/Backpacks/erteng.rsi
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-reinforced-textile
-    microFiberColor: micro-fibers-black
 #SS220 Micro_fibers end
 
 - type: entity
@@ -373,8 +329,6 @@
     sprite: Clothing/Back/Backpacks/ertjanitor.rsi
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-reinforced-textile
-    microFiberColor: micro-fibers-black
 #SS220 Micro_fibers end
 
 - type: entity
@@ -387,8 +341,6 @@
     sprite: Clothing/Back/Backpacks/ertclown.rsi
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-reinforced-textile
-    microFiberColor: micro-fibers-black
 #SS220 Micro_fibers end
 
 - type: entity
@@ -401,8 +353,6 @@
     sprite: Clothing/Back/Backpacks/ertchaplain.rsi
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-reinforced-textile
-    microFiberColor: micro-fibers-black
 #SS220 Micro_fibers end
 
 - type: entity
@@ -416,8 +366,6 @@
       - 0,0,7,6
 #SS220 Micro_fibers start
     - type: MicroFiber
-      microFiberMaterial: micro-fibers-reinforced-textile
-      microFiberColor: micro-fibers-black
 #SS220 Micro_fibers end
 
 #SS220 RETURNED FOR CENTCOMM MAP
@@ -473,8 +421,6 @@
     price: 1000 #SS220-underused-uplinks-stuff end
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-reinforced-textile
-    microFiberColor: micro-fibers-black
 #SS220 Micro_fibers end
 
 #Special
@@ -501,7 +447,6 @@
     - 0,0,19,9
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-plasma
 #SS220 Micro_fibers end
 
 - type: entity
@@ -518,8 +463,6 @@
     lockToHands: false
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-textile
-    microFiberColor: micro-fibers-red
 #SS220 Micro_fibers end
 
 - type: entity
@@ -546,8 +489,6 @@
       - Trigger
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-textile
-    microFiberColor: micro-fibers-moss
 #SS220 Micro_fibers end
 
 # Debug

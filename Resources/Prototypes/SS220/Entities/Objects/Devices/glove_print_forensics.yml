@@ -86,6 +86,9 @@
     - state: unlit
       shader: unshaded
   - type: GlovePrintAnalyzer
+  - type: DeviceLinkSource
+    ports:
+    - GlovePrintReport
   - type: ItemSlots
     slots:
       sampleSlot:
@@ -116,6 +119,16 @@
     size: Normal
   - type: Flatpack
     entity: GlovePrintAnalyzer
+  - type: GuideHelp
+    guides:
+    - Forensics
+
+- type: entity
+  id: GlovePrintReportPaper
+  parent: PaperNtFormSec
+  name: glove trace analysis report
+  description: An official security department report identifying glove types and individual pair codes in an analyzed sample.
+  components:
   - type: GuideHelp
     guides:
     - Forensics

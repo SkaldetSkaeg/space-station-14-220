@@ -13,13 +13,15 @@ using Robust.Shared.Prototypes;
 namespace Content.Server.SS220.Forensics.Systems;
 
 /// <summary>
-/// Collects either deposited glove traces or an item's own glove identity into a new physical sample.
+/// Collects deposited material evidence or an item's own material reference into a new physical sample.
 /// </summary>
 public sealed class GlovePrintScannerSystem : EntitySystem
 {
     [Dependency] private readonly SharedDoAfterSystem _doAfter = default!;
     [Dependency] private readonly GlovePrintSystem _glovePrint = default!;
     [Dependency] private readonly SharedHandsSystem _hands = default!;
+    [Dependency] private readonly MetaDataSystem _metadata = default!;
+    [Dependency] private readonly MicroFiberSystem _microFiber = default!;
     [Dependency] private readonly PopupSystem _popup = default!;
 
     public override void Initialize()
@@ -62,7 +64,8 @@ public sealed class GlovePrintScannerSystem : EntitySystem
 
     private void StartScan(Entity<GlovePrintScannerComponent> ent, EntityUid user, EntityUid target)
     {
-        if (ent.Comp.Mode == GlovePrintScannerMode.OwnPrint && !_glovePrint.TryGetPrint(target, out _))
+        if (ent.Comp.Mode == GlovePrintScannerMode.OwnPrint &&
+            !_glovePrint.TryGetPrint(target, out _) && !_microFiber.TryGetTrace(target, out _))
         {
             _popup.PopupEntity(Loc.GetString("glove-print-scanner-no-own-print"), ent, user);
             return;
@@ -102,7 +105,7 @@ public sealed class GlovePrintScannerSystem : EntitySystem
             return;
         }
 
-        if (!TryGetSample(target, args.Mode, out var traces))
+        if (!TryGetSample(target, args.Mode, out var traces, out var microFibers))
         {
             _popup.PopupEntity(Loc.GetString("glove-print-scanner-no-own-print"), ent, args.User);
             return;
@@ -117,28 +120,41 @@ public sealed class GlovePrintScannerSystem : EntitySystem
         }
 
         sample.GlovePrints = traces;
+        sample.MicroFibers = microFibers;
         sample.Used = true;
+        sample.SourceName = MetaData(target).EntityName;
+        _metadata.SetEntityName(swab, Loc.GetString("glove-print-swab-label", ("source", sample.SourceName)));
         _hands.PickupOrDrop(args.User, swab, checkActionBlocker: false);
         args.Handled = true;
     }
 
-    private bool TryGetSample(EntityUid target, GlovePrintScannerMode mode, out List<GlovePrintTrace> traces)
+    private bool TryGetSample(EntityUid target, GlovePrintScannerMode mode, out List<GlovePrintTrace> traces,
+        out List<MicroFiberTrace> microFibers)
     {
         traces = [];
+        microFibers = [];
         if (mode == GlovePrintScannerMode.SurfaceTraces)
         {
             if (TryComp<ForensicsComponent>(target, out var forensics))
+            {
                 traces = [.. forensics.GlovePrints];
+                microFibers = [.. forensics.MicroFibers];
+            }
 
             return true;
         }
 
-        if (!_glovePrint.TryGetPrint(target, out var print) || print == null)
-            return false;
+        if (_glovePrint.TryGetPrint(target, out var print) && print != null)
+        {
+            var prototype = MetaData(target).EntityPrototype;
+            EntProtoId? prototypeId = prototype == null ? (EntProtoId?)null : new EntProtoId(prototype.ID);
+            traces = [new GlovePrintTrace(print, prototypeId)];
+        }
 
-        var prototype = MetaData(target).EntityPrototype;
-        EntProtoId? prototypeId = prototype == null ? (EntProtoId?)null : new EntProtoId(prototype.ID);
-        traces = [new GlovePrintTrace(print, prototypeId)];
+        if (!_microFiber.TryGetTrace(target, out var fiber))
+            return traces.Count != 0;
+
+        microFibers = [fiber];
         return true;
     }
 }

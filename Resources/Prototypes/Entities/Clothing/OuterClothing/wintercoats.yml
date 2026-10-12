@@ -39,8 +39,6 @@
     price: 50
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-grey
 #SS220 Micro_fibers end
 
 - type: entity
@@ -92,8 +90,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterAtmos # SS220 hood resprite
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-light-blue
 #SS220 Micro_fibers end
 
 - type: entity
@@ -120,8 +116,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterBartender
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-white
 #SS220 Micro_fibers end
 
 - type: entity
@@ -148,8 +142,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterCaptain
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-blue
 #SS220 Micro_fibers end
 
 - type: entity
@@ -176,8 +168,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterCargo
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-yellow
 #SS220 Micro_fibers end
 
 - type: entity
@@ -204,8 +194,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterCE
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-white
 #SS220 Micro_fibers end
 
 - type: entity
@@ -233,8 +221,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterCentcom
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-green
 #SS220 Micro_fibers end
 
 - type: entity
@@ -264,8 +250,6 @@
 # SS220 new hood end
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-white
 #SS220 Micro_fibers end
 
 - type: entity
@@ -299,8 +283,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterChem
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-light-blue
 #SS220 Micro_fibers end
 
 - type: entity
@@ -334,8 +316,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterCMO
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-light-blue
 #SS220 Micro_fibers end
 
 - type: entity
@@ -349,8 +329,6 @@
     sprite: Clothing/OuterClothing/WinterCoats/coatclown.rsi
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-red
 #SS220 Micro_fibers end
 
 - type: entity
@@ -377,8 +355,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterEngineer
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-orange
 #SS220 Micro_fibers end
 
 - type: entity
@@ -412,8 +388,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterGen # SS220 hood resprite
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-white
 #SS220 Micro_fibers end
 
 - type: entity
@@ -440,8 +414,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterHOP
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-blue
 #SS220 Micro_fibers end
 
 ##########################################################
@@ -459,8 +431,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterHOS
   #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-reinforced-synthetic-fur
-    microFiberColor: micro-fibers-gray
   #SS220 Micro_fibers end
   - type: ContainerContainer
     containers:
@@ -495,8 +465,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterHOS
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-gray
 #SS220 Micro_fibers end
 
 - type: entity
@@ -523,8 +491,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterHydro
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-green
 #SS220 Micro_fibers end
 
 - type: entity
@@ -558,8 +524,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterJani
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-purple
 #SS220 Micro_fibers end
 
 - type: entity
@@ -593,8 +557,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterMed
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-light-blue
 #SS220 Micro_fibers end
 
 - type: entity
@@ -621,8 +583,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterMime
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-white
 #SS220 Micro_fibers end
 
 - type: entity
@@ -649,8 +609,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterMiner
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-purple
 #SS220 Micro_fibers end
 
 - type: entity
@@ -684,8 +642,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterPara
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-blue
 #SS220 Micro_fibers end
 
 - type: entity
@@ -712,8 +668,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterQM
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-brown
 #SS220 Micro_fibers end
 
 - type: entity
@@ -747,8 +701,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterRD
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-white
 #SS220 Micro_fibers end
 
 - type: entity
@@ -775,8 +727,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterRobo
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-black
 #SS220 Micro_fibers end
 
 - type: entity
@@ -810,8 +760,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterSci
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-white
 #SS220 Micro_fibers end
 
 - type: entity
@@ -838,8 +786,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterSec
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-red
 #SS220 Micro_fibers end
 
 - type: entity
@@ -873,8 +819,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterViro # SS220 hood resprite
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-green
 #SS220 Micro_fibers end
 
 ################################################################
@@ -892,8 +836,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterWarden
   #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-reinforced-synthetic-fur
-    microFiberColor: micro-fibers-red
   #SS220 Micro_fibers end
   - type: ContainerContainer
     containers:
@@ -928,8 +870,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterWarden
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-red
 #SS220 Micro_fibers end
 
 - type: entity
@@ -957,8 +897,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterSyndieCap # SS220 hood resprite
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-black
 #SS220 Micro_fibers end
 
 ##############################################################
@@ -976,8 +914,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterSyndieCapArmored # SS220 new hood
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-reinforced-synthetic-fur
-    microFiberColor: micro-fibers-black
 #SS220 Micro_fibers end
 ##############################################################
 
@@ -1006,8 +942,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterSyndie
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-wool
-    microFiberColor: micro-fibers-black
 #SS220 Micro_fibers end
 
 - type: entity
@@ -1022,8 +956,6 @@
     sprite: Clothing/OuterClothing/WinterCoats/coatnomi.rsi
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-black
 #SS220 Micro_fibers end
 
 - type: entity
@@ -1070,8 +1002,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterWeb
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-spiderweb
-    microFiberColor: micro-fibers-white
 #SS220 Micro_fibers end
 
 - type: entity
@@ -1106,8 +1036,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterColorBlack
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-black
 #SS220 Micro_fibers end
 
 - type: entity
@@ -1142,8 +1070,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterColorPurple
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-purple
 #SS220 Micro_fibers end
 
 - type: entity
@@ -1178,8 +1104,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterColorRed
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-red
 #SS220 Micro_fibers end
 
 - type: entity
@@ -1214,8 +1138,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterColorBlue
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-blue
 #SS220 Micro_fibers end
 
 - type: entity
@@ -1250,8 +1172,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterColorBrown
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-brown
 #SS220 Micro_fibers end
 
 - type: entity
@@ -1286,8 +1206,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterColorGray
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-grey
 #SS220 Micro_fibers end
 
 - type: entity
@@ -1322,8 +1240,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterColorGreen
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-green
 #SS220 Micro_fibers end
 
 - type: entity
@@ -1358,8 +1274,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterColorLightBrown
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-light-brown
 #SS220 Micro_fibers end
 
 - type: entity
@@ -1394,8 +1308,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterColorOrange
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-orange
 #SS220 Micro_fibers end
 
 - type: entity
@@ -1430,8 +1342,6 @@
     clothingPrototype: ClothingHeadHatHoodWinterColorWhite
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-white
 #SS220 Micro_fibers end
 
 - type: entity
@@ -1466,6 +1376,4 @@
     clothingPrototype: ClothingHeadHatHoodWinterColorYellow
 #SS220 Micro_fibers start
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-yellow
 #SS220 Micro_fibers end

@@ -35,8 +35,6 @@
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterJanitorJR
   - type: MicroFiber
-    microFiberMaterial: micro-fibers-synthetic-fur
-    microFiberColor: micro-fibers-green
   - type: Armor
     modifiers:
       coefficients:
