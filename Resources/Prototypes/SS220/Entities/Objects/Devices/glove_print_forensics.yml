@@ -1,10 +1,33 @@
 # © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
 - type: entity
+  id: GlovePrintScanner
+  name: glove trace scanner
+  parent: [BaseItem, BaseSecurityContraband]
+  description: A portable scanner that collects glove traces or an item's own glove signature and dispenses a sample swab. Use it in hand to switch modes.
+  components:
+  - type: Sprite
+    sprite: Objects/Tools/appraisal-tool.rsi
+    state: icon
+  - type: Item
+    sprite: Objects/Tools/appraisal-tool.rsi
+    size: Small
+  - type: Clothing
+    sprite: Objects/Tools/appraisal-tool.rsi
+    quickEquip: false
+    slots:
+    - Belt
+  - type: GlovePrintScanner
+  - type: UnPlaceable
+  - type: GuideHelp
+    guides:
+    - Forensics
+
+- type: entity
   id: GlovePrintSwab
   name: glove trace swab
   parent: BaseItem
-  description: A single-use swab for collecting glove traces from objects or sampling a pair of gloves.
+  description: A physical carrier for a glove trace sample. Insert a collected sample into a glove trace analyzer.
   components:
   - type: Sprite
     sprite: Objects/Specific/Medical/mouth_swab.rsi
@@ -22,20 +45,26 @@
 
 - type: entity
   id: BoxGlovePrintSwabs
-  name: glove trace swab dispenser
-  parent: BaseAmmoProvider
-  description: A dispenser containing ten single-use swabs for collecting glove traces.
+  name: glove trace swab box
+  parent: BoxCardboard
+  description: A box containing ten empty glove trace sample swabs.
   components:
   - type: Sprite
     layers:
     - state: boxwide
     - state: swab
-  - type: BallisticAmmoProvider
-    whitelist:
-      tags:
-      - GlovePrintSwab
-    proto: GlovePrintSwab
-    capacity: 10
+  - type: Item
+    size: Normal
+    shape:
+    - 0,0,1,1
+  - type: Storage
+    grid:
+    - 0,0,4,1
+  - type: EntityTableContainerFill
+    containers:
+      storagebase:
+        id: GlovePrintSwab
+        amount: 10
   - type: GuideHelp
     guides:
     - Forensics

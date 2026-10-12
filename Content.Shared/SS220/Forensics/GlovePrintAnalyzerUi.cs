@@ -25,20 +25,33 @@ public sealed class GlovePrintAnalyzerResultsMessage : BoundUserInterfaceMessage
     public readonly List<GlovePrintTrace> GlovePrints;
 
     /// <summary>
-    /// The name of the sampled source, or null when the inserted swab has not been used.
+    /// Whether the inserted swab contains a collected sample, including a sample without traces.
     /// </summary>
-    public readonly string? SourceName;
+    public readonly bool Used;
 
     /// <summary>
     /// Whether a swab is physically inserted and can be ejected.
     /// </summary>
     public readonly bool HasSwab;
 
-    public GlovePrintAnalyzerResultsMessage(List<GlovePrintTrace> glovePrints, string? sourceName, bool hasSwab)
+    /// <summary>
+    /// When the printer can produce another report.
+    /// </summary>
+    public readonly TimeSpan PrintReadyAt;
+
+    /// <summary>
+    /// Delay between printed reports.
+    /// </summary>
+    public readonly TimeSpan PrintCooldown;
+
+    public GlovePrintAnalyzerResultsMessage(List<GlovePrintTrace> glovePrints, bool hasSwab, bool used,
+        TimeSpan printReadyAt, TimeSpan printCooldown)
     {
         GlovePrints = glovePrints;
-        SourceName = sourceName;
         HasSwab = hasSwab;
+        Used = used;
+        PrintReadyAt = printReadyAt;
+        PrintCooldown = printCooldown;
     }
 }
 
@@ -55,5 +68,13 @@ public sealed class GlovePrintAnalyzerRequestResultsMessage : BoundUserInterface
 /// </summary>
 [Serializable, NetSerializable]
 public sealed class GlovePrintAnalyzerEjectMessage : BoundUserInterfaceMessage
+{
+}
+
+/// <summary>
+/// Requests a paper report of the currently inserted collected sample.
+/// </summary>
+[Serializable, NetSerializable]
+public sealed class GlovePrintAnalyzerPrintMessage : BoundUserInterfaceMessage
 {
 }

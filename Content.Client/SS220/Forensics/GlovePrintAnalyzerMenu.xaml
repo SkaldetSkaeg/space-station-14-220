@@ -4,12 +4,20 @@
                MinSize="400 250"
                SetSize="400 400">
     <BoxContainer Orientation="Vertical" SeparationOverride="8">
-        <Button Name="Eject"
+        <BoxContainer Orientation="Horizontal">
+            <Button Name="Print"
                 Access="Public"
                 Disabled="True"
+                HorizontalExpand="True"
+                TextAlign="Center"
+                Text="{Loc 'glove-print-analyzer-interface-print'}" />
+            <Button Name="Eject"
+                Access="Public"
+                Disabled="True"
+                HorizontalExpand="True"
                 TextAlign="Center"
                 Text="{Loc 'glove-print-analyzer-interface-eject'}" />
-        <RichTextLabel Name="SourceLabel" />
+        </BoxContainer>
         <Label Name="StatusLabel" />
         <Label Text="{Loc 'glove-print-analyzer-interface-traces'}" />
         <ScrollContainer VerticalExpand="True" HorizontalExpand="True" HScrollEnabled="False">

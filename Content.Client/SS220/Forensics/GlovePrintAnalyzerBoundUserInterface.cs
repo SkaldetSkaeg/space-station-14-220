@@ -21,7 +21,17 @@ public sealed class GlovePrintAnalyzerBoundUserInterface : BoundUserInterface
         base.Open();
         _window = this.CreateWindow<GlovePrintAnalyzerMenu>();
         _window.Eject.OnPressed += _ => SendMessage(new GlovePrintAnalyzerEjectMessage());
+        _window.Print.OnPressed += _ => Print();
         SendMessage(new GlovePrintAnalyzerRequestResultsMessage());
+    }
+
+    private void Print()
+    {
+        if (_window == null)
+            return;
+
+        _window.StartPrintCooldown();
+        SendMessage(new GlovePrintAnalyzerPrintMessage());
     }
 
     protected override void ReceiveMessage(BoundUserInterfaceMessage message)

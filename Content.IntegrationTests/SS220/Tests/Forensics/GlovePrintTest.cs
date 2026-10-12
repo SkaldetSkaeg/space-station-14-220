@@ -89,7 +89,7 @@ public sealed class GlovePrintTest : GameTest
     }
 
     [Test]
-    public async Task ForensicGlovesLeaveNoTracesOrDirectSample()
+    public async Task ForensicGlovesLeaveNoTraces()
     {
         var map = await Pair.CreateTestMap();
         await Server.WaitAssertion(() =>
@@ -108,7 +108,6 @@ public sealed class GlovePrintTest : GameTest
             var sample = SEntMan.GetComponent<GlovePrintSwabComponent>(swab);
             Assert.That(sample.Used, Is.True);
             Assert.That(sample.GlovePrints, Is.Empty);
-            Assert.That(sample.SourceName, Is.EqualTo(SEntMan.GetComponent<MetaDataComponent>(gloves).EntityName));
         });
     }
 
@@ -222,7 +221,6 @@ public sealed class GlovePrintTest : GameTest
             SEntMan.System<SharedInteractionSystem>().DoContactInteraction(wearer, evidence);
             var swab = CollectSample(wearer, evidence);
             var sample = SEntMan.GetComponent<GlovePrintSwabComponent>(swab);
-            var sourceName = sample.SourceName;
             Assert.That(sample.GlovePrints, Is.EquivalentTo(new[] { trace }));
 
             var hands = SEntMan.System<SharedHandsSystem>();
@@ -239,13 +237,12 @@ public sealed class GlovePrintTest : GameTest
 
             Assert.That(sample.GlovePrints, Is.EquivalentTo(new[] { trace }),
                 "A collected sample must retain the glove type and code after its source and gloves are gone.");
-            Assert.That(sample.SourceName, Is.EqualTo(sourceName));
         });
     }
 
     [TestCase(false)]
     [TestCase(true)]
-    public async Task UsedSwabsCannotOverwriteEmptyOrCollectedSamples(bool firstSourceHasTraces)
+    public async Task RepeatedScansDoNotOverwriteEarlierSamples(bool firstSourceHasTraces)
     {
         var map = await Pair.CreateTestMap();
         await Server.WaitAssertion(() =>
@@ -265,18 +262,18 @@ public sealed class GlovePrintTest : GameTest
             var sample = SEntMan.GetComponent<GlovePrintSwabComponent>(swab);
             List<GlovePrintTrace> originalTraces = [.. sample.GlovePrints];
             Assert.That(originalTraces.Count, Is.EqualTo(firstSourceHasTraces ? 1 : 0));
-            var originalSourceName = sample.SourceName;
-            Assert.That(originalSourceName, Is.EqualTo(SEntMan.GetComponent<MetaDataComponent>(firstEvidence).EntityName));
             Assert.That(inventory.TryUnequip(wearer, "gloves"), Is.True);
             Assert.That(inventory.TryEquip(wearer, secondGloves, "gloves"), Is.True);
             interaction.DoContactInteraction(wearer, secondEvidence);
 
-            Assert.That(interaction.InteractDoAfter(wearer, swab, secondEvidence, map.GridCoords, canReach: true),
-                Is.False);
+            Assert.That(SEntMan.System<SharedHandsSystem>().TryDrop(wearer, swab), Is.True);
+            var laterSwab = CollectSample(wearer, secondEvidence);
+            Assert.That(laterSwab, Is.Not.EqualTo(swab));
+            Assert.That(SEntMan.GetComponent<GlovePrintSwabComponent>(laterSwab).GlovePrints,
+                Is.EquivalentTo(new[] { GetTrace(secondGloves) }));
             Assert.That(sample.Used, Is.True);
-            Assert.That(sample.GlovePrints, Is.EquivalentTo(originalTraces));
-            Assert.That(sample.SourceName, Is.EqualTo(originalSourceName),
-                "Even an empty collection consumes the swab and must not be replaced by a later sample.");
+            Assert.That(sample.GlovePrints, Is.EquivalentTo(originalTraces),
+                "A later scan must create a new sample and preserve even an earlier empty snapshot.");
         });
     }
 
@@ -323,7 +320,7 @@ public sealed class GlovePrintTest : GameTest
             Assert.That(cutTrace.Code, Is.EqualTo(originalTrace.Code));
             Assert.That(cutTrace.Prototype, Is.Not.EqualTo(originalTrace.Prototype));
             Assert.That(SEntMan.System<SharedHandsSystem>().TryDrop(wearer, originalSwab), Is.True);
-            var cutSwab = CollectSample(wearer, cutGloves.Value);
+            var cutSwab = CollectSample(wearer, cutGloves.Value, GlovePrintScannerMode.OwnPrint);
             Assert.That(SEntMan.GetComponent<GlovePrintSwabComponent>(cutSwab).GlovePrints,
                 Is.EquivalentTo(new[] { cutTrace }));
 
@@ -343,17 +340,39 @@ public sealed class GlovePrintTest : GameTest
         });
     }
 
-    private EntityUid CollectSample(EntityUid user, EntityUid target)
+    private EntityUid CollectSample(EntityUid user, EntityUid target,
+        GlovePrintScannerMode mode = GlovePrintScannerMode.SurfaceTraces)
     {
         var coordinates = SEntMan.GetComponent<TransformComponent>(user).Coordinates;
-        var swab = SEntMan.SpawnEntity("GlovePrintSwab", coordinates);
-        var sample = SEntMan.GetComponent<GlovePrintSwabComponent>(swab);
-        sample.SampleDelay = TimeSpan.Zero;
-        Assert.That(SEntMan.System<SharedHandsSystem>().TryPickupAnyHand(user, swab), Is.True);
+        var scanner = SEntMan.SpawnEntity("GlovePrintScanner", coordinates);
+        var component = SEntMan.GetComponent<GlovePrintScannerComponent>(scanner);
+        component.ScanDelay = TimeSpan.Zero;
+        component.Mode = mode;
+        var hands = SEntMan.System<SharedHandsSystem>();
+        Assert.That(hands.TryPickupAnyHand(user, scanner), Is.True);
+        var existingSwabs = GetSwabs();
         Assert.That(SEntMan.System<SharedInteractionSystem>().InteractDoAfter(
-            user, swab, target, coordinates, canReach: true), Is.False);
-        Assert.That(sample.Used, Is.True, "The real interaction must finish collecting a physical sample.");
+            user, scanner, target, coordinates, canReach: true), Is.False);
+        var swab = GetSwabs().Single(uid => !existingSwabs.Contains(uid));
+        Assert.That(SEntMan.GetComponent<GlovePrintSwabComponent>(swab).Used, Is.True,
+            "The scanner must emit a physical, completed sample after the real interaction.");
+        Assert.That(hands.TryDrop(user, scanner), Is.True);
+        if (!hands.IsHolding(user, swab))
+            Assert.That(hands.TryPickupAnyHand(user, swab), Is.True);
+
         return swab;
+    }
+
+    private List<EntityUid> GetSwabs()
+    {
+        List<EntityUid> swabs = [];
+        var query = SEntMan.EntityQueryEnumerator<GlovePrintSwabComponent>();
+        while (query.MoveNext(out var uid, out _))
+        {
+            swabs.Add(uid);
+        }
+
+        return swabs;
     }
 
     private GlovePrintTrace GetTrace(EntityUid gloves)

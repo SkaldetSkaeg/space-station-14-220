@@ -39,7 +39,7 @@
     - ForensicPad
     - ForensicScanner
     # SS220 glove prints begin
-    - BoxGlovePrintSwabs
+    - GlovePrintScanner
     - GlovePrintAnalyzerFlatpack
     - Multitool
     # SS220 glove prints end

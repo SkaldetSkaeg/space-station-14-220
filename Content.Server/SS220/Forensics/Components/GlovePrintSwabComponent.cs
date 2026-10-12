@@ -11,7 +11,7 @@ namespace Content.Server.SS220.Forensics.Components;
 public sealed partial class GlovePrintSwabComponent : Component
 {
     /// <summary>
-    /// Whether this swab has already been used, including on a source with no glove traces.
+    /// Whether this swab contains a collected sample, including a sample without glove traces.
     /// </summary>
     [DataField]
     public bool Used;
@@ -21,16 +21,4 @@ public sealed partial class GlovePrintSwabComponent : Component
     /// </summary>
     [DataField]
     public List<GlovePrintTrace> GlovePrints = [];
-
-    /// <summary>
-    /// The source's display name at collection time.
-    /// </summary>
-    [DataField]
-    public string? SourceName;
-
-    /// <summary>
-    /// Time required to collect a sample.
-    /// </summary>
-    [DataField]
-    public TimeSpan SampleDelay = TimeSpan.FromSeconds(3);
 }

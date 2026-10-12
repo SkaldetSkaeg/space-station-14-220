@@ -1,7 +1,9 @@
+ent-GlovePrintScanner = glove trace scanner
+    .desc = A portable scanner that collects surface traces or an object's own glove print and dispenses a sample swab. Use it in hand to switch modes.
 ent-GlovePrintSwab = glove trace swab
-    .desc = A single-use swab for collecting glove traces from objects or sampling a pair of gloves.
-ent-BoxGlovePrintSwabs = glove trace swab dispenser
-    .desc = A dispenser containing ten single-use swabs for collecting glove traces.
+    .desc = A physical carrier for a glove trace sample. Insert a collected sample into a glove trace analyzer.
+ent-BoxGlovePrintSwabs = glove trace swab box
+    .desc = A box containing ten empty glove trace sample swabs.
 ent-GlovePrintAnalyzer = glove trace analyzer
     .desc = A machine that identifies the glove types and pair codes in a collected swab sample.
 ent-GlovePrintAnalyzerFlatpack = glove trace analyzer flatpack
