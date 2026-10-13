@@ -5,6 +5,7 @@ using Content.Shared.Forensics;
 using Content.Shared.Forensics.Components;
 using Content.Shared.IdentityManagement;
 using Content.Shared.Interaction;
+using Content.Shared.Inventory;
 using Content.Shared.Labels.EntitySystems;
 using Content.Shared.Verbs;
 
@@ -17,8 +18,9 @@ namespace Content.Server.Forensics
     {
         [Dependency] private readonly SharedDoAfterSystem _doAfterSystem = default!;
         [Dependency] private readonly PopupSystem _popupSystem = default!;
+        //[Dependency] private readonly ForensicsSystem _forensics = default!; // ss220 remove unused dep
         [Dependency] private readonly LabelSystem _label = default!;
-        [Dependency] private readonly ForensicsSystem _forensics = default!;
+        [Dependency] private readonly InventorySystem _inventory = default!;
 
         public override void Initialize()
         {
@@ -60,6 +62,32 @@ namespace Content.Server.Forensics
             }
 
             // SS220 microfibers begin
+            /*
+            if (!_forensics.CanAccessFingerprint(args.Target.Value, out var blocker))
+            {
+
+                if (blocker is { } item)
+                    _popupSystem.PopupEntity(Loc.GetString("forensic-pad-no-access-due", ("entity", Identity.Entity(item, EntityManager))), args.Target.Value, args.User);
+                else
+                    _popupSystem.PopupEntity(Loc.GetString("forensic-pad-no-access"), args.Target.Value, args.User);
+
+                return;
+            }
+
+            if (TryComp<FingerprintComponent>(args.Target, out var fingerprint) && fingerprint.Fingerprint != null)
+            {
+                if (args.User != args.Target)
+                {
+                    _popupSystem.PopupEntity(Loc.GetString("forensic-pad-start-scan-user", ("target", Identity.Entity(args.Target.Value, EntityManager))), args.Target.Value, args.User);
+                    _popupSystem.PopupEntity(Loc.GetString("forensic-pad-start-scan-target", ("user", Identity.Entity(args.User, EntityManager))), args.Target.Value, args.Target.Value);
+                }
+                StartScan(uid, args.User, args.Target.Value, component, fingerprint.Fingerprint);
+                return;
+            }
+
+            if (TryComp<FiberComponent>(args.Target, out var fiber))
+                StartScan(uid, args.User, args.Target.Value, component, string.IsNullOrEmpty(fiber.FiberColor) ? Loc.GetString("forensic-fibers", ("material", fiber.FiberMaterial)) : Loc.GetString("forensic-fibers-colored", ("color", fiber.FiberColor), ("material", fiber.FiberMaterial)));
+            */
             if (!TryGetSample(args.Target.Value, args.User, out var sample))
                 return;
 
@@ -129,13 +157,9 @@ namespace Content.Server.Forensics
         {
             sample = null;
 
-            if (!_forensics.CanAccessFingerprint(ent, out var blocker))
+            if (_inventory.TryGetSlotEntity(ent, "gloves", out var gloves))
             {
-                var message = blocker != null
-                    ? Loc.GetString("forensic-pad-no-access-due", ("entity", Identity.Entity(blocker.Value, EntityManager)))
-                    : Loc.GetString("forensic-pad-no-access");
-
-                _popupSystem.PopupEntity(message, ent, user);
+                _popupSystem.PopupEntity(Loc.GetString("forensic-pad-gloves", ("target", Identity.Entity(ent, EntityManager))), ent, user);
                 return false;
             }
 

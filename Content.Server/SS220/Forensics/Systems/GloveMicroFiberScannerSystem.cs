@@ -128,22 +128,20 @@ public sealed class GloveMicroFiberScannerSystem : EntitySystem
         args.Handled = true;
     }
 
-    private bool TryGetSample(EntityUid target, GloveMicroFiberScannerMode mode, out List<GloveMicroFiberTrace> traces,
+    private bool TryGetSample(
+        EntityUid target,
+        GloveMicroFiberScannerMode mode,
+        out List<GloveMicroFiberTrace> traces,
         out List<StorageMicroFiberTrace> storageMicroFibers)
     {
-        traces = [];
-        storageMicroFibers = [];
         if (mode == GloveMicroFiberScannerMode.SurfaceTraces)
         {
-            if (TryComp<ForensicsComponent>(target, out var forensics))
-            {
-                traces = [.. forensics.GloveMicroFibers];
-                storageMicroFibers = [.. forensics.StorageMicroFibers];
-            }
-
+            CollectSurfaceTraces(target, out traces, out storageMicroFibers);
             return true;
         }
 
+        traces = [];
+        storageMicroFibers = [];
         if (_gloveMicroFiber.TryGetCode(target, out var code) && code != null)
         {
             var prototype = MetaData(target).EntityPrototype;
@@ -156,5 +154,19 @@ public sealed class GloveMicroFiberScannerSystem : EntitySystem
 
         storageMicroFibers = [fiber];
         return true;
+    }
+
+    private void CollectSurfaceTraces(
+        EntityUid target,
+        out List<GloveMicroFiberTrace> traces,
+        out List<StorageMicroFiberTrace> storageMicroFibers)
+    {
+        traces = [];
+        storageMicroFibers = [];
+        if (!TryComp<ForensicsComponent>(target, out var forensics))
+            return;
+
+        traces = [.. forensics.GloveMicroFibers];
+        storageMicroFibers = [.. forensics.StorageMicroFibers];
     }
 }

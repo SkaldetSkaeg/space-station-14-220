@@ -64,6 +64,12 @@ glove-micro-fiber-analyzer-port-source-description = Отправляет зак
 glove-micro-fiber-analyzer-port-sink-name = Печать документов
 glove-micro-fiber-analyzer-port-sink-description = Принимает заключения связанного анализатора для печати.
 glove-micro-fiber-analyzer-report-title = Заключение экспертизы микроволокон
+glove-micro-fiber-analyzer-comparison-report-title = Протокол сравнительного анализа микроволокон
+glove-micro-fiber-analyzer-comparison-report-header = [bold]Форма НТ-СБ-САМ[/bold]
+    { "[head=2]Протокол сравнительного анализа микроволокон[/head]" }
+glove-micro-fiber-analyzer-comparison-report-sample = [head=3]Исследуемый образец № { $number }[/head]
+    { "[bold]Регистрационный номер:[/bold]" } { $identifier }
+glove-micro-fiber-analyzer-comparison-report-matches = [head=2]Совпадения по кодам образцов[/head]
 glove-micro-fiber-analyzer-report-header = [bold]Форма НТ-СБ-ЭСП[/bold]
     { "[head=2]Заключение экспертизы микроволокон[/head]" }
 

@@ -342,21 +342,7 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
         contents.AddChild(heading);
         var itemName = string.IsNullOrEmpty(sourceName) ? Loc.GetString(unknownTypeKey) : sourceName;
         if (_prototype.TryIndex(prototypeId, out var prototype))
-        {
-            if (string.IsNullOrEmpty(sourceName))
-                itemName = prototype.Name;
-
-            var image = new EntityPrototypeView
-            {
-                MinSize = new Vector2(64, 64),
-                MaxSize = new Vector2(64, 64),
-                Stretch = SpriteView.StretchMode.Fill,
-                VerticalAlignment = VAlignment.Center,
-                MouseFilter = MouseFilterMode.Ignore,
-            };
-            image.SetPrototype(prototype.ID);
-            heading.AddChild(image);
-        }
+            itemName = AddSampleAppearance(heading, prototype, sourceName);
 
         var names = new BoxContainer
         {
@@ -393,6 +379,25 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
         codePanel.AddChild(codeLabel);
         contents.AddChild(codePanel);
         return card;
+    }
+
+    private string AddSampleAppearance(BoxContainer heading, EntityPrototype prototype, string sourceName)
+    {
+        var itemName = sourceName;
+        if (string.IsNullOrEmpty(sourceName))
+            itemName = prototype.Name;
+
+        var image = new EntityPrototypeView
+        {
+            MinSize = new Vector2(64, 64),
+            MaxSize = new Vector2(64, 64),
+            Stretch = SpriteView.StretchMode.Fill,
+            VerticalAlignment = VAlignment.Center,
+            MouseFilter = MouseFilterMode.Ignore,
+        };
+        image.SetPrototype(prototype.ID);
+        heading.AddChild(image);
+        return itemName;
     }
 
     private static string FormatSampleCode(string code)
@@ -479,7 +484,8 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
             return;
         }
 
-        PrinterButton.Disabled = CompareHistory.Pressed || !_hasSample ||
+        var hasReport = CompareHistory.Pressed ? _comparisonHasResult : _hasSample;
+        PrinterButton.Disabled = !hasReport ||
             _results.PrinterStatus != GloveMicroFiberAnalyzerPrinterStatus.Ready ||
             _timing.CurTime < _printReadyAt;
     }

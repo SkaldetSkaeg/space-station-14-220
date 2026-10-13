@@ -59,6 +59,8 @@ public sealed class GloveMicroFiberAnalyzerSystem : EntitySystem
         SubscribeLocalEvent<GloveMicroFiberAnalyzerComponent, GloveMicroFiberAnalyzerSetDescriptionMessage>(
             OnSetDescription);
         SubscribeLocalEvent<GloveMicroFiberAnalyzerComponent, GloveMicroFiberAnalyzerPrintMessage>(OnPrint);
+        SubscribeLocalEvent<GloveMicroFiberAnalyzerComponent, GloveMicroFiberAnalyzerPrintComparisonMessage>(
+            OnPrintComparison);
     }
 
     public override void Update(float frameTime)
@@ -379,31 +381,116 @@ public sealed class GloveMicroFiberAnalyzerSystem : EntitySystem
         if (!TryGetPrintSample(ent, args.SampleId, out var sample))
             return;
 
+        if (!TryGetReportPrinter(ent, args.Actor, out var printer))
+            return;
+
+        QueueReport(ent, args.Actor, printer, ent.Comp.MachineOutput,
+            Loc.GetString("glove-micro-fiber-analyzer-report-title"), CreateReport(sample));
+    }
+
+    private void OnPrintComparison(
+        Entity<GloveMicroFiberAnalyzerComponent> ent,
+        ref GloveMicroFiberAnalyzerPrintComparisonMessage args)
+    {
+        if (!CanAccess(ent, args.Actor))
+            return;
+
+        if (args.FirstSampleId == args.SecondSampleId)
+            return;
+
+        if (!TryGetPrintSample(ent, args.FirstSampleId, out var first))
+            return;
+
+        if (!TryGetPrintSample(ent, args.SecondSampleId, out var second))
+            return;
+
+        if (!TryGetReportPrinter(ent, args.Actor, out var printer))
+            return;
+
+        QueueReport(ent, args.Actor, printer, ent.Comp.ComparisonOutput,
+            Loc.GetString("glove-micro-fiber-analyzer-comparison-report-title"), CreateComparisonReport(first, second));
+    }
+
+    private bool TryGetReportPrinter(
+        Entity<GloveMicroFiberAnalyzerComponent> ent,
+        EntityUid actor,
+        out EntityUid printer)
+    {
+        printer = default;
         if (_timing.CurTime < ent.Comp.PrintReadyAt)
         {
-            NotifyPrinterUnavailable(ent, args.Actor);
-            return;
+            NotifyPrinterUnavailable(ent, actor);
+            return false;
         }
 
         if (GetPrinterStatus(ent) != GloveMicroFiberAnalyzerPrinterStatus.Ready)
         {
-            NotifyPrinterUnavailable(ent, args.Actor);
-            return;
+            NotifyPrinterUnavailable(ent, actor);
+            return false;
         }
 
         if (ent.Comp.LinkedPhotocopier == null)
-            return;
+            return false;
 
-        var printer = ent.Comp.LinkedPhotocopier.Value;
-        if (!_photocopier.TryQueueReport(printer, ent.Comp.MachineOutput,
-                Loc.GetString("glove-micro-fiber-analyzer-report-title"), CreateReport(sample)))
+        printer = ent.Comp.LinkedPhotocopier.Value;
+        return true;
+    }
+
+    private void QueueReport(
+        Entity<GloveMicroFiberAnalyzerComponent> ent,
+        EntityUid actor,
+        EntityUid printer,
+        EntProtoId prototype,
+        string title,
+        string content)
+    {
+        if (!_photocopier.TryQueueReport(printer, prototype, title, content))
         {
-            SendResults(ent, args.Actor);
+            SendResults(ent, actor);
             return;
         }
 
         ent.Comp.PrintReadyAt = _timing.CurTime + ent.Comp.PrintCooldown;
         SendResults(ent);
+    }
+
+    private string CreateComparisonReport(
+        GloveMicroFiberAnalyzerHistoryEntry first,
+        GloveMicroFiberAnalyzerHistoryEntry second)
+    {
+        var text = new StringBuilder();
+        text.AppendLine(Loc.GetString("glove-micro-fiber-analyzer-comparison-report-header"));
+        text.AppendLine();
+        AppendComparisonSample(text, first, 1);
+        AppendComparisonSample(text, second, 2);
+        text.AppendLine(Loc.GetString("glove-micro-fiber-analyzer-comparison-report-matches"));
+        var gloveMatches = GloveMicroFiberComparison.FindGloveMatches(first.GloveMicroFibers, second.GloveMicroFibers);
+        var storageMatches = GloveMicroFiberComparison.FindStorageMatches(first.StorageMicroFibers, second.StorageMicroFibers);
+        AppendGloveResults(text, gloveMatches,
+            emptyKey: "glove-micro-fiber-analyzer-interface-compare-no-profiles");
+        AppendStorageResults(text, storageMatches,
+            emptyKey: "glove-micro-fiber-analyzer-interface-compare-no-storage-micro-fibers");
+        text.AppendLine(Loc.GetString("glove-micro-fiber-analyzer-interface-compare-note"));
+        text.AppendLine();
+        text.AppendLine(Loc.GetString("glove-micro-fiber-analyzer-report-footer"));
+        return text.ToString();
+    }
+
+    private void AppendComparisonSample(
+        StringBuilder text,
+        GloveMicroFiberAnalyzerHistoryEntry sample,
+        int number)
+    {
+        text.AppendLine(Loc.GetString("glove-micro-fiber-analyzer-comparison-report-sample",
+            ("number", number), ("identifier", FormattedMessage.EscapeText(sample.Identifier))));
+        if (!string.IsNullOrEmpty(sample.SourceName))
+            text.AppendLine(Loc.GetString("glove-micro-fiber-analyzer-report-source",
+                ("source", FormattedMessage.EscapeText(sample.SourceName))));
+
+        text.AppendLine(Loc.GetString("glove-micro-fiber-analyzer-report-analyzed-at",
+            ("time", GloveMicroFiberAnalyzerUi.FormatRoundTime(sample.AnalyzedAt))));
+        AppendReportDescription(text, sample.Description);
+        text.AppendLine();
     }
 
     private void NotifyPrinterUnavailable(Entity<GloveMicroFiberAnalyzerComponent> ent, EntityUid actor)
@@ -439,7 +526,10 @@ public sealed class GloveMicroFiberAnalyzerSystem : EntitySystem
         text.AppendLine();
     }
 
-    private void AppendGloveResults(StringBuilder text, List<GloveMicroFiberTrace> traces)
+    private void AppendGloveResults(
+        StringBuilder text,
+        List<GloveMicroFiberTrace> traces,
+        string emptyKey = "glove-micro-fiber-analyzer-interface-no-traces")
     {
         text.AppendLine(Loc.GetString("glove-micro-fiber-analyzer-report-results",
             ("count", traces.Count)));
@@ -447,7 +537,7 @@ public sealed class GloveMicroFiberAnalyzerSystem : EntitySystem
 
         if (traces.Count == 0)
         {
-            text.AppendLine(Loc.GetString("glove-micro-fiber-analyzer-interface-no-traces"));
+            text.AppendLine(Loc.GetString(emptyKey));
             text.AppendLine();
         }
 
@@ -464,10 +554,16 @@ public sealed class GloveMicroFiberAnalyzerSystem : EntitySystem
         }
     }
 
-    private void AppendStorageResults(StringBuilder text, List<StorageMicroFiberTrace> traces)
+    private void AppendStorageResults(
+        StringBuilder text,
+        List<StorageMicroFiberTrace> traces,
+        string? emptyKey = null)
     {
         text.AppendLine(Loc.GetString("glove-micro-fiber-analyzer-report-storage-micro-fibers",
             ("count", traces.Count)));
+        if (traces.Count == 0 && emptyKey != null)
+            text.AppendLine(Loc.GetString(emptyKey));
+
         for (var i = 0; i < traces.Count; i++)
         {
             var trace = traces[i];

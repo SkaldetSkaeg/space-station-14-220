@@ -69,6 +69,12 @@ public sealed partial class GloveMicroFiberAnalyzerComponent : Component
     public EntProtoId MachineOutput = "GloveMicroFiberReportPaper";
 
     /// <summary>
+    /// The separate paper used for reports comparing two completed samples.
+    /// </summary>
+    [DataField]
+    public EntProtoId ComparisonOutput = "GloveMicroFiberComparisonReportPaper";
+
+    /// <summary>
     /// Delay between printed reports.
     /// </summary>
     [DataField]

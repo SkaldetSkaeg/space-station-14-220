@@ -64,6 +64,12 @@ glove-micro-fiber-analyzer-port-source-description = Sends the report to the lin
 glove-micro-fiber-analyzer-port-sink-name = Print documents
 glove-micro-fiber-analyzer-port-sink-description = Receives reports from a linked analyzer for printing.
 glove-micro-fiber-analyzer-report-title = Microfiber analysis report
+glove-micro-fiber-analyzer-comparison-report-title = Microfiber comparison report
+glove-micro-fiber-analyzer-comparison-report-header = [bold]Form NT-SEC-MFC[/bold]
+    { "[head=2]Microfiber Comparison Report[/head]" }
+glove-micro-fiber-analyzer-comparison-report-sample = [head=3]Examined Sample No. { $number }[/head]
+    { "[bold]Registration number:[/bold]" } { $identifier }
+glove-micro-fiber-analyzer-comparison-report-matches = [head=2]Matching Sample Codes[/head]
 glove-micro-fiber-analyzer-report-header = [bold]Form NT-SEC-GTE[/bold]
     { "[head=2]Microfiber Analysis Report[/head]" }
 

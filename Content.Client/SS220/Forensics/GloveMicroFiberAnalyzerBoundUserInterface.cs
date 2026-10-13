@@ -53,11 +53,30 @@ public sealed class GloveMicroFiberAnalyzerBoundUserInterface : BoundUserInterfa
         if (_window.PrinterButton.Disabled)
             return;
 
+        if (_window.CompareHistory.Pressed)
+        {
+            PrintComparison(_window);
+            return;
+        }
+
         if (_window.SelectedSampleId == null)
             return;
 
         _window.StartPrintCooldown();
         SendMessage(new GloveMicroFiberAnalyzerPrintMessage(_window.SelectedSampleId));
+    }
+
+    private void PrintComparison(GloveMicroFiberAnalyzerMenu window)
+    {
+        if (window.ComparisonFirstSampleId == null)
+            return;
+
+        if (window.ComparisonSecondSampleId == null)
+            return;
+
+        window.StartPrintCooldown();
+        SendMessage(new GloveMicroFiberAnalyzerPrintComparisonMessage(
+            window.ComparisonFirstSampleId.Value, window.ComparisonSecondSampleId.Value));
     }
 
     protected override void ReceiveMessage(BoundUserInterfaceMessage message)

@@ -84,15 +84,7 @@ public sealed class StorageMicroFiberSystem : EntitySystem
         // Pocket containers belong to the wearer, but their material identity belongs to the worn uniform.
         if ((args.SlotFlags & SlotFlags.POCKET) != 0)
         {
-            var uniforms = _inventory.GetSlotEnumerator((ent.Owner, ent.Comp), SlotFlags.INNERCLOTHING);
-            while (uniforms.NextItem(out var uniform))
-            {
-                if (!TryGetTrace(uniform, out var uniformTrace))
-                    continue;
-
-                DepositTrace(args.Equipment, uniformTrace);
-            }
-
+            DepositWornUniformTraces(ent, args.Equipment);
             return;
         }
 
@@ -106,6 +98,18 @@ public sealed class StorageMicroFiberSystem : EntitySystem
         var pockets = _inventory.GetSlotEnumerator((ent.Owner, ent.Comp), SlotFlags.POCKET);
         while (pockets.NextItem(out var item))
         {
+            DepositTrace(item, trace);
+        }
+    }
+
+    private void DepositWornUniformTraces(Entity<InventoryComponent> wearer, EntityUid item)
+    {
+        var uniforms = _inventory.GetSlotEnumerator((wearer.Owner, wearer.Comp), SlotFlags.INNERCLOTHING);
+        while (uniforms.NextItem(out var uniform))
+        {
+            if (!TryGetTrace(uniform, out var trace))
+                continue;
+
             DepositTrace(item, trace);
         }
     }

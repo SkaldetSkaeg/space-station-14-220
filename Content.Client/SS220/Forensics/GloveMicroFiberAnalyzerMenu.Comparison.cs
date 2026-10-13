@@ -12,6 +12,16 @@ public sealed partial class GloveMicroFiberAnalyzerMenu
     private int? _comparisonSecondId;
     private bool _comparisonHasResult;
 
+    /// <summary>
+    /// The first archive record selected for comparison.
+    /// </summary>
+    public int? ComparisonFirstSampleId => _comparisonFirstId;
+
+    /// <summary>
+    /// The second archive record selected for comparison.
+    /// </summary>
+    public int? ComparisonSecondSampleId => _comparisonSecondId;
+
     private void InitializeComparison()
     {
         CompareHistory.ToolTip = Loc.GetString("glove-micro-fiber-analyzer-interface-compare-not-enough");
@@ -114,6 +124,7 @@ public sealed partial class GloveMicroFiberAnalyzerMenu
         ComparisonResults.Visible = _comparisonHasResult;
         ComparisonStatus.Visible = !_comparisonHasResult;
         ComparisonStatus.SetMessage(FormattedMessage.FromUnformatted(Loc.GetString(GetComparisonStatusKey())));
+        UpdatePrinterState();
     }
 
     private string GetComparisonStatusKey()
@@ -149,8 +160,8 @@ public sealed partial class GloveMicroFiberAnalyzerMenu
         if (first == null || second == null)
             return;
 
-        var gloveMatches = FindComparisonGloveMatches(first.GloveMicroFibers, second.GloveMicroFibers);
-        var storageMatches = FindComparisonStorageMicroFiberMatches(first.StorageMicroFibers,
+        var gloveMatches = GloveMicroFiberComparison.FindGloveMatches(first.GloveMicroFibers, second.GloveMicroFibers);
+        var storageMatches = GloveMicroFiberComparison.FindStorageMatches(first.StorageMicroFibers,
             second.StorageMicroFibers);
         DisplayComparisonResults(gloveMatches, storageMatches);
     }
@@ -171,50 +182,6 @@ public sealed partial class GloveMicroFiberAnalyzerMenu
             "glove-micro-fiber-analyzer-interface-compare-no-storage-micro-fibers");
         _comparisonHasResult = true;
         UpdateComparisonView();
-    }
-
-    private static List<GloveMicroFiberTrace> FindComparisonGloveMatches(
-        List<GloveMicroFiberTrace> first,
-        List<GloveMicroFiberTrace> second)
-    {
-        HashSet<string> remaining = new(StringComparer.Ordinal);
-        foreach (var profile in second)
-        {
-            remaining.Add(profile.Code);
-        }
-
-        List<GloveMicroFiberTrace> matches = [];
-        foreach (var profile in first)
-        {
-            if (!remaining.Remove(profile.Code))
-                continue;
-
-            matches.Add(profile);
-        }
-
-        return matches;
-    }
-
-    private static List<StorageMicroFiberTrace> FindComparisonStorageMicroFiberMatches(
-        List<StorageMicroFiberTrace> first,
-        List<StorageMicroFiberTrace> second)
-    {
-        HashSet<string> remaining = new(StringComparer.Ordinal);
-        foreach (var fiber in second)
-        {
-            remaining.Add(fiber.Code);
-        }
-
-        List<StorageMicroFiberTrace> matches = [];
-        foreach (var fiber in first)
-        {
-            if (!remaining.Remove(fiber.Code))
-                continue;
-
-            matches.Add(fiber);
-        }
-
-        return matches;
     }
 
     private void DisplayComparisonGloveMatches(

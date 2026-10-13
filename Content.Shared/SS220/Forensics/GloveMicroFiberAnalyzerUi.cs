@@ -285,3 +285,26 @@ public sealed class GloveMicroFiberAnalyzerPrintMessage : BoundUserInterfaceMess
         SampleId = sampleId;
     }
 }
+
+/// <summary>
+/// Requests a separate comparison report of two completed samples belonging to this analyzer.
+/// </summary>
+[Serializable, NetSerializable]
+public sealed class GloveMicroFiberAnalyzerPrintComparisonMessage : BoundUserInterfaceMessage
+{
+    /// <summary>
+    /// The first stored sample to compare.
+    /// </summary>
+    public readonly int FirstSampleId;
+
+    /// <summary>
+    /// The second stored sample to compare; it must differ from the first.
+    /// </summary>
+    public readonly int SecondSampleId;
+
+    public GloveMicroFiberAnalyzerPrintComparisonMessage(int firstSampleId, int secondSampleId)
+    {
+        FirstSampleId = firstSampleId;
+        SecondSampleId = secondSampleId;
+    }
+}

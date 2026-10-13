@@ -107,3 +107,13 @@
   - type: GuideHelp
     guides:
     - Forensics
+
+- type: entity
+  id: GloveMicroFiberComparisonReportPaper
+  parent: PaperNtFormSec
+  name: microfiber comparison report
+  description: An official security department document comparing individual codes in two analyzed microfiber samples.
+  components:
+  - type: GuideHelp
+    guides:
+    - Forensics

@@ -257,30 +257,26 @@ namespace Content.Server.Forensics
 
             totalPrintsAndFibers += forensicsComp.GloveMicroFibers.Count; // SS220 microfibers
 
-            if (hasRemovableDNA || totalPrintsAndFibers > 0)
-            {
-                var cleanDelay = cleanForensicsEntity.Comp.CleanDelay;
-                var doAfterArgs = new DoAfterArgs(EntityManager, user, cleanDelay, new CleanForensicsDoAfterEvent(), cleanForensicsEntity, target: target, used: cleanForensicsEntity)
-                {
-                    NeedHand = true,
-                    BreakOnDamage = true,
-                    BreakOnMove = true,
-                    MovementThreshold = 0.01f,
-                    DistanceThreshold = forensicsComp.CleanDistance,
-                };
-
-                _doAfterSystem.TryStartDoAfter(doAfterArgs);
-
-                _popupSystem.PopupEntity(Loc.GetString("forensics-cleaning", ("target", Identity.Entity(target, EntityManager))), user, user);
-
-                return true;
-            }
-            else
+            if (!hasRemovableDNA && totalPrintsAndFibers <= 0)
             {
                 _popupSystem.PopupEntity(Loc.GetString("forensics-cleaning-cannot-clean", ("target", Identity.Entity(target, EntityManager))), user, user, PopupType.MediumCaution);
                 return false;
             }
 
+            var cleanDelay = cleanForensicsEntity.Comp.CleanDelay;
+            var doAfterArgs = new DoAfterArgs(EntityManager, user, cleanDelay, new CleanForensicsDoAfterEvent(), cleanForensicsEntity, target: target, used: cleanForensicsEntity)
+            {
+                NeedHand = true,
+                BreakOnDamage = true,
+                BreakOnMove = true,
+                MovementThreshold = 0.01f,
+                DistanceThreshold = forensicsComp.CleanDistance,
+            };
+
+            _doAfterSystem.TryStartDoAfter(doAfterArgs);
+
+            _popupSystem.PopupEntity(Loc.GetString("forensics-cleaning", ("target", Identity.Entity(target, EntityManager))), user, user);
+            return true;
         }
 
         private void OnCleanForensicsDoAfter(EntityUid uid, ForensicsComponent component, CleanForensicsDoAfterEvent args)

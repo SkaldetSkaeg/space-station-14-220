@@ -8,3 +8,5 @@ ent-GloveMicroFiberAnalyzerMachineCircuitboard = microfiber analyzer (machine bo
     .desc = A security machine circuit board for a microfiber analyzer.
 ent-GloveMicroFiberReportPaper = microfiber analysis report
     .desc = An official NanoTrasen Security form containing a report generated automatically by a microfiber analyzer.
+ent-GloveMicroFiberComparisonReportPaper = microfiber comparison report
+    .desc = A separate NanoTrasen Security form comparing two analyzed microfiber samples.
