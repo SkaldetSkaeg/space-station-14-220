@@ -1,0 +1,146 @@
+# © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
+
+- type: entity
+  id: GloveMicroFiberScanner
+  name: microfiber scanner
+  parent: [BaseItem, BaseSecurityContraband]
+  description: A portable scanner that collects surface microfibers or an item's own sample and dispenses a swab. Use it in hand to open its mode menu.
+  components:
+  # ToDo_SS220 find sprites: Scanner world, in-hand and belt sprites currently reuse the appraisal tool.
+  - type: Sprite
+    sprite: Objects/Tools/appraisal-tool.rsi
+    state: icon
+  - type: Item
+    sprite: Objects/Tools/appraisal-tool.rsi
+    size: Small
+  - type: Clothing
+    sprite: Objects/Tools/appraisal-tool.rsi
+    quickEquip: false
+    slots:
+    - Belt
+  - type: GloveMicroFiberScanner
+  - type: ActivatableUI
+    inHandsOnly: true
+    key: enum.GloveMicroFiberScannerUiKey.Key
+    verbText: glove-micro-fiber-scanner-mode-verb
+  - type: UserInterface
+    interfaces:
+      enum.GloveMicroFiberScannerUiKey.Key:
+        type: GloveMicroFiberScannerBoundUserInterface
+  - type: UnPlaceable
+  - type: GuideHelp
+    guides:
+    - Forensics
+
+- type: entity
+  id: GloveMicroFiberSwab
+  name: microfiber sample swab
+  parent: BaseItem
+  description: A physical carrier for a microfiber sample. Insert a collected sample into a microfiber analyzer.
+  components:
+  # ToDo_SS220 find sprites: Dedicated microfiber sample swab sprite; currently uses a medical swab.
+  - type: Sprite
+    sprite: Objects/Specific/Medical/mouth_swab.rsi
+    state: icon
+  - type: Item
+    size: Tiny
+  - type: GloveMicroFiberSwab
+  - type: UnPlaceable
+  - type: Tag
+    tags:
+    - GloveMicroFiberSwab
+  - type: GuideHelp
+    guides:
+    - Forensics
+
+- type: entity
+  id: BoxGloveMicroFiberSwabs
+  name: microfiber sample swab box
+  parent: BoxCardboard
+  description: A box containing ten empty microfiber sample swabs.
+  components:
+  # ToDo_SS220 find sprites: Sample swab box artwork currently reuses the generic box and swab label.
+  - type: Sprite
+    layers:
+    - state: boxwide
+    - state: swab
+  - type: Item
+    size: Normal
+    shape:
+    - 0,0,1,1
+  - type: Storage
+    grid:
+    - 0,0,4,1
+  - type: EntityTableContainerFill
+    containers:
+      storagebase:
+        id: GloveMicroFiberSwab
+        amount: 10
+  - type: GuideHelp
+    guides:
+    - Forensics
+
+- type: entity
+  id: GloveMicroFiberAnalyzer
+  name: microfiber analyzer
+  parent: [BaseMachine, BaseSecurityContraband]
+  description: A machine that identifies the glove types and pair codes in a collected swab sample.
+  placement:
+    mode: SnapgridCenter
+  components:
+  - type: Transform
+    anchored: true
+  # ToDo_SS220 find sprites: Dedicated microfiber analyzer sprite; currently uses a medical diagnoser.
+  - type: Sprite
+    sprite: Structures/Machines/diagnoser.rsi
+    layers:
+    - state: icon
+    - state: unlit
+      shader: unshaded
+  - type: GloveMicroFiberAnalyzer
+  - type: DeviceLinkSource
+    ports:
+    - GloveMicroFiberReport
+  - type: ItemSlots
+    slots:
+      sampleSlot:
+        name: glove-micro-fiber-analyzer-slot-name
+        whitelist:
+          tags:
+          - GloveMicroFiberSwab
+  - type: ContainerContainer
+    containers:
+      sampleSlot: !type:ContainerSlot
+  - type: ActivatableUI
+    key: enum.GloveMicroFiberAnalyzerUiKey.Key
+  - type: UserInterface
+    interfaces:
+      enum.GloveMicroFiberAnalyzerUiKey.Key:
+        type: GloveMicroFiberAnalyzerBoundUserInterface
+  - type: GuideHelp
+    guides:
+    - Forensics
+
+- type: entity
+  id: GloveMicroFiberAnalyzerFlatpack
+  name: microfiber analyzer flatpack
+  parent: BaseFlatpack
+  description: A flatpack for constructing a microfiber analyzer. Use a multitool to deploy it.
+  components:
+  - type: Item
+    size: Normal
+  - type: Flatpack
+    entity: GloveMicroFiberAnalyzer
+  - type: GuideHelp
+    guides:
+    - Forensics
+
+- type: entity
+  id: GloveMicroFiberReportPaper
+  parent: PaperNtFormSec
+  name: microfiber analysis report
+  description: An official security department report identifying glove types and individual pair codes in an analyzed sample.
+  components:
+  - type: GuideHelp
+    guides:
+    - Forensics

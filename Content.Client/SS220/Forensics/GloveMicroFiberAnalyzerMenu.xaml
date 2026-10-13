@@ -1,0 +1,263 @@
+<!-- © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt -->
+<DefaultWindow xmlns="https://spacestation14.io"
+               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+               xmlns:gfx="clr-namespace:Robust.Client.Graphics;assembly=Robust.Client"
+               xmlns:forensics="clr-namespace:Content.Client.SS220.Forensics"
+               Title="{Loc 'glove-micro-fiber-analyzer-interface-title'}"
+               MinSize="608 480"
+               SetSize="760 620">
+    <PanelContainer HorizontalExpand="True" VerticalExpand="True">
+        <PanelContainer.PanelOverride>
+            <gfx:StyleBoxFlat BackgroundColor="{x:Static forensics:GloveMicroFiberAnalyzerColors.WindowBackground}" />
+        </PanelContainer.PanelOverride>
+        <BoxContainer Orientation="Vertical" SeparationOverride="8" Margin="8"
+                      HorizontalExpand="True" VerticalExpand="True">
+            <PanelContainer MinHeight="48" HorizontalExpand="True">
+                <PanelContainer.PanelOverride>
+                    <gfx:StyleBoxFlat BackgroundColor="{x:Static forensics:GloveMicroFiberAnalyzerColors.HeaderBackground}"
+                                      BorderColor="{x:Static forensics:GloveMicroFiberAnalyzerColors.Border}"
+                                      BorderThickness="1 1 1 2" />
+                </PanelContainer.PanelOverride>
+                <BoxContainer Orientation="Horizontal" SeparationOverride="6" Margin="6 4" HorizontalExpand="True">
+                    <PanelContainer SetWidth="36">
+                        <PanelContainer.PanelOverride>
+                            <gfx:StyleBoxFlat BackgroundColor="{x:Static forensics:GloveMicroFiberAnalyzerColors.BrandBackground}"
+                                              BorderColor="{x:Static forensics:GloveMicroFiberAnalyzerColors.BrandBorder}"
+                                              BorderThickness="1" />
+                        </PanelContainer.PanelOverride>
+                        <Label Text="{Loc 'glove-micro-fiber-analyzer-interface-brand'}" StyleClasses="ConsoleHeading"
+                               FontColorOverride="{x:Static forensics:GloveMicroFiberAnalyzerColors.DarkText}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                    </PanelContainer>
+                    <PanelContainer MinWidth="156">
+                        <PanelContainer.PanelOverride>
+                            <gfx:StyleBoxFlat BackgroundColor="{x:Static forensics:GloveMicroFiberAnalyzerColors.InsetBackground}"
+                                              BorderColor="{x:Static forensics:GloveMicroFiberAnalyzerColors.Border}"
+                                              BorderThickness="1" />
+                        </PanelContainer.PanelOverride>
+                        <BoxContainer Orientation="Horizontal" SeparationOverride="8" Margin="8 2">
+                            <BoxContainer Orientation="Vertical" SeparationOverride="0" VerticalAlignment="Center">
+                                <Label Text="{Loc 'glove-micro-fiber-analyzer-interface-number-caption'}"
+                                       StyleClasses="LabelSubText"
+                                       FontColorOverride="{x:Static forensics:GloveMicroFiberAnalyzerColors.MutedText}" />
+                                <Label Text="{Loc 'glove-micro-fiber-analyzer-interface-number-caption-second-line'}"
+                                       StyleClasses="LabelSubText"
+                                       FontColorOverride="{x:Static forensics:GloveMicroFiberAnalyzerColors.MutedText}" />
+                            </BoxContainer>
+                            <Label Name="AnalyzerNumberLabel" ClipText="True" MouseFilter="Stop"
+                                   StyleClasses="ConsoleHeading" FontColorOverride="{x:Static forensics:GloveMicroFiberAnalyzerColors.BrandText}"
+                                   HorizontalExpand="True" VerticalAlignment="Center" />
+                        </BoxContainer>
+                    </PanelContainer>
+                    <Control HorizontalExpand="True" />
+                    <Button Name="Eject" Access="Public" Disabled="True" Visible="False" StyleClasses="ButtonSquare"
+                            MinSize="40 40" MaxSize="40 40" VerticalAlignment="Center"
+                            ToolTip="{Loc 'glove-micro-fiber-analyzer-interface-eject'}">
+                        <TextureRect Name="EjectIcon" MinSize="24 24" MaxSize="24 24" MouseFilter="Ignore"
+                                     TexturePath="/Textures/Interface/eject.png" Stretch="KeepAspectCentered"
+                                     HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Button>
+                    <Button Name="PrinterButton" Access="Public" Disabled="True" StyleClasses="ButtonSquare"
+                            MinSize="40 40" MaxSize="40 40" VerticalAlignment="Center">
+                        <forensics:GloveMicroFiberAnalyzerPrinterIcon Name="PrinterStatusIcon" Access="Public"
+                                                               MinSize="24 24" MaxSize="24 24" MouseFilter="Ignore"
+                                                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Button>
+                </BoxContainer>
+            </PanelContainer>
+            <BoxContainer Orientation="Horizontal" SeparationOverride="8" HorizontalExpand="True" VerticalExpand="True">
+                <BoxContainer Orientation="Vertical" SeparationOverride="8" SetWidth="200" VerticalExpand="True">
+                    <PanelContainer HorizontalExpand="True" VerticalExpand="True">
+                        <PanelContainer.PanelOverride>
+                            <gfx:StyleBoxFlat BackgroundColor="{x:Static forensics:GloveMicroFiberAnalyzerColors.PanelBackground}"
+                                              BorderColor="{x:Static forensics:GloveMicroFiberAnalyzerColors.Border}"
+                                              BorderThickness="1" />
+                        </PanelContainer.PanelOverride>
+                        <BoxContainer Name="HistoryPanel" Orientation="Vertical" SeparationOverride="8" Margin="8"
+                                      HorizontalExpand="True" VerticalExpand="True">
+                            <PanelContainer HorizontalExpand="True">
+                                <PanelContainer.PanelOverride>
+                                    <gfx:StyleBoxFlat BackgroundColor="{x:Static forensics:GloveMicroFiberAnalyzerColors.HistoryHeaderBackground}" />
+                                </PanelContainer.PanelOverride>
+                                <BoxContainer Orientation="Horizontal" HorizontalExpand="True" SeparationOverride="0">
+                                    <PanelContainer SetWidth="3">
+                                        <PanelContainer.PanelOverride>
+                                            <gfx:StyleBoxFlat BackgroundColor="{x:Static forensics:GloveMicroFiberAnalyzerColors.Accent}" />
+                                        </PanelContainer.PanelOverride>
+                                    </PanelContainer>
+                                    <Label Text="{Loc 'glove-micro-fiber-analyzer-interface-history'}" StyleClasses="LabelHeading"
+                                           FontColorOverride="{x:Static forensics:GloveMicroFiberAnalyzerColors.AccentText}" Margin="8 4" />
+                                    <Control HorizontalExpand="True" />
+                                    <Label Name="HistoryCount" Text="0" StyleClasses="ConsoleText"
+                                           FontColorOverride="{x:Static forensics:GloveMicroFiberAnalyzerColors.CodeText}"
+                                           Margin="4 4 8 4"
+                                           VerticalAlignment="Center" />
+                                </BoxContainer>
+                            </PanelContainer>
+                            <Label Name="HistoryEmpty" Text="{Loc 'glove-micro-fiber-analyzer-interface-history-empty'}" />
+                            <ScrollContainer VerticalExpand="True" HorizontalExpand="True" HScrollEnabled="False">
+                                <BoxContainer Name="HistoryEntries" Orientation="Vertical" SeparationOverride="4"
+                                              VerticalAlignment="Top" HorizontalExpand="True" />
+                            </ScrollContainer>
+                            <Button Name="CompareHistory" Access="Public" ToggleMode="True" Disabled="True"
+                                    HorizontalExpand="True" Text="{Loc 'glove-micro-fiber-analyzer-interface-compare-history'}" />
+                        </BoxContainer>
+                    </PanelContainer>
+                    <PanelContainer Name="PendingSamplePanel" Visible="False" HorizontalExpand="True">
+                        <PanelContainer.PanelOverride>
+                            <gfx:StyleBoxFlat BackgroundColor="{x:Static forensics:GloveMicroFiberAnalyzerColors.PanelBackground}" />
+                        </PanelContainer.PanelOverride>
+                        <Button Name="CurrentSample" ToggleMode="True" Pressed="True" Margin="8"
+                                MinHeight="44" HorizontalExpand="True"
+                                ToolTip="{Loc 'glove-micro-fiber-analyzer-interface-current-sample'}">
+                            <RichTextLabel ModulateSelfOverride="{x:Static forensics:GloveMicroFiberAnalyzerColors.ButtonText}"
+                                           Text="{Loc 'glove-micro-fiber-analyzer-interface-current-sample'}"
+                                           HorizontalExpand="True" VerticalAlignment="Center" MouseFilter="Ignore" />
+                        </Button>
+                    </PanelContainer>
+                </BoxContainer>
+                <PanelContainer HorizontalExpand="True" VerticalExpand="True">
+                    <PanelContainer.PanelOverride>
+                        <gfx:StyleBoxFlat BackgroundColor="{x:Static forensics:GloveMicroFiberAnalyzerColors.PanelBackground}" />
+                    </PanelContainer.PanelOverride>
+                    <BoxContainer Orientation="Vertical" SeparationOverride="8" Margin="8"
+                                  HorizontalExpand="True" VerticalExpand="True">
+                        <PanelContainer HorizontalExpand="True">
+                            <PanelContainer.PanelOverride>
+                                <gfx:StyleBoxFlat BackgroundColor="{x:Static forensics:GloveMicroFiberAnalyzerColors.PanelBackground}"
+                                                  BorderColor="{x:Static forensics:GloveMicroFiberAnalyzerColors.Border}"
+                                                  BorderThickness="0 0 0 1" />
+                            </PanelContainer.PanelOverride>
+                            <BoxContainer Orientation="Vertical" SeparationOverride="4" Margin="0 0 0 8"
+                                          HorizontalExpand="True">
+                                <Label Name="SampleSourceLabel" Visible="False" ClipText="True" MouseFilter="Stop"
+                                       StyleClasses="LabelHeading" FontColorOverride="{x:Static forensics:GloveMicroFiberAnalyzerColors.Text}" />
+                                <BoxContainer Orientation="Horizontal" SeparationOverride="8" HorizontalExpand="True">
+                                    <Label Name="SelectedSampleLabel" ClipText="True" MouseFilter="Stop"
+                                           StyleClasses="LabelSubText"
+                                           FontColorOverride="{x:Static forensics:GloveMicroFiberAnalyzerColors.MutedText}"
+                                           HorizontalExpand="True"
+                                           Text="{Loc 'glove-micro-fiber-analyzer-interface-current-sample'}" />
+                                    <Label Name="AnalysisTimeLabel" Visible="False" ClipText="True" MouseFilter="Stop"
+                                           StyleClasses="LabelSubText"
+                                           FontColorOverride="{x:Static forensics:GloveMicroFiberAnalyzerColors.MutedText}" />
+                                </BoxContainer>
+                            </BoxContainer>
+                        </PanelContainer>
+                        <Label Name="StatusLabel" />
+                        <Button Name="Analyze" Access="Public" Disabled="True" HorizontalExpand="True"
+                                Text="{Loc 'glove-micro-fiber-analyzer-interface-analyze'}" />
+                        <ProgressBar Name="AnalysisProgress" Access="Public" Visible="False" MinValue="0" MaxValue="1"
+                                     MinHeight="20" HorizontalExpand="True" />
+                        <BoxContainer Name="ComparisonPanel" Orientation="Vertical" SeparationOverride="8"
+                                      Visible="False" HorizontalExpand="True" VerticalExpand="True">
+                            <Label Text="{Loc 'glove-micro-fiber-analyzer-interface-compare-first'}" />
+                            <OptionButton Name="ComparisonFirst" Access="Public" HorizontalExpand="True" />
+                            <Label Text="{Loc 'glove-micro-fiber-analyzer-interface-compare-second'}" />
+                            <OptionButton Name="ComparisonSecond" Access="Public" HorizontalExpand="True" />
+                            <Button Name="ComparisonRun" Access="Public" Disabled="True" HorizontalExpand="True"
+                                    Text="{Loc 'glove-micro-fiber-analyzer-interface-compare-run'}" />
+                            <RichTextLabel Name="ComparisonStatus" HorizontalExpand="True" />
+                            <ScrollContainer Name="ComparisonResults" Visible="False" VerticalExpand="True"
+                                             HorizontalExpand="True" HScrollEnabled="False">
+                                <BoxContainer Orientation="Vertical" SeparationOverride="8"
+                                              VerticalAlignment="Top" HorizontalExpand="True">
+                                    <Label Name="ComparisonProfileCount" />
+                                    <BoxContainer Name="ComparisonProfilesContainer" Orientation="Vertical"
+                                                  SeparationOverride="4" HorizontalExpand="True" />
+                                    <Label Name="ComparisonStorageMicroFiberCount" />
+                                    <BoxContainer Name="ComparisonStorageMicroFibersContainer" Orientation="Vertical"
+                                                  SeparationOverride="8" HorizontalExpand="True" />
+                                    <RichTextLabel Text="{Loc 'glove-micro-fiber-analyzer-interface-compare-note'}"
+                                                   HorizontalExpand="True" />
+                                </BoxContainer>
+                            </ScrollContainer>
+                        </BoxContainer>
+                        <BoxContainer Name="ResultsDetails" Orientation="Vertical" SeparationOverride="8"
+                                      Visible="False" HorizontalExpand="True" VerticalExpand="True">
+                            <ScrollContainer Name="ResultsScroll" VerticalExpand="True" HorizontalExpand="True"
+                                             HScrollEnabled="False">
+                                <BoxContainer Orientation="Vertical" SeparationOverride="10"
+                                              VerticalAlignment="Top" HorizontalExpand="True">
+                                    <PanelContainer HorizontalExpand="True">
+                                        <PanelContainer.PanelOverride>
+                                            <gfx:StyleBoxFlat BackgroundColor="{x:Static forensics:GloveMicroFiberAnalyzerColors.PanelBackground}"
+                                                              BorderColor="{x:Static forensics:GloveMicroFiberAnalyzerColors.AccentBorder}"
+                                                              BorderThickness="0 0 0 1" />
+                                        </PanelContainer.PanelOverride>
+                                        <BoxContainer Orientation="Horizontal" SeparationOverride="8" Margin="0 0 0 6"
+                                                      HorizontalExpand="True">
+                                            <Label Name="TracesHeader" Text="{Loc 'glove-micro-fiber-analyzer-interface-traces'}"
+                                                   StyleClasses="LabelKeyText"
+                                                   FontColorOverride="{x:Static forensics:GloveMicroFiberAnalyzerColors.AccentText}"
+                                                   HorizontalExpand="True" />
+                                            <PanelContainer>
+                                                <PanelContainer.PanelOverride>
+                                                    <gfx:StyleBoxFlat BackgroundColor="{x:Static forensics:GloveMicroFiberAnalyzerColors.CountBackground}" />
+                                                </PanelContainer.PanelOverride>
+                                                <Label Name="GloveSamplesCount" Text="0" StyleClasses="ConsoleText"
+                                                       FontColorOverride="{x:Static forensics:GloveMicroFiberAnalyzerColors.CodeText}"
+                                                       Margin="8 2" />
+                                            </PanelContainer>
+                                        </BoxContainer>
+                                    </PanelContainer>
+                                    <RichTextLabel Name="NoTraces" HorizontalExpand="True" Visible="False"
+                                                   Text="{Loc 'glove-micro-fiber-analyzer-interface-empty-category'}"
+                                                   Margin="0 0 0 4" />
+                                    <BoxContainer Name="TracesContainer" Orientation="Vertical" SeparationOverride="8"
+                                                  HorizontalExpand="True" />
+                                    <PanelContainer HorizontalExpand="True">
+                                        <PanelContainer.PanelOverride>
+                                            <gfx:StyleBoxFlat BackgroundColor="{x:Static forensics:GloveMicroFiberAnalyzerColors.PanelBackground}"
+                                                              BorderColor="{x:Static forensics:GloveMicroFiberAnalyzerColors.AccentBorder}"
+                                                              BorderThickness="0 0 0 1" />
+                                        </PanelContainer.PanelOverride>
+                                        <BoxContainer Orientation="Horizontal" SeparationOverride="8" Margin="0 0 0 6"
+                                                      HorizontalExpand="True">
+                                            <Label Name="StorageMicroFibersHeader"
+                                                   Text="{Loc 'glove-micro-fiber-analyzer-interface-storage-micro-fibers'}"
+                                                   StyleClasses="LabelKeyText"
+                                                   FontColorOverride="{x:Static forensics:GloveMicroFiberAnalyzerColors.AccentText}"
+                                                   HorizontalExpand="True" />
+                                            <PanelContainer>
+                                                <PanelContainer.PanelOverride>
+                                                    <gfx:StyleBoxFlat BackgroundColor="{x:Static forensics:GloveMicroFiberAnalyzerColors.CountBackground}" />
+                                                </PanelContainer.PanelOverride>
+                                                <Label Name="StorageMicroFiberSamplesCount" Text="0" StyleClasses="ConsoleText"
+                                                       FontColorOverride="{x:Static forensics:GloveMicroFiberAnalyzerColors.CodeText}"
+                                                       Margin="8 2" />
+                                            </PanelContainer>
+                                        </BoxContainer>
+                                    </PanelContainer>
+                                    <BoxContainer Name="StorageMicroFibersContainer" Orientation="Vertical" SeparationOverride="8"
+                                                  HorizontalExpand="True" />
+                                </BoxContainer>
+                            </ScrollContainer>
+                            <PanelContainer Name="DescriptionPanel" HorizontalExpand="True">
+                                <PanelContainer.PanelOverride>
+                                    <gfx:StyleBoxFlat BackgroundColor="{x:Static forensics:GloveMicroFiberAnalyzerColors.PanelBackground}"
+                                                      BorderColor="{x:Static forensics:GloveMicroFiberAnalyzerColors.Border}"
+                                                      BorderThickness="0 1 0 0" />
+                                </PanelContainer.PanelOverride>
+                                <BoxContainer Orientation="Vertical" SeparationOverride="4" Margin="0 8 0 0"
+                                              HorizontalExpand="True">
+                                    <Label Text="{Loc 'glove-micro-fiber-analyzer-interface-description'}"
+                                           StyleClasses="LabelSubText"
+                                           FontColorOverride="{x:Static forensics:GloveMicroFiberAnalyzerColors.MutedText}" />
+                                    <BoxContainer Orientation="Horizontal" SeparationOverride="6" HorizontalExpand="True">
+                                        <LineEdit Name="DescriptionEdit" Access="Public" Editable="False"
+                                                  HorizontalExpand="True"
+                                                  PlaceHolder="{Loc 'glove-micro-fiber-analyzer-interface-description-placeholder'}" />
+                                        <Button Name="SaveDescription" Access="Public" Disabled="True" MinHeight="28"
+                                                Text="{Loc 'glove-micro-fiber-analyzer-interface-save-description'}" />
+                                    </BoxContainer>
+                                </BoxContainer>
+                            </PanelContainer>
+                        </BoxContainer>
+                    </BoxContainer>
+                </PanelContainer>
+            </BoxContainer>
+        </BoxContainer>
+    </PanelContainer>
+</DefaultWindow>

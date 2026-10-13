@@ -27,7 +27,7 @@ namespace Content.Server.Forensics
             SubscribeLocalEvent<ForensicPadComponent, ExaminedEvent>(OnExamined);
             SubscribeLocalEvent<ForensicPadComponent, AfterInteractEvent>(OnAfterInteract);
             SubscribeLocalEvent<ForensicPadComponent, ForensicPadDoAfterEvent>(OnDoAfter);
-            SubscribeLocalEvent<ForensicPadComponent, GetVerbsEvent<UtilityVerb>>(OnUtilityVerb); // SS220 sample collection
+            SubscribeLocalEvent<ForensicPadComponent, GetVerbsEvent<UtilityVerb>>(OnUtilityVerb); // SS220 microfibers
         }
 
         private void OnExamined(EntityUid uid, ForensicPadComponent component, ExaminedEvent args)
@@ -60,7 +60,7 @@ namespace Content.Server.Forensics
                 return;
             }
 
-            // SS220 sample collection begin
+            // SS220 microfibers begin
             if (!TryGetSample(args.Target.Value, args.User, out var sample))
                 return;
 
@@ -68,7 +68,7 @@ namespace Content.Server.Forensics
                 return;
 
             StartScan(uid, args.User, args.Target.Value, component, sample);
-            // SS220 sample collection end
+            // SS220 microfibers end
         }
 
         private void StartScan(EntityUid used, EntityUid user, EntityUid target, ForensicPadComponent pad, string sample)
@@ -84,7 +84,7 @@ namespace Content.Server.Forensics
             _doAfterSystem.TryStartDoAfter(doAfterEventArgs);
         }
 
-        // SS220 sample collection begin
+        // SS220 microfibers begin
         private void OnUtilityVerb(Entity<ForensicPadComponent> ent, ref GetVerbsEvent<UtilityVerb> args)
         {
             if (!args.CanInteract || !args.CanAccess)
@@ -157,7 +157,7 @@ namespace Content.Server.Forensics
             _popupSystem.PopupEntity(Loc.GetString("forensic-pad-verb-no-sapmles"), ent, user);
             return false;
         }
-        // SS220 sample collection end
+        // SS220 microfibers end
 
         private void OnDoAfter(EntityUid uid, ForensicPadComponent padComponent, ForensicPadDoAfterEvent args)
         {

@@ -995,7 +995,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers:
+      storageMicroFibers:
       - серые плазматиеские волокна
       fibers: []
       fingerprints: []
@@ -1022,7 +1022,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers:
+      storageMicroFibers:
       - серые плазматиеские волокна
       fibers: []
       fingerprints: []
@@ -1295,7 +1295,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers: []
+      storageMicroFibers: []
       fibers: []
       fingerprints: []
 - proto: CableHV
@@ -1348,7 +1348,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers: []
+      storageMicroFibers: []
       fibers: []
       fingerprints: []
 - proto: CableMV
@@ -1536,7 +1536,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers: []
+      storageMicroFibers: []
       fibers: []
       fingerprints: []
 - proto: CableTerminal
@@ -1653,7 +1653,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers: []
+      storageMicroFibers: []
       fibers: []
       fingerprints: []
 - proto: ClothingMaskBreathMedical
@@ -2650,7 +2650,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers:
+      storageMicroFibers:
       - серые плазматиеские волокна
       fibers: []
       fingerprints: []
@@ -2679,7 +2679,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers:
+      storageMicroFibers:
       - серые плазматиеские волокна
       fibers: []
       fingerprints: []
@@ -2706,7 +2706,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers:
+      storageMicroFibers:
       - серые плазматиеские волокна
       fibers: []
       fingerprints: []
@@ -2995,7 +2995,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers: []
+      storageMicroFibers: []
       fibers: []
       fingerprints: []
   - uid: 5
@@ -3113,7 +3113,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers: []
+      storageMicroFibers: []
       fibers: []
       fingerprints: []
   - uid: 7
@@ -3231,7 +3231,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers:
+      storageMicroFibers:
       - серые плазматиеские волокна
       fibers: []
       fingerprints: []
@@ -3350,7 +3350,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers:
+      storageMicroFibers:
       - серые плазматиеские волокна
       fibers: []
       fingerprints: []
@@ -3452,7 +3452,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers:
+      storageMicroFibers:
       - серые плазматиеские волокна
       fibers: []
       fingerprints: []
@@ -4011,7 +4011,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers: []
+      storageMicroFibers: []
       fibers: []
       fingerprints: []
 - proto: UraniumReinforcedWindowDirectional

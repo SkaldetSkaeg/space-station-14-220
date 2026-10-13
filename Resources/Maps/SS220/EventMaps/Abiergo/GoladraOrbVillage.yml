@@ -18627,7 +18627,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers: []
+      storageMicroFibers: []
       fibers: []
       fingerprints: []
     - type: InsideEntityStorage
@@ -45138,7 +45138,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers:
+      storageMicroFibers:
       - серые тканевые волокна
       fibers: []
       fingerprints: []
@@ -45282,7 +45282,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers:
+      storageMicroFibers:
       - серые тканевые волокна
       fibers: []
       fingerprints: []
@@ -45763,7 +45763,7 @@ entities:
       parent: 2
     missingComponents:
     - Item
-    - MicroFiber
+    - StorageMicroFiber
     - StaticPrice
     - FlavorProfile
     - MovedByPressure
@@ -46164,7 +46164,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers:
+      storageMicroFibers:
       - серые тканевые волокна
       fibers: []
       fingerprints: []
@@ -46226,7 +46226,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers: []
+      storageMicroFibers: []
       fibers: []
       fingerprints: []
   - uid: 28212
@@ -59565,7 +59565,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers: []
+      storageMicroFibers: []
       fibers: []
       fingerprints: []
   - uid: 30876
@@ -59595,7 +59595,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers: []
+      storageMicroFibers: []
       fibers: []
       fingerprints: []
 - proto: DrinkBeerCan
@@ -59849,7 +59849,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers:
+      storageMicroFibers:
       - серые тканевые волокна
       fibers: []
       fingerprints: []
@@ -59957,7 +59957,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers:
+      storageMicroFibers:
       - серые тканевые волокна
       fibers: []
       fingerprints: []
@@ -59972,7 +59972,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers:
+      storageMicroFibers:
       - серые тканевые волокна
       fibers: []
       fingerprints: []
@@ -60112,7 +60112,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers:
+      storageMicroFibers:
       - серые тканевые волокна
       fibers: []
       fingerprints: []
@@ -61160,7 +61160,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers: []
+      storageMicroFibers: []
       fibers: []
       fingerprints: []
     missingComponents:
@@ -106512,7 +106512,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers:
+      storageMicroFibers:
       - серые тканевые волокна
       fibers: []
       fingerprints: []
@@ -106525,7 +106525,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers:
+      storageMicroFibers:
       - серые тканевые волокна
       fibers: []
       fingerprints: []
@@ -106538,7 +106538,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers:
+      storageMicroFibers:
       - серые тканевые волокна
       fibers: []
       fingerprints: []
@@ -106551,7 +106551,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers:
+      storageMicroFibers:
       - серые тканевые волокна
       fibers: []
       fingerprints: []
@@ -106636,7 +106636,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers:
+      storageMicroFibers:
       - серые тканевые волокна
       fibers: []
       fingerprints: []
@@ -106649,7 +106649,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers:
+      storageMicroFibers:
       - серые тканевые волокна
       fibers: []
       fingerprints: []
@@ -106662,7 +106662,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers:
+      storageMicroFibers:
       - серые тканевые волокна
       fibers: []
       fingerprints: []
@@ -106675,7 +106675,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers:
+      storageMicroFibers:
       - серые тканевые волокна
       fibers: []
       fingerprints: []
@@ -106690,7 +106690,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers:
+      storageMicroFibers:
       - серые тканевые волокна
       fibers: []
       fingerprints: []
@@ -106703,7 +106703,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers:
+      storageMicroFibers:
       - серые тканевые волокна
       fibers: []
       fingerprints: []
@@ -106716,7 +106716,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers:
+      storageMicroFibers:
       - серые тканевые волокна
       fibers: []
       fingerprints: []
@@ -106729,7 +106729,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers:
+      storageMicroFibers:
       - серые тканевые волокна
       fibers: []
       fingerprints: []
@@ -127666,7 +127666,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      microFibers:
+      storageMicroFibers:
       - серые плазматиеские волокна
       fibers: []
       fingerprints: []

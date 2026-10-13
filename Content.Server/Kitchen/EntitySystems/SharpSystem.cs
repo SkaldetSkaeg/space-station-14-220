@@ -1,4 +1,4 @@
-﻿using Content.Server.SS220.Forensics.Systems; // SS220 glove prints
+﻿using Content.Server.SS220.Forensics.Systems; // SS220 microfibers
 using Content.Shared.Administration.Logs;
 using Content.Shared.Database;
 using Content.Shared.Destructible;
@@ -26,7 +26,7 @@ namespace Content.Server.Kitchen.EntitySystems;
 
 public sealed class SharpSystem : EntitySystem
 {
-    [Dependency] private readonly GlovePrintSystem _glovePrint = default!; // SS220 glove prints
+    [Dependency] private readonly GloveMicroFiberSystem _gloveMicroFiber = default!; // SS220 microfibers
     [Dependency] private readonly GibbingSystem _gibbing = default!;
     [Dependency] private readonly SharedDestructibleSystem _destructibleSystem = default!;
     [Dependency] private readonly SharedDoAfterSystem _doAfterSystem = default!;
@@ -128,7 +128,7 @@ public sealed class SharpSystem : EntitySystem
             {
                 // distribute the spawned items randomly in a small radius around the origin
                 popupEnt = SpawnInContainerOrDrop(proto, container.Owner, container.ID);
-                _glovePrint.TransferPrint(args.Args.Target.Value, popupEnt); // SS220 glove prints
+                _gloveMicroFiber.TransferCode(args.Args.Target.Value, popupEnt); // SS220 microfibers
             }
         }
         else
@@ -137,7 +137,7 @@ public sealed class SharpSystem : EntitySystem
             {
                 // distribute the spawned items randomly in a small radius around the origin
                 popupEnt = Spawn(proto, coords.Offset(_robustRandom.NextVector2(0.25f)));
-                _glovePrint.TransferPrint(args.Args.Target.Value, popupEnt); // SS220 glove prints
+                _gloveMicroFiber.TransferCode(args.Args.Target.Value, popupEnt); // SS220 microfibers
             }
         }
 

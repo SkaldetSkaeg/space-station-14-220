@@ -3,7 +3,7 @@
   parent: Clothing
   id: UnsensoredClothingUniformBase
   components:
-  - type: MicroFiber # SS220
+  - type: StorageMicroFiber # SS220 microfibers
   - type: Sprite
     state: icon
   - type: Clothing

@@ -1,5 +1,7 @@
-using Content.Shared.SS220.Forensics; // SS220 glove prints
-using Content.Server.SS220.Forensics.Serialization; // SS220 material profiles
+// SS220 microfibers begin
+using Content.Shared.SS220.Forensics;
+using Content.Server.SS220.Forensics.Serialization;
+// SS220 microfibers end
 
 namespace Content.Server.Forensics
 {
@@ -12,21 +14,20 @@ namespace Content.Server.Forensics
         [DataField("fibers")]
         public HashSet<string> Fibers = new();
 
-        // SS220 glove prints begin
+        // SS220 microfibers begin
         /// <summary>
         /// Identities and types of gloves that touched this entity, independent of fiber descriptions.
         /// </summary>
         [DataField]
-        public HashSet<GlovePrintTrace> GlovePrints = [];
-        // SS220 glove prints end
+        public HashSet<GloveMicroFiberTrace> GloveMicroFibers = [];
 
-        //SS220 Micro_fibers start
         /// <summary>
         /// Individual material profiles left by clothing and storage on this entity.
         /// </summary>
-        [DataField("microFibers", customTypeSerializer: typeof(MicroFiberTraceSetSerializer))]
-        public HashSet<MicroFiberTrace> MicroFibers = [];
-        //SS220 Micro_fibers end
+        [DataField("storageMicroFibers", customTypeSerializer: typeof(StorageMicroFiberTraceSetSerializer))]
+        public HashSet<StorageMicroFiberTrace> StorageMicroFibers = [];
+        // SS220 microfibers end
+
         [DataField("dnas")]
         public HashSet<string> DNAs = new();
 

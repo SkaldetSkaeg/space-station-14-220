@@ -31,9 +31,9 @@
           tags:
           - CaptainSabre
   - type: Appearance
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
+  # SS220 microfibers begin
+  - type: StorageMicroFiber
+  # SS220 microfibers end
 
 - type: entity
   parent: ClothingBeltStorageBase

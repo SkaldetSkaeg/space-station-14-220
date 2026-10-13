@@ -90,7 +90,7 @@ namespace Content.Server.Destructible.Thresholds.Behaviors
                 return;
             comp.Fingerprints = forensicsComponent.Fingerprints;
             comp.Fibers = forensicsComponent.Fibers;
-            comp.GlovePrints = [.. forensicsComponent.GlovePrints]; // SS220 glove prints
+            comp.GloveMicroFibers = [.. forensicsComponent.GloveMicroFibers]; // SS220 microfibers
         }
     }
 }

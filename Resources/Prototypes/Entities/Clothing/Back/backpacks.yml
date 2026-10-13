@@ -35,9 +35,9 @@
     delay: 0.5
   - type: ExplosionResistance
     damageCoefficient: 0.9
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
+  # SS220 microfibers begin
+  - type: StorageMicroFiber
+  # SS220 microfibers end
   - type: Tag
     tags:
     - WhitelistChameleon

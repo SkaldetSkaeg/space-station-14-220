@@ -205778,7 +205778,7 @@ entities:
       dnas:
       - ACCGATTCGTCAGAAT
       - GATTCTTCACTTAGGC
-      microFibers: []
+      storageMicroFibers: []
       fibers: []
       fingerprints:
       - B90F88B430265C68F5946C7E0629F4A7

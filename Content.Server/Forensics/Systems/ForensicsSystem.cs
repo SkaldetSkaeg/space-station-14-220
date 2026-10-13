@@ -3,7 +3,7 @@ using Content.Server.DoAfter;
 using Content.Server.Fluids.EntitySystems;
 using Content.Server.Forensics.Components;
 using Content.Server.Popups;
-using Content.Server.SS220.Forensics.Systems; // SS220 item profiles
+using Content.Server.SS220.Forensics.Systems; // SS220 microfibers
 using Content.Shared.Body.Events;
 using Content.Shared.Chemistry.EntitySystems;
 using Content.Shared.Popups;
@@ -36,7 +36,7 @@ namespace Content.Server.Forensics
         [Dependency] private readonly DoAfterSystem _doAfterSystem = default!;
         [Dependency] private readonly PopupSystem _popupSystem = default!;
         [Dependency] private readonly SharedSolutionContainerSystem _solutionContainerSystem = default!;
-        [Dependency] private readonly MicroFiberSystem _microFiber = default!; // SS220 item profiles
+        [Dependency] private readonly StorageMicroFiberSystem _storageMicroFiber = default!; // SS220 microfibers
 
         public override void Initialize()
         {
@@ -151,7 +151,7 @@ namespace Content.Server.Forensics
         public void CopyForensicsFrom(ForensicsComponent src, EntityUid target)
         {
             var dest = EnsureComp<ForensicsComponent>(target);
-            dest.GlovePrints.UnionWith(src.GlovePrints); // SS220 glove prints
+            dest.GloveMicroFibers.UnionWith(src.GloveMicroFibers); // SS220 microfibers
             foreach (var dna in src.DNAs)
             {
                 dest.DNAs.Add(dna);
@@ -162,12 +162,12 @@ namespace Content.Server.Forensics
                 dest.Fibers.Add(fiber);
             }
 
-			//SS220 Micro_fibers start
-            foreach (var microFiber in src.MicroFibers)
+            // SS220 microfibers begin
+            foreach (var storageMicroFiber in src.StorageMicroFibers)
             {
-                _microFiber.AddTrace((target, dest), microFiber);
+                _storageMicroFiber.AddTrace((target, dest), storageMicroFiber);
             }
-			//SS220 Micro_fibers end
+            // SS220 microfibers end
             foreach (var print in src.Fingerprints)
             {
                 dest.Fingerprints.Add(print);
@@ -252,10 +252,10 @@ namespace Content.Server.Forensics
                 return false;
             }
 
-            var totalPrintsAndFibers = forensicsComp.Fingerprints.Count + forensicsComp.Fibers.Count + forensicsComp.MicroFibers.Count;//SS220 Micro_fibers
+            var totalPrintsAndFibers = forensicsComp.Fingerprints.Count + forensicsComp.Fibers.Count + forensicsComp.StorageMicroFibers.Count; // SS220 microfibers
             var hasRemovableDNA = forensicsComp.DNAs.Count > 0 && forensicsComp.CanDnaBeCleaned;
 
-            totalPrintsAndFibers += forensicsComp.GlovePrints.Count; // SS220 glove prints
+            totalPrintsAndFibers += forensicsComp.GloveMicroFibers.Count; // SS220 microfibers
 
             if (hasRemovableDNA || totalPrintsAndFibers > 0)
             {
@@ -292,8 +292,10 @@ namespace Content.Server.Forensics
                 return;
 
             targetComp.Fibers = new();
-            targetComp.GlovePrints.Clear(); // SS220 glove prints
-            targetComp.MicroFibers.Clear();//SS220 Micro_fibers
+            // SS220 microfibers begin
+            targetComp.GloveMicroFibers.Clear();
+            targetComp.StorageMicroFibers.Clear();
+            // SS220 microfibers end
             targetComp.Fingerprints = new();
 
             if (targetComp.CanDnaBeCleaned)

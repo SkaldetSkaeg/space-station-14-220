@@ -5,7 +5,7 @@
   parent: ClothingHeadBase
   id: ClothingHeadHatStorageBase
   components:
-  - type: MicroFiber
+  - type: StorageMicroFiber
   - type: Storage
     grid:
     - 0,0,0,0
