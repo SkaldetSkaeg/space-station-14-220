@@ -54,36 +54,9 @@
     - Forensics
 
 - type: entity
-  id: BoxGloveMicroFiberSwabs
-  name: microfiber sample swab box
-  parent: BoxCardboard
-  description: A box containing ten empty microfiber sample swabs.
-  components:
-  # ToDo_SS220 find sprites: Sample swab box artwork currently reuses the generic box and swab label.
-  - type: Sprite
-    layers:
-    - state: boxwide
-    - state: swab
-  - type: Item
-    size: Normal
-    shape:
-    - 0,0,1,1
-  - type: Storage
-    grid:
-    - 0,0,4,1
-  - type: EntityTableContainerFill
-    containers:
-      storagebase:
-        id: GloveMicroFiberSwab
-        amount: 10
-  - type: GuideHelp
-    guides:
-    - Forensics
-
-- type: entity
   id: GloveMicroFiberAnalyzer
   name: microfiber analyzer
-  parent: [BaseMachine, BaseSecurityContraband]
+  parent: [BaseMachine, ConstructibleMachine, BaseSecurityContraband]
   description: A machine that identifies the glove types and pair codes in a collected swab sample.
   placement:
     mode: SnapgridCenter
@@ -98,6 +71,8 @@
     - state: unlit
       shader: unshaded
   - type: GloveMicroFiberAnalyzer
+  - type: Machine
+    board: GloveMicroFiberAnalyzerMachineCircuitboard
   - type: DeviceLinkSource
     ports:
     - GloveMicroFiberReport
@@ -111,26 +86,14 @@
   - type: ContainerContainer
     containers:
       sampleSlot: !type:ContainerSlot
+      machine_board: !type:Container
+      machine_parts: !type:Container
   - type: ActivatableUI
     key: enum.GloveMicroFiberAnalyzerUiKey.Key
   - type: UserInterface
     interfaces:
       enum.GloveMicroFiberAnalyzerUiKey.Key:
         type: GloveMicroFiberAnalyzerBoundUserInterface
-  - type: GuideHelp
-    guides:
-    - Forensics
-
-- type: entity
-  id: GloveMicroFiberAnalyzerFlatpack
-  name: microfiber analyzer flatpack
-  parent: BaseFlatpack
-  description: A flatpack for constructing a microfiber analyzer. Use a multitool to deploy it.
-  components:
-  - type: Item
-    size: Normal
-  - type: Flatpack
-    entity: GloveMicroFiberAnalyzer
   - type: GuideHelp
     guides:
     - Forensics

@@ -101,8 +101,11 @@ public sealed class GloveMicroFiberAnalyzerSystem : EntitySystem
             var id = component.History.Count + 1;
             var identifier = $"{_gameTicker.RoundId}-{ent.Owner.Id}-{id}";
             component.History.Add(new GloveMicroFiberAnalyzerHistoryEntry(id, [.. sample.Comp.GloveMicroFibers],
-                component.PendingDescription, identifier, sample.Comp.SourceName, [.. sample.Comp.StorageMicroFibers],
-                _gameTicker.RoundDuration()));
+                description: component.PendingDescription,
+                identifier: identifier,
+                sourceName: sample.Comp.SourceName,
+                storageMicroFibers: [.. sample.Comp.StorageMicroFibers],
+                analyzedAt: _gameTicker.RoundDuration()));
             ResetAnalysis(ent);
             component.PendingDescription = string.Empty;
             Del(sample.Owner);
@@ -344,8 +347,7 @@ public sealed class GloveMicroFiberAnalyzerSystem : EntitySystem
             return;
 
         var stored = ent.Comp.History[index];
-        ent.Comp.History[index] = new GloveMicroFiberAnalyzerHistoryEntry(stored.Id, stored.GloveMicroFibers,
-            args.Description, stored.Identifier, stored.SourceName, stored.StorageMicroFibers, stored.AnalyzedAt);
+        ent.Comp.History[index] = stored.WithDescription(args.Description);
         SendResults(ent);
     }
 
@@ -530,9 +532,21 @@ public sealed class GloveMicroFiberAnalyzerSystem : EntitySystem
         var hasSwab = TryGetSample(ent, out var sample);
         var used = hasSwab && sample.Comp.Used;
         ent.Comp.PrinterStatus = GetPrinterStatus(ent);
-        return new GloveMicroFiberAnalyzerResultsMessage(hasSwab, used, ent.Comp.PrintReadyAt, ent.Comp.PrintCooldown,
-            history, ent.Comp.AnalyzingSwab != null, ent.Comp.AnalysisStartedAt, ent.Comp.AnalysisFinishAt,
-            ent.Comp.PendingDescription, hasSwab ? GetNetEntity(sample.Owner) : null, ent.Comp.PrinterStatus,
-            ent.Owner.Id, hasSwab ? sample.Comp.SourceName : string.Empty);
+        return new GloveMicroFiberAnalyzerResultsMessage
+        {
+            HasSwab = hasSwab,
+            Used = used,
+            PrintReadyAt = ent.Comp.PrintReadyAt,
+            PrintCooldown = ent.Comp.PrintCooldown,
+            History = history,
+            IsAnalyzing = ent.Comp.AnalyzingSwab != null,
+            AnalysisStartedAt = ent.Comp.AnalysisStartedAt,
+            AnalysisFinishAt = ent.Comp.AnalysisFinishAt,
+            PendingDescription = ent.Comp.PendingDescription,
+            PendingSwab = hasSwab ? GetNetEntity(sample.Owner) : null,
+            PrinterStatus = ent.Comp.PrinterStatus,
+            AnalyzerId = ent.Owner.Id,
+            PendingSourceName = hasSwab ? sample.Comp.SourceName : string.Empty,
+        };
     }
 }

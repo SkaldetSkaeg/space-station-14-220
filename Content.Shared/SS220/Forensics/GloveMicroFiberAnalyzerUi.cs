@@ -114,6 +114,19 @@ public sealed class GloveMicroFiberAnalyzerHistoryEntry
         SourceName = sourceName;
         AnalyzedAt = analyzedAt;
     }
+
+    /// <summary>
+    /// Replaces the description without changing the evidence or previously sent history snapshots.
+    /// </summary>
+    public GloveMicroFiberAnalyzerHistoryEntry WithDescription(string description)
+    {
+        return new GloveMicroFiberAnalyzerHistoryEntry(Id, GloveMicroFibers,
+            description: description,
+            identifier: Identifier,
+            sourceName: SourceName,
+            storageMicroFibers: StorageMicroFibers,
+            analyzedAt: AnalyzedAt);
+    }
 }
 
 /// <summary>
@@ -125,87 +138,67 @@ public sealed class GloveMicroFiberAnalyzerResultsMessage : BoundUserInterfaceMe
     /// <summary>
     /// The server-side analyzer UID used in completed sample identifiers.
     /// </summary>
-    public readonly int AnalyzerId;
+    public required int AnalyzerId { get; init; }
 
     /// <summary>
     /// Whether the inserted swab contains a collected sample, including a sample without traces.
     /// </summary>
-    public readonly bool Used;
+    public required bool Used { get; init; }
 
     /// <summary>
     /// Whether a swab is physically inserted and can be ejected.
     /// </summary>
-    public readonly bool HasSwab;
+    public required bool HasSwab { get; init; }
 
     /// <summary>
     /// When the printer can produce another report.
     /// </summary>
-    public readonly TimeSpan PrintReadyAt;
+    public required TimeSpan PrintReadyAt { get; init; }
 
     /// <summary>
     /// Delay between printed reports.
     /// </summary>
-    public readonly TimeSpan PrintCooldown;
+    public required TimeSpan PrintCooldown { get; init; }
 
     /// <summary>
     /// This analyzer's stored samples, sent only to authorized users of the interface.
     /// </summary>
-    public readonly List<GloveMicroFiberAnalyzerHistoryEntry> History;
+    public required List<GloveMicroFiberAnalyzerHistoryEntry> History { get; init; }
 
     /// <summary>
     /// Whether the analyzer is processing the physically inserted swab.
     /// </summary>
-    public readonly bool IsAnalyzing;
+    public required bool IsAnalyzing { get; init; }
 
     /// <summary>
     /// When the current analysis started.
     /// </summary>
-    public readonly TimeSpan AnalysisStartedAt;
+    public required TimeSpan AnalysisStartedAt { get; init; }
 
     /// <summary>
     /// When the current analysis will finish if the swab stays inserted.
     /// </summary>
-    public readonly TimeSpan AnalysisFinishAt;
+    public required TimeSpan AnalysisFinishAt { get; init; }
 
     /// <summary>
     /// The description to attach to the pending sample when its analysis completes.
     /// </summary>
-    public readonly string PendingDescription;
+    public required string PendingDescription { get; init; }
 
     /// <summary>
     /// The physical swab targeted by pending analysis and description requests.
     /// </summary>
-    public readonly NetEntity? PendingSwab;
+    public required NetEntity? PendingSwab { get; init; }
 
     /// <summary>
     /// The scanned item's name on the inserted sample, without revealing its unanalyzed material evidence.
     /// </summary>
-    public readonly string PendingSourceName;
+    public string PendingSourceName { get; init; } = string.Empty;
 
     /// <summary>
     /// Whether a valid linked copier is ready to print a report.
     /// </summary>
-    public readonly GloveMicroFiberAnalyzerPrinterStatus PrinterStatus;
-
-    public GloveMicroFiberAnalyzerResultsMessage(bool hasSwab, bool used, TimeSpan printReadyAt, TimeSpan printCooldown,
-        List<GloveMicroFiberAnalyzerHistoryEntry> history, bool isAnalyzing, TimeSpan analysisStartedAt,
-        TimeSpan analysisFinishAt, string pendingDescription, NetEntity? pendingSwab,
-        GloveMicroFiberAnalyzerPrinterStatus printerStatus, int analyzerId, string pendingSourceName = "")
-    {
-        AnalyzerId = analyzerId;
-        HasSwab = hasSwab;
-        Used = used;
-        PrintReadyAt = printReadyAt;
-        PrintCooldown = printCooldown;
-        History = history;
-        IsAnalyzing = isAnalyzing;
-        AnalysisStartedAt = analysisStartedAt;
-        AnalysisFinishAt = analysisFinishAt;
-        PendingDescription = pendingDescription;
-        PendingSwab = pendingSwab;
-        PrinterStatus = printerStatus;
-        PendingSourceName = pendingSourceName;
-    }
+    public required GloveMicroFiberAnalyzerPrinterStatus PrinterStatus { get; init; }
 }
 
 /// <summary>

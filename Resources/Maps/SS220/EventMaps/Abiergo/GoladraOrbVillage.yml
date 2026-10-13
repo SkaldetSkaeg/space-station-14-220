@@ -18627,7 +18627,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers: []
       fibers: []
       fingerprints: []
     - type: InsideEntityStorage
@@ -45138,8 +45137,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
 - proto: CigaretteNomads
@@ -45282,8 +45279,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
 - proto: ClockOnWall
@@ -46164,8 +46159,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
 - proto: ClothingHeadHatStrawHat
@@ -46226,7 +46219,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers: []
       fibers: []
       fingerprints: []
   - uid: 28212
@@ -59565,7 +59557,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers: []
       fibers: []
       fingerprints: []
   - uid: 30876
@@ -59595,7 +59586,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers: []
       fibers: []
       fingerprints: []
 - proto: DrinkBeerCan
@@ -59849,8 +59839,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
 - proto: DrinkShotGlass
@@ -59957,8 +59945,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
 - proto: DrinkWineBottleFull
@@ -59972,8 +59958,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
 - proto: DrinkWineGlass
@@ -60112,8 +60096,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
 - proto: ExtinguisherCabinetFilled
@@ -61160,7 +61142,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers: []
       fibers: []
       fingerprints: []
     missingComponents:
@@ -106512,8 +106493,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 29572
@@ -106525,8 +106504,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 29573
@@ -106538,8 +106515,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 29574
@@ -106551,8 +106526,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
 - proto: FoodMealHappyHonkBigBite
@@ -106636,8 +106609,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 29568
@@ -106649,8 +106620,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 29569
@@ -106662,8 +106631,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 29570
@@ -106675,8 +106642,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
 - proto: FoodMeatBearCutletCooked
@@ -106690,8 +106655,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 29576
@@ -106703,8 +106666,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 29577
@@ -106716,8 +106677,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 29578
@@ -106729,8 +106688,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
 - proto: FoodMeatSnake
@@ -127666,8 +127623,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые плазматиеские волокна
       fibers: []
       fingerprints: []
 - proto: PlushieCarp

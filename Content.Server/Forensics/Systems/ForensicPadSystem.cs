@@ -5,7 +5,6 @@ using Content.Shared.Forensics;
 using Content.Shared.Forensics.Components;
 using Content.Shared.IdentityManagement;
 using Content.Shared.Interaction;
-using Content.Shared.Inventory;
 using Content.Shared.Labels.EntitySystems;
 using Content.Shared.Verbs;
 
@@ -19,7 +18,7 @@ namespace Content.Server.Forensics
         [Dependency] private readonly SharedDoAfterSystem _doAfterSystem = default!;
         [Dependency] private readonly PopupSystem _popupSystem = default!;
         [Dependency] private readonly LabelSystem _label = default!;
-        [Dependency] private readonly InventorySystem _inventory = default!;
+        [Dependency] private readonly ForensicsSystem _forensics = default!;
 
         public override void Initialize()
         {
@@ -130,9 +129,13 @@ namespace Content.Server.Forensics
         {
             sample = null;
 
-            if (_inventory.TryGetSlotEntity(ent, "gloves", out var gloves))
+            if (!_forensics.CanAccessFingerprint(ent, out var blocker))
             {
-                _popupSystem.PopupEntity(Loc.GetString("forensic-pad-gloves", ("target", Identity.Entity(ent, EntityManager))), ent, user);
+                var message = blocker != null
+                    ? Loc.GetString("forensic-pad-no-access-due", ("entity", Identity.Entity(blocker.Value, EntityManager)))
+                    : Loc.GetString("forensic-pad-no-access");
+
+                _popupSystem.PopupEntity(message, ent, user);
                 return false;
             }
 

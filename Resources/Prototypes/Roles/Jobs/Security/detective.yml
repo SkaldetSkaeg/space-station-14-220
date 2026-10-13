@@ -40,7 +40,6 @@
     - ForensicScanner
     # SS220 microfibers begin
     - GloveMicroFiberScanner
-    - GloveMicroFiberAnalyzerFlatpack
     - Multitool
     # SS220 microfibers end
 

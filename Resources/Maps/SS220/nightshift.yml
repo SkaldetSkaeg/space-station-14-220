@@ -67451,8 +67451,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - фиолетовые синтетические волокна
       fibers: []
       fingerprints: []
 - proto: ChemistryHotplate
@@ -70891,8 +70889,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 8813
@@ -70911,9 +70907,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые плазматиеские волокна
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 8814
@@ -71709,8 +71702,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - фиолетовые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 8936
@@ -71945,8 +71936,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
 - proto: ClothingShoesBootsJackFilled
@@ -72002,8 +71991,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
 - proto: ClothingShoesCult
@@ -74960,8 +74947,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
 - proto: Crematorium
@@ -89286,8 +89271,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - фиолетовые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 11842
@@ -109679,8 +109662,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые плазматиеские волокна
       fibers: []
       fingerprints: []
     - type: NameModifier
@@ -117764,8 +117745,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые плазматиеские волокна
       fibers: []
       fingerprints: []
   - uid: 15916
@@ -121260,8 +121239,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые плазматиеские волокна
       fibers: []
       fingerprints: []
   - uid: 16383
@@ -125591,9 +125568,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые плазматиеские волокна
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 16960
@@ -137620,8 +137594,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1650
@@ -137633,8 +137605,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
 - proto: ShippingContainerGorlexRed
@@ -141193,8 +141163,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - фиолетовые синтетические волокна
       fibers: []
       fingerprints: []
 - proto: Sink
@@ -149186,8 +149154,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 20866
@@ -150090,8 +150056,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - фиолетовые синтетические волокна
       fibers: []
       fingerprints: []
 - proto: TritiumCanisterBroken
@@ -170126,8 +170090,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
 - proto: WeaponCapacitorRecharger
@@ -170270,8 +170232,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
 - proto: WeaponRevolverPythonToy
@@ -173502,8 +173462,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
 - proto: WschamomileSeeds
@@ -173517,8 +173475,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
 - proto: wtulip
@@ -173540,8 +173496,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers:
-      - серые тканевые волокна
       fibers: []
       fingerprints: []
 - proto: ZiptiesBroken

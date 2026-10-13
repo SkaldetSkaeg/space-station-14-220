@@ -3130,7 +3130,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers: []
       fibers: []
       fingerprints: []
 - proto: PoppySeeds
@@ -3752,7 +3751,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers: []
       fibers: []
       fingerprints: []
   - uid: 407
@@ -3768,7 +3766,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers: []
       fibers: []
       fingerprints: []
 - proto: SMESBasic
@@ -4124,7 +4121,6 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
-      storageMicroFibers: []
       fibers: []
       fingerprints: []
 - proto: WoodStairsSolo
