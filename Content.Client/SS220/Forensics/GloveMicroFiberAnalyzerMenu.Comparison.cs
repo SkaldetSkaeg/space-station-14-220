@@ -40,25 +40,12 @@ public sealed partial class GloveMicroFiberAnalyzerMenu
         for (var i = history.Count - 1; i >= 0; i--)
         {
             var sample = history[i];
-            ComparisonFirst.AddItem(GetSampleName(sample), sample.Id);
-            ComparisonSecond.AddItem(GetSampleName(sample), sample.Id);
+            var sampleName = GetSampleName(sample);
+            ComparisonFirst.AddItem(sampleName, sample.Id);
+            ComparisonSecond.AddItem(sampleName, sample.Id);
         }
 
-        if (_comparisonFirstId == null || !history.Exists(sample => sample.Id == _comparisonFirstId.Value))
-            _comparisonFirstId = history.Count > 0 ? history[^1].Id : null;
-
-        if (_comparisonSecondId == null || !history.Exists(sample => sample.Id == _comparisonSecondId.Value))
-        {
-            _comparisonSecondId = null;
-            for (var i = history.Count - 1; i >= 0; i--)
-            {
-                if (history[i].Id == _comparisonFirstId)
-                    continue;
-
-                _comparisonSecondId = history[i].Id;
-                break;
-            }
-        }
+        RestoreComparisonSelection(history);
 
         if (_comparisonFirstId != null)
             ComparisonFirst.SelectId(_comparisonFirstId.Value);
@@ -70,9 +57,31 @@ public sealed partial class GloveMicroFiberAnalyzerMenu
             ClearComparison();
     }
 
+    private void RestoreComparisonSelection(List<GloveMicroFiberAnalyzerHistoryEntry> history)
+    {
+        if (_comparisonFirstId == null || !history.Exists(sample => sample.Id == _comparisonFirstId.Value))
+            _comparisonFirstId = history.Count > 0 ? history[^1].Id : null;
+
+        if (_comparisonSecondId != null && history.Exists(sample => sample.Id == _comparisonSecondId.Value))
+            return;
+
+        _comparisonSecondId = null;
+        for (var i = history.Count - 1; i >= 0; i--)
+        {
+            if (history[i].Id == _comparisonFirstId)
+                continue;
+
+            _comparisonSecondId = history[i].Id;
+            break;
+        }
+    }
+
     private void SelectComparisonSample(int id, bool first)
     {
-        if (_results == null || !_results.History.Exists(sample => sample.Id == id))
+        if (_results == null)
+            return;
+
+        if (!_results.History.Exists(sample => sample.Id == id))
             return;
 
         if (first)
@@ -104,12 +113,18 @@ public sealed partial class GloveMicroFiberAnalyzerMenu
             _comparisonFirstId == _comparisonSecondId;
         ComparisonResults.Visible = _comparisonHasResult;
         ComparisonStatus.Visible = !_comparisonHasResult;
-        var statusKey = _comparisonFirstId == null || _comparisonSecondId == null
-            ? "glove-micro-fiber-analyzer-interface-compare-not-enough"
-            : _comparisonFirstId == _comparisonSecondId
-                ? "glove-micro-fiber-analyzer-interface-compare-same-sample"
-                : "glove-micro-fiber-analyzer-interface-compare-instructions";
-        ComparisonStatus.SetMessage(FormattedMessage.FromUnformatted(Loc.GetString(statusKey)));
+        ComparisonStatus.SetMessage(FormattedMessage.FromUnformatted(Loc.GetString(GetComparisonStatusKey())));
+    }
+
+    private string GetComparisonStatusKey()
+    {
+        if (_comparisonFirstId == null || _comparisonSecondId == null)
+            return "glove-micro-fiber-analyzer-interface-compare-not-enough";
+
+        if (_comparisonFirstId == _comparisonSecondId)
+            return "glove-micro-fiber-analyzer-interface-compare-same-sample";
+
+        return "glove-micro-fiber-analyzer-interface-compare-instructions";
     }
 
     private void RunComparison()
@@ -134,52 +149,55 @@ public sealed partial class GloveMicroFiberAnalyzerMenu
         if (first == null || second == null)
             return;
 
-        List<string> firstCodes = [];
-        List<string> secondCodes = [];
-        foreach (var profile in first.GloveMicroFibers)
-        {
-            firstCodes.Add(profile.Code);
-        }
-
-        foreach (var profile in second.GloveMicroFibers)
-        {
-            secondCodes.Add(profile.Code);
-        }
-
-        var profiles = FindComparisonMatches(firstCodes, secondCodes);
-        var storageMicroFibers = FindComparisonStorageMicroFiberMatches(first.StorageMicroFibers,
+        var gloveMatches = FindComparisonGloveMatches(first.GloveMicroFibers, second.GloveMicroFibers);
+        var storageMatches = FindComparisonStorageMicroFiberMatches(first.StorageMicroFibers,
             second.StorageMicroFibers);
+        DisplayComparisonResults(gloveMatches, storageMatches);
+    }
+
+    private void DisplayComparisonResults(
+        List<GloveMicroFiberTrace> gloveMatches,
+        List<StorageMicroFiberTrace> storageMatches)
+    {
         ClearComparison();
         ComparisonProfileCount.Text = Loc.GetString("glove-micro-fiber-analyzer-interface-compare-profile-count",
-            ("count", profiles.Count));
+            ("count", gloveMatches.Count));
         ComparisonStorageMicroFiberCount.Text = Loc.GetString(
             "glove-micro-fiber-analyzer-interface-compare-storage-micro-fiber-count",
-            ("count", storageMicroFibers.Count));
-        DisplayComparisonMatches(ComparisonProfilesContainer, profiles, first.GloveMicroFibers,
+            ("count", storageMatches.Count));
+        DisplayComparisonGloveMatches(ComparisonProfilesContainer, gloveMatches,
             "glove-micro-fiber-analyzer-interface-compare-no-profiles");
-        DisplayStorageMicroFibers(ComparisonStorageMicroFibersContainer, storageMicroFibers,
+        DisplayStorageMicroFibers(ComparisonStorageMicroFibersContainer, storageMatches,
             "glove-micro-fiber-analyzer-interface-compare-no-storage-micro-fibers");
         _comparisonHasResult = true;
         UpdateComparisonView();
     }
 
-    private static List<string> FindComparisonMatches(List<string> first, List<string> second)
+    private static List<GloveMicroFiberTrace> FindComparisonGloveMatches(
+        List<GloveMicroFiberTrace> first,
+        List<GloveMicroFiberTrace> second)
     {
-        var remaining = new HashSet<string>(second, StringComparer.Ordinal);
-        List<string> matches = [];
-        foreach (var value in first)
+        HashSet<string> remaining = new(StringComparer.Ordinal);
+        foreach (var profile in second)
         {
-            if (!remaining.Remove(value))
+            remaining.Add(profile.Code);
+        }
+
+        List<GloveMicroFiberTrace> matches = [];
+        foreach (var profile in first)
+        {
+            if (!remaining.Remove(profile.Code))
                 continue;
 
-            matches.Add(value);
+            matches.Add(profile);
         }
 
         return matches;
     }
 
     private static List<StorageMicroFiberTrace> FindComparisonStorageMicroFiberMatches(
-        List<StorageMicroFiberTrace> first, List<StorageMicroFiberTrace> second)
+        List<StorageMicroFiberTrace> first,
+        List<StorageMicroFiberTrace> second)
     {
         HashSet<string> remaining = new(StringComparer.Ordinal);
         foreach (var fiber in second)
@@ -199,8 +217,10 @@ public sealed partial class GloveMicroFiberAnalyzerMenu
         return matches;
     }
 
-    private void DisplayComparisonMatches(BoxContainer container, List<string> matches,
-        List<GloveMicroFiberTrace> sourceProfiles, string emptyKey)
+    private void DisplayComparisonGloveMatches(
+        BoxContainer container,
+        List<GloveMicroFiberTrace> matches,
+        string emptyKey)
     {
         if (matches.Count == 0)
         {
@@ -212,9 +232,8 @@ public sealed partial class GloveMicroFiberAnalyzerMenu
 
         for (var i = 0; i < matches.Count; i++)
         {
-            var match = matches[i];
-            var trace = sourceProfiles.Find(profile => string.Equals(profile.Code, match, StringComparison.Ordinal));
-            container.AddChild(CreateSampleCard(match, trace.Prototype,
+            var trace = matches[i];
+            container.AddChild(CreateSampleCard(trace.Code, trace.Prototype,
                 "glove-micro-fiber-analyzer-interface-glove-sample-number", i + 1,
                 "glove-micro-fiber-analyzer-interface-unknown-type"));
         }

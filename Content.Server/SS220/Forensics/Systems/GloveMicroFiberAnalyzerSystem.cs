@@ -76,41 +76,56 @@ public sealed class GloveMicroFiberAnalyzerSystem : EntitySystem
             if (checkPrinter)
                 UpdatePrinterStatus(ent);
 
-            if (component.AnalyzingSwab == null)
-                continue;
-
-            if (!TryGetSample(ent, out var sample))
-            {
-                CancelAnalysis(ent);
-                component.PendingDescription = string.Empty;
-                SendResults(ent);
-                continue;
-            }
-
-            if (sample.Owner != component.AnalyzingSwab.Value || !sample.Comp.Used)
-            {
-                CancelAnalysis(ent);
-                component.PendingDescription = string.Empty;
-                SendResults(ent);
-                continue;
-            }
-
-            if (_timing.CurTime < component.AnalysisFinishAt)
-                continue;
-
-            var id = component.History.Count + 1;
-            var identifier = $"{_gameTicker.RoundId}-{ent.Owner.Id}-{id}";
-            component.History.Add(new GloveMicroFiberAnalyzerHistoryEntry(id, [.. sample.Comp.GloveMicroFibers],
-                description: component.PendingDescription,
-                identifier: identifier,
-                sourceName: sample.Comp.SourceName,
-                storageMicroFibers: [.. sample.Comp.StorageMicroFibers],
-                analyzedAt: _gameTicker.RoundDuration()));
-            ResetAnalysis(ent);
-            component.PendingDescription = string.Empty;
-            Del(sample.Owner);
-            SendResults(ent);
+            UpdateAnalysis(ent);
         }
+    }
+
+    private void UpdateAnalysis(Entity<GloveMicroFiberAnalyzerComponent> ent)
+    {
+        if (ent.Comp.AnalyzingSwab == null)
+            return;
+
+        if (!TryGetSample(ent, out var sample))
+        {
+            CancelPendingAnalysis(ent);
+            return;
+        }
+
+        if (sample.Owner != ent.Comp.AnalyzingSwab.Value || !sample.Comp.Used)
+        {
+            CancelPendingAnalysis(ent);
+            return;
+        }
+
+        if (_timing.CurTime < ent.Comp.AnalysisFinishAt)
+            return;
+
+        CompleteAnalysis(ent, sample);
+    }
+
+    private void CompleteAnalysis(
+        Entity<GloveMicroFiberAnalyzerComponent> ent,
+        Entity<GloveMicroFiberSwabComponent> sample)
+    {
+        var id = ent.Comp.History.Count + 1;
+        var identifier = $"{_gameTicker.RoundId}-{ent.Owner.Id}-{id}";
+        ent.Comp.History.Add(new GloveMicroFiberAnalyzerHistoryEntry(id, [.. sample.Comp.GloveMicroFibers],
+            description: ent.Comp.PendingDescription,
+            identifier: identifier,
+            sourceName: sample.Comp.SourceName,
+            storageMicroFibers: [.. sample.Comp.StorageMicroFibers],
+            analyzedAt: _gameTicker.RoundDuration()));
+        ResetAnalysis(ent);
+        ent.Comp.PendingDescription = string.Empty;
+        Del(sample.Owner);
+        SendResults(ent);
+    }
+
+    private void CancelPendingAnalysis(Entity<GloveMicroFiberAnalyzerComponent> ent)
+    {
+        CancelAnalysis(ent);
+        ent.Comp.PendingDescription = string.Empty;
+        SendResults(ent);
     }
 
     private void OnMapInit(Entity<GloveMicroFiberAnalyzerComponent> ent, ref MapInitEvent args)
@@ -169,22 +184,33 @@ public sealed class GloveMicroFiberAnalyzerSystem : EntitySystem
 
     private void UpdatePrinterStatus(Entity<GloveMicroFiberAnalyzerComponent> ent)
     {
-        if (ent.Comp.LinkedPhotocopier == null || !IsLinkedPhotocopier(ent, ent.Comp.LinkedPhotocopier.Value))
-        {
-            ent.Comp.LinkedPhotocopier = null;
-            foreach (var printer in _deviceLink.GetLinkedSinks((ent.Owner, null),
-                GloveMicroFiberAnalyzerUi.ReportSourcePort))
-            {
-                if (!IsLinkedPhotocopier(ent, printer))
-                    continue;
-
-                ent.Comp.LinkedPhotocopier = printer;
-                break;
-            }
-        }
+        ResolveLinkedPhotocopier(ent);
 
         if (ent.Comp.PrinterStatus != GetPrinterStatus(ent))
             SendResults(ent);
+    }
+
+    private void ResolveLinkedPhotocopier(Entity<GloveMicroFiberAnalyzerComponent> ent)
+    {
+        if (ent.Comp.LinkedPhotocopier != null && IsLinkedPhotocopier(ent, ent.Comp.LinkedPhotocopier.Value))
+            return;
+
+        ent.Comp.LinkedPhotocopier = null;
+        ent.Comp.LinkedPhotocopier = FindLinkedPhotocopier(ent);
+    }
+
+    private EntityUid? FindLinkedPhotocopier(Entity<GloveMicroFiberAnalyzerComponent> ent)
+    {
+        foreach (var printer in _deviceLink.GetLinkedSinks((ent.Owner, null),
+            GloveMicroFiberAnalyzerUi.ReportSourcePort))
+        {
+            if (!IsLinkedPhotocopier(ent, printer))
+                continue;
+
+            return printer;
+        }
+
+        return null;
     }
 
     private bool IsLinkedPhotocopier(Entity<GloveMicroFiberAnalyzerComponent> ent, EntityUid printer)
@@ -294,16 +320,7 @@ public sealed class GloveMicroFiberAnalyzerSystem : EntitySystem
         if (ent.Comp.AnalyzingSwab != null)
             return;
 
-        if (!TryGetSample(ent, out var sample))
-            return;
-
-        if (!sample.Comp.Used)
-            return;
-
-        if (args.Swab == null)
-            return;
-
-        if (args.Swab.Value != GetNetEntity(sample.Owner))
+        if (!TryGetRequestedSample(ent, args.Swab, out var sample))
             return;
 
         ent.Comp.PendingDescription = args.Description;
@@ -324,30 +341,33 @@ public sealed class GloveMicroFiberAnalyzerSystem : EntitySystem
 
         if (args.SampleId == null)
         {
-            if (!TryGetSample(ent, out var sample))
-                return;
-
-            if (!sample.Comp.Used)
-                return;
-
-            if (args.Swab == null)
-                return;
-
-            if (args.Swab.Value != GetNetEntity(sample.Owner))
-                return;
-
-            ent.Comp.PendingDescription = args.Description;
-            SendResults(ent);
+            SetPendingDescription(ent, args.Swab, args.Description);
             return;
         }
 
-        var sampleId = args.SampleId.Value;
+        SetStoredDescription(ent, args.SampleId.Value, args.Description);
+    }
+
+    private void SetPendingDescription(
+        Entity<GloveMicroFiberAnalyzerComponent> ent,
+        NetEntity? requestedSwab,
+        string description)
+    {
+        if (!TryGetRequestedSample(ent, requestedSwab, out _))
+            return;
+
+        ent.Comp.PendingDescription = description;
+        SendResults(ent);
+    }
+
+    private void SetStoredDescription(Entity<GloveMicroFiberAnalyzerComponent> ent, int sampleId, string description)
+    {
         var index = ent.Comp.History.FindIndex(entry => entry.Id == sampleId);
         if (index < 0)
             return;
 
         var stored = ent.Comp.History[index];
-        ent.Comp.History[index] = stored.WithDescription(args.Description);
+        ent.Comp.History[index] = stored.WithDescription(description);
         SendResults(ent);
     }
 
@@ -361,15 +381,13 @@ public sealed class GloveMicroFiberAnalyzerSystem : EntitySystem
 
         if (_timing.CurTime < ent.Comp.PrintReadyAt)
         {
-            _popup.PopupEntity(Loc.GetString("forensic-scanner-printer-not-ready"), ent, args.Actor);
-            SendResults(ent, args.Actor);
+            NotifyPrinterUnavailable(ent, args.Actor);
             return;
         }
 
         if (GetPrinterStatus(ent) != GloveMicroFiberAnalyzerPrinterStatus.Ready)
         {
-            _popup.PopupEntity(Loc.GetString("forensic-scanner-printer-not-ready"), ent, args.Actor);
-            SendResults(ent, args.Actor);
+            NotifyPrinterUnavailable(ent, args.Actor);
             return;
         }
 
@@ -388,12 +406,28 @@ public sealed class GloveMicroFiberAnalyzerSystem : EntitySystem
         SendResults(ent);
     }
 
+    private void NotifyPrinterUnavailable(Entity<GloveMicroFiberAnalyzerComponent> ent, EntityUid actor)
+    {
+        _popup.PopupEntity(Loc.GetString("forensic-scanner-printer-not-ready"), ent, actor);
+        SendResults(ent, actor);
+    }
+
     /// <summary>
     /// Formats the official security report, escaping sample values while preserving the template's markup.
     /// </summary>
     private string CreateReport(GloveMicroFiberAnalyzerHistoryEntry sample)
     {
         var text = new StringBuilder();
+        AppendReportHeader(text, sample);
+        AppendGloveResults(text, sample.GloveMicroFibers);
+        AppendStorageResults(text, sample.StorageMicroFibers);
+        AppendReportDescription(text, sample.Description);
+        text.AppendLine(Loc.GetString("glove-micro-fiber-analyzer-report-footer"));
+        return text.ToString();
+    }
+
+    private void AppendReportHeader(StringBuilder text, GloveMicroFiberAnalyzerHistoryEntry sample)
+    {
         text.AppendLine(Loc.GetString("glove-micro-fiber-analyzer-report-header",
             ("identifier", FormattedMessage.EscapeText(sample.Identifier))));
         text.AppendLine(Loc.GetString("glove-micro-fiber-analyzer-report-analyzed-at",
@@ -403,19 +437,23 @@ public sealed class GloveMicroFiberAnalyzerSystem : EntitySystem
                 ("source", FormattedMessage.EscapeText(sample.SourceName))));
 
         text.AppendLine();
+    }
+
+    private void AppendGloveResults(StringBuilder text, List<GloveMicroFiberTrace> traces)
+    {
         text.AppendLine(Loc.GetString("glove-micro-fiber-analyzer-report-results",
-            ("count", sample.GloveMicroFibers.Count)));
+            ("count", traces.Count)));
         text.AppendLine();
 
-        if (sample.GloveMicroFibers.Count == 0)
+        if (traces.Count == 0)
         {
             text.AppendLine(Loc.GetString("glove-micro-fiber-analyzer-interface-no-traces"));
             text.AppendLine();
         }
 
-        for (var i = 0; i < sample.GloveMicroFibers.Count; i++)
+        for (var i = 0; i < traces.Count; i++)
         {
-            var trace = sample.GloveMicroFibers[i];
+            var trace = traces[i];
             var name = _prototype.TryIndex(trace.Prototype, out var prototype)
                 ? prototype.Name
                 : Loc.GetString("glove-micro-fiber-analyzer-interface-unknown-type");
@@ -424,28 +462,31 @@ public sealed class GloveMicroFiberAnalyzerSystem : EntitySystem
                 ("code", FormattedMessage.EscapeText(trace.Code))));
             text.AppendLine();
         }
+    }
 
+    private void AppendStorageResults(StringBuilder text, List<StorageMicroFiberTrace> traces)
+    {
         text.AppendLine(Loc.GetString("glove-micro-fiber-analyzer-report-storage-micro-fibers",
-            ("count", sample.StorageMicroFibers.Count)));
-        for (var i = 0; i < sample.StorageMicroFibers.Count; i++)
+            ("count", traces.Count)));
+        for (var i = 0; i < traces.Count; i++)
         {
-            var trace = sample.StorageMicroFibers[i];
+            var trace = traces[i];
             text.AppendLine(Loc.GetString("glove-micro-fiber-analyzer-report-storage-micro-fiber",
                 ("number", i + 1), ("type", FormattedMessage.EscapeText(GetStorageMicroFiberName(trace))),
                 ("code", FormattedMessage.EscapeText(trace.Code))));
             text.AppendLine();
         }
         text.AppendLine();
+    }
 
-        if (!string.IsNullOrEmpty(sample.Description))
-        {
-            text.AppendLine(Loc.GetString("glove-micro-fiber-analyzer-report-description",
-                ("description", FormattedMessage.EscapeText(sample.Description))));
-            text.AppendLine();
-        }
+    private void AppendReportDescription(StringBuilder text, string description)
+    {
+        if (string.IsNullOrEmpty(description))
+            return;
 
-        text.AppendLine(Loc.GetString("glove-micro-fiber-analyzer-report-footer"));
-        return text.ToString();
+        text.AppendLine(Loc.GetString("glove-micro-fiber-analyzer-report-description",
+            ("description", FormattedMessage.EscapeText(description))));
+        text.AppendLine();
     }
 
     private string GetStorageMicroFiberName(StorageMicroFiberTrace trace)
@@ -472,6 +513,23 @@ public sealed class GloveMicroFiberAnalyzerSystem : EntitySystem
 
         sample = stored;
         return true;
+    }
+
+    private bool TryGetRequestedSample(
+        Entity<GloveMicroFiberAnalyzerComponent> ent,
+        NetEntity? requestedSwab,
+        out Entity<GloveMicroFiberSwabComponent> sample)
+    {
+        if (!TryGetSample(ent, out sample))
+            return false;
+
+        if (!sample.Comp.Used)
+            return false;
+
+        if (requestedSwab == null)
+            return false;
+
+        return requestedSwab.Value == GetNetEntity(sample.Owner);
     }
 
     private bool TryGetSample(Entity<GloveMicroFiberAnalyzerComponent> ent,

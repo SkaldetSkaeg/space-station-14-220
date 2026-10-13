@@ -19,42 +19,53 @@ namespace Content.Server.SS220.Forensics.Serialization;
 public sealed class StorageMicroFiberTraceSetSerializer
     : ITypeSerializer<HashSet<StorageMicroFiberTrace>, SequenceDataNode>
 {
-    public HashSet<StorageMicroFiberTrace> Read(ISerializationManager serializationManager, SequenceDataNode node,
-        IDependencyCollection dependencies, SerializationHookContext hookCtx, ISerializationContext? context = null,
+    public HashSet<StorageMicroFiberTrace> Read(
+        ISerializationManager serializationManager,
+        SequenceDataNode node,
+        IDependencyCollection dependencies,
+        SerializationHookContext hookCtx,
+        ISerializationContext? context = null,
         ISerializationManager.InstantiationDelegate<HashSet<StorageMicroFiberTrace>>? instanceProvider = null)
     {
         HashSet<StorageMicroFiberTrace> traces = instanceProvider != null ? instanceProvider() : [];
-        foreach (var entry in node.Sequence)
+        foreach (var traceNode in node.Sequence)
         {
-            if (entry is ValueDataNode)
+            if (traceNode is ValueDataNode)
                 continue;
 
-            traces.Add(serializationManager.Read<StorageMicroFiberTrace>(entry, hookCtx, context));
+            traces.Add(serializationManager.Read<StorageMicroFiberTrace>(traceNode, hookCtx, context));
         }
 
         return traces;
     }
 
-    public ValidationNode Validate(ISerializationManager serializationManager, SequenceDataNode node,
-        IDependencyCollection dependencies, ISerializationContext? context = null)
+    public ValidationNode Validate(
+        ISerializationManager serializationManager,
+        SequenceDataNode node,
+        IDependencyCollection dependencies,
+        ISerializationContext? context = null)
     {
-        List<ValidationNode> entries = [];
-        foreach (var entry in node.Sequence)
+        List<ValidationNode> validatedTraces = [];
+        foreach (var traceNode in node.Sequence)
         {
-            if (entry is ValueDataNode)
+            if (traceNode is ValueDataNode)
             {
-                entries.Add(new ValidatedValueNode(entry));
+                validatedTraces.Add(new ValidatedValueNode(traceNode));
                 continue;
             }
 
-            entries.Add(serializationManager.ValidateNode<StorageMicroFiberTrace>(entry, context));
+            validatedTraces.Add(serializationManager.ValidateNode<StorageMicroFiberTrace>(traceNode, context));
         }
 
-        return new ValidatedSequenceNode(entries);
+        return new ValidatedSequenceNode(validatedTraces);
     }
 
-    public DataNode Write(ISerializationManager serializationManager, HashSet<StorageMicroFiberTrace> value,
-        IDependencyCollection dependencies, bool alwaysWrite = false, ISerializationContext? context = null)
+    public DataNode Write(
+        ISerializationManager serializationManager,
+        HashSet<StorageMicroFiberTrace> value,
+        IDependencyCollection dependencies,
+        bool alwaysWrite = false,
+        ISerializationContext? context = null)
     {
         var sequence = new SequenceDataNode(value.Count);
         foreach (var trace in value)
