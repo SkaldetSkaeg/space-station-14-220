@@ -3,8 +3,8 @@
                xmlns:gfx="clr-namespace:Robust.Client.Graphics;assembly=Robust.Client"
                xmlns:forensics="clr-namespace:Content.Client.SS220.Forensics"
                Title="{Loc 'glove-print-analyzer-interface-title'}"
-               MinSize="608 400"
-               SetSize="608 480">
+               MinSize="608 480"
+               SetSize="760 620">
     <PanelContainer HorizontalExpand="True" VerticalExpand="True">
         <PanelContainer.PanelOverride>
             <gfx:StyleBoxFlat BackgroundColor="#111115" />
@@ -27,29 +27,39 @@
                         <PanelContainer.PanelOverride>
                             <gfx:StyleBoxFlat BackgroundColor="#14171B" BorderColor="#58616A" BorderThickness="1" />
                         </PanelContainer.PanelOverride>
-                        <BoxContainer Orientation="Vertical" SeparationOverride="0" Margin="8 2">
-                            <Label Text="{Loc 'glove-print-analyzer-interface-number-caption'}"
-                                   StyleClasses="LabelSubText" FontColorOverride="#9CA6AE" />
+                        <BoxContainer Orientation="Horizontal" SeparationOverride="8" Margin="8 2">
+                            <BoxContainer Orientation="Vertical" SeparationOverride="0" VerticalAlignment="Center">
+                                <Label Text="{Loc 'glove-print-analyzer-interface-number-caption'}"
+                                       StyleClasses="LabelSubText" FontColorOverride="#9CA6AE" />
+                                <Label Text="{Loc 'glove-print-analyzer-interface-number-caption-second-line'}"
+                                       StyleClasses="LabelSubText" FontColorOverride="#9CA6AE" />
+                            </BoxContainer>
                             <Label Name="AnalyzerNumberLabel" ClipText="True" MouseFilter="Stop"
-                                   StyleClasses="ConsoleHeading" FontColorOverride="#DFC48C" HorizontalExpand="True" />
+                                   StyleClasses="ConsoleHeading" FontColorOverride="#DFC48C"
+                                   HorizontalExpand="True" VerticalAlignment="Center" />
                         </BoxContainer>
                     </PanelContainer>
                     <Control HorizontalExpand="True" />
-                    <PanelContainer MinSize="36 36" VerticalAlignment="Center">
-                        <PanelContainer.PanelOverride>
-                            <gfx:StyleBoxFlat BackgroundColor="#14171B" BorderColor="#58616A" BorderThickness="1" />
-                        </PanelContainer.PanelOverride>
+                    <Button Name="Eject" Access="Public" Disabled="True" Visible="False" StyleClasses="ButtonSquare"
+                            MinSize="40 40" MaxSize="40 40" VerticalAlignment="Center"
+                            ToolTip="{Loc 'glove-print-analyzer-interface-eject'}">
+                        <TextureRect Name="EjectIcon" MinSize="24 24" MaxSize="24 24" MouseFilter="Ignore"
+                                     TexturePath="/Textures/Interface/eject.png" Stretch="KeepAspectCentered"
+                                     HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Button>
+                    <Button Name="PrinterButton" Access="Public" Disabled="True" StyleClasses="ButtonSquare"
+                            MinSize="40 40" MaxSize="40 40" VerticalAlignment="Center">
                         <forensics:GlovePrintAnalyzerPrinterIcon Name="PrinterStatusIcon" Access="Public"
-                                                               MinSize="24 24" MaxSize="24 24" MouseFilter="Stop"
+                                                               MinSize="24 24" MaxSize="24 24" MouseFilter="Ignore"
                                                                HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </PanelContainer>
+                    </Button>
                 </BoxContainer>
             </PanelContainer>
             <BoxContainer Orientation="Horizontal" SeparationOverride="8" HorizontalExpand="True" VerticalExpand="True">
                 <BoxContainer Orientation="Vertical" SeparationOverride="8" SetWidth="200" VerticalExpand="True">
                     <PanelContainer HorizontalExpand="True" VerticalExpand="True">
                         <PanelContainer.PanelOverride>
-                            <gfx:StyleBoxFlat BackgroundColor="#1B1B1E" />
+                            <gfx:StyleBoxFlat BackgroundColor="#1B1B1E" BorderColor="#3B444D" BorderThickness="1" />
                         </PanelContainer.PanelOverride>
                         <BoxContainer Name="HistoryPanel" Orientation="Vertical" SeparationOverride="8" Margin="8"
                                       HorizontalExpand="True" VerticalExpand="True">
@@ -65,6 +75,9 @@
                                     </PanelContainer>
                                     <Label Text="{Loc 'glove-print-analyzer-interface-history'}" StyleClasses="LabelHeading"
                                            FontColorOverride="#9AD9E5" Margin="8 4" />
+                                    <Control HorizontalExpand="True" />
+                                    <Label Name="HistoryCount" Text="0" StyleClasses="ConsoleText"
+                                           FontColorOverride="#C7E5ED" Margin="4 4 8 4" VerticalAlignment="Center" />
                                 </BoxContainer>
                             </PanelContainer>
                             <Label Name="HistoryEmpty" Text="{Loc 'glove-print-analyzer-interface-history-empty'}" />
@@ -95,15 +108,24 @@
                     </PanelContainer.PanelOverride>
                     <BoxContainer Orientation="Vertical" SeparationOverride="8" Margin="8"
                                   HorizontalExpand="True" VerticalExpand="True">
-                        <BoxContainer Orientation="Horizontal">
-                            <Button Name="Print" Access="Public" Disabled="True" HorizontalExpand="True"
-                                    TextAlign="Center" Text="{Loc 'glove-print-analyzer-interface-print'}" />
-                            <Button Name="Eject" Access="Public" Disabled="True" HorizontalExpand="True"
-                                    TextAlign="Center" Text="{Loc 'glove-print-analyzer-interface-eject'}" />
-                        </BoxContainer>
-                        <Label Name="SelectedSampleLabel" ClipText="True" MouseFilter="Stop"
-                               Text="{Loc 'glove-print-analyzer-interface-current-sample'}" />
-                        <Label Name="SampleSourceLabel" Visible="False" ClipText="True" MouseFilter="Stop" />
+                        <PanelContainer HorizontalExpand="True">
+                            <PanelContainer.PanelOverride>
+                                <gfx:StyleBoxFlat BackgroundColor="#1B1B1E" BorderColor="#444C54"
+                                                  BorderThickness="0 0 0 1" />
+                            </PanelContainer.PanelOverride>
+                            <BoxContainer Orientation="Vertical" SeparationOverride="4" Margin="0 0 0 8"
+                                          HorizontalExpand="True">
+                                <Label Name="SampleSourceLabel" Visible="False" ClipText="True" MouseFilter="Stop"
+                                       StyleClasses="LabelHeading" FontColorOverride="#E0E2E6" />
+                                <BoxContainer Orientation="Horizontal" SeparationOverride="8" HorizontalExpand="True">
+                                    <Label Name="SelectedSampleLabel" ClipText="True" MouseFilter="Stop"
+                                           StyleClasses="LabelSubText" FontColorOverride="#B6BEC8" HorizontalExpand="True"
+                                           Text="{Loc 'glove-print-analyzer-interface-current-sample'}" />
+                                    <Label Name="AnalysisTimeLabel" Visible="False" ClipText="True" MouseFilter="Stop"
+                                           StyleClasses="LabelSubText" FontColorOverride="#B6BEC8" />
+                                </BoxContainer>
+                            </BoxContainer>
+                        </PanelContainer>
                         <Label Name="StatusLabel" />
                         <Button Name="Analyze" Access="Public" Disabled="True" HorizontalExpand="True"
                                 Text="{Loc 'glove-print-analyzer-interface-analyze'}" />
@@ -135,24 +157,76 @@
                         </BoxContainer>
                         <BoxContainer Name="ResultsDetails" Orientation="Vertical" SeparationOverride="8"
                                       Visible="False" HorizontalExpand="True" VerticalExpand="True">
-                            <Label Text="{Loc 'glove-print-analyzer-interface-description'}" />
-                            <LineEdit Name="DescriptionEdit" Access="Public" Editable="False" HorizontalExpand="True"
-                                      PlaceHolder="{Loc 'glove-print-analyzer-interface-description-placeholder'}" />
-                            <Button Name="SaveDescription" Access="Public" Disabled="True" HorizontalExpand="True"
-                                    Text="{Loc 'glove-print-analyzer-interface-save-description'}" />
-                            <ScrollContainer VerticalExpand="True" HorizontalExpand="True" HScrollEnabled="False">
-                                <BoxContainer Orientation="Vertical" SeparationOverride="8"
+                            <ScrollContainer Name="ResultsScroll" VerticalExpand="True" HorizontalExpand="True"
+                                             HScrollEnabled="False">
+                                <BoxContainer Orientation="Vertical" SeparationOverride="10"
                                               VerticalAlignment="Top" HorizontalExpand="True">
-                                    <Label Text="{Loc 'glove-print-analyzer-interface-traces'}" />
+                                    <PanelContainer HorizontalExpand="True">
+                                        <PanelContainer.PanelOverride>
+                                            <gfx:StyleBoxFlat BackgroundColor="#1B1B1E" BorderColor="#455661"
+                                                              BorderThickness="0 0 0 1" />
+                                        </PanelContainer.PanelOverride>
+                                        <BoxContainer Orientation="Horizontal" SeparationOverride="8" Margin="0 0 0 6"
+                                                      HorizontalExpand="True">
+                                            <Label Name="TracesHeader" Text="{Loc 'glove-print-analyzer-interface-traces'}"
+                                                   StyleClasses="LabelKeyText" FontColorOverride="#A1D8E5"
+                                                   HorizontalExpand="True" />
+                                            <PanelContainer>
+                                                <PanelContainer.PanelOverride>
+                                                    <gfx:StyleBoxFlat BackgroundColor="#283640" />
+                                                </PanelContainer.PanelOverride>
+                                                <Label Name="GloveSamplesCount" Text="0" StyleClasses="ConsoleText"
+                                                       FontColorOverride="#C7E5ED" Margin="8 2" />
+                                            </PanelContainer>
+                                        </BoxContainer>
+                                    </PanelContainer>
                                     <RichTextLabel Name="NoTraces" HorizontalExpand="True" Visible="False"
-                                                   Text="{Loc 'glove-print-analyzer-interface-no-traces'}" />
+                                                   Text="{Loc 'glove-print-analyzer-interface-empty-category'}"
+                                                   Margin="0 0 0 4" />
                                     <BoxContainer Name="TracesContainer" Orientation="Vertical" SeparationOverride="8"
                                                   HorizontalExpand="True" />
-                                    <Label Text="{Loc 'glove-print-analyzer-interface-micro-fibers'}" />
+                                    <PanelContainer HorizontalExpand="True">
+                                        <PanelContainer.PanelOverride>
+                                            <gfx:StyleBoxFlat BackgroundColor="#1B1B1E" BorderColor="#455661"
+                                                              BorderThickness="0 0 0 1" />
+                                        </PanelContainer.PanelOverride>
+                                        <BoxContainer Orientation="Horizontal" SeparationOverride="8" Margin="0 0 0 6"
+                                                      HorizontalExpand="True">
+                                            <Label Name="MicroFibersHeader"
+                                                   Text="{Loc 'glove-print-analyzer-interface-micro-fibers'}"
+                                                   StyleClasses="LabelKeyText" FontColorOverride="#A1D8E5"
+                                                   HorizontalExpand="True" />
+                                            <PanelContainer>
+                                                <PanelContainer.PanelOverride>
+                                                    <gfx:StyleBoxFlat BackgroundColor="#283640" />
+                                                </PanelContainer.PanelOverride>
+                                                <Label Name="MicroFiberSamplesCount" Text="0" StyleClasses="ConsoleText"
+                                                       FontColorOverride="#C7E5ED" Margin="8 2" />
+                                            </PanelContainer>
+                                        </BoxContainer>
+                                    </PanelContainer>
                                     <BoxContainer Name="MicroFibersContainer" Orientation="Vertical" SeparationOverride="8"
                                                   HorizontalExpand="True" />
                                 </BoxContainer>
                             </ScrollContainer>
+                            <PanelContainer Name="DescriptionPanel" HorizontalExpand="True">
+                                <PanelContainer.PanelOverride>
+                                    <gfx:StyleBoxFlat BackgroundColor="#1B1B1E" BorderColor="#444C54"
+                                                      BorderThickness="0 1 0 0" />
+                                </PanelContainer.PanelOverride>
+                                <BoxContainer Orientation="Vertical" SeparationOverride="4" Margin="0 8 0 0"
+                                              HorizontalExpand="True">
+                                    <Label Text="{Loc 'glove-print-analyzer-interface-description'}"
+                                           StyleClasses="LabelSubText" FontColorOverride="#B6BEC8" />
+                                    <BoxContainer Orientation="Horizontal" SeparationOverride="6" HorizontalExpand="True">
+                                        <LineEdit Name="DescriptionEdit" Access="Public" Editable="False"
+                                                  HorizontalExpand="True"
+                                                  PlaceHolder="{Loc 'glove-print-analyzer-interface-description-placeholder'}" />
+                                        <Button Name="SaveDescription" Access="Public" Disabled="True" MinHeight="28"
+                                                Text="{Loc 'glove-print-analyzer-interface-save-description'}" />
+                                    </BoxContainer>
+                                </BoxContainer>
+                            </PanelContainer>
                         </BoxContainer>
                     </BoxContainer>
                 </PanelContainer>

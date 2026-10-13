@@ -9,23 +9,24 @@ using Robust.Shared.Timing;
 namespace Content.Client.SS220.Forensics;
 
 /// <summary>
-/// Displays the held scanner's current mode and allows choosing either collection mode.
+/// Displays the held scanner's current collection mode.
 /// </summary>
 public sealed class GlovePrintScannerStatusControl : Control
 {
     private readonly Entity<GlovePrintScannerComponent> _scanner;
-    private readonly IEntityManager _entityManager;
     private GlovePrintScannerMode _displayedMode;
 
     /// <summary>
-    /// Selects between deposited traces and the scanned gloves' own pair code.
+    /// Shows the selected collection mode in the held item's status panel.
     /// </summary>
-    public readonly OptionButton ModeSelector;
+    public readonly Label ModeLabel;
 
-    public GlovePrintScannerStatusControl(Entity<GlovePrintScannerComponent> scanner, IEntityManager entityManager)
+    public GlovePrintScannerStatusControl(Entity<GlovePrintScannerComponent> scanner)
     {
         _scanner = scanner;
-        _entityManager = entityManager;
+        ToolTip = Loc.GetString("glove-print-scanner-mode-tooltip") + "\n" +
+            Loc.GetString("glove-print-scanner-switch-hint");
+        MouseFilter = MouseFilterMode.Stop;
 
         var contents = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Vertical };
         contents.AddChild(new Label
@@ -34,18 +35,11 @@ public sealed class GlovePrintScannerStatusControl : Control
             StyleClasses = { StyleClass.ItemStatus },
         });
 
-        ModeSelector = new OptionButton
+        ModeLabel = new Label
         {
-            HorizontalExpand = true,
-            MinHeight = 22,
-            ToolTip = Loc.GetString("glove-print-scanner-mode-tooltip"),
+            StyleClasses = { StyleClass.ItemStatus },
         };
-        ModeSelector.AddItem(Loc.GetString("glove-print-scanner-mode-surface-short"),
-            (int)GlovePrintScannerMode.SurfaceTraces);
-        ModeSelector.AddItem(Loc.GetString("glove-print-scanner-mode-own-short"),
-            (int)GlovePrintScannerMode.OwnPrint);
-        ModeSelector.OnItemSelected += OnModeSelected;
-        contents.AddChild(ModeSelector);
+        contents.AddChild(ModeLabel);
         AddChild(contents);
         UpdateMode();
     }
@@ -55,10 +49,7 @@ public sealed class GlovePrintScannerStatusControl : Control
         base.FrameUpdate(args);
 
         if (_scanner.Comp.LifeStage > ComponentLifeStage.Running)
-        {
-            ModeSelector.Disabled = true;
             return;
-        }
 
         if (_displayedMode == _scanner.Comp.Mode)
             return;
@@ -69,18 +60,8 @@ public sealed class GlovePrintScannerStatusControl : Control
     private void UpdateMode()
     {
         _displayedMode = _scanner.Comp.Mode;
-        ModeSelector.SelectId((int)_displayedMode);
-    }
-
-    private void OnModeSelected(OptionButton.ItemSelectedEventArgs args)
-    {
-        if (_scanner.Comp.LifeStage > ComponentLifeStage.Running)
-            return;
-
-        if (args.Id != (int)GlovePrintScannerMode.SurfaceTraces && args.Id != (int)GlovePrintScannerMode.OwnPrint)
-            return;
-
-        _entityManager.RaisePredictiveEvent(new GlovePrintScannerSetModeEvent(
-            _entityManager.GetNetEntity(_scanner.Owner), (GlovePrintScannerMode)args.Id));
+        ModeLabel.Text = Loc.GetString(_displayedMode == GlovePrintScannerMode.SurfaceTraces
+            ? "glove-print-scanner-mode-surface-short"
+            : "glove-print-scanner-mode-own-short");
     }
 }

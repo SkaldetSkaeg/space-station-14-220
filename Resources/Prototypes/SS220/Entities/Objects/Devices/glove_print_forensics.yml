@@ -4,8 +4,9 @@
   id: GlovePrintScanner
   name: glove trace scanner
   parent: [BaseItem, BaseSecurityContraband]
-  description: A portable scanner that collects glove traces or an item's own glove signature and dispenses a sample swab. Use it in hand to switch modes.
+  description: A portable scanner that collects surface microfibers or an item's own sample and dispenses a swab. Use it in hand to open its mode menu.
   components:
+  # ToDo_SS220 find sprites: Scanner world, in-hand and belt sprites currently reuse the appraisal tool.
   - type: Sprite
     sprite: Objects/Tools/appraisal-tool.rsi
     state: icon
@@ -18,6 +19,14 @@
     slots:
     - Belt
   - type: GlovePrintScanner
+  - type: ActivatableUI
+    inHandsOnly: true
+    key: enum.GlovePrintScannerUiKey.Key
+    verbText: glove-print-scanner-mode-verb
+  - type: UserInterface
+    interfaces:
+      enum.GlovePrintScannerUiKey.Key:
+        type: GlovePrintScannerBoundUserInterface
   - type: UnPlaceable
   - type: GuideHelp
     guides:
@@ -29,6 +38,7 @@
   parent: BaseItem
   description: A physical carrier for a glove trace sample. Insert a collected sample into a glove trace analyzer.
   components:
+  # ToDo_SS220 find sprites: Dedicated microfiber sample swab sprite; currently uses a medical swab.
   - type: Sprite
     sprite: Objects/Specific/Medical/mouth_swab.rsi
     state: icon
@@ -49,6 +59,7 @@
   parent: BoxCardboard
   description: A box containing ten empty glove trace sample swabs.
   components:
+  # ToDo_SS220 find sprites: Sample swab box artwork currently reuses the generic box and swab label.
   - type: Sprite
     layers:
     - state: boxwide
@@ -79,6 +90,7 @@
   components:
   - type: Transform
     anchored: true
+  # ToDo_SS220 find sprites: Dedicated microfiber analyzer sprite; currently uses a medical diagnoser.
   - type: Sprite
     sprite: Structures/Machines/diagnoser.rsi
     layers:

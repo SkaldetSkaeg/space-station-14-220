@@ -99,7 +99,8 @@ public sealed class GlovePrintAnalyzerSystem : EntitySystem
             var id = component.History.Count + 1;
             var identifier = $"{_gameTicker.RoundId}-{ent.Owner.Id}-{id}";
             component.History.Add(new GlovePrintAnalyzerHistoryEntry(id, [.. sample.Comp.GlovePrints],
-                component.PendingDescription, identifier, sample.Comp.SourceName, [.. sample.Comp.MicroFibers]));
+                component.PendingDescription, identifier, sample.Comp.SourceName, [.. sample.Comp.MicroFibers],
+                _gameTicker.RoundDuration()));
             ResetAnalysis(ent);
             component.PendingDescription = string.Empty;
             Del(sample.Owner);
@@ -337,7 +338,7 @@ public sealed class GlovePrintAnalyzerSystem : EntitySystem
 
         var stored = ent.Comp.History[index];
         ent.Comp.History[index] = new GlovePrintAnalyzerHistoryEntry(stored.Id, stored.GlovePrints,
-            args.Description, stored.Identifier, stored.SourceName, stored.MicroFibers);
+            args.Description, stored.Identifier, stored.SourceName, stored.MicroFibers, stored.AnalyzedAt);
         SendResults(ent);
     }
 
@@ -386,6 +387,8 @@ public sealed class GlovePrintAnalyzerSystem : EntitySystem
         var text = new StringBuilder();
         text.AppendLine(Loc.GetString("glove-print-analyzer-report-header",
             ("identifier", FormattedMessage.EscapeText(sample.Identifier))));
+        text.AppendLine(Loc.GetString("glove-print-analyzer-report-analyzed-at",
+            ("time", GlovePrintAnalyzerUi.FormatRoundTime(sample.AnalyzedAt))));
         if (!string.IsNullOrEmpty(sample.SourceName))
             text.AppendLine(Loc.GetString("glove-print-analyzer-report-source",
                 ("source", FormattedMessage.EscapeText(sample.SourceName))));

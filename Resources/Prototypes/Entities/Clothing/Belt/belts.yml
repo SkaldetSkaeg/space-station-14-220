@@ -97,9 +97,6 @@
       - CartridgeLightRifle
       - CartridgeAntiMateriel
     #ss220 Bandolier rework end
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
 
 - type: entity
   parent: [ ClothingBeltStorageBase, BaseMagicalContraband ]
@@ -118,9 +115,6 @@
       tags:
       - WizardWand
       - WhitelistChameleon
-  #SS220 Micro_fibers start
-  - type: MicroFiber
-  #SS220 Micro_fibers end
 
 
 ## Holsters
@@ -172,9 +166,6 @@
         - Gun
         - BallisticAmmoProvider
         - CartridgeAmmo
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
   - type: StaticPrice
     price: 500
 
@@ -192,9 +183,6 @@
     sprite: Clothing/Belt/securitywebbing.rsi
   - type: Clothing
     sprite: Clothing/Belt/securitywebbing.rsi
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
 
 - type: entity
   parent: [ ClothingBeltStorageBase]
@@ -206,9 +194,6 @@
     sprite: Clothing/Belt/mercwebbing.rsi
   - type: Clothing
     sprite: Clothing/Belt/mercwebbing.rsi
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingBeltStorageBase
@@ -233,9 +218,6 @@
     sprite: Clothing/Belt/militarywebbing.rsi
   - type: ExplosionResistance
     damageCoefficient: 0.1
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
   - type: StaticPrice
     price: 500
 
@@ -249,9 +231,6 @@
     sprite: Clothing/Belt/militarywebbingmed.rsi
   - type: Clothing
     sprite: Clothing/Belt/militarywebbingmed.rsi
-  #SS220 Micro_fibers start
-  - type: MicroFiber
-  #SS220 Micro_fibers end
 
 - type: entity
   parent: [ BaseCentcommContraband, ClothingBeltMilitaryWebbing ]

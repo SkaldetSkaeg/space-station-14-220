@@ -3,7 +3,6 @@
 using Content.Shared.ActionBlocker;
 using Content.Shared.Examine;
 using Content.Shared.Hands.EntitySystems;
-using Content.Shared.Interaction.Events;
 using Content.Shared.Popups;
 
 namespace Content.Shared.SS220.Forensics;
@@ -21,21 +20,8 @@ public sealed class SharedGlovePrintScannerSystem : EntitySystem
     {
         base.Initialize();
 
-        SubscribeLocalEvent<GlovePrintScannerComponent, UseInHandEvent>(OnUseInHand);
         SubscribeLocalEvent<GlovePrintScannerComponent, ExaminedEvent>(OnExamined);
         SubscribeAllEvent<GlovePrintScannerSetModeEvent>(OnSetMode);
-    }
-
-    private void OnUseInHand(Entity<GlovePrintScannerComponent> ent, ref UseInHandEvent args)
-    {
-        if (args.Handled)
-            return;
-
-        var mode = ent.Comp.Mode == GlovePrintScannerMode.SurfaceTraces
-            ? GlovePrintScannerMode.OwnPrint
-            : GlovePrintScannerMode.SurfaceTraces;
-        SetMode(ent, mode, args.User);
-        args.Handled = true;
     }
 
     private void OnSetMode(GlovePrintScannerSetModeEvent msg, EntitySessionEventArgs args)

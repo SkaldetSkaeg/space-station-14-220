@@ -114,7 +114,16 @@ public sealed partial class GlovePrintAnalyzerMenu
 
     private void RunComparison()
     {
-        if (!CompareHistory.Pressed || _results == null || _comparisonFirstId == null || _comparisonSecondId == null)
+        if (!CompareHistory.Pressed)
+            return;
+
+        if (_results == null)
+            return;
+
+        if (_comparisonFirstId == null)
+            return;
+
+        if (_comparisonSecondId == null)
             return;
 
         if (_comparisonFirstId == _comparisonSecondId)
@@ -144,7 +153,7 @@ public sealed partial class GlovePrintAnalyzerMenu
             ("count", profiles.Count));
         ComparisonMicroFiberCount.Text = Loc.GetString("glove-print-analyzer-interface-compare-micro-fiber-count",
             ("count", microFibers.Count));
-        DisplayComparisonMatches(ComparisonProfilesContainer, profiles,
+        DisplayComparisonMatches(ComparisonProfilesContainer, profiles, first.GlovePrints,
             "glove-print-analyzer-interface-compare-no-profiles");
         DisplayMicroFibers(ComparisonMicroFibersContainer, microFibers,
             "glove-print-analyzer-interface-compare-no-micro-fibers");
@@ -188,7 +197,8 @@ public sealed partial class GlovePrintAnalyzerMenu
         return matches;
     }
 
-    private static void DisplayComparisonMatches(BoxContainer container, List<string> matches, string emptyKey)
+    private void DisplayComparisonMatches(BoxContainer container, List<string> matches,
+        List<GlovePrintTrace> sourceProfiles, string emptyKey)
     {
         if (matches.Count == 0)
         {
@@ -198,11 +208,13 @@ public sealed partial class GlovePrintAnalyzerMenu
             return;
         }
 
-        foreach (var match in matches)
+        for (var i = 0; i < matches.Count; i++)
         {
-            var text = new RichTextLabel { HorizontalExpand = true };
-            text.SetMessage(FormattedMessage.FromUnformatted(match));
-            container.AddChild(text);
+            var match = matches[i];
+            var trace = sourceProfiles.Find(profile => string.Equals(profile.Code, match, StringComparison.Ordinal));
+            container.AddChild(CreateSampleCard(match, trace.Prototype,
+                "glove-print-analyzer-interface-glove-sample-number", i + 1,
+                "glove-print-analyzer-interface-unknown-type"));
         }
     }
 }

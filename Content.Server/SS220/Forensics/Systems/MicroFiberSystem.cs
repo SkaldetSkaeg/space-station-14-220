@@ -2,6 +2,8 @@
 
 using Content.Server.Forensics;
 using Content.Server.SS220.Forensics.Components;
+using Content.Shared.Inventory;
+using Content.Shared.Inventory.Events;
 using Content.Shared.SS220.Forensics;
 using Robust.Shared.Containers;
 using Robust.Shared.Prototypes;
@@ -14,6 +16,7 @@ namespace Content.Server.SS220.Forensics.Systems;
 /// </summary>
 public sealed class MicroFiberSystem : EntitySystem
 {
+    [Dependency] private readonly InventorySystem _inventory = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
 
     public override void Initialize()
@@ -21,6 +24,7 @@ public sealed class MicroFiberSystem : EntitySystem
         base.Initialize();
         SubscribeLocalEvent<MicroFiberComponent, MapInitEvent>(OnMapInit);
         SubscribeLocalEvent<MicroFiberComponent, EntInsertedIntoContainerMessage>(OnEntInserted);
+        SubscribeLocalEvent<InventoryComponent, DidEquipEvent>(OnInventoryEquipped);
     }
 
     private void OnMapInit(Entity<MicroFiberComponent> ent, ref MapInitEvent args)
@@ -45,6 +49,9 @@ public sealed class MicroFiberSystem : EntitySystem
     public bool TryGetTrace(Entity<MicroFiberComponent?> ent, out MicroFiberTrace trace)
     {
         trace = default;
+        if (TerminatingOrDeleted(ent))
+            return false;
+
         if (!Resolve(ent, ref ent.Comp, false))
             return false;
 
@@ -63,8 +70,53 @@ public sealed class MicroFiberSystem : EntitySystem
         if (!TryGetTrace((ent.Owner, ent.Comp), out var trace))
             return;
 
-        var forensics = EnsureComp<ForensicsComponent>(args.Entity);
-        AddTrace((args.Entity, forensics), trace);
+        DepositTrace(args.Entity, trace);
+    }
+
+    private void OnInventoryEquipped(Entity<InventoryComponent> ent, ref DidEquipEvent args)
+    {
+        if (TerminatingOrDeleted(ent))
+            return;
+
+        if (TerminatingOrDeleted(args.Equipment))
+            return;
+
+        // Pocket containers belong to the wearer, but their material identity belongs to the worn uniform.
+        if ((args.SlotFlags & SlotFlags.POCKET) != 0)
+        {
+            var uniforms = _inventory.GetSlotEnumerator((ent.Owner, ent.Comp), SlotFlags.INNERCLOTHING);
+            while (uniforms.NextItem(out var uniform))
+            {
+                if (!TryGetTrace(uniform, out var uniformTrace))
+                    continue;
+
+                DepositTrace(args.Equipment, uniformTrace);
+            }
+
+            return;
+        }
+
+        if ((args.SlotFlags & SlotFlags.INNERCLOTHING) == 0)
+            return;
+
+        if (!TryGetTrace(args.Equipment, out var trace))
+            return;
+
+        // Equipping a different uniform also brings it into contact with existing pocket contents.
+        var pockets = _inventory.GetSlotEnumerator((ent.Owner, ent.Comp), SlotFlags.POCKET);
+        while (pockets.NextItem(out var item))
+        {
+            DepositTrace(item, trace);
+        }
+    }
+
+    private void DepositTrace(EntityUid target, MicroFiberTrace trace)
+    {
+        if (TerminatingOrDeleted(target))
+            return;
+
+        var forensics = EnsureComp<ForensicsComponent>(target);
+        AddTrace((target, forensics), trace);
     }
 
     /// <summary>

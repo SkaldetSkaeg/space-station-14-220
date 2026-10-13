@@ -1,5 +1,6 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
+using System.Globalization;
 using Content.Shared.DeviceLinking;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
@@ -25,6 +26,19 @@ public static class GlovePrintAnalyzerUi
     /// Maximum description length accepted by the editor and server.
     /// </summary>
     public const int MaxDescriptionLength = 512;
+
+    /// <summary>
+    /// Formats a recorded round duration as hours, minutes and seconds without wrapping after a day.
+    /// </summary>
+    public static string FormatRoundTime(TimeSpan roundTime)
+    {
+        if (roundTime < TimeSpan.Zero)
+            roundTime = TimeSpan.Zero;
+
+        var hours = roundTime.Ticks / TimeSpan.TicksPerHour;
+        return string.Format(CultureInfo.InvariantCulture, "{0:D2}:{1:D2}:{2:D2}",
+            hours, roundTime.Minutes, roundTime.Seconds);
+    }
 }
 
 /// <summary>
@@ -83,8 +97,14 @@ public sealed class GlovePrintAnalyzerHistoryEntry
     /// </summary>
     public readonly string SourceName;
 
+    /// <summary>
+    /// Elapsed round time when this sample's analysis completed, retained as a permanent snapshot.
+    /// </summary>
+    public readonly TimeSpan AnalyzedAt;
+
     public GlovePrintAnalyzerHistoryEntry(int id, List<GlovePrintTrace> glovePrints, string description = "",
-        string identifier = "", string sourceName = "", List<MicroFiberTrace>? microFibers = null)
+        string identifier = "", string sourceName = "", List<MicroFiberTrace>? microFibers = null,
+        TimeSpan analyzedAt = default)
     {
         Id = id;
         GlovePrints = glovePrints;
@@ -92,6 +112,7 @@ public sealed class GlovePrintAnalyzerHistoryEntry
         Description = description;
         Identifier = identifier;
         SourceName = sourceName;
+        AnalyzedAt = analyzedAt;
     }
 }
 

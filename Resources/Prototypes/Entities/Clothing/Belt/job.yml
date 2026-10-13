@@ -94,9 +94,6 @@
     tags:
     - UtilityBelt
     - WhitelistChameleon
-  #SS220 Micro_fibers start
-  - type: MicroFiber
-  #SS220 Micro_fibers end
 
 - type: entity
   parent: BaseClothingBeltEngineering
@@ -113,9 +110,6 @@
     - 0,0,9,1
   - type: StealTarget
     stealGroup: ChiefEngineerToolBelt
-  #SS220 Micro_fibers start
-  - type: MicroFiber
-  #SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingBeltStorageBase
@@ -198,9 +192,6 @@
           tags:
           - CleanerGrenade
   - type: Appearance
-  #SS220 Micro_fibers start
-  - type: MicroFiber
-  #SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingBeltStorageBase
@@ -268,9 +259,6 @@
           tags:
           - Wrench
   - type: Appearance
-  #SS220 Micro_fibers start
-  - type: MicroFiber
-  #SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingBeltMedical
@@ -282,9 +270,6 @@
     sprite: Clothing/Belt/emt.rsi
   - type: Clothing
     sprite: Clothing/Belt/emt.rsi
-  #SS220 Micro_fibers start
-  - type: MicroFiber
-  #SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingBeltStorageBase
@@ -336,9 +321,6 @@
           tags:
           - Bottle
   - type: Appearance
-  #SS220 Micro_fibers start
-  - type: MicroFiber
-  #SS220 Micro_fibers end
 
 #SS220 Chef Resprite begin
 # - type: entity
@@ -475,6 +457,3 @@
           components:
           - SmokeOnTrigger
   - type: Appearance
-  #SS220 Micro_fibers start
-  - type: MicroFiber
-  #SS220 Micro_fibers end

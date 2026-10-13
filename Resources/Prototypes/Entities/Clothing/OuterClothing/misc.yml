@@ -8,9 +8,6 @@
     sprite: Clothing/OuterClothing/Misc/apron.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Misc/apron.rsi
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
   - type: Tag
     tags:
     - Apron
@@ -27,9 +24,6 @@
     sprite: Clothing/OuterClothing/Misc/apronbar.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Misc/apronbar.rsi
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
   - type: Tag
     tags:
     - Apron
@@ -46,9 +40,6 @@
     sprite: Clothing/OuterClothing/Misc/apronbotanist.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Misc/apronbotanist.rsi
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
   - type: Tag
     tags:
     - Apron
@@ -65,9 +56,6 @@
     sprite: Clothing/OuterClothing/Misc/apronchef.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Misc/apronchef.rsi
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
   - type: Tag
     tags:
     - Apron
@@ -83,9 +71,6 @@
     sprite: Clothing/OuterClothing/Misc/chef.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Misc/chef.rsi
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingOuterBase

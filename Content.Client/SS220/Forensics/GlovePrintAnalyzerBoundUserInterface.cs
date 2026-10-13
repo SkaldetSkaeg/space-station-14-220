@@ -21,7 +21,7 @@ public sealed class GlovePrintAnalyzerBoundUserInterface : BoundUserInterface
         base.Open();
         _window = this.CreateWindow<GlovePrintAnalyzerMenu>();
         _window.Eject.OnPressed += _ => SendMessage(new GlovePrintAnalyzerEjectMessage());
-        _window.Print.OnPressed += _ => Print();
+        _window.PrinterButton.OnPressed += _ => Print();
         _window.Analyze.OnPressed += _ => Analyze();
         _window.SaveDescription.OnPressed += _ => SaveDescription();
         SendMessage(new GlovePrintAnalyzerRequestResultsMessage());
@@ -47,7 +47,13 @@ public sealed class GlovePrintAnalyzerBoundUserInterface : BoundUserInterface
 
     private void Print()
     {
-        if (_window == null || _window.Print.Disabled || _window.SelectedSampleId == null)
+        if (_window == null)
+            return;
+
+        if (_window.PrinterButton.Disabled)
+            return;
+
+        if (_window.SelectedSampleId == null)
             return;
 
         _window.StartPrintCooldown();

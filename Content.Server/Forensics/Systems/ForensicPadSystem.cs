@@ -60,6 +60,7 @@ namespace Content.Server.Forensics
                 return;
             }
 
+            // SS220 sample collection begin
             if (!TryGetSample(args.Target.Value, args.User, out var sample))
                 return;
 
@@ -67,6 +68,7 @@ namespace Content.Server.Forensics
                 return;
 
             StartScan(uid, args.User, args.Target.Value, component, sample);
+            // SS220 sample collection end
         }
 
         private void StartScan(EntityUid used, EntityUid user, EntityUid target, ForensicPadComponent pad, string sample)

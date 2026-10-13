@@ -61,9 +61,6 @@
       collection: FootstepClown
       params:
         variation: 0.125
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingBackpack
@@ -77,9 +74,6 @@
   - type: Storage
     storageOpenSound:
       collection: IanBark
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
 
 - type: entity
   parent: [ClothingBackpack, BaseSecurityContraband]
@@ -89,9 +83,6 @@
   components:
   - type: Sprite
     sprite: Clothing/Back/Backpacks/security.rsi
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
 
 - type: entity
   parent: [ClothingBackpack, BaseSecurityContraband]
@@ -101,9 +92,6 @@
   components:
   - type: Sprite
     sprite: Clothing/Back/Backpacks/brigmedic.rsi
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingBackpack
@@ -113,9 +101,6 @@
   components:
   - type: Sprite
     sprite: Clothing/Back/Backpacks/engineering.rsi
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingBackpack
@@ -125,9 +110,6 @@
   components:
   - type: Sprite
     sprite: Clothing/Back/Backpacks/atmospherics.rsi
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingBackpack
@@ -137,9 +119,6 @@
   components:
   - type: Sprite
     sprite: Clothing/Back/Backpacks/medical.rsi
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
 
 - type: entity
   parent: [ClothingBackpack]
@@ -149,8 +128,6 @@
   components:
   - type: Sprite
     sprite: Clothing/Back/Backpacks/captain.rsi
-#SS220 Micro_fibers start
-  - type: MicroFiber
 
 - type: entity
   parent: ClothingBackpack
@@ -160,9 +137,6 @@
   components:
   - type: Sprite
     sprite: Clothing/Back/Backpacks/mime.rsi
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
   - type: Storage
     storageOpenSound: null
     storageInsertSound: null
@@ -175,9 +149,6 @@
   components:
   - type: Sprite
     sprite: Clothing/Back/Backpacks/chemistry.rsi
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingBackpack
@@ -187,9 +158,6 @@
   components:
   - type: Sprite
     sprite: Clothing/Back/Backpacks/hydroponics.rsi
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingBackpack
@@ -199,9 +167,6 @@
   components:
   - type: Sprite
     sprite: Clothing/Back/Backpacks/science.rsi
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingBackpack
@@ -211,9 +176,6 @@
   components:
   - type: Sprite
     sprite: Clothing/Back/Backpacks/virology.rsi
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingBackpack
@@ -223,9 +185,6 @@
   components:
   - type: Sprite
     sprite: Clothing/Back/Backpacks/genetics.rsi
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingBackpack
@@ -235,9 +194,6 @@
   components:
     - type: Sprite
       sprite: Clothing/Back/Backpacks/cargo.rsi
-#SS220 Micro_fibers start
-    - type: MicroFiber
-#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingBackpack
@@ -247,9 +203,6 @@
   components:
     - type: Sprite
       sprite: Clothing/Back/Backpacks/salvage.rsi
-#SS220 Micro_fibers start
-    - type: MicroFiber
-#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingBackpack
@@ -259,9 +212,6 @@
   components:
     - type: Sprite
       sprite: Clothing/Back/Backpacks/merc.rsi
-#SS220 Micro_fibers start
-    - type: MicroFiber
-#SS220 Micro_fibers end
 
 #ERT
 - type: entity
@@ -275,9 +225,6 @@
   - type: Storage
     grid:
     - 0,0,10,4 # SS220 bigger-ert-backpack
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
 #SS220 ERT-ExplosionResistance-fix start
   - type: ExplosionResistance
     damageCoefficient: 0
@@ -291,9 +238,6 @@
   components:
   - type: Sprite
     sprite: Clothing/Back/Backpacks/ertsec.rsi
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingBackpackERTLeader
@@ -303,9 +247,6 @@
   components:
   - type: Sprite
     sprite: Clothing/Back/Backpacks/ertmed.rsi
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingBackpackERTLeader
@@ -315,9 +256,6 @@
   components:
   - type: Sprite
     sprite: Clothing/Back/Backpacks/erteng.rsi
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingBackpackERTLeader
@@ -327,9 +265,6 @@
   components:
   - type: Sprite
     sprite: Clothing/Back/Backpacks/ertjanitor.rsi
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingBackpackERTLeader
@@ -339,9 +274,6 @@
   components:
   - type: Sprite
     sprite: Clothing/Back/Backpacks/ertclown.rsi
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingBackpackERTLeader
@@ -351,9 +283,6 @@
   components:
   - type: Sprite
     sprite: Clothing/Back/Backpacks/ertchaplain.rsi
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingBackpackERTSecurity
@@ -364,9 +293,6 @@
     - type: Storage
       grid:
       - 0,0,7,6
-#SS220 Micro_fibers start
-    - type: MicroFiber
-#SS220 Micro_fibers end
 
 #SS220 RETURNED FOR CENTCOMM MAP
 - type: entity
@@ -419,9 +345,6 @@
     - 8,1,8,3
   - type: StaticPrice
     price: 1000 #SS220-underused-uplinks-stuff end
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
 
 #Special
 - type: entity
@@ -445,9 +368,6 @@
     maxItemSize: Huge
     grid:
     - 0,0,19,9
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingBackpackClown
@@ -461,9 +381,6 @@
   - type: Unremoveable
     deleteOnDrop: false
     lockToHands: false
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
 
 - type: entity
   parent: ClothingBackpack
@@ -487,9 +404,6 @@
   - type: DeviceLinkSink
     ports:
       - Trigger
-#SS220 Micro_fibers start
-  - type: MicroFiber
-#SS220 Micro_fibers end
 
 # Debug
 - type: entity

@@ -34,7 +34,6 @@
     sprite: SS220/Clothing/OuterClothing/WinterCoats/janitor_JR.rsi
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterJanitorJR
-  - type: MicroFiber
   - type: Armor
     modifiers:
       coefficients:

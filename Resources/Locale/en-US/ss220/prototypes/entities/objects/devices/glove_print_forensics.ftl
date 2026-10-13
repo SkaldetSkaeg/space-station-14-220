@@ -1,5 +1,5 @@
 ent-GlovePrintScanner = microfiber scanner
-    .desc = A portable scanner that collects surface microfibers or an individual sample from gloves, clothing or equipment and dispenses a sample swab. Select its mode in the held item's menu or by using it in hand.
+    .desc = A portable scanner that collects surface microfibers or an individual sample from gloves, clothing or equipment and dispenses a sample swab. Use it in hand to open its radial mode menu.
 ent-GlovePrintSwab = microfiber sample swab
     .desc = A physical carrier for a microfiber sample. Insert a collected sample into a microfiber analyzer.
 ent-BoxGlovePrintSwabs = microfiber sample swab box

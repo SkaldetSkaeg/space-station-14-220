@@ -6,7 +6,7 @@ using Content.Shared.SS220.Forensics;
 namespace Content.Client.SS220.Forensics;
 
 /// <summary>
-/// Adds a visible collection-mode selector to the held scanner's HUD.
+/// Adds the selected collection mode to the held scanner's HUD.
 /// </summary>
 public sealed class GlovePrintScannerStatusSystem : EntitySystem
 {
@@ -14,6 +14,6 @@ public sealed class GlovePrintScannerStatusSystem : EntitySystem
     {
         base.Initialize();
 
-        Subs.ItemStatus<GlovePrintScannerComponent>(ent => new GlovePrintScannerStatusControl(ent, EntityManager));
+        Subs.ItemStatus<GlovePrintScannerComponent>(ent => new GlovePrintScannerStatusControl(ent));
     }
 }
