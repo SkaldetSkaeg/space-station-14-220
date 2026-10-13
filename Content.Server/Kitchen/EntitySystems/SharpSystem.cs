@@ -1,4 +1,4 @@
-﻿using Content.Server.SS220.Forensics.Systems; // SS220 microfibers
+﻿using Content.Server.SS220.Forensics.Systems;
 using Content.Shared.Administration.Logs;
 using Content.Shared.Database;
 using Content.Shared.Destructible;

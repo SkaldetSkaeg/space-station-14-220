@@ -69,10 +69,17 @@ public sealed partial class GloveMicroFiberAnalyzerMenu
 
     private void RestoreComparisonSelection(List<GloveMicroFiberAnalyzerHistoryEntry> history)
     {
-        if (_comparisonFirstId == null || !history.Exists(sample => sample.Id == _comparisonFirstId.Value))
-            _comparisonFirstId = history.Count > 0 ? history[^1].Id : null;
+        if (history.Count == 0)
+        {
+            _comparisonFirstId = null;
+            _comparisonSecondId = null;
+            return;
+        }
 
-        if (_comparisonSecondId != null && history.Exists(sample => sample.Id == _comparisonSecondId.Value))
+        if (!HasComparisonSample(history, _comparisonFirstId))
+            _comparisonFirstId = history[^1].Id;
+
+        if (HasComparisonSample(history, _comparisonSecondId))
             return;
 
         _comparisonSecondId = null;
@@ -84,6 +91,14 @@ public sealed partial class GloveMicroFiberAnalyzerMenu
             _comparisonSecondId = history[i].Id;
             break;
         }
+    }
+
+    private static bool HasComparisonSample(List<GloveMicroFiberAnalyzerHistoryEntry> history, int? id)
+    {
+        if (id == null)
+            return false;
+
+        return history.Exists(sample => sample.Id == id.Value);
     }
 
     private void SelectComparisonSample(int id, bool first)
@@ -119,12 +134,22 @@ public sealed partial class GloveMicroFiberAnalyzerMenu
     private void UpdateComparisonView()
     {
         ComparisonPanel.Visible = CompareHistory.Pressed;
-        ComparisonRun.Disabled = _comparisonFirstId == null || _comparisonSecondId == null ||
-            _comparisonFirstId == _comparisonSecondId;
+        ComparisonRun.Disabled = !CanCompareSelectedSamples();
         ComparisonResults.Visible = _comparisonHasResult;
         ComparisonStatus.Visible = !_comparisonHasResult;
         ComparisonStatus.SetMessage(FormattedMessage.FromUnformatted(Loc.GetString(GetComparisonStatusKey())));
         UpdatePrinterState();
+    }
+
+    private bool CanCompareSelectedSamples()
+    {
+        if (_comparisonFirstId == null)
+            return false;
+
+        if (_comparisonSecondId == null)
+            return false;
+
+        return _comparisonFirstId != _comparisonSecondId;
     }
 
     private string GetComparisonStatusKey()

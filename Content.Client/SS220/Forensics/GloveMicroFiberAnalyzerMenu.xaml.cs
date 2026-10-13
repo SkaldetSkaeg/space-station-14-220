@@ -1,6 +1,7 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
 using System.Globalization;
+using System.Linq;
 using System.Numerics;
 using Content.Client.Stylesheets;
 using Content.Client.Stylesheets.Palette;
@@ -83,8 +84,33 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
         UpdatePrinterConnection();
         _printReadyAt = state.PrintReadyAt;
         UpdateHistory(state.History);
-        var pendingChanged = SelectedSampleId == null && previous != null && previous.PendingSwab != state.PendingSwab;
-        RefreshResults(resetDescription: previousSelection != SelectedSampleId || pendingChanged);
+        var resetDescription = ShouldResetDescription(previousSelection, previous, state);
+        RefreshResults(resetDescription: resetDescription);
+    }
+
+    private bool ShouldResetDescription(
+        int? previousSelection,
+        GloveMicroFiberAnalyzerResultsMessage? previous,
+        GloveMicroFiberAnalyzerResultsMessage current)
+    {
+        var pendingChanged = HasPendingSampleChanged(previous, current);
+        if (previousSelection != SelectedSampleId)
+            return true;
+
+        return pendingChanged;
+    }
+
+    private bool HasPendingSampleChanged(
+        GloveMicroFiberAnalyzerResultsMessage? previous,
+        GloveMicroFiberAnalyzerResultsMessage current)
+    {
+        if (SelectedSampleId != null)
+            return false;
+
+        if (previous == null)
+            return false;
+
+        return previous.PendingSwab != current.PendingSwab;
     }
 
     private void UpdateAnalysisInterruption(GloveMicroFiberAnalyzerResultsMessage? previous,
@@ -112,19 +138,29 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
     private void SelectLatestCompletedSample(GloveMicroFiberAnalyzerResultsMessage? previous,
         GloveMicroFiberAnalyzerResultsMessage current)
     {
-        if (SelectedSampleId != null)
-            return;
-
-        if (current.History.Count == 0)
-            return;
-
-        if (previous == null && current.HasSwab)
-            return;
-
-        if (previous != null && current.History.Count <= previous.History.Count)
+        if (!ShouldSelectLatestCompletedSample(previous, current))
             return;
 
         SelectedSampleId = current.History[^1].Id;
+    }
+
+    private bool ShouldSelectLatestCompletedSample(
+        GloveMicroFiberAnalyzerResultsMessage? previous,
+        GloveMicroFiberAnalyzerResultsMessage current)
+    {
+        if (SelectedSampleId != null)
+            return false;
+
+        if (current.History.Count == 0)
+            return false;
+
+        if (previous == null)
+            return !current.HasSwab;
+
+        if (current.History.Count <= previous.History.Count)
+            return false;
+
+        return true;
     }
 
     private void UpdateHistory(List<GloveMicroFiberAnalyzerHistoryEntry> history)
@@ -211,7 +247,7 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
             ? Loc.GetString("glove-micro-fiber-analyzer-interface-current-sample")
             : GetSampleName(stored);
         SelectedSampleLabel.ToolTip = SelectedSampleLabel.Text;
-        SelectedSampleLabel.Visible = !CompareHistory.Pressed && (stored != null || state.HasSwab);
+        SelectedSampleLabel.Visible = ShouldShowSampleHeader(state, stored);
         var sourceName = stored?.SourceName ?? state.PendingSourceName;
         SampleSourceLabel.Visible = !CompareHistory.Pressed && !string.IsNullOrEmpty(sourceName);
         SampleSourceLabel.Text = Loc.GetString("glove-micro-fiber-analyzer-interface-source-heading",
@@ -222,6 +258,19 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
         AnalysisTimeLabel.ToolTip = AnalysisTimeLabel.Text;
     }
 
+    private bool ShouldShowSampleHeader(
+        GloveMicroFiberAnalyzerResultsMessage state,
+        GloveMicroFiberAnalyzerHistoryEntry? stored)
+    {
+        if (CompareHistory.Pressed)
+            return false;
+
+        if (stored != null)
+            return true;
+
+        return state.HasSwab;
+    }
+
     private void UpdateSampleControls(GloveMicroFiberAnalyzerResultsMessage state,
         GloveMicroFiberAnalyzerHistoryEntry? stored)
     {
@@ -229,12 +278,39 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
         ResultsDetails.Visible = !CompareHistory.Pressed && stored != null;
         DescriptionPanel.Visible = ResultsDetails.Visible;
         StatusLabel.Visible = !CompareHistory.Pressed && stored == null;
-        NoTraces.Visible = stored != null && stored.GloveMicroFibers.Count == 0;
+        NoTraces.Visible = HasNoGloveTraces(stored);
         GloveSamplesCount.Text = (stored?.GloveMicroFibers.Count ?? 0).ToString(CultureInfo.InvariantCulture);
         StorageMicroFiberSamplesCount.Text = (stored?.StorageMicroFibers.Count ?? 0)
             .ToString(CultureInfo.InvariantCulture);
         Analyze.Visible = !CompareHistory.Pressed && stored == null;
-        Analyze.Disabled = stored != null || !state.HasSwab || !state.Used || state.IsAnalyzing;
+        Analyze.Disabled = !CanAnalyzeSample(state, stored);
+    }
+
+    private static bool HasNoGloveTraces(GloveMicroFiberAnalyzerHistoryEntry? stored)
+    {
+        if (stored == null)
+            return false;
+
+        return stored.GloveMicroFibers.Count == 0;
+    }
+
+    private static bool CanAnalyzeSample(
+        GloveMicroFiberAnalyzerResultsMessage state,
+        GloveMicroFiberAnalyzerHistoryEntry? stored)
+    {
+        if (stored != null)
+            return false;
+
+        if (!state.HasSwab)
+            return false;
+
+        if (!state.Used)
+            return false;
+
+        if (state.IsAnalyzing)
+            return false;
+
+        return true;
     }
 
     private void DisplaySampleResults(GloveMicroFiberAnalyzerResultsMessage state,
@@ -283,7 +359,7 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
 
     private void UpdateDescription(string description, bool reset)
     {
-        if (reset || !_descriptionLoaded || !_descriptionDirty || DescriptionEdit.Text == description)
+        if (ShouldReloadDescription(description, reset))
         {
             DescriptionEdit.Text = description;
             _descriptionDirty = false;
@@ -294,11 +370,36 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
         UpdateDescriptionState();
     }
 
+    private bool ShouldReloadDescription(string description, bool reset)
+    {
+        if (reset)
+            return true;
+
+        if (!_descriptionLoaded)
+            return true;
+
+        if (!_descriptionDirty)
+            return true;
+
+        return DescriptionEdit.Text == description;
+    }
+
     private void UpdateDescriptionState()
     {
-        var editable = !CompareHistory.Pressed && _results != null && SelectedSampleId != null;
+        var editable = CanEditDescription();
         DescriptionEdit.Editable = editable;
         SaveDescription.Disabled = !editable || !_descriptionDirty;
+    }
+
+    private bool CanEditDescription()
+    {
+        if (CompareHistory.Pressed)
+            return false;
+
+        if (_results == null)
+            return false;
+
+        return SelectedSampleId != null;
     }
 
     private void DisplayTraces(List<GloveMicroFiberTrace> traces)
@@ -402,27 +503,19 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
 
     private static string FormatSampleCode(string code)
     {
-        if (code.Length != 32)
+        const int CodeLength = 32;
+        const int GroupLength = 4;
+
+        if (code.Length != CodeLength)
             return code;
 
-        foreach (var symbol in code)
-        {
-            if (symbol >= '0' && symbol <= '9')
-                continue;
-
-            if (symbol >= 'A' && symbol <= 'F')
-                continue;
-
-            if (symbol >= 'a' && symbol <= 'f')
-                continue;
-
+        if (!code.All(char.IsAsciiHexDigit))
             return code;
-        }
 
-        var groups = new string[8];
+        var groups = new string[code.Length / GroupLength];
         for (var i = 0; i < groups.Length; i++)
         {
-            groups[i] = code.Substring(i * 4, 4);
+            groups[i] = code.Substring(i * GroupLength, GroupLength);
         }
 
         return string.Join(" ", groups);
@@ -478,16 +571,25 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
 
     private void UpdatePrinterState()
     {
+        PrinterButton.Disabled = !CanPrintReport();
+    }
+
+    private bool CanPrintReport()
+    {
         if (_results == null)
-        {
-            PrinterButton.Disabled = true;
-            return;
-        }
+            return false;
 
         var hasReport = CompareHistory.Pressed ? _comparisonHasResult : _hasSample;
-        PrinterButton.Disabled = !hasReport ||
-            _results.PrinterStatus != GloveMicroFiberAnalyzerPrinterStatus.Ready ||
-            _timing.CurTime < _printReadyAt;
+        if (!hasReport)
+            return false;
+
+        if (_results.PrinterStatus != GloveMicroFiberAnalyzerPrinterStatus.Ready)
+            return false;
+
+        if (_timing.CurTime < _printReadyAt)
+            return false;
+
+        return true;
     }
 
     private void UpdatePrinterConnection()
@@ -509,8 +611,7 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
 
     private void UpdateAnalysisProgress()
     {
-        AnalysisProgress.Visible = !CompareHistory.Pressed && SelectedSampleId == null &&
-            _results != null && _results.IsAnalyzing;
+        AnalysisProgress.Visible = ShouldShowAnalysisProgress();
         if (!AnalysisProgress.Visible || _results == null)
         {
             AnalysisProgress.Value = 0;
@@ -526,6 +627,20 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
 
         var elapsed = (_timing.CurTime - _results.AnalysisStartedAt).TotalSeconds;
         AnalysisProgress.Value = (float)Math.Clamp(elapsed / duration, 0, 1);
+    }
+
+    private bool ShouldShowAnalysisProgress()
+    {
+        if (CompareHistory.Pressed)
+            return false;
+
+        if (SelectedSampleId != null)
+            return false;
+
+        if (_results == null)
+            return false;
+
+        return _results.IsAnalyzing;
     }
 
     private sealed class HistorySampleButton : Button

@@ -70,7 +70,10 @@ public sealed class GloveMicroFiberSystem : EntitySystem
         if (!_inventory.TryGetSlotEntity(ent, "gloves", out var gloves))
             return;
 
-        if (!TryGetCode(gloves.Value, out var code) || code == null)
+        if (!TryGetCode(gloves.Value, out var code))
+            return;
+
+        if (code == null)
             return;
 
         var prototype = MetaData(gloves.Value).EntityPrototype;

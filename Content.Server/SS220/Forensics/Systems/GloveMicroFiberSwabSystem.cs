@@ -24,7 +24,10 @@ public sealed class GloveMicroFiberSwabSystem : EntitySystem
             return;
 
         args.PushText(Loc.GetString(ent.Comp.Used ? "glove-micro-fiber-swab-used" : "glove-micro-fiber-swab-unused"));
-        if (!ent.Comp.Used || string.IsNullOrEmpty(ent.Comp.SourceName))
+        if (!ent.Comp.Used)
+            return;
+
+        if (string.IsNullOrEmpty(ent.Comp.SourceName))
             return;
 
         args.PushText(Loc.GetString("glove-micro-fiber-swab-source",

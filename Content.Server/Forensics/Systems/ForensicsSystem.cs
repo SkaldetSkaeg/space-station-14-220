@@ -3,7 +3,7 @@ using Content.Server.DoAfter;
 using Content.Server.Fluids.EntitySystems;
 using Content.Server.Forensics.Components;
 using Content.Server.Popups;
-using Content.Server.SS220.Forensics.Systems; // SS220 microfibers
+using Content.Server.SS220.Forensics.Systems;
 using Content.Shared.Body.Events;
 using Content.Shared.Chemistry.EntitySystems;
 using Content.Shared.Popups;

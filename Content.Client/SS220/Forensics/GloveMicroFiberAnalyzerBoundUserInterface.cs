@@ -29,7 +29,13 @@ public sealed class GloveMicroFiberAnalyzerBoundUserInterface : BoundUserInterfa
 
     private void Analyze()
     {
-        if (_window == null || _window.Analyze.Disabled || _window.SelectedSampleId != null)
+        if (_window == null)
+            return;
+
+        if (_window.Analyze.Disabled)
+            return;
+
+        if (_window.SelectedSampleId != null)
             return;
 
         SendMessage(new GloveMicroFiberAnalyzerAnalyzeMessage(_window.DescriptionEdit.Text, _window.PendingSwab));
@@ -37,7 +43,10 @@ public sealed class GloveMicroFiberAnalyzerBoundUserInterface : BoundUserInterfa
 
     private void SaveDescription()
     {
-        if (_window == null || _window.SaveDescription.Disabled)
+        if (_window == null)
+            return;
+
+        if (_window.SaveDescription.Disabled)
             return;
 
         var swab = _window.SelectedSampleId == null ? _window.PendingSwab : null;

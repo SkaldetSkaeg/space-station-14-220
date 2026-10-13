@@ -1,7 +1,5 @@
-// SS220 microfibers begin
 using Content.Shared.SS220.Forensics;
 using Content.Server.SS220.Forensics.Serialization;
-// SS220 microfibers end
 
 namespace Content.Server.Forensics
 {

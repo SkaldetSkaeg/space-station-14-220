@@ -64,8 +64,7 @@ public sealed class GloveMicroFiberScannerSystem : EntitySystem
 
     private void StartScan(Entity<GloveMicroFiberScannerComponent> ent, EntityUid user, EntityUid target)
     {
-        if (ent.Comp.Mode == GloveMicroFiberScannerMode.OwnSample &&
-            !_gloveMicroFiber.TryGetCode(target, out _) && !_storageMicroFiber.TryGetTrace(target, out _))
+        if (!CanScanTarget(ent, target))
         {
             _popup.PopupEntity(Loc.GetString("glove-micro-fiber-scanner-no-own-sample"), ent, user);
             return;
@@ -85,6 +84,22 @@ public sealed class GloveMicroFiberScannerSystem : EntitySystem
             CancelDuplicate = false,
         }))
             return;
+    }
+
+    private bool CanScanTarget(Entity<GloveMicroFiberScannerComponent> ent, EntityUid target)
+    {
+        if (ent.Comp.Mode != GloveMicroFiberScannerMode.OwnSample)
+            return true;
+
+        return HasOwnSample(target);
+    }
+
+    private bool HasOwnSample(EntityUid target)
+    {
+        if (_gloveMicroFiber.TryGetCode(target, out _))
+            return true;
+
+        return _storageMicroFiber.TryGetTrace(target, out _);
     }
 
     private void OnDoAfter(Entity<GloveMicroFiberScannerComponent> ent, ref GloveMicroFiberScannerDoAfterEvent args)
@@ -142,17 +157,28 @@ public sealed class GloveMicroFiberScannerSystem : EntitySystem
 
         traces = [];
         storageMicroFibers = [];
-        if (_gloveMicroFiber.TryGetCode(target, out var code) && code != null)
-        {
-            var prototype = MetaData(target).EntityPrototype;
-            EntProtoId? prototypeId = prototype == null ? (EntProtoId?)null : new EntProtoId(prototype.ID);
-            traces = [new GloveMicroFiberTrace(code, prototypeId)];
-        }
+        if (TryGetOwnGloveTrace(target, out var gloveTrace))
+            traces = [gloveTrace];
 
         if (!_storageMicroFiber.TryGetTrace(target, out var fiber))
             return traces.Count != 0;
 
         storageMicroFibers = [fiber];
+        return true;
+    }
+
+    private bool TryGetOwnGloveTrace(EntityUid target, out GloveMicroFiberTrace trace)
+    {
+        trace = default;
+        if (!_gloveMicroFiber.TryGetCode(target, out var code))
+            return false;
+
+        if (code == null)
+            return false;
+
+        var prototype = MetaData(target).EntityPrototype;
+        EntProtoId? prototypeId = prototype == null ? (EntProtoId?)null : new EntProtoId(prototype.ID);
+        trace = new GloveMicroFiberTrace(code, prototypeId);
         return true;
     }
 

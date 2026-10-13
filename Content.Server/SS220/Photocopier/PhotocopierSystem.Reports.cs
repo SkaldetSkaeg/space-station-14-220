@@ -20,7 +20,10 @@ public sealed partial class PhotocopierSystem
         if (!Resolve(uid, ref component))
             return false;
 
-        if (TerminatingOrDeleted(uid) || !component.Initialized)
+        if (TerminatingOrDeleted(uid))
+            return false;
+
+        if (!component.Initialized)
             return false;
 
         if (!TryComp<ApcPowerReceiverComponent>(uid, out var receiver))
@@ -29,7 +32,10 @@ public sealed partial class PhotocopierSystem
         if (!this.IsPowered(uid, EntityManager, receiver))
             return false;
 
-        if (component.State != PhotocopierState.Idle || component.CopiesQueued > 0)
+        if (component.State != PhotocopierState.Idle)
+            return false;
+
+        if (component.CopiesQueued > 0)
             return false;
 
         if (component.DocumentsToCopy.Count > 0)

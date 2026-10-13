@@ -220,7 +220,10 @@ public sealed class GloveMicroFiberAnalyzerSystem : EntitySystem
         if (TerminatingOrDeleted(printer))
             return false;
 
-        if (!HasComp<PhotocopierComponent>(printer) || !HasComp<DeviceLinkSinkComponent>(printer))
+        if (!HasComp<PhotocopierComponent>(printer))
+            return false;
+
+        if (!HasComp<DeviceLinkSinkComponent>(printer))
             return false;
 
         return _deviceLink.GetLinks(ent, printer).Contains(
@@ -316,7 +319,7 @@ public sealed class GloveMicroFiberAnalyzerSystem : EntitySystem
         if (!CanAccess(ent, args.Actor))
             return;
 
-        if (args.Description == null || args.Description.Length > GloveMicroFiberAnalyzerUi.MaxDescriptionLength)
+        if (!IsDescriptionValid(args.Description))
             return;
 
         if (ent.Comp.AnalyzingSwab != null)
@@ -338,7 +341,7 @@ public sealed class GloveMicroFiberAnalyzerSystem : EntitySystem
         if (!CanAccess(ent, args.Actor))
             return;
 
-        if (args.Description == null || args.Description.Length > GloveMicroFiberAnalyzerUi.MaxDescriptionLength)
+        if (!IsDescriptionValid(args.Description))
             return;
 
         if (args.SampleId == null)
@@ -348,6 +351,17 @@ public sealed class GloveMicroFiberAnalyzerSystem : EntitySystem
         }
 
         SetStoredDescription(ent, args.SampleId.Value, args.Description);
+    }
+
+    private static bool IsDescriptionValid(string? description)
+    {
+        if (description == null)
+            return false;
+
+        if (description.Length > GloveMicroFiberAnalyzerUi.MaxDescriptionLength)
+            return false;
+
+        return true;
     }
 
     private void SetPendingDescription(
