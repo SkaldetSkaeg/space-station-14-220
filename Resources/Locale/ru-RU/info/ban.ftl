@@ -82,7 +82,9 @@ cmd-ban_exemption_get-arg-player = <player>
 # Kick on ban
 ban-kick-reason = Вы были забанены
 
-cmd-ban-invalid-stated-round = ${statedround} не является допустимым номером раунда!
+# SS220-localization-fix begin
+cmd-ban-invalid-stated-round = { $statedround } не является допустимым номером раунда!
+# SS220-localization-fix end
 
 cmd-ban-hint-stated-round = [раунд нарушения]
 

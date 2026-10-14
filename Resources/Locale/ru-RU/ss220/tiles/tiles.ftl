@@ -432,3 +432,14 @@ floor-oldconcrete-pavement-vertical = бетонное старое вертик
 floor-lino-gray = { ent-FloorItemLinoGray }
 floor-lino-light-brown = { ent-FloorItemLinoLightBrown }
 floor-lino-red-brown = { ent-FloorItemLinoRedBrown } 
+
+## SS220 floors
+tiles-steel-reinforced = стальные шестиугольные плиты
+tiles-white-reinforced = белые шестиугольные плиты
+tiles-dark-reinforced = тёмные шестиугольные плиты
+tiles-techmaint-drain-vertical = технический пол с вертикальной решёткой
+tiles-techmaint-drain-horizontal = технический пол с горизонтальной решёткой
+tiles-techmaint-drain-middle = технический пол с центральной решёткой
+tiles-kitchen-red = красный кухонный пол
+tiles-astro-sand = астро-песок
+tiles-220-curse = проклятье 220

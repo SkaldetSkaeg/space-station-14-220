@@ -16,7 +16,7 @@ cmd-chat-ban-hint-duration-5 = 2 недели
 cmd-chat-ban-hint-duration-6 = 1 месяц
 
 cmd-chat-ban-minutes-parse = { $time } - недопустимое количество минут.\n{ $help }
-cmd-chat-ban-severity-parse = ${ severity } не является валидной тяжестью\n{ $help }.
+cmd-chat-ban-severity-parse = { $severity } не является валидной тяжестью\n{ $help }.
 cmd-chat-ban-arg-count = Недопустимое количество аргументов.
 cmd-chat-ban-parse = Чат { $chat } не существует.
 cmd-chat-ban-name-parse = Невозможно найти игрока с таким именем.

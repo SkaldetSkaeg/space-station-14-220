@@ -44,7 +44,7 @@ public sealed partial class ChatBanCommand : LocalizedCommands
                 target = args[0];
                 if (!Enum.TryParse(args[1], out bannableChat))
                 {
-                    shell.WriteError(Loc.GetString("cmd-chat-ban-chat-parse", ("time", args[1]), ("help", Help)));
+                    shell.WriteError(Loc.GetString("cmd-chat-ban-parse", ("chat", args[1])));
                     return;
                 }
                 reason = args[2];
@@ -55,7 +55,7 @@ public sealed partial class ChatBanCommand : LocalizedCommands
                 target = args[0];
                 if (!Enum.TryParse(args[1], out bannableChat))
                 {
-                    shell.WriteError(Loc.GetString("cmd-chat-ban-chat-parse", ("time", args[1]), ("help", Help)));
+                    shell.WriteError(Loc.GetString("cmd-chat-ban-parse", ("chat", args[1])));
                     return;
                 }
                 reason = args[2];
@@ -70,7 +70,7 @@ public sealed partial class ChatBanCommand : LocalizedCommands
                 target = args[0];
                 if (!Enum.TryParse(args[1], out bannableChat))
                 {
-                    shell.WriteError(Loc.GetString("cmd-chat-ban-chat-parse", ("time", args[1]), ("help", Help)));
+                    shell.WriteError(Loc.GetString("cmd-chat-ban-parse", ("chat", args[1])));
                     return;
                 }
                 reason = args[2];
@@ -92,7 +92,7 @@ public sealed partial class ChatBanCommand : LocalizedCommands
                 target = args[0];
                 if (!Enum.TryParse(args[1], out bannableChat))
                 {
-                    shell.WriteError(Loc.GetString("cmd-chat-ban-chat-parse", ("time", args[1]), ("help", Help)));
+                    shell.WriteError(Loc.GetString("cmd-chat-ban-parse", ("chat", args[1])));
                     return;
                 }
                 reason = args[2];
