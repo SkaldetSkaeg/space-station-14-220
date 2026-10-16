@@ -31,7 +31,7 @@ public sealed partial class ChatBanCommand : LocalizedCommands
         string reason;
         uint minutes;
         var postBanInfo = true;
-        if (!Enum.TryParse(_cfg.GetCVar(CCVars220.ChatBanDefaultSeverity), out NoteSeverity severity))
+        if (!Enum.TryParse(_cfg.GetCVar(CCVars220.ChatBanDefaultSeverity), ignoreCase: true, out NoteSeverity severity))
         {
             _sawmill ??= _log.GetSawmill("admin.chat_ban");
             _sawmill.Warning("Chat ban severity could not be parsed from config! Defaulting to medium.");
