@@ -1,15 +1,15 @@
 # © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
 - type: entity
-  id: GloveMicroFiberAnalyzerMachineCircuitboard
-  name: microfiber analyzer machine board
   parent: [BaseMachineCircuitboard, BaseSecurityContraband]
+  id: MicroFiberAnalyzerMachineCircuitboard
+  name: microfiber analyzer machine board
   description: A machine circuit board for a microfiber analyzer.
   components:
   - type: Sprite
     state: security
   - type: MachineBoard
-    prototype: GloveMicroFiberAnalyzer
+    prototype: MicroFiberAnalyzer
     stackRequirements:
       Manipulator: 1
       Glass: 5

@@ -1,9 +1,9 @@
 # © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
 - type: entity
+  parent: [BaseItem, BaseSecurityContraband]
   id: GloveMicroFiberScanner
   name: microfiber scanner
-  parent: [BaseItem, BaseSecurityContraband]
   description: A portable scanner that collects surface microfibers or an item's own sample and dispenses a swab. Use it in hand to open its mode menu.
   components:
   # ToDo_SS220 find sprites: Scanner world, in-hand and belt sprites currently reuse the appraisal tool.
@@ -33,9 +33,9 @@
     - Forensics
 
 - type: entity
+  parent: BaseItem
   id: GloveMicroFiberSwab
   name: microfiber sample swab
-  parent: BaseItem
   description: A physical carrier for a microfiber sample. Insert a collected sample into a microfiber analyzer.
   components:
   # ToDo_SS220 find sprites: Dedicated microfiber sample swab sprite; currently uses a medical swab.
@@ -54,9 +54,9 @@
     - Forensics
 
 - type: entity
-  id: GloveMicroFiberAnalyzer
-  name: microfiber analyzer
   parent: [BaseMachine, ConstructibleMachine, BaseSecurityContraband]
+  id: MicroFiberAnalyzer
+  name: microfiber analyzer
   description: A machine that identifies the glove types and pair codes in a collected swab sample.
   placement:
     mode: SnapgridCenter
@@ -70,16 +70,16 @@
     - state: icon
     - state: unlit
       shader: unshaded
-  - type: GloveMicroFiberAnalyzer
+  - type: MicroFiberAnalyzer
   - type: Machine
-    board: GloveMicroFiberAnalyzerMachineCircuitboard
+    board: MicroFiberAnalyzerMachineCircuitboard
   - type: DeviceLinkSource
     ports:
-    - GloveMicroFiberReport
+    - MicroFiberReport
   - type: ItemSlots
     slots:
       sampleSlot:
-        name: glove-micro-fiber-analyzer-slot-name
+        name: micro-fiber-analyzer-slot-name
         whitelist:
           tags:
           - GloveMicroFiberSwab
@@ -89,18 +89,18 @@
       machine_board: !type:Container
       machine_parts: !type:Container
   - type: ActivatableUI
-    key: enum.GloveMicroFiberAnalyzerUiKey.Key
+    key: enum.MicroFiberAnalyzerUiKey.Key
   - type: UserInterface
     interfaces:
-      enum.GloveMicroFiberAnalyzerUiKey.Key:
-        type: GloveMicroFiberAnalyzerBoundUserInterface
+      enum.MicroFiberAnalyzerUiKey.Key:
+        type: MicroFiberAnalyzerBoundUserInterface
   - type: GuideHelp
     guides:
     - Forensics
 
 - type: entity
-  id: GloveMicroFiberReportPaper
   parent: PaperNtFormSec
+  id: MicroFiberReportPaper
   name: microfiber analysis report
   description: An official security department report identifying glove types and individual pair codes in an analyzed sample.
   components:
@@ -109,8 +109,8 @@
     - Forensics
 
 - type: entity
-  id: GloveMicroFiberComparisonReportPaper
   parent: PaperNtFormSec
+  id: MicroFiberComparisonReportPaper
   name: microfiber comparison report
   description: An official security department document comparing individual codes in two analyzed microfiber samples.
   components:

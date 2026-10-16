@@ -4,7 +4,7 @@ using Content.Client.Stylesheets.Palette;
 
 namespace Content.Client.SS220.Forensics;
 
-public static class GloveMicroFiberAnalyzerColors
+public static class MicroFiberAnalyzerColors
 {
     public static readonly Color WindowBackground = Palettes.Neutral.BackgroundDark;
 

@@ -14,13 +14,13 @@ namespace Content.Client.SS220.Forensics;
 /// Coordinates sample selection, analysis progress, descriptions and report printing.
 /// </summary>
 [GenerateTypedNameReferences]
-public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
+public sealed partial class MicroFiberAnalyzerMenu : DefaultWindow
 {
     [Dependency] private readonly IGameTiming _timing = default!;
 
     private bool _hasSample;
     private TimeSpan _printReadyAt;
-    private GloveMicroFiberAnalyzerResultsMessage? _results;
+    private MicroFiberAnalyzerResultsMessage? _results;
     private bool _descriptionLoaded;
     private bool _descriptionDirty;
     private string _descriptionSource = string.Empty;
@@ -51,14 +51,14 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
     /// </summary>
     public int? ComparisonSecondSampleId => ComparisonPanel.SecondSampleId;
 
-    public GloveMicroFiberAnalyzerMenu()
+    public MicroFiberAnalyzerMenu()
     {
         IoCManager.InjectDependencies(this);
         RobustXamlLoader.Load(this);
-        AnalyzerNumberLabel.Text = Loc.GetString("glove-micro-fiber-analyzer-interface-number", ("number", "—"));
+        AnalyzerNumberLabel.Text = Loc.GetString("micro-fiber-analyzer-interface-number", ("number", "—"));
         UpdatePrinterConnection();
         History.OnSampleSelected += SelectSample;
-        DescriptionEdit.IsValid = text => text.Length <= GloveMicroFiberAnalyzerUi.MaxDescriptionLength;
+        DescriptionEdit.IsValid = text => text.Length <= MicroFiberAnalyzerUi.MaxDescriptionLength;
         DescriptionEdit.OnTextChanged += _ =>
         {
             _descriptionDirty = DescriptionEdit.Text != _descriptionSource;
@@ -72,7 +72,7 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
     /// <summary>
     /// Updates physical analysis and history while preserving edits to the selected description.
     /// </summary>
-    public void UpdateResults(GloveMicroFiberAnalyzerResultsMessage state)
+    public void UpdateResults(MicroFiberAnalyzerResultsMessage state)
     {
         var previous = _results;
         var previousSelection = SelectedSampleId;
@@ -82,9 +82,9 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
         Eject.Disabled = !state.HasSwab;
         Eject.Visible = state.HasSwab;
         _results = state;
-        AnalyzerNumberLabel.Text = Loc.GetString("glove-micro-fiber-analyzer-interface-number",
+        AnalyzerNumberLabel.Text = Loc.GetString("micro-fiber-analyzer-interface-number",
             ("number", state.AnalyzerId));
-        AnalyzerNumberLabel.ToolTip = Loc.GetString("glove-micro-fiber-analyzer-interface-number-tooltip",
+        AnalyzerNumberLabel.ToolTip = Loc.GetString("micro-fiber-analyzer-interface-number-tooltip",
             ("number", state.AnalyzerId));
         UpdatePrinterConnection();
         _printReadyAt = state.PrintReadyAt;
@@ -96,8 +96,8 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
 
     private bool ShouldResetDescription(
         int? previousSelection,
-        GloveMicroFiberAnalyzerResultsMessage? previous,
-        GloveMicroFiberAnalyzerResultsMessage current)
+        MicroFiberAnalyzerResultsMessage? previous,
+        MicroFiberAnalyzerResultsMessage current)
     {
         var pendingChanged = HasPendingSampleChanged(previous, current);
         if (previousSelection != SelectedSampleId)
@@ -107,8 +107,8 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
     }
 
     private bool HasPendingSampleChanged(
-        GloveMicroFiberAnalyzerResultsMessage? previous,
-        GloveMicroFiberAnalyzerResultsMessage current)
+        MicroFiberAnalyzerResultsMessage? previous,
+        MicroFiberAnalyzerResultsMessage current)
     {
         if (SelectedSampleId != null)
             return false;
@@ -119,8 +119,8 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
         return previous.PendingSwab != current.PendingSwab;
     }
 
-    private void UpdateAnalysisInterruption(GloveMicroFiberAnalyzerResultsMessage? previous,
-        GloveMicroFiberAnalyzerResultsMessage current)
+    private void UpdateAnalysisInterruption(MicroFiberAnalyzerResultsMessage? previous,
+        MicroFiberAnalyzerResultsMessage current)
     {
         if (current.IsAnalyzing)
         {
@@ -141,8 +141,8 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
             _analysisInterrupted = false;
     }
 
-    private void SelectLatestCompletedSample(GloveMicroFiberAnalyzerResultsMessage? previous,
-        GloveMicroFiberAnalyzerResultsMessage current)
+    private void SelectLatestCompletedSample(MicroFiberAnalyzerResultsMessage? previous,
+        MicroFiberAnalyzerResultsMessage current)
     {
         if (!ShouldSelectLatestCompletedSample(previous, current))
             return;
@@ -151,8 +151,8 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
     }
 
     private bool ShouldSelectLatestCompletedSample(
-        GloveMicroFiberAnalyzerResultsMessage? previous,
-        GloveMicroFiberAnalyzerResultsMessage current)
+        MicroFiberAnalyzerResultsMessage? previous,
+        MicroFiberAnalyzerResultsMessage current)
     {
         if (SelectedSampleId != null)
             return false;
@@ -199,8 +199,8 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
         DisplaySampleResults(_results, stored);
     }
 
-    private GloveMicroFiberAnalyzerHistoryEntry? FindSelectedHistoryEntry(
-        List<GloveMicroFiberAnalyzerHistoryEntry> history)
+    private MicroFiberAnalyzerHistoryEntry? FindSelectedHistoryEntry(
+        List<MicroFiberAnalyzerHistoryEntry> history)
     {
         if (SelectedSampleId == null)
             return null;
@@ -208,17 +208,17 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
         return history.Find(sample => sample.Id == SelectedSampleId.Value);
     }
 
-    private void UpdateSampleHeader(GloveMicroFiberAnalyzerResultsMessage state,
-        GloveMicroFiberAnalyzerHistoryEntry? stored)
+    private void UpdateSampleHeader(MicroFiberAnalyzerResultsMessage state,
+        MicroFiberAnalyzerHistoryEntry? stored)
     {
         SelectedSampleLabel.Text = stored == null
-            ? Loc.GetString("glove-micro-fiber-analyzer-interface-current-sample")
-            : GloveMicroFiberAnalyzerUi.GetSampleName(stored);
+            ? Loc.GetString("micro-fiber-analyzer-interface-current-sample")
+            : MicroFiberAnalyzerUi.GetSampleName(stored);
         SelectedSampleLabel.ToolTip = SelectedSampleLabel.Text;
         SelectedSampleLabel.Visible = ShouldShowSampleHeader(state, stored);
         var sourceName = stored?.SourceName ?? state.PendingSourceName;
         SampleSourceLabel.Visible = !IsComparing && !string.IsNullOrEmpty(sourceName);
-        SampleSourceLabel.Text = Loc.GetString("glove-micro-fiber-analyzer-interface-source-heading",
+        SampleSourceLabel.Text = Loc.GetString("micro-fiber-analyzer-interface-source-heading",
             ("source", sourceName));
         SampleSourceLabel.ToolTip = SampleSourceLabel.Text;
         AnalysisTimeLabel.Visible = !IsComparing && stored != null;
@@ -227,8 +227,8 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
     }
 
     private bool ShouldShowSampleHeader(
-        GloveMicroFiberAnalyzerResultsMessage state,
-        GloveMicroFiberAnalyzerHistoryEntry? stored)
+        MicroFiberAnalyzerResultsMessage state,
+        MicroFiberAnalyzerHistoryEntry? stored)
     {
         if (IsComparing)
             return false;
@@ -239,8 +239,8 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
         return state.HasSwab;
     }
 
-    private void UpdateSampleControls(GloveMicroFiberAnalyzerResultsMessage state,
-        GloveMicroFiberAnalyzerHistoryEntry? stored)
+    private void UpdateSampleControls(MicroFiberAnalyzerResultsMessage state,
+        MicroFiberAnalyzerHistoryEntry? stored)
     {
         _hasSample = stored != null;
         ResultsDetails.Visible = !IsComparing && stored != null;
@@ -254,7 +254,7 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
         Analyze.Disabled = !CanAnalyzeSample(state, stored);
     }
 
-    private static bool HasNoGloveTraces(GloveMicroFiberAnalyzerHistoryEntry? stored)
+    private static bool HasNoGloveTraces(MicroFiberAnalyzerHistoryEntry? stored)
     {
         if (stored == null)
             return false;
@@ -263,8 +263,8 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
     }
 
     private static bool CanAnalyzeSample(
-        GloveMicroFiberAnalyzerResultsMessage state,
-        GloveMicroFiberAnalyzerHistoryEntry? stored)
+        MicroFiberAnalyzerResultsMessage state,
+        MicroFiberAnalyzerHistoryEntry? stored)
     {
         if (stored != null)
             return false;
@@ -281,8 +281,8 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
         return true;
     }
 
-    private void DisplaySampleResults(GloveMicroFiberAnalyzerResultsMessage state,
-        GloveMicroFiberAnalyzerHistoryEntry? stored)
+    private void DisplaySampleResults(MicroFiberAnalyzerResultsMessage state,
+        MicroFiberAnalyzerHistoryEntry? stored)
     {
         if (stored == null)
         {
@@ -293,36 +293,36 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
         StatusLabel.Text = string.Empty;
         TracesContainer.ShowGloveSamples(stored.GloveMicroFibers);
         StorageMicroFibersContainer.ShowStorageSamples(stored.StorageMicroFibers,
-            Loc.GetString("glove-micro-fiber-analyzer-interface-empty-category"));
+            Loc.GetString("micro-fiber-analyzer-interface-empty-category"));
     }
 
-    private void UpdatePendingSampleStatus(GloveMicroFiberAnalyzerResultsMessage state)
+    private void UpdatePendingSampleStatus(MicroFiberAnalyzerResultsMessage state)
     {
         if (state.IsAnalyzing)
         {
-            StatusLabel.Text = Loc.GetString("glove-micro-fiber-analyzer-interface-analyzing");
+            StatusLabel.Text = Loc.GetString("micro-fiber-analyzer-interface-analyzing");
             return;
         }
 
         if (_analysisInterrupted)
         {
-            StatusLabel.Text = Loc.GetString("glove-micro-fiber-analyzer-interface-analysis-interrupted");
+            StatusLabel.Text = Loc.GetString("micro-fiber-analyzer-interface-analysis-interrupted");
             return;
         }
 
         if (!state.HasSwab)
         {
-            StatusLabel.Text = Loc.GetString("glove-micro-fiber-analyzer-interface-no-swab");
+            StatusLabel.Text = Loc.GetString("micro-fiber-analyzer-interface-no-swab");
             return;
         }
 
         if (!state.Used)
         {
-            StatusLabel.Text = Loc.GetString("glove-micro-fiber-analyzer-interface-unused-swab");
+            StatusLabel.Text = Loc.GetString("micro-fiber-analyzer-interface-unused-swab");
             return;
         }
 
-        StatusLabel.Text = Loc.GetString("glove-micro-fiber-analyzer-interface-ready");
+        StatusLabel.Text = Loc.GetString("micro-fiber-analyzer-interface-ready");
     }
 
     private void UpdateDescription(string description, bool reset)
@@ -370,10 +370,10 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
         return SelectedSampleId != null;
     }
 
-    private string GetAnalysisTimeText(GloveMicroFiberAnalyzerHistoryEntry sample)
+    private string GetAnalysisTimeText(MicroFiberAnalyzerHistoryEntry sample)
     {
-        return Loc.GetString("glove-micro-fiber-analyzer-interface-analyzed-at",
-            ("time", GloveMicroFiberAnalyzerUi.FormatRoundTime(sample.AnalyzedAt)));
+        return Loc.GetString("micro-fiber-analyzer-interface-analyzed-at",
+            ("time", MicroFiberAnalyzerUi.FormatRoundTime(sample.AnalyzedAt)));
     }
 
     /// <summary>
@@ -406,7 +406,7 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
         if (!hasReport)
             return false;
 
-        if (_results.PrinterStatus != GloveMicroFiberAnalyzerPrinterStatus.Ready)
+        if (_results.PrinterStatus != MicroFiberAnalyzerPrinterStatus.Ready)
             return false;
 
         if (_timing.CurTime < _printReadyAt)
@@ -417,16 +417,16 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
 
     private void UpdatePrinterConnection()
     {
-        var status = _results?.PrinterStatus ?? GloveMicroFiberAnalyzerPrinterStatus.Disconnected;
-        PrinterStatusIcon.ModulateSelfOverride = status == GloveMicroFiberAnalyzerPrinterStatus.Disconnected
+        var status = _results?.PrinterStatus ?? MicroFiberAnalyzerPrinterStatus.Disconnected;
+        PrinterStatusIcon.ModulateSelfOverride = status == MicroFiberAnalyzerPrinterStatus.Disconnected
             ? Palettes.Red.Base
             : Palettes.Green.Base;
         var tooltip = status switch
         {
-            GloveMicroFiberAnalyzerPrinterStatus.Ready => "glove-micro-fiber-analyzer-interface-printer-ready",
-            GloveMicroFiberAnalyzerPrinterStatus.Unavailable =>
-                "glove-micro-fiber-analyzer-interface-printer-unavailable",
-            _ => "glove-micro-fiber-analyzer-interface-printer-disconnected",
+            MicroFiberAnalyzerPrinterStatus.Ready => "micro-fiber-analyzer-interface-printer-ready",
+            MicroFiberAnalyzerPrinterStatus.Unavailable =>
+                "micro-fiber-analyzer-interface-printer-unavailable",
+            _ => "micro-fiber-analyzer-interface-printer-disconnected",
         };
         PrinterStatusIcon.ToolTip = Loc.GetString(tooltip);
         PrinterButton.ToolTip = PrinterStatusIcon.ToolTip;

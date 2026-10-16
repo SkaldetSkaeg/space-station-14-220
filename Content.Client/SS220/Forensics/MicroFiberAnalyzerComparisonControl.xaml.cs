@@ -12,9 +12,9 @@ namespace Content.Client.SS220.Forensics;
 /// Selects two archived samples and displays their matching glove and storage fibers.
 /// </summary>
 [GenerateTypedNameReferences]
-public sealed partial class GloveMicroFiberAnalyzerComparisonControl : BoxContainer
+public sealed partial class MicroFiberAnalyzerComparisonControl : BoxContainer
 {
-    private List<GloveMicroFiberAnalyzerHistoryEntry> _history = [];
+    private List<MicroFiberAnalyzerHistoryEntry> _history = [];
 
     /// <summary>
     /// The first archive record selected for comparison.
@@ -39,7 +39,7 @@ public sealed partial class GloveMicroFiberAnalyzerComparisonControl : BoxContai
     /// <summary>
     /// Creates the comparison controls and initializes their status.
     /// </summary>
-    public GloveMicroFiberAnalyzerComparisonControl()
+    public MicroFiberAnalyzerComparisonControl()
     {
         RobustXamlLoader.Load(this);
         ComparisonFirst.OnItemSelected += args => SelectSample(args.Id, true);
@@ -51,7 +51,7 @@ public sealed partial class GloveMicroFiberAnalyzerComparisonControl : BoxContai
     /// <summary>
     /// Refreshes the archive choices while preserving valid selections and their comparison.
     /// </summary>
-    public void UpdateHistory(List<GloveMicroFiberAnalyzerHistoryEntry> history)
+    public void UpdateHistory(List<MicroFiberAnalyzerHistoryEntry> history)
     {
         _history = history;
         var previousFirst = FirstSampleId;
@@ -64,7 +64,7 @@ public sealed partial class GloveMicroFiberAnalyzerComparisonControl : BoxContai
         for (var i = history.Count - 1; i >= 0; i--)
         {
             var sample = history[i];
-            var sampleName = GloveMicroFiberAnalyzerUi.GetSampleName(sample);
+            var sampleName = MicroFiberAnalyzerUi.GetSampleName(sample);
             ComparisonFirst.AddItem(sampleName, sample.Id);
             ComparisonSecond.AddItem(sampleName, sample.Id);
         }
@@ -169,12 +169,12 @@ public sealed partial class GloveMicroFiberAnalyzerComparisonControl : BoxContai
     private string GetStatusKey()
     {
         if (FirstSampleId == null || SecondSampleId == null)
-            return "glove-micro-fiber-analyzer-interface-compare-not-enough";
+            return "micro-fiber-analyzer-interface-compare-not-enough";
 
         if (FirstSampleId == SecondSampleId)
-            return "glove-micro-fiber-analyzer-interface-compare-same-sample";
+            return "micro-fiber-analyzer-interface-compare-same-sample";
 
-        return "glove-micro-fiber-analyzer-interface-compare-instructions";
+        return "micro-fiber-analyzer-interface-compare-instructions";
     }
 
     private void RunComparison()
@@ -204,15 +204,15 @@ public sealed partial class GloveMicroFiberAnalyzerComparisonControl : BoxContai
 
     private void DisplayResults(List<GloveMicroFiberTrace> gloveMatches, List<StorageMicroFiberTrace> storageMatches)
     {
-        ComparisonProfileCount.Text = Loc.GetString("glove-micro-fiber-analyzer-interface-compare-profile-count",
+        ComparisonProfileCount.Text = Loc.GetString("micro-fiber-analyzer-interface-compare-profile-count",
             ("count", gloveMatches.Count));
         ComparisonStorageMicroFiberCount.Text = Loc.GetString(
-            "glove-micro-fiber-analyzer-interface-compare-storage-micro-fiber-count",
+            "micro-fiber-analyzer-interface-compare-storage-micro-fiber-count",
             ("count", storageMatches.Count));
         ComparisonProfilesContainer.ShowGloveSamples(gloveMatches,
-            Loc.GetString("glove-micro-fiber-analyzer-interface-compare-no-profiles"));
+            Loc.GetString("micro-fiber-analyzer-interface-compare-no-profiles"));
         ComparisonStorageMicroFibersContainer.ShowStorageSamples(storageMatches,
-            Loc.GetString("glove-micro-fiber-analyzer-interface-compare-no-storage-micro-fibers"));
+            Loc.GetString("micro-fiber-analyzer-interface-compare-no-storage-micro-fibers"));
         HasResult = true;
         UpdateView();
         OnResultChanged?.Invoke();

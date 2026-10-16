@@ -8,23 +8,23 @@ namespace Content.Client.SS220.Forensics;
 /// <summary>
 /// Displays private analysis progress and stored samples from the analyzer.
 /// </summary>
-public sealed class GloveMicroFiberAnalyzerBoundUserInterface : BoundUserInterface
+public sealed class MicroFiberAnalyzerBoundUserInterface : BoundUserInterface
 {
-    private GloveMicroFiberAnalyzerMenu? _window;
+    private MicroFiberAnalyzerMenu? _window;
 
-    public GloveMicroFiberAnalyzerBoundUserInterface(EntityUid owner, Enum uiKey) : base(owner, uiKey)
+    public MicroFiberAnalyzerBoundUserInterface(EntityUid owner, Enum uiKey) : base(owner, uiKey)
     {
     }
 
     protected override void Open()
     {
         base.Open();
-        _window = this.CreateWindow<GloveMicroFiberAnalyzerMenu>();
-        _window.Eject.OnPressed += _ => SendMessage(new GloveMicroFiberAnalyzerEjectMessage());
+        _window = this.CreateWindow<MicroFiberAnalyzerMenu>();
+        _window.Eject.OnPressed += _ => SendMessage(new MicroFiberAnalyzerEjectMessage());
         _window.PrinterButton.OnPressed += _ => Print();
         _window.Analyze.OnPressed += _ => Analyze();
         _window.SaveDescription.OnPressed += _ => SaveDescription();
-        SendMessage(new GloveMicroFiberAnalyzerRequestResultsMessage());
+        SendMessage(new MicroFiberAnalyzerRequestResultsMessage());
     }
 
     private void Analyze()
@@ -38,7 +38,7 @@ public sealed class GloveMicroFiberAnalyzerBoundUserInterface : BoundUserInterfa
         if (_window.SelectedSampleId != null)
             return;
 
-        SendMessage(new GloveMicroFiberAnalyzerAnalyzeMessage(_window.DescriptionEdit.Text, _window.PendingSwab));
+        SendMessage(new MicroFiberAnalyzerAnalyzeMessage(_window.DescriptionEdit.Text, _window.PendingSwab));
     }
 
     private void SaveDescription()
@@ -50,7 +50,7 @@ public sealed class GloveMicroFiberAnalyzerBoundUserInterface : BoundUserInterfa
             return;
 
         var swab = _window.SelectedSampleId == null ? _window.PendingSwab : null;
-        SendMessage(new GloveMicroFiberAnalyzerSetDescriptionMessage(
+        SendMessage(new MicroFiberAnalyzerSetDescriptionMessage(
             _window.SelectedSampleId, _window.DescriptionEdit.Text, swab));
     }
 
@@ -72,10 +72,10 @@ public sealed class GloveMicroFiberAnalyzerBoundUserInterface : BoundUserInterfa
             return;
 
         _window.StartPrintCooldown();
-        SendMessage(new GloveMicroFiberAnalyzerPrintMessage(_window.SelectedSampleId));
+        SendMessage(new MicroFiberAnalyzerPrintMessage(_window.SelectedSampleId));
     }
 
-    private void PrintComparison(GloveMicroFiberAnalyzerMenu window)
+    private void PrintComparison(MicroFiberAnalyzerMenu window)
     {
         if (window.ComparisonFirstSampleId == null)
             return;
@@ -84,7 +84,7 @@ public sealed class GloveMicroFiberAnalyzerBoundUserInterface : BoundUserInterfa
             return;
 
         window.StartPrintCooldown();
-        SendMessage(new GloveMicroFiberAnalyzerPrintComparisonMessage(
+        SendMessage(new MicroFiberAnalyzerPrintComparisonMessage(
             window.ComparisonFirstSampleId.Value, window.ComparisonSecondSampleId.Value));
     }
 
@@ -94,7 +94,7 @@ public sealed class GloveMicroFiberAnalyzerBoundUserInterface : BoundUserInterfa
         if (_window == null)
             return;
 
-        if (message is not GloveMicroFiberAnalyzerResultsMessage results)
+        if (message is not MicroFiberAnalyzerResultsMessage results)
             return;
 
         _window.UpdateResults(results);

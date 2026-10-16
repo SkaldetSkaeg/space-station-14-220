@@ -20,88 +20,88 @@ glove-micro-fiber-swab-unused = На палочке нет пробы. Гото�
 glove-micro-fiber-swab-used = На палочке сохранена проба. Для её изучения вставьте её в анализатор микроволокон.
 glove-micro-fiber-swab-label = проба микроволокон: { $source }
 glove-micro-fiber-swab-source = Источник пробы: { $source }
-glove-micro-fiber-analyzer-slot-name = Проба микроволокон
-glove-micro-fiber-analyzer-interface-title = Анализатор микроволокон
-glove-micro-fiber-analyzer-interface-number = № { $number }
-glove-micro-fiber-analyzer-interface-number-caption = СЕРИЙНЫЙ
-glove-micro-fiber-analyzer-interface-number-caption-second-line = НОМЕР
-glove-micro-fiber-analyzer-interface-number-tooltip = Номер аппарата: { $number }
-glove-micro-fiber-analyzer-interface-brand = NT
-glove-micro-fiber-analyzer-interface-eject = Извлечь пробу
-glove-micro-fiber-analyzer-interface-print = Распечатать
-glove-micro-fiber-analyzer-interface-analyze = Провести анализ
-glove-micro-fiber-analyzer-interface-analyzing = Выполняется анализ образца…
-glove-micro-fiber-analyzer-interface-ready = Образец готов к анализу.
-glove-micro-fiber-analyzer-interface-analysis-interrupted = Анализ прерван: образец извлечён.
-glove-micro-fiber-analyzer-interface-description = Описание
-glove-micro-fiber-analyzer-interface-description-placeholder = Введите описание образца…
-glove-micro-fiber-analyzer-interface-save-description = Сохранить
-glove-micro-fiber-analyzer-interface-description-value = Описание: { $description }
-glove-micro-fiber-analyzer-interface-history = История
-glove-micro-fiber-analyzer-interface-compare-history = Сравнение образцов
-glove-micro-fiber-analyzer-interface-compare-first = Первый образец
-glove-micro-fiber-analyzer-interface-compare-second = Второй образец
-glove-micro-fiber-analyzer-interface-compare-run = Сравнить
-glove-micro-fiber-analyzer-interface-compare-instructions = Выберите два образца из истории и нажмите «Сравнить».
-glove-micro-fiber-analyzer-interface-compare-same-sample = Нужны два разных образца.
-glove-micro-fiber-analyzer-interface-compare-profile-count = Совпавшие коды образцов перчаток: { $count }
-glove-micro-fiber-analyzer-interface-compare-storage-micro-fiber-count = Совпавшие коды образцов хранилищ: { $count }
-glove-micro-fiber-analyzer-interface-compare-no-profiles = Совпадений по кодам образцов перчаток нет.
-glove-micro-fiber-analyzer-interface-compare-no-storage-micro-fibers = Совпадений по кодам образцов хранилищ нет.
-glove-micro-fiber-analyzer-interface-compare-note = Совпадение кода образца указывает на конкретную пару перчаток или экземпляр хранилища, но не устанавливает его владельца.
-glove-micro-fiber-analyzer-interface-compare-not-enough = Для сравнения нужны два исследованных образца в истории.
-glove-micro-fiber-analyzer-interface-current-sample = Неисследованный образец
-glove-micro-fiber-analyzer-interface-history-empty = История пуста.
-glove-micro-fiber-analyzer-interface-history-sample = Образец { $identifier }
-glove-micro-fiber-analyzer-interface-source = Исследуемый предмет: { $source }
-glove-micro-fiber-analyzer-interface-source-heading = { $source }
-glove-micro-fiber-analyzer-interface-analyzed-at = Время анализа: { $time }
-glove-micro-fiber-analyzer-interface-printer-ready = Копировальный аппарат подключён и готов к печати.
-glove-micro-fiber-analyzer-interface-printer-unavailable = Копировальный аппарат подключён, но не готов: проверьте питание, тонер и очередь печати.
-glove-micro-fiber-analyzer-interface-printer-disconnected = Нет связи с копировальным аппаратом. Установите связь мультитулом.
-glove-micro-fiber-analyzer-port-source-name = Отчёт анализа микроволокон
-glove-micro-fiber-analyzer-port-source-description = Отправляет заключение в связанный копировальный аппарат.
-glove-micro-fiber-analyzer-port-sink-name = Печать документов
-glove-micro-fiber-analyzer-port-sink-description = Принимает заключения связанного анализатора для печати.
-glove-micro-fiber-analyzer-report-title = Заключение экспертизы микроволокон
-glove-micro-fiber-analyzer-comparison-report-title = Протокол сравнительного анализа микроволокон
-glove-micro-fiber-analyzer-comparison-report-header = [bold]Форма НТ-СБ-САМ[/bold]
+micro-fiber-analyzer-slot-name = Проба микроволокон
+micro-fiber-analyzer-interface-title = Анализатор микроволокон
+micro-fiber-analyzer-interface-number = № { $number }
+micro-fiber-analyzer-interface-number-caption = СЕРИЙНЫЙ
+micro-fiber-analyzer-interface-number-caption-second-line = НОМЕР
+micro-fiber-analyzer-interface-number-tooltip = Номер аппарата: { $number }
+micro-fiber-analyzer-interface-brand = NT
+micro-fiber-analyzer-interface-eject = Извлечь пробу
+micro-fiber-analyzer-interface-print = Распечатать
+micro-fiber-analyzer-interface-analyze = Провести анализ
+micro-fiber-analyzer-interface-analyzing = Выполняется анализ образца…
+micro-fiber-analyzer-interface-ready = Образец готов к анализу.
+micro-fiber-analyzer-interface-analysis-interrupted = Анализ прерван: образец извлечён.
+micro-fiber-analyzer-interface-description = Описание
+micro-fiber-analyzer-interface-description-placeholder = Введите описание образца…
+micro-fiber-analyzer-interface-save-description = Сохранить
+micro-fiber-analyzer-interface-description-value = Описание: { $description }
+micro-fiber-analyzer-interface-history = История
+micro-fiber-analyzer-interface-compare-history = Сравнение образцов
+micro-fiber-analyzer-interface-compare-first = Первый образец
+micro-fiber-analyzer-interface-compare-second = Второй образец
+micro-fiber-analyzer-interface-compare-run = Сравнить
+micro-fiber-analyzer-interface-compare-instructions = Выберите два образца из истории и нажмите «Сравнить».
+micro-fiber-analyzer-interface-compare-same-sample = Нужны два разных образца.
+micro-fiber-analyzer-interface-compare-profile-count = Совпавшие коды образцов перчаток: { $count }
+micro-fiber-analyzer-interface-compare-storage-micro-fiber-count = Совпавшие коды образцов хранилищ: { $count }
+micro-fiber-analyzer-interface-compare-no-profiles = Совпадений по кодам образцов перчаток нет.
+micro-fiber-analyzer-interface-compare-no-storage-micro-fibers = Совпадений по кодам образцов хранилищ нет.
+micro-fiber-analyzer-interface-compare-note = Совпадение кода образца указывает на конкретную пару перчаток или экземпляр хранилища, но не устанавливает его владельца.
+micro-fiber-analyzer-interface-compare-not-enough = Для сравнения нужны два исследованных образца в истории.
+micro-fiber-analyzer-interface-current-sample = Неисследованный образец
+micro-fiber-analyzer-interface-history-empty = История пуста.
+micro-fiber-analyzer-interface-history-sample = Образец { $identifier }
+micro-fiber-analyzer-interface-source = Исследуемый предмет: { $source }
+micro-fiber-analyzer-interface-source-heading = { $source }
+micro-fiber-analyzer-interface-analyzed-at = Время анализа: { $time }
+micro-fiber-analyzer-interface-printer-ready = Копировальный аппарат подключён и готов к печати.
+micro-fiber-analyzer-interface-printer-unavailable = Копировальный аппарат подключён, но не готов: проверьте питание, тонер и очередь печати.
+micro-fiber-analyzer-interface-printer-disconnected = Нет связи с копировальным аппаратом. Установите связь мультитулом.
+micro-fiber-analyzer-port-source-name = Отчёт анализа микроволокон
+micro-fiber-analyzer-port-source-description = Отправляет заключение в связанный копировальный аппарат.
+micro-fiber-analyzer-port-sink-name = Печать документов
+micro-fiber-analyzer-port-sink-description = Принимает заключения связанного анализатора для печати.
+micro-fiber-analyzer-report-title = Заключение экспертизы микроволокон
+micro-fiber-analyzer-comparison-report-title = Протокол сравнительного анализа микроволокон
+micro-fiber-analyzer-comparison-report-header = [bold]Форма НТ-СБ-САМ[/bold]
     { "[head=2]Протокол сравнительного анализа микроволокон[/head]" }
-glove-micro-fiber-analyzer-comparison-report-sample = [head=3]Исследуемый образец № { $number }[/head]
+micro-fiber-analyzer-comparison-report-sample = [head=3]Исследуемый образец № { $number }[/head]
     { "[bold]Регистрационный номер:[/bold]" } { $identifier }
-glove-micro-fiber-analyzer-comparison-report-matches = [head=2]Совпадения по кодам образцов[/head]
-glove-micro-fiber-analyzer-report-header = [bold]Форма НТ-СБ-ЭСП[/bold]
+micro-fiber-analyzer-comparison-report-matches = [head=2]Совпадения по кодам образцов[/head]
+micro-fiber-analyzer-report-header = [bold]Форма НТ-СБ-ЭСП[/bold]
     { "[head=2]Заключение экспертизы микроволокон[/head]" }
 
     { "[bold]Регистрационный номер:[/bold]" } { $identifier }
-glove-micro-fiber-analyzer-report-source = [bold]Исследуемый предмет:[/bold] { $source }
-glove-micro-fiber-analyzer-report-analyzed-at = [bold]Время завершения анализа (от начала раунда):[/bold] { $time }
-glove-micro-fiber-analyzer-report-results = [head=3]Идентифицированные образцы перчаток[/head]
+micro-fiber-analyzer-report-source = [bold]Исследуемый предмет:[/bold] { $source }
+micro-fiber-analyzer-report-analyzed-at = [bold]Время завершения анализа (от начала раунда):[/bold] { $time }
+micro-fiber-analyzer-report-results = [head=3]Идентифицированные образцы перчаток[/head]
     { "[bold]Количество образцов перчаток:[/bold]" } { $count }
-glove-micro-fiber-analyzer-report-trace = [bold]Образец № { $number }[/bold]
+micro-fiber-analyzer-report-trace = [bold]Образец № { $number }[/bold]
     { "[bold]Вид перчаток:[/bold]" } { $type }
     { "[bold]Код образца:[/bold]" } { $code }
-glove-micro-fiber-analyzer-report-storage-micro-fibers = [head=3]Идентифицированные образцы хранилищ[/head]
+micro-fiber-analyzer-report-storage-micro-fibers = [head=3]Идентифицированные образцы хранилищ[/head]
     { "[bold]Количество образцов хранилищ:[/bold]" } { $count }
-glove-micro-fiber-analyzer-report-storage-micro-fiber = [bold]Образец хранилища № { $number }[/bold]
+micro-fiber-analyzer-report-storage-micro-fiber = [bold]Образец хранилища № { $number }[/bold]
     { "[bold]Хранилище:[/bold]" } { $type }
     { "[bold]Код образца:[/bold]" } { $code }
-glove-micro-fiber-analyzer-report-description = [head=3]Описание образца[/head]
+micro-fiber-analyzer-report-description = [head=3]Описание образца[/head]
     { $description }
-glove-micro-fiber-analyzer-report-footer = [italic]Документ сформирован автоматически анализатором микроволокон.[/italic]
+micro-fiber-analyzer-report-footer = [italic]Документ сформирован автоматически анализатором микроволокон.[/italic]
 
     { "[italic]Место для подписи и печати детектива[/italic]" }
-glove-micro-fiber-analyzer-interface-no-swab = Вставьте палочку с пробой.
-glove-micro-fiber-analyzer-interface-unused-swab = Вставленная палочка ещё не использована.
-glove-micro-fiber-analyzer-interface-traces = Образцы перчаток
-glove-micro-fiber-analyzer-interface-no-traces = Образцы перчаток не обнаружены.
-glove-micro-fiber-analyzer-interface-storage-micro-fibers = Образцы хранилищ
-glove-micro-fiber-analyzer-interface-no-storage-micro-fibers = Образцы хранилищ не обнаружены.
-glove-micro-fiber-analyzer-interface-type = Вид перчаток: { $type }
-glove-micro-fiber-analyzer-interface-item-type = Хранилище: { $type }
-glove-micro-fiber-analyzer-interface-code = Код образца: { $code }
-glove-micro-fiber-analyzer-interface-glove-sample-number = Образец перчаток № { $number }
-glove-micro-fiber-analyzer-interface-storage-sample-number = Образец хранилища № { $number }
-glove-micro-fiber-analyzer-interface-empty-category = Не обнаружены
-glove-micro-fiber-analyzer-interface-unknown-type = Неизвестный вид перчаток
-glove-micro-fiber-analyzer-interface-unknown-item = Неизвестное хранилище
+micro-fiber-analyzer-interface-no-swab = Вставьте палочку с пробой.
+micro-fiber-analyzer-interface-unused-swab = Вставленная палочка ещё не использована.
+micro-fiber-analyzer-interface-traces = Образцы перчаток
+micro-fiber-analyzer-interface-no-traces = Образцы перчаток не обнаружены.
+micro-fiber-analyzer-interface-storage-micro-fibers = Образцы хранилищ
+micro-fiber-analyzer-interface-no-storage-micro-fibers = Образцы хранилищ не обнаружены.
+micro-fiber-analyzer-interface-type = Вид перчаток: { $type }
+micro-fiber-analyzer-interface-item-type = Хранилище: { $type }
+micro-fiber-analyzer-interface-code = Код образца: { $code }
+micro-fiber-analyzer-interface-glove-sample-number = Образец перчаток № { $number }
+micro-fiber-analyzer-interface-storage-sample-number = Образец хранилища № { $number }
+micro-fiber-analyzer-interface-empty-category = Не обнаружены
+micro-fiber-analyzer-interface-unknown-type = Неизвестный вид перчаток
+micro-fiber-analyzer-interface-unknown-item = Неизвестное хранилище

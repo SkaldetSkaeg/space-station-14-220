@@ -8,15 +8,15 @@ using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom;
 namespace Content.Server.SS220.Forensics.Components;
 
 /// <summary>
-/// Stores the glove-micro-fiber analyzer's sample slot, analysis progress, linked copier and private sample history.
+/// Stores the microfiber analyzer's sample slot, analysis progress, linked copier and private sample history.
 /// </summary>
 [RegisterComponent, AutoGenerateComponentPause]
-public sealed partial class GloveMicroFiberAnalyzerComponent : Component
+public sealed partial class MicroFiberAnalyzerComponent : Component
 {
     /// <summary>
     /// Stored snapshots of analyzed samples. This runtime history lasts for the lifetime of the analyzer.
     /// </summary>
-    public readonly List<GloveMicroFiberAnalyzerHistoryEntry> History = [];
+    public readonly List<MicroFiberAnalyzerHistoryEntry> History = [];
 
     /// <summary>
     /// The copier linked to the analyzer's report output port, if any.
@@ -26,7 +26,7 @@ public sealed partial class GloveMicroFiberAnalyzerComponent : Component
     /// <summary>
     /// Last printer availability sent to users of the private interface.
     /// </summary>
-    public GloveMicroFiberAnalyzerPrinterStatus PrinterStatus;
+    public MicroFiberAnalyzerPrinterStatus PrinterStatus;
 
     /// <summary>
     /// The slot accepting a glove-micro-fiber swab.
@@ -66,13 +66,13 @@ public sealed partial class GloveMicroFiberAnalyzerComponent : Component
     /// The paper used for printed reports.
     /// </summary>
     [DataField]
-    public EntProtoId MachineOutput = "GloveMicroFiberReportPaper";
+    public EntProtoId MachineOutput = "MicroFiberReportPaper";
 
     /// <summary>
     /// The separate paper used for reports comparing two completed samples.
     /// </summary>
     [DataField]
-    public EntProtoId ComparisonOutput = "GloveMicroFiberComparisonReportPaper";
+    public EntProtoId ComparisonOutput = "MicroFiberComparisonReportPaper";
 
     /// <summary>
     /// Delay between printed reports.

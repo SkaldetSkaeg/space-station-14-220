@@ -9,12 +9,12 @@ namespace Content.Client.SS220.Forensics;
 /// <summary>
 /// Displays numbered trace cards and optional empty-category messages for analyzer results and comparisons.
 /// </summary>
-public sealed class GloveMicroFiberAnalyzerSampleList : BoxContainer
+public sealed class MicroFiberAnalyzerSampleList : BoxContainer
 {
     /// <summary>
     /// Creates a vertical list whose spacing is configured by its containing view.
     /// </summary>
-    public GloveMicroFiberAnalyzerSampleList()
+    public MicroFiberAnalyzerSampleList()
     {
         Orientation = LayoutOrientation.Vertical;
         HorizontalExpand = true;
@@ -28,7 +28,7 @@ public sealed class GloveMicroFiberAnalyzerSampleList : BoxContainer
         RemoveAllChildren();
         for (var i = 0; i < samples.Count; i++)
         {
-            AddChild(new GloveMicroFiberAnalyzerSampleCard(samples[i], i + 1));
+            AddChild(new MicroFiberAnalyzerSampleCard(samples[i], i + 1));
         }
 
         if (samples.Count > 0)
@@ -48,13 +48,13 @@ public sealed class GloveMicroFiberAnalyzerSampleList : BoxContainer
         RemoveAllChildren();
         for (var i = 0; i < samples.Count; i++)
         {
-            AddChild(new GloveMicroFiberAnalyzerSampleCard(samples[i], i + 1));
+            AddChild(new MicroFiberAnalyzerSampleCard(samples[i], i + 1));
         }
 
         if (samples.Count > 0)
             return;
 
-        ShowEmptyMessage(emptyMessage, GloveMicroFiberAnalyzerColors.MutedText);
+        ShowEmptyMessage(emptyMessage, MicroFiberAnalyzerColors.MutedText);
     }
 
     private void ShowEmptyMessage(string message, Color? color = null)

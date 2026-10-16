@@ -10,12 +10,12 @@ namespace Content.Shared.SS220.Forensics;
 /// <summary>
 /// Shared analyzer limits and formatting for sample descriptions and history.
 /// </summary>
-public static class GloveMicroFiberAnalyzerUi
+public static class MicroFiberAnalyzerUi
 {
     /// <summary>
     /// The analyzer port used to establish a report printer link.
     /// </summary>
-    public static readonly ProtoId<SourcePortPrototype> ReportSourcePort = "GloveMicroFiberReport";
+    public static readonly ProtoId<SourcePortPrototype> ReportSourcePort = "MicroFiberReport";
 
     /// <summary>
     /// The copier port accepting report printer links.
@@ -30,9 +30,9 @@ public static class GloveMicroFiberAnalyzerUi
     /// <summary>
     /// Formats an archive sample's name from its permanent identifier.
     /// </summary>
-    public static string GetSampleName(GloveMicroFiberAnalyzerHistoryEntry sample)
+    public static string GetSampleName(MicroFiberAnalyzerHistoryEntry sample)
     {
-        return Loc.GetString("glove-micro-fiber-analyzer-interface-history-sample", ("identifier", sample.Identifier));
+        return Loc.GetString("micro-fiber-analyzer-interface-history-sample", ("identifier", sample.Identifier));
     }
 
     /// <summary>
@@ -50,10 +50,10 @@ public static class GloveMicroFiberAnalyzerUi
 }
 
 /// <summary>
-/// The interface used to examine a swab inserted into the glove-micro-fiber analyzer.
+/// The interface used to examine a swab inserted into the microfiber analyzer.
 /// </summary>
 [Serializable, NetSerializable]
-public enum GloveMicroFiberAnalyzerUiKey : byte
+public enum MicroFiberAnalyzerUiKey : byte
 {
     Key,
 }
@@ -62,7 +62,7 @@ public enum GloveMicroFiberAnalyzerUiKey : byte
 /// The linked copier's ability to receive a report from this analyzer.
 /// </summary>
 [Serializable, NetSerializable]
-public enum GloveMicroFiberAnalyzerPrinterStatus : byte
+public enum MicroFiberAnalyzerPrinterStatus : byte
 {
     Disconnected,
     Unavailable,
@@ -73,7 +73,7 @@ public enum GloveMicroFiberAnalyzerPrinterStatus : byte
 /// A stored snapshot of a physical sample previously inserted into this analyzer.
 /// </summary>
 [Serializable, NetSerializable]
-public sealed class GloveMicroFiberAnalyzerHistoryEntry
+public sealed class MicroFiberAnalyzerHistoryEntry
 {
     /// <summary>
     /// The sample's permanent number within this analyzer.
@@ -110,7 +110,7 @@ public sealed class GloveMicroFiberAnalyzerHistoryEntry
     /// </summary>
     public readonly TimeSpan AnalyzedAt;
 
-    public GloveMicroFiberAnalyzerHistoryEntry(int id, List<GloveMicroFiberTrace> gloveMicroFibers,
+    public MicroFiberAnalyzerHistoryEntry(int id, List<GloveMicroFiberTrace> gloveMicroFibers,
         string description = "", string identifier = "", string sourceName = "",
         List<StorageMicroFiberTrace>? storageMicroFibers = null, TimeSpan analyzedAt = default)
     {
@@ -126,9 +126,9 @@ public sealed class GloveMicroFiberAnalyzerHistoryEntry
     /// <summary>
     /// Replaces the description without changing the evidence or previously sent history snapshots.
     /// </summary>
-    public GloveMicroFiberAnalyzerHistoryEntry WithDescription(string description)
+    public MicroFiberAnalyzerHistoryEntry WithDescription(string description)
     {
-        return new GloveMicroFiberAnalyzerHistoryEntry(Id, GloveMicroFibers,
+        return new MicroFiberAnalyzerHistoryEntry(Id, GloveMicroFibers,
             description: description,
             identifier: Identifier,
             sourceName: SourceName,
@@ -141,7 +141,7 @@ public sealed class GloveMicroFiberAnalyzerHistoryEntry
 /// Private completed analyses and the pending sample's status, sent only to users of the interface.
 /// </summary>
 [Serializable, NetSerializable]
-public sealed class GloveMicroFiberAnalyzerResultsMessage : BoundUserInterfaceMessage
+public sealed class MicroFiberAnalyzerResultsMessage : BoundUserInterfaceMessage
 {
     /// <summary>
     /// The server-side analyzer UID used in completed sample identifiers.
@@ -171,7 +171,7 @@ public sealed class GloveMicroFiberAnalyzerResultsMessage : BoundUserInterfaceMe
     /// <summary>
     /// This analyzer's stored samples, sent only to authorized users of the interface.
     /// </summary>
-    public required List<GloveMicroFiberAnalyzerHistoryEntry> History { get; init; }
+    public required List<MicroFiberAnalyzerHistoryEntry> History { get; init; }
 
     /// <summary>
     /// Whether the analyzer is processing the physically inserted swab.
@@ -206,14 +206,14 @@ public sealed class GloveMicroFiberAnalyzerResultsMessage : BoundUserInterfaceMe
     /// <summary>
     /// Whether a valid linked copier is ready to print a report.
     /// </summary>
-    public required GloveMicroFiberAnalyzerPrinterStatus PrinterStatus { get; init; }
+    public required MicroFiberAnalyzerPrinterStatus PrinterStatus { get; init; }
 }
 
 /// <summary>
 /// Requests the currently inserted sample's results after opening the analyzer.
 /// </summary>
 [Serializable, NetSerializable]
-public sealed class GloveMicroFiberAnalyzerRequestResultsMessage : BoundUserInterfaceMessage
+public sealed class MicroFiberAnalyzerRequestResultsMessage : BoundUserInterfaceMessage
 {
 }
 
@@ -221,7 +221,7 @@ public sealed class GloveMicroFiberAnalyzerRequestResultsMessage : BoundUserInte
 /// Requests removal of the swab from the analyzer into the user's hands.
 /// </summary>
 [Serializable, NetSerializable]
-public sealed class GloveMicroFiberAnalyzerEjectMessage : BoundUserInterfaceMessage
+public sealed class MicroFiberAnalyzerEjectMessage : BoundUserInterfaceMessage
 {
 }
 
@@ -229,7 +229,7 @@ public sealed class GloveMicroFiberAnalyzerEjectMessage : BoundUserInterfaceMess
 /// Starts processing the inserted sample, including the description currently entered by the user.
 /// </summary>
 [Serializable, NetSerializable]
-public sealed class GloveMicroFiberAnalyzerAnalyzeMessage : BoundUserInterfaceMessage
+public sealed class MicroFiberAnalyzerAnalyzeMessage : BoundUserInterfaceMessage
 {
     /// <summary>
     /// The description entered for the pending sample.
@@ -241,7 +241,7 @@ public sealed class GloveMicroFiberAnalyzerAnalyzeMessage : BoundUserInterfaceMe
     /// </summary>
     public readonly NetEntity? Swab;
 
-    public GloveMicroFiberAnalyzerAnalyzeMessage(string description, NetEntity? swab)
+    public MicroFiberAnalyzerAnalyzeMessage(string description, NetEntity? swab)
     {
         Description = description;
         Swab = swab;
@@ -252,7 +252,7 @@ public sealed class GloveMicroFiberAnalyzerAnalyzeMessage : BoundUserInterfaceMe
 /// Saves a description for a completed analysis or, when the ID is null, for the pending physical sample.
 /// </summary>
 [Serializable, NetSerializable]
-public sealed class GloveMicroFiberAnalyzerSetDescriptionMessage : BoundUserInterfaceMessage
+public sealed class MicroFiberAnalyzerSetDescriptionMessage : BoundUserInterfaceMessage
 {
     /// <summary>
     /// The completed record to edit, or null to edit the pending physical sample.
@@ -269,7 +269,7 @@ public sealed class GloveMicroFiberAnalyzerSetDescriptionMessage : BoundUserInte
     /// </summary>
     public readonly NetEntity? Swab;
 
-    public GloveMicroFiberAnalyzerSetDescriptionMessage(int? sampleId, string description, NetEntity? swab = null)
+    public MicroFiberAnalyzerSetDescriptionMessage(int? sampleId, string description, NetEntity? swab = null)
     {
         SampleId = sampleId;
         Description = description;
@@ -281,14 +281,14 @@ public sealed class GloveMicroFiberAnalyzerSetDescriptionMessage : BoundUserInte
 /// Requests a paper report of a completed analysis belonging to this analyzer.
 /// </summary>
 [Serializable, NetSerializable]
-public sealed class GloveMicroFiberAnalyzerPrintMessage : BoundUserInterfaceMessage
+public sealed class MicroFiberAnalyzerPrintMessage : BoundUserInterfaceMessage
 {
     /// <summary>
     /// The stored sample to print. Requests without a stored sample ID are rejected.
     /// </summary>
     public readonly int? SampleId;
 
-    public GloveMicroFiberAnalyzerPrintMessage(int? sampleId = null)
+    public MicroFiberAnalyzerPrintMessage(int? sampleId = null)
     {
         SampleId = sampleId;
     }
@@ -298,7 +298,7 @@ public sealed class GloveMicroFiberAnalyzerPrintMessage : BoundUserInterfaceMess
 /// Requests a separate comparison report of two completed samples belonging to this analyzer.
 /// </summary>
 [Serializable, NetSerializable]
-public sealed class GloveMicroFiberAnalyzerPrintComparisonMessage : BoundUserInterfaceMessage
+public sealed class MicroFiberAnalyzerPrintComparisonMessage : BoundUserInterfaceMessage
 {
     /// <summary>
     /// The first stored sample to compare.
@@ -310,7 +310,7 @@ public sealed class GloveMicroFiberAnalyzerPrintComparisonMessage : BoundUserInt
     /// </summary>
     public readonly int SecondSampleId;
 
-    public GloveMicroFiberAnalyzerPrintComparisonMessage(int firstSampleId, int secondSampleId)
+    public MicroFiberAnalyzerPrintComparisonMessage(int firstSampleId, int secondSampleId)
     {
         FirstSampleId = firstSampleId;
         SecondSampleId = secondSampleId;

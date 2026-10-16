@@ -66,8 +66,8 @@
   <Box>
     <GuideEntityEmbed Entity="GloveMicroFiberScanner"/>
     <GuideEntityEmbed Entity="GloveMicroFiberSwab"/>
-    <GuideEntityEmbed Entity="GloveMicroFiberAnalyzerMachineCircuitboard"/>
-    <GuideEntityEmbed Entity="GloveMicroFiberAnalyzer"/>
+    <GuideEntityEmbed Entity="MicroFiberAnalyzerMachineCircuitboard"/>
+    <GuideEntityEmbed Entity="MicroFiberAnalyzer"/>
   </Box>
   <!-- SS220 microfibers end -->
 

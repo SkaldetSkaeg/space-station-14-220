@@ -10,7 +10,7 @@ namespace Content.Client.SS220.Forensics;
 /// <summary>
 /// Draws a simple printer outline whose color indicates whether the analyzer has a linked copier.
 /// </summary>
-public sealed class GloveMicroFiberAnalyzerPrinterIcon : Control
+public sealed class MicroFiberAnalyzerPrinterIcon : Control
 {
     private const float IconSize = 24f;
 

@@ -46,32 +46,35 @@ public sealed class GloveMicroFiberSystem : EntitySystem
     /// <summary>
     /// Obtains the permanent identity of gloves that leave identifiable contact traces.
     /// </summary>
-    public bool TryGetCode(EntityUid uid, out string? code)
+    public bool TryGetCode(Entity<GloveMicroFiberComponent?> ent, out string? code)
     {
         code = null;
-        if (!TryComp<GloveMicroFiberComponent>(uid, out var component))
+        if (!Resolve(ent, ref ent.Comp, false))
             return false;
 
-        if (!component.Enabled)
+        if (!ent.Comp.Enabled)
             return false;
 
-        code = EnsureCode(component);
+        code = EnsureCode(ent.Comp);
         return true;
     }
 
     /// <summary>
     /// Obtains a glove's permanent identity and a snapshot of its prototype for contact evidence or a physical sample.
     /// </summary>
-    public bool TryGetTrace(EntityUid uid, out GloveMicroFiberTrace trace)
+    public bool TryGetTrace(Entity<GloveMicroFiberComponent?> ent, out GloveMicroFiberTrace trace)
     {
         trace = default;
-        if (!TryGetCode(uid, out var code))
+        if (!Resolve(ent, ref ent.Comp, false))
+            return false;
+
+        if (!TryGetCode(ent, out var code))
             return false;
 
         if (code == null)
             return false;
 
-        var prototype = MetaData(uid).EntityPrototype;
+        var prototype = MetaData(ent).EntityPrototype;
         EntProtoId? prototypeId = prototype == null ? (EntProtoId?)null : new EntProtoId(prototype.ID);
         trace = new GloveMicroFiberTrace(code, prototypeId);
         return true;
@@ -98,14 +101,14 @@ public sealed class GloveMicroFiberSystem : EntitySystem
     /// Retains the identity when cutting gloves into another pair of gloves.
     /// Does not turn cloth or other butchering products into sources of glove microfibers.
     /// </summary>
-    public void TransferCode(EntityUid source, EntityUid target)
+    public void TransferCode(Entity<GloveMicroFiberComponent?> source, Entity<GloveMicroFiberComponent?> target)
     {
-        if (!TryComp<GloveMicroFiberComponent>(source, out var sourceProfile))
+        if (!Resolve(source, ref source.Comp, false))
             return;
 
-        if (!TryComp<GloveMicroFiberComponent>(target, out var targetProfile))
+        if (!Resolve(target, ref target.Comp, false))
             return;
 
-        targetProfile.Code = EnsureCode(sourceProfile);
+        target.Comp.Code = EnsureCode(source.Comp);
     }
 }

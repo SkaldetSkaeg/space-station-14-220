@@ -4,7 +4,6 @@ using Content.Shared.SS220.Forensics;
 using Robust.Shared.IoC;
 using Robust.Shared.Serialization;
 using Robust.Shared.Serialization.Manager;
-using Robust.Shared.Serialization.Markdown;
 using Robust.Shared.Serialization.Markdown.Sequence;
 using Robust.Shared.Serialization.Markdown.Validation;
 using Robust.Shared.Serialization.Markdown.Value;
@@ -13,11 +12,10 @@ using Robust.Shared.Serialization.TypeSerializers.Interfaces;
 namespace Content.Server.SS220.Forensics.Serialization;
 
 /// <summary>
-/// Loads individual material profiles while discarding older maps' material and color descriptions.
-/// Those descriptions contain no source identity and cannot be converted into identifiable profiles.
+/// Reads individual material profiles while accepting and discarding scalar descriptions without source identities.
 /// </summary>
 public sealed class StorageMicroFiberTraceSetSerializer
-    : ITypeSerializer<HashSet<StorageMicroFiberTrace>, SequenceDataNode>
+    : ITypeReader<HashSet<StorageMicroFiberTrace>, SequenceDataNode>
 {
     public HashSet<StorageMicroFiberTrace> Read(
         ISerializationManager serializationManager,
@@ -58,21 +56,5 @@ public sealed class StorageMicroFiberTraceSetSerializer
         }
 
         return new ValidatedSequenceNode(validatedTraces);
-    }
-
-    public DataNode Write(
-        ISerializationManager serializationManager,
-        HashSet<StorageMicroFiberTrace> value,
-        IDependencyCollection dependencies,
-        bool alwaysWrite = false,
-        ISerializationContext? context = null)
-    {
-        var sequence = new SequenceDataNode(value.Count);
-        foreach (var trace in value)
-        {
-            sequence.Add(serializationManager.WriteValue(trace, alwaysWrite, context));
-        }
-
-        return sequence;
     }
 }

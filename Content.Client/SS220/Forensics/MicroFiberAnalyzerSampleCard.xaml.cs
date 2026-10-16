@@ -14,11 +14,11 @@ namespace Content.Client.SS220.Forensics;
 /// Displays one trace's source, optional prototype image and identifying code.
 /// </summary>
 [GenerateTypedNameReferences]
-public sealed partial class GloveMicroFiberAnalyzerSampleCard : PanelContainer
+public sealed partial class MicroFiberAnalyzerSampleCard : PanelContainer
 {
     [Dependency] private readonly IPrototypeManager _prototype = default!;
 
-    private GloveMicroFiberAnalyzerSampleCard()
+    private MicroFiberAnalyzerSampleCard()
     {
         IoCManager.InjectDependencies(this);
         RobustXamlLoader.Load(this);
@@ -27,24 +27,24 @@ public sealed partial class GloveMicroFiberAnalyzerSampleCard : PanelContainer
     /// <summary>
     /// Creates a numbered glove sample card using the glove prototype's name and image when available.
     /// </summary>
-    public GloveMicroFiberAnalyzerSampleCard(GloveMicroFiberTrace sample, int number) : this()
+    public MicroFiberAnalyzerSampleCard(GloveMicroFiberTrace sample, int number) : this()
     {
-        SampleNumber.Text = Loc.GetString("glove-micro-fiber-analyzer-interface-glove-sample-number",
+        SampleNumber.Text = Loc.GetString("micro-fiber-analyzer-interface-glove-sample-number",
             ("number", number));
         var itemName = ShowSampleAppearance(sample.Prototype)
-            ?? Loc.GetString("glove-micro-fiber-analyzer-interface-unknown-type");
+            ?? Loc.GetString("micro-fiber-analyzer-interface-unknown-type");
         SetSampleText(itemName, sample.Code);
     }
 
     /// <summary>
     /// Creates a numbered item sample card, preserving the source name recorded with the sample.
     /// </summary>
-    public GloveMicroFiberAnalyzerSampleCard(StorageMicroFiberTrace sample, int number) : this()
+    public MicroFiberAnalyzerSampleCard(StorageMicroFiberTrace sample, int number) : this()
     {
-        SampleNumber.Text = Loc.GetString("glove-micro-fiber-analyzer-interface-storage-sample-number",
+        SampleNumber.Text = Loc.GetString("micro-fiber-analyzer-interface-storage-sample-number",
             ("number", number));
         var itemName = ShowSampleAppearance(sample.Prototype)
-            ?? Loc.GetString("glove-micro-fiber-analyzer-interface-unknown-item");
+            ?? Loc.GetString("micro-fiber-analyzer-interface-unknown-item");
         if (!string.IsNullOrEmpty(sample.SourceName))
             itemName = sample.SourceName;
 
@@ -63,10 +63,10 @@ public sealed partial class GloveMicroFiberAnalyzerSampleCard : PanelContainer
 
     private void SetSampleText(string itemName, string code)
     {
-        SampleName.SetMessage(FormattedMessage.FromUnformatted(itemName), GloveMicroFiberAnalyzerColors.Text);
+        SampleName.SetMessage(FormattedMessage.FromUnformatted(itemName), MicroFiberAnalyzerColors.Text);
         SampleCode.ToolTip = code;
         SampleCode.SetMessage(FormattedMessage.FromUnformatted(FormatSampleCode(code)),
-            GloveMicroFiberAnalyzerColors.CodeText);
+            MicroFiberAnalyzerColors.CodeText);
     }
 
     private static string FormatSampleCode(string code)

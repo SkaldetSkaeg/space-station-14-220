@@ -15,7 +15,7 @@ namespace Content.Client.SS220.Forensics;
 /// Displays stored analyzer samples and the pending swab selector.
 /// </summary>
 [GenerateTypedNameReferences]
-public sealed partial class GloveMicroFiberAnalyzerHistoryControl : BoxContainer
+public sealed partial class MicroFiberAnalyzerHistoryControl : BoxContainer
 {
     private readonly Dictionary<int, Button> _historyButtons = [];
 
@@ -28,18 +28,18 @@ public sealed partial class GloveMicroFiberAnalyzerHistoryControl : BoxContainer
     /// <summary>
     /// Initializes the history list and pending swab selector.
     /// </summary>
-    public GloveMicroFiberAnalyzerHistoryControl()
+    public MicroFiberAnalyzerHistoryControl()
     {
         RobustXamlLoader.Load(this);
-        CurrentSample.ModulateSelfOverride = GloveMicroFiberAnalyzerColors.Accent;
+        CurrentSample.ModulateSelfOverride = MicroFiberAnalyzerColors.Accent;
         CurrentSample.OnPressed += _ => OnSampleSelected?.Invoke(null);
-        CompareHistory.ToolTip = Loc.GetString("glove-micro-fiber-analyzer-interface-compare-not-enough");
+        CompareHistory.ToolTip = Loc.GetString("micro-fiber-analyzer-interface-compare-not-enough");
     }
 
     /// <summary>
     /// Rebuilds the stored sample list, showing the newest samples first.
     /// </summary>
-    public void UpdateHistory(List<GloveMicroFiberAnalyzerHistoryEntry> history)
+    public void UpdateHistory(List<MicroFiberAnalyzerHistoryEntry> history)
     {
         HistoryEntries.RemoveAllChildren();
         _historyButtons.Clear();
@@ -47,7 +47,7 @@ public sealed partial class GloveMicroFiberAnalyzerHistoryControl : BoxContainer
         HistoryCount.Text = history.Count.ToString(CultureInfo.InvariantCulture);
         CompareHistory.Disabled = history.Count < 2;
         CompareHistory.ToolTip = CompareHistory.Disabled
-            ? Loc.GetString("glove-micro-fiber-analyzer-interface-compare-not-enough")
+            ? Loc.GetString("micro-fiber-analyzer-interface-compare-not-enough")
             : null;
         if (CompareHistory.Disabled)
             CompareHistory.Pressed = false;
@@ -57,7 +57,7 @@ public sealed partial class GloveMicroFiberAnalyzerHistoryControl : BoxContainer
             var sample = history[i];
             var button = new HistorySampleButton
             {
-                Text = GloveMicroFiberAnalyzerUi.GetSampleName(sample),
+                Text = MicroFiberAnalyzerUi.GetSampleName(sample),
                 ClipText = true,
                 ToolTip = sample.Identifier,
                 ToggleMode = true,
@@ -77,7 +77,7 @@ public sealed partial class GloveMicroFiberAnalyzerHistoryControl : BoxContainer
         PendingSamplePanel.Visible = hasSwab;
         CurrentSample.Pressed = !CompareHistory.Pressed && selectedSampleId == null;
         CurrentSample.ModulateSelfOverride = CurrentSample.Pressed
-            ? GloveMicroFiberAnalyzerColors.Accent
+            ? MicroFiberAnalyzerColors.Accent
             : Palettes.Cyan.Base;
         foreach (var (id, button) in _historyButtons)
         {
@@ -120,7 +120,7 @@ public sealed partial class GloveMicroFiberAnalyzerHistoryControl : BoxContainer
                 DrawModeEnum.Disabled => Palettes.Slate.DisabledElement,
                 _ => Palettes.Slate.Element,
             };
-            style.BorderColor = Pressed ? Palettes.Green.Base : GloveMicroFiberAnalyzerColors.Border;
+            style.BorderColor = Pressed ? Palettes.Green.Base : MicroFiberAnalyzerColors.Border;
             style.BorderThickness = new Thickness(Pressed ? 3 : 1, 1, 1, 1);
         }
     }
