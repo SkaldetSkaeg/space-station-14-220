@@ -8,7 +8,7 @@ using Robust.Shared.Serialization;
 namespace Content.Shared.SS220.Forensics;
 
 /// <summary>
-/// Shared limits for descriptions attached to pending and completed glove analyses.
+/// Shared analyzer limits and formatting for sample descriptions and history.
 /// </summary>
 public static class GloveMicroFiberAnalyzerUi
 {
@@ -26,6 +26,14 @@ public static class GloveMicroFiberAnalyzerUi
     /// Maximum description length accepted by the editor and server.
     /// </summary>
     public const int MaxDescriptionLength = 512;
+
+    /// <summary>
+    /// Formats an archive sample's name from its permanent identifier.
+    /// </summary>
+    public static string GetSampleName(GloveMicroFiberAnalyzerHistoryEntry sample)
+    {
+        return Loc.GetString("glove-micro-fiber-analyzer-interface-history-sample", ("identifier", sample.Identifier));
+    }
 
     /// <summary>
     /// Formats a recorded round duration as hours, minutes and seconds without wrapping after a day.

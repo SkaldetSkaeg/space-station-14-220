@@ -59,6 +59,24 @@ public sealed class GloveMicroFiberSystem : EntitySystem
         return true;
     }
 
+    /// <summary>
+    /// Obtains a glove's permanent identity and a snapshot of its prototype for contact evidence or a physical sample.
+    /// </summary>
+    public bool TryGetTrace(EntityUid uid, out GloveMicroFiberTrace trace)
+    {
+        trace = default;
+        if (!TryGetCode(uid, out var code))
+            return false;
+
+        if (code == null)
+            return false;
+
+        var prototype = MetaData(uid).EntityPrototype;
+        EntProtoId? prototypeId = prototype == null ? (EntProtoId?)null : new EntProtoId(prototype.ID);
+        trace = new GloveMicroFiberTrace(code, prototypeId);
+        return true;
+    }
+
     private void OnContact(Entity<InventoryComponent> ent, ref ContactInteractionEvent args)
     {
         if (!HasComp<HandsComponent>(ent))
@@ -70,15 +88,10 @@ public sealed class GloveMicroFiberSystem : EntitySystem
         if (!_inventory.TryGetSlotEntity(ent, "gloves", out var gloves))
             return;
 
-        if (!TryGetCode(gloves.Value, out var code))
+        if (!TryGetTrace(gloves.Value, out var trace))
             return;
 
-        if (code == null)
-            return;
-
-        var prototype = MetaData(gloves.Value).EntityPrototype;
-        EntProtoId? prototypeId = prototype == null ? (EntProtoId?)null : new EntProtoId(prototype.ID);
-        EnsureComp<ForensicsComponent>(args.Other).GloveMicroFibers.Add(new GloveMicroFiberTrace(code, prototypeId));
+        EnsureComp<ForensicsComponent>(args.Other).GloveMicroFibers.Add(trace);
     }
 
     /// <summary>

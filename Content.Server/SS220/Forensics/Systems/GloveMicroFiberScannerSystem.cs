@@ -8,7 +8,6 @@ using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Interaction;
 using Content.Shared.SS220.Forensics;
 using Content.Shared.Verbs;
-using Robust.Shared.Prototypes;
 
 namespace Content.Server.SS220.Forensics.Systems;
 
@@ -157,28 +156,13 @@ public sealed class GloveMicroFiberScannerSystem : EntitySystem
 
         traces = [];
         storageMicroFibers = [];
-        if (TryGetOwnGloveTrace(target, out var gloveTrace))
+        if (_gloveMicroFiber.TryGetTrace(target, out var gloveTrace))
             traces = [gloveTrace];
 
         if (!_storageMicroFiber.TryGetTrace(target, out var fiber))
             return traces.Count != 0;
 
         storageMicroFibers = [fiber];
-        return true;
-    }
-
-    private bool TryGetOwnGloveTrace(EntityUid target, out GloveMicroFiberTrace trace)
-    {
-        trace = default;
-        if (!_gloveMicroFiber.TryGetCode(target, out var code))
-            return false;
-
-        if (code == null)
-            return false;
-
-        var prototype = MetaData(target).EntityPrototype;
-        EntProtoId? prototypeId = prototype == null ? (EntProtoId?)null : new EntProtoId(prototype.ID);
-        trace = new GloveMicroFiberTrace(code, prototypeId);
         return true;
     }
 

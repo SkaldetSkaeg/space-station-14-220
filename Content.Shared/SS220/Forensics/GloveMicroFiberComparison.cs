@@ -14,22 +14,7 @@ public static class GloveMicroFiberComparison
         List<GloveMicroFiberTrace> first,
         List<GloveMicroFiberTrace> second)
     {
-        HashSet<string> remaining = new(StringComparer.Ordinal);
-        foreach (var trace in second)
-        {
-            remaining.Add(trace.Code);
-        }
-
-        List<GloveMicroFiberTrace> matches = [];
-        foreach (var trace in first)
-        {
-            if (!remaining.Remove(trace.Code))
-                continue;
-
-            matches.Add(trace);
-        }
-
-        return matches;
+        return FindMatches(first, second, static trace => trace.Code);
     }
 
     /// <summary>
@@ -39,16 +24,21 @@ public static class GloveMicroFiberComparison
         List<StorageMicroFiberTrace> first,
         List<StorageMicroFiberTrace> second)
     {
+        return FindMatches(first, second, static trace => trace.Code);
+    }
+
+    private static List<T> FindMatches<T>(List<T> first, List<T> second, Func<T, string> getCode)
+    {
         HashSet<string> remaining = new(StringComparer.Ordinal);
         foreach (var trace in second)
         {
-            remaining.Add(trace.Code);
+            remaining.Add(getCode(trace));
         }
 
-        List<StorageMicroFiberTrace> matches = [];
+        List<T> matches = [];
         foreach (var trace in first)
         {
-            if (!remaining.Remove(trace.Code))
+            if (!remaining.Remove(getCode(trace)))
                 continue;
 
             matches.Add(trace);

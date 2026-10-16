@@ -213,7 +213,7 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
     {
         SelectedSampleLabel.Text = stored == null
             ? Loc.GetString("glove-micro-fiber-analyzer-interface-current-sample")
-            : GetSampleName(stored);
+            : GloveMicroFiberAnalyzerUi.GetSampleName(stored);
         SelectedSampleLabel.ToolTip = SelectedSampleLabel.Text;
         SelectedSampleLabel.Visible = ShouldShowSampleHeader(state, stored);
         var sourceName = stored?.SourceName ?? state.PendingSourceName;
@@ -368,11 +368,6 @@ public sealed partial class GloveMicroFiberAnalyzerMenu : DefaultWindow
             return false;
 
         return SelectedSampleId != null;
-    }
-
-    private string GetSampleName(GloveMicroFiberAnalyzerHistoryEntry sample)
-    {
-        return Loc.GetString("glove-micro-fiber-analyzer-interface-history-sample", ("identifier", sample.Identifier));
     }
 
     private string GetAnalysisTimeText(GloveMicroFiberAnalyzerHistoryEntry sample)
