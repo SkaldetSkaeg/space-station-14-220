@@ -1,6 +1,6 @@
 - type: microwaveMealRecipe
   id: RecipeAloeCream
-  name: recipe-aloe-cream # SS220-localization-fix
+  name: ent-AloeCream # SS220-localization-fix
   result: AloeCream
   time: 10
   group: Medicinal
@@ -9,7 +9,7 @@
 
 - type: microwaveMealRecipe
   id: RecipeMedicatedSuture
-  name: recipe-medicated-suture # SS220-localization-fix
+  name: ent-MedicatedSuture # SS220-localization-fix
   result: MedicatedSuture
   time: 10
   group: Medicinal
@@ -23,7 +23,7 @@
 
 - type: microwaveMealRecipe
   id: RecipeRegenerativeMesh
-  name: recipe-regenerative-mesh # SS220-localization-fix
+  name: ent-RegenerativeMesh # SS220-localization-fix
   result: RegenerativeMesh
   time: 10
   group: Medicinal
