@@ -17,8 +17,8 @@ cmd-speciesban-hint-duration-6 = 1 месяц
 
 cmd-species-ban-minutes-parse = { $time } - недопустимое количество минут.
     { $help }
-cmd-species-ban-severity-parse = { $severity } не является валидной тяжестью
-    { $help }.
+cmd-species-ban-severity-parse = { $severity } не является валидной тяжестью.
+    { $help }
 cmd-species-ban-arg-count = Недопустимое количество аргументов.
 cmd-species-ban-parse = Раса с id { $speciesId } не существует.
 cmd-species-ban-name-parse = Невозможно найти игрока с таким именем.

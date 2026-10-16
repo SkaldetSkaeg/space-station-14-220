@@ -42,8 +42,8 @@ cmd-rolebanlist-hint-2 = [include unbanned]
 # SS220-localization-fix begin
 cmd-roleban-minutes-parse = {$time} is not a valid amount of minutes.
     {$help}
-cmd-roleban-severity-parse = { $severity } is not a valid severity
-    {$help}.
+cmd-roleban-severity-parse = { $severity } is not a valid severity.
+    {$help}
 # SS220-localization-fix end
 cmd-roleban-arg-count = Invalid amount of arguments.
 cmd-roleban-job-parse = Job {$job} does not exist.

@@ -41,8 +41,8 @@ cmd-rolebanlist-hint-2 = [include unbanned]
 # SS220-localization-fix begin
 cmd-roleban-minutes-parse = { $time } — недопустимое количество минут.
     { $help }
-cmd-roleban-severity-parse = { $severity } не является валидной тяжестью
-    { $help }.
+cmd-roleban-severity-parse = { $severity } не является валидной тяжестью.
+    { $help }
 # SS220-localization-fix end
 cmd-roleban-arg-count = Недопустимое количество аргументов.
 cmd-roleban-job-parse = Работа { $job } не существует.
