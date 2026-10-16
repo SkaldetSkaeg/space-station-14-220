@@ -14,6 +14,7 @@ using Content.Shared.Database;
 using Content.Shared.Maps;
 using Content.Shared.Players;
 using Content.Shared.Players.PlayTimeTracking;
+using Content.Shared.SS220.CCVars;
 using Content.Shared.Voting;
 using Robust.Shared.Configuration;
 using Robust.Shared.Enums;
@@ -263,7 +264,18 @@ namespace Content.Server.Voting.Managers
 
         private void CreateMapVote(ICommonSession? initiator)
         {
-            var maps = _gameMapManager.CurrentlyEligibleMaps().ToDictionary(map => map, map => map.MapName);
+            // SS220 map vote limit begin
+            // var maps = _gameMapManager.CurrentlyEligibleMaps().ToDictionary(map => map, map => map.MapName);
+            var eligibleMaps = _gameMapManager.CurrentlyEligibleMaps().ToArray();
+            var limit = _cfg.GetCVar(CCVars220.VoteMapLimit);
+            if (limit > 0 && eligibleMaps.Length > limit)
+            {
+                _random.Shuffle(eligibleMaps);
+                eligibleMaps = eligibleMaps[..limit];
+            }
+
+            var maps = eligibleMaps.ToDictionary(map => map, map => map.MapName);
+            // SS220 map vote limit end
 
             var alone = _playerManager.PlayerCount == 1 && initiator != null;
             var options = new VoteOptions

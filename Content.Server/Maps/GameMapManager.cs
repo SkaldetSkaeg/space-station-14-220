@@ -99,8 +99,18 @@ public sealed partial class GameMapManager : IGameMapManager // SS220 add partia
 
     public IEnumerable<GameMapPrototype> CurrentlyEligibleMaps()
     {
-        var maps = AllVotableMaps().Where(IsMapEligible).ToArray();
-        return maps.Length == 0 ? AllMaps().Where(x => x.Fallback) : maps;
+        // SS220 played map cycle begin
+        // var maps = AllVotableMaps().Where(IsMapEligible).ToArray();
+        // return maps.Length == 0 ? AllMaps().Where(x => x.Fallback) : maps;
+        var maps = AllVotableMaps().Where(map => IsMapEligible(map)).ToArray();
+        if (maps.Length > 0)
+            return maps;
+
+        if (TryResetPlayedMapCycle(out maps))
+            return maps;
+
+        return AllMaps().Where(x => x.Fallback);
+        // SS220 played map cycle end
     }
 
     public IEnumerable<GameMapPrototype> AllVotableMaps()
@@ -192,14 +202,16 @@ public sealed partial class GameMapManager : IGameMapManager // SS220 add partia
         return TryLookupMap(gameMap, out _);
     }
 
-    private bool IsMapEligible(GameMapPrototype map)
+    // private bool IsMapEligible(GameMapPrototype map)
+    private bool IsMapEligible(GameMapPrototype map, bool ignorePlayedMapMemory = false) // SS220 played map cycle
     {
         return map.MaxPlayers >= _playerManager.PlayerCount &&
                map.MinPlayers <= _playerManager.PlayerCount &&
                map.Conditions.All(x => x.Check(map)) &&
                _entityManager.System<GameTicker>().IsMapEligible(map) &&
                (!_previousMaps.Contains(map.ID) || !_mapRotationEnabled) &&
-               (!_playedMapQueue.Contains(map.ID) || !_playedMapMemoryEnabled); // SS220 map vote fix
+               // (!_playedMapQueue.Contains(map.ID) || !_playedMapMemoryEnabled); // SS220 map vote fix
+               (ignorePlayedMapMemory || IsPlayedMapEligible(map)); // SS220 map vote fix
     }
 
     private bool TryLookupMap(string gameMap, [NotNullWhen(true)] out GameMapPrototype? map)
