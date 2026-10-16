@@ -62,7 +62,7 @@ public sealed class GloveMicroFiberAnalyzerBoundUserInterface : BoundUserInterfa
         if (_window.PrinterButton.Disabled)
             return;
 
-        if (_window.CompareHistory.Pressed)
+        if (_window.IsComparing)
         {
             PrintComparison(_window);
             return;

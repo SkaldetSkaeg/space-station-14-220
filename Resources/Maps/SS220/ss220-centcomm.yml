@@ -17372,6 +17372,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - оранжевые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 485
@@ -17383,6 +17385,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - оранжевые синтетические волокна
       fibers: []
       fingerprints: []
 - proto: AirSensor
@@ -18517,6 +18521,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - оранжевые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 487
@@ -18528,6 +18534,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - оранжевые синтетические волокна
       fibers: []
       fingerprints: []
 - proto: APCBasic
@@ -20758,6 +20766,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1015
@@ -20769,6 +20779,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1016
@@ -20780,6 +20792,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1017
@@ -20791,6 +20805,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
 - proto: Bed
@@ -21618,6 +21634,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1170
@@ -21629,6 +21647,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1171
@@ -21640,6 +21660,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1172
@@ -21651,6 +21673,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
 - proto: BlueprintBeltChiefEngineer
@@ -21884,6 +21908,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые плазматиеские волокна
       fibers: []
       fingerprints: []
 - proto: BoxFolderBlue
@@ -21929,6 +21955,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые плазматиеские волокна
       fibers: []
       fingerprints: []
   - uid: 1219
@@ -21977,6 +22005,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые плазматиеские волокна
       fibers: []
       fingerprints: []
 - proto: BoxFolderCargo
@@ -22164,6 +22194,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые плазматиеские волокна
       fibers: []
       fingerprints: []
 - proto: BoxFolderMedical
@@ -22215,6 +22247,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые плазматиеские волокна
       fibers: []
       fingerprints: []
   - uid: 1253
@@ -22267,6 +22301,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые плазматиеские волокна
       fibers: []
       fingerprints: []
 - proto: BoxFolderRed
@@ -22308,6 +22344,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые плазматиеские волокна
       fibers: []
       fingerprints: []
   - uid: 1255
@@ -22662,6 +22700,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - оранжевые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 489
@@ -22673,6 +22713,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - оранжевые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1339
@@ -22708,6 +22750,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1345
@@ -22719,6 +22763,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1346
@@ -22730,6 +22776,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1347
@@ -22741,6 +22789,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1348
@@ -22752,6 +22802,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1349
@@ -22763,6 +22815,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1350
@@ -22774,6 +22828,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1351
@@ -22785,6 +22841,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
 - proto: Brutepack
@@ -22798,6 +22856,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1174
@@ -22809,6 +22869,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1175
@@ -22820,6 +22882,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1176
@@ -22831,6 +22895,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1177
@@ -22842,6 +22908,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1178
@@ -22853,6 +22921,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
 - proto: BurnAutoInjector
@@ -22866,6 +22936,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - оранжевые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 491
@@ -22877,6 +22949,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - оранжевые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1352
@@ -22888,6 +22962,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1353
@@ -22899,6 +22975,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1354
@@ -22910,6 +22988,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1355
@@ -22921,6 +23001,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1356
@@ -22932,6 +23014,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1357
@@ -22943,6 +23027,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1358
@@ -22954,6 +23040,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1359
@@ -22965,6 +23053,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1384
@@ -23107,6 +23197,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1407
@@ -23118,6 +23210,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1408
@@ -23129,6 +23223,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1409
@@ -23140,6 +23236,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1410
@@ -23151,6 +23249,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1411
@@ -23162,6 +23262,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1412
@@ -23173,6 +23275,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1413
@@ -23184,6 +23288,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1414
@@ -23195,6 +23301,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1415
@@ -23206,6 +23314,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1416
@@ -23217,6 +23327,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1417
@@ -23228,6 +23340,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1418
@@ -23239,6 +23353,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1419
@@ -23250,6 +23366,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1420
@@ -23261,6 +23379,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1421
@@ -23272,6 +23392,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1422
@@ -23283,6 +23405,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1423
@@ -23294,6 +23418,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1424
@@ -23305,6 +23431,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1425
@@ -23316,6 +23444,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
 - proto: CableApcExtension
@@ -32063,6 +32193,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 3173
@@ -32074,6 +32206,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 3186
@@ -33713,6 +33847,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 3509
@@ -40562,6 +40698,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 4874
@@ -43501,6 +43639,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - оранжевые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 493
@@ -43512,6 +43652,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - оранжевые синтетические волокна
       fibers: []
       fingerprints: []
 - proto: ChemistryBottleCryoxadone
@@ -43537,6 +43679,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - оранжевые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 495
@@ -43548,6 +43692,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - оранжевые синтетические волокна
       fibers: []
       fingerprints: []
 - proto: ChemistryBottleDexalinPlus
@@ -43561,6 +43707,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - оранжевые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 497
@@ -43572,6 +43720,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - оранжевые синтетические волокна
       fibers: []
       fingerprints: []
 - proto: ChemistryBottleDiphenhydramine
@@ -43595,6 +43745,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5392
@@ -43606,6 +43758,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5393
@@ -43617,6 +43771,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5394
@@ -43628,6 +43784,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
 - proto: ChemistryBottleDylovene
@@ -43641,6 +43799,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - оранжевые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 499
@@ -43652,6 +43812,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - оранжевые синтетические волокна
       fibers: []
       fingerprints: []
 - proto: ChemistryBottleHyronalin
@@ -43665,6 +43827,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - оранжевые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 501
@@ -43676,6 +43840,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - оранжевые синтетические волокна
       fibers: []
       fingerprints: []
 - proto: ChemistryBottleLeporazine
@@ -43706,6 +43872,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5396
@@ -43717,6 +43885,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5397
@@ -43728,6 +43898,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5398
@@ -43739,6 +43911,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5399
@@ -43750,6 +43924,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5400
@@ -43761,6 +43937,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5401
@@ -43772,6 +43950,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5402
@@ -43783,6 +43963,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
 - proto: ChemistryBottleOpporozidone
@@ -43808,6 +43990,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5404
@@ -43819,6 +44003,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5405
@@ -43830,6 +44016,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5406
@@ -43841,6 +44029,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5418
@@ -43864,6 +44054,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - оранжевые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 503
@@ -43875,6 +44067,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - оранжевые синтетические волокна
       fibers: []
       fingerprints: []
 - proto: ChemistryHotplate
@@ -48265,6 +48459,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5665
@@ -48276,6 +48472,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5666
@@ -48287,6 +48485,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5667
@@ -48298,6 +48498,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
 - proto: ClusterGrenade
@@ -48311,6 +48513,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5686
@@ -48322,6 +48526,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5687
@@ -48333,6 +48539,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5688
@@ -48344,6 +48552,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
 - proto: ComfyChair
@@ -51422,6 +51632,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5408
@@ -51433,6 +51645,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5409
@@ -51444,6 +51658,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5410
@@ -51455,6 +51671,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
 - proto: DeskBell
@@ -56365,6 +56583,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1361
@@ -56376,6 +56596,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1362
@@ -56387,6 +56609,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1363
@@ -56398,6 +56622,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1364
@@ -56409,6 +56635,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1365
@@ -56420,6 +56648,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1366
@@ -56431,6 +56661,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1367
@@ -56442,6 +56674,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5606
@@ -56453,6 +56687,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5607
@@ -56464,6 +56700,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5608
@@ -56475,6 +56713,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5609
@@ -56486,6 +56726,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5610
@@ -56497,6 +56739,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5611
@@ -56508,6 +56752,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5612
@@ -56519,6 +56765,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5613
@@ -56530,6 +56778,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
 - proto: EmpGrenade
@@ -56543,6 +56793,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5707
@@ -56554,6 +56806,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5708
@@ -56565,6 +56819,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5709
@@ -56576,6 +56832,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
 - proto: EncryptionKeysPersonalAI
@@ -56632,6 +56890,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5690
@@ -56643,6 +56903,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5691
@@ -56654,6 +56916,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5692
@@ -56665,6 +56929,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5693
@@ -56676,6 +56942,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5694
@@ -56687,6 +56955,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5695
@@ -56698,6 +56968,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5696
@@ -56709,6 +56981,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 7198
@@ -79378,6 +79652,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1180
@@ -79389,6 +79665,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1181
@@ -79400,6 +79678,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1182
@@ -79411,6 +79691,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 10006
@@ -79577,6 +79859,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5711
@@ -79588,6 +79872,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5712
@@ -79599,6 +79885,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5713
@@ -79610,6 +79898,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5714
@@ -79621,6 +79911,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5715
@@ -79632,6 +79924,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5716
@@ -79643,6 +79937,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5717
@@ -79654,6 +79950,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 10029
@@ -79702,6 +80000,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5698
@@ -79713,6 +80013,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5699
@@ -79724,6 +80026,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5700
@@ -79735,6 +80039,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5701
@@ -79746,6 +80052,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5702
@@ -79757,6 +80065,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5703
@@ -79768,6 +80078,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5704
@@ -79779,6 +80091,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 10036
@@ -82663,6 +82977,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5412
@@ -82674,6 +82990,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 10552
@@ -82736,6 +83054,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 3177
@@ -82747,6 +83067,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 3178
@@ -82758,6 +83080,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5585
@@ -82801,6 +83125,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 3180
@@ -82812,6 +83138,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 3181
@@ -82823,6 +83151,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5587
@@ -86133,6 +86463,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5648
@@ -86144,6 +86476,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5649
@@ -86155,6 +86489,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5650
@@ -86166,6 +86502,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5651
@@ -86177,6 +86515,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5652
@@ -86188,6 +86528,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5653
@@ -86199,6 +86541,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5654
@@ -86210,6 +86554,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 10820
@@ -86512,6 +86858,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1019
@@ -86525,6 +86873,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1020
@@ -86538,6 +86888,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1021
@@ -86551,6 +86903,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1022
@@ -86564,6 +86918,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1023
@@ -86577,6 +86933,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1024
@@ -86590,6 +86948,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
 - proto: MicStand
@@ -86948,6 +87308,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1184
@@ -86959,6 +87321,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1185
@@ -86970,6 +87334,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1186
@@ -86981,6 +87347,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1187
@@ -86992,6 +87360,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1188
@@ -87003,6 +87373,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 10889
@@ -89281,6 +89653,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые плазматиеские волокна
       fibers: []
       fingerprints: []
   - uid: 44
@@ -89342,6 +89716,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые плазматиеские волокна
       fibers: []
       fingerprints: []
   - uid: 59
@@ -90727,6 +91103,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые плазматиеские волокна
       fibers: []
       fingerprints: []
   - uid: 10989
@@ -95455,6 +95833,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1369
@@ -95466,6 +95846,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1370
@@ -95477,6 +95859,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1371
@@ -95488,6 +95872,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1372
@@ -95499,6 +95885,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1373
@@ -95510,6 +95898,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1374
@@ -95521,6 +95911,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1375
@@ -95532,6 +95924,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
 - proto: PyraAutoInjector
@@ -95559,6 +95953,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1377
@@ -95570,6 +95966,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1378
@@ -95581,6 +95979,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1379
@@ -95592,6 +95992,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1380
@@ -95603,6 +96005,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1381
@@ -95614,6 +96018,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1382
@@ -95625,6 +96031,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 1383
@@ -95636,6 +96044,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
 - proto: Rack
@@ -96074,6 +96484,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - оранжевые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 505
@@ -96085,6 +96497,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - оранжевые синтетические волокна
       fibers: []
       fingerprints: []
 - proto: RadioHandheldCentcom
@@ -97068,6 +97482,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5656
@@ -97079,6 +97495,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5657
@@ -97090,6 +97508,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5658
@@ -97101,6 +97521,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5659
@@ -97112,6 +97534,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5660
@@ -97123,6 +97547,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5661
@@ -97134,6 +97560,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5662
@@ -97145,6 +97573,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 10826
@@ -98787,6 +99217,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1026
@@ -98798,6 +99230,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5522
@@ -99014,6 +99448,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 3183
@@ -99025,6 +99461,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5593
@@ -99052,6 +99490,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1028
@@ -99063,6 +99503,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 6029
@@ -99377,6 +99819,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 6046
@@ -99476,6 +99920,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1031
@@ -99487,6 +99933,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1032
@@ -99498,6 +99946,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1033
@@ -99509,6 +99959,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 1034
@@ -99520,6 +99972,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5530
@@ -99800,6 +100254,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 3185
@@ -99811,6 +100267,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - черные укрепленные тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5603
@@ -101719,6 +102177,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5719
@@ -101730,6 +102190,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5720
@@ -101741,6 +102203,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5721
@@ -101752,6 +102216,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
 - proto: Sink
@@ -101904,6 +102370,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5669
@@ -101915,6 +102383,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5670
@@ -101926,6 +102396,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5671
@@ -101937,6 +102409,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5672
@@ -101948,6 +102422,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5673
@@ -101959,6 +102435,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5674
@@ -101970,6 +102448,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5675
@@ -101981,6 +102461,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
 - proto: Soap
@@ -102413,6 +102895,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5615
@@ -102424,6 +102908,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5616
@@ -102435,6 +102921,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5617
@@ -102446,6 +102934,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5618
@@ -102457,6 +102947,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5619
@@ -102468,6 +102960,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5620
@@ -102479,6 +102973,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5621
@@ -102490,6 +102986,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5622
@@ -102501,6 +102999,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5623
@@ -102512,6 +103012,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5624
@@ -102523,6 +103025,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5625
@@ -102534,6 +103038,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5626
@@ -102545,6 +103051,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5627
@@ -102556,6 +103064,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5628
@@ -102567,6 +103077,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5629
@@ -102578,6 +103090,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
 - proto: StimpackERT
@@ -102591,6 +103105,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5631
@@ -102602,6 +103118,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5632
@@ -102613,6 +103131,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5633
@@ -102624,6 +103144,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5634
@@ -102635,6 +103157,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5635
@@ -102646,6 +103170,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5636
@@ -102657,6 +103183,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5637
@@ -102668,6 +103196,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5638
@@ -102679,6 +103209,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5639
@@ -102690,6 +103222,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5640
@@ -102701,6 +103235,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5641
@@ -102712,6 +103248,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5642
@@ -102723,6 +103261,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5643
@@ -102734,6 +103274,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5644
@@ -102745,6 +103287,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
   - uid: 5645
@@ -102756,6 +103300,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - белые синтетические волокна
       fibers: []
       fingerprints: []
 - proto: StoolBar
@@ -105832,6 +106378,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5677
@@ -105843,6 +106391,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5678
@@ -105854,6 +106404,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5679
@@ -105865,6 +106417,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5680
@@ -105876,6 +106430,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5681
@@ -105887,6 +106443,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5682
@@ -105898,6 +106456,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5683
@@ -105909,6 +106469,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
 - proto: TelecomServer
@@ -117657,6 +118219,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5723
@@ -117668,6 +118232,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5724
@@ -117679,6 +118245,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
   - uid: 5725
@@ -117690,6 +118258,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые тканевые волокна
       fibers: []
       fingerprints: []
 - proto: Windoor

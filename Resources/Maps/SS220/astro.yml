@@ -190641,6 +190641,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers: []
       fibers: []
       fingerprints:
       - 7687A15F433DCA8D70DB887C58152999
@@ -292855,6 +292856,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые плазматиеские волокна
       fibers: []
       fingerprints: []
   - uid: 39528

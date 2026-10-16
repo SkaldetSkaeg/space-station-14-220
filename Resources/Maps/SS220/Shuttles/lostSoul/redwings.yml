@@ -995,6 +995,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые плазматиеские волокна
       fibers: []
       fingerprints: []
   - uid: 33
@@ -1020,6 +1022,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые плазматиеские волокна
       fibers: []
       fingerprints: []
 - proto: BedsheetMedical
@@ -1291,6 +1295,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers: []
       fibers: []
       fingerprints: []
 - proto: CableHV
@@ -1343,6 +1348,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers: []
       fibers: []
       fingerprints: []
 - proto: CableMV
@@ -1530,6 +1536,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers: []
       fibers: []
       fingerprints: []
 - proto: CableTerminal
@@ -1646,6 +1653,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers: []
       fibers: []
       fingerprints: []
 - proto: ClothingMaskBreathMedical
@@ -2642,6 +2650,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые плазматиеские волокна
       fibers: []
       fingerprints: []
 - proto: LargeBeaker
@@ -2669,6 +2679,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые плазматиеские волокна
       fibers: []
       fingerprints: []
   - uid: 29
@@ -2694,6 +2706,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые плазматиеские волокна
       fibers: []
       fingerprints: []
   - uid: 268
@@ -2981,6 +2995,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers: []
       fibers: []
       fingerprints: []
   - uid: 5
@@ -3098,6 +3113,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers: []
       fibers: []
       fingerprints: []
   - uid: 7
@@ -3215,6 +3231,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые плазматиеские волокна
       fibers: []
       fingerprints: []
   - uid: 9
@@ -3332,6 +3350,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые плазматиеские волокна
       fibers: []
       fingerprints: []
   - uid: 36
@@ -3432,6 +3452,8 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers:
+      - серые плазматиеские волокна
       fibers: []
       fingerprints: []
 - proto: PenSignaller
@@ -3989,6 +4011,7 @@ entities:
     - type: Forensics
       residues: []
       dnas: []
+      microFibers: []
       fibers: []
       fingerprints: []
 - proto: UraniumReinforcedWindowDirectional
