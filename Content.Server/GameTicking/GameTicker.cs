@@ -57,7 +57,7 @@ namespace Content.Server.GameTicking
         [Dependency] private readonly SharedMindSystem _mind = default!;
         [Dependency] private readonly PlayTimeTrackingSystem _playTimeTrackings = default!;
         [Dependency] private readonly PvsOverrideSystem _pvsOverride = default!;
-        [Dependency] private readonly IVoteManager _voteManager = default!; // SS220-add-auto-map-vote
+        [Dependency] private readonly IVoteManager _voteManager = default!; // SS220 map voting
         [Dependency] private readonly ServerUpdateManager _serverUpdates = default!;
         [Dependency] private readonly SharedAudioSystem _audio = default!;
         [Dependency] private readonly StationJobsSystem _stationJobs = default!;

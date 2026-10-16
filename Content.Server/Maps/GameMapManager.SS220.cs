@@ -6,7 +6,6 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Server.Maps;
 
-// SS220 played map memory begin
 public partial class GameMapManager
 {
     private GameTicker _gameTicker = default!;
@@ -30,8 +29,6 @@ public partial class GameMapManager
         _configurationManager.OnValueChanged(CCVars220.GamePlayedMapMemory, value =>
         {
             _playedMapMemoryEnabled = value;
-            // if (!_playedMapMemoryEnabled)
-            //     _playedMapQueue.Clear();
             if (_playedMapMemoryEnabled)
                 return;
 
@@ -121,4 +118,3 @@ public partial class GameMapManager
         return true;
     }
 }
-// SS220 played map memory end

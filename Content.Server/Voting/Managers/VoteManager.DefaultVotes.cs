@@ -264,7 +264,7 @@ namespace Content.Server.Voting.Managers
 
         private void CreateMapVote(ICommonSession? initiator)
         {
-            // SS220 map vote limit begin
+            // SS220 map voting begin
             // var maps = _gameMapManager.CurrentlyEligibleMaps().ToDictionary(map => map, map => map.MapName);
             var eligibleMaps = _gameMapManager.CurrentlyEligibleMaps().ToArray();
             var limit = _cfg.GetCVar(CCVars220.VoteMapLimit);
@@ -275,7 +275,7 @@ namespace Content.Server.Voting.Managers
             }
 
             var maps = eligibleMaps.ToDictionary(map => map, map => map.MapName);
-            // SS220 map vote limit end
+            // SS220 map voting end
 
             var alone = _playerManager.PlayerCount == 1 && initiator != null;
             var options = new VoteOptions
