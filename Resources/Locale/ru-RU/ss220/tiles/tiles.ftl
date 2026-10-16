@@ -434,12 +434,12 @@ floor-lino-light-brown = { ent-FloorItemLinoLightBrown }
 floor-lino-red-brown = { ent-FloorItemLinoRedBrown } 
 
 ## SS220 floors
-tiles-steel-reinforced = стальные шестиугольные плиты
-tiles-white-reinforced = белые шестиугольные плиты
-tiles-dark-reinforced = тёмные шестиугольные плиты
+tiles-steel-reinforced = { ent-FloorTileItemSteelReinforced }
+tiles-white-reinforced = { ent-FloorTileItemWhiteReinforced }
+tiles-dark-reinforced = { ent-FloorTileItemDarkReinforced }
 tiles-techmaint-drain-vertical = технический пол с вертикальной решёткой
 tiles-techmaint-drain-horizontal = технический пол с горизонтальной решёткой
-tiles-techmaint-drain-middle = технический пол с центральной решёткой
-tiles-kitchen-red = красный кухонный пол
-tiles-astro-sand = астро-песок
+tiles-techmaint-drain-middle = { ent-FloorItemTechMainDrainMiddle }
+tiles-kitchen-red = { ent-FloorTileItemKitchenRed }
+tiles-astro-sand = { ent-FloorTileItemSand }
 tiles-220-curse = проклятье 220
