@@ -267,7 +267,7 @@ namespace Content.Server.Voting.Managers
             // SS220 map voting begin
             // var maps = _gameMapManager.CurrentlyEligibleMaps().ToDictionary(map => map, map => map.MapName);
             var eligibleMaps = _gameMapManager.CurrentlyEligibleMaps().ToArray();
-            var limit = _cfg.GetCVar(CCVars220.VoteMapLimit);
+            var limit = _cfg.GetCVar(CCVars220.VoteMaxMapsPerVote);
             if (limit > 0 && eligibleMaps.Length > limit)
             {
                 _random.Shuffle(eligibleMaps);
@@ -553,7 +553,6 @@ namespace Content.Server.Voting.Managers
                         _voteWebhooks.UpdateWebhookIfConfigured(webhookState, eventArgs);
 
                         uint minutes = (uint)_cfg.GetCVar(CCVars.VotekickBanDuration);
-                        // SS220 Upstream merge 63 (#1979)
                         var ticker = _entityManager.EntitySysManager.GetEntitySystem<GameTicker>();
 
                         var banInfo = new CreateServerBanInfo(Loc.GetString("votekick-ban-reason", ("reason", reason)));

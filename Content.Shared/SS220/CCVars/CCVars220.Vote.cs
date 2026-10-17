@@ -13,6 +13,6 @@ public sealed partial class CCVars220
     ///     Zero disables the limit.
     /// </summary>
     [CVarControl(AdminFlags.Round, min: 0, max: int.MaxValue)]
-    public static readonly CVarDef<int> VoteMapLimit =
-        CVarDef.Create("vote.map_limit", 3, CVar.SERVERONLY);
+    public static readonly CVarDef<int> VoteMaxMapsPerVote =
+        CVarDef.Create("vote.max_maps_per_vote", 3, CVar.SERVERONLY);
 }

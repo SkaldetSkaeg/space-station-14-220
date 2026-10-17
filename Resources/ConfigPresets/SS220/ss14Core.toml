@@ -32,7 +32,7 @@ mob_pushing = true
 enabled = false
 map_enabled = false
 auto_map_vote = true
-map_limit = 3
+max_maps_per_vote = 3
 
 [chat]
 motd = "Билд SS14 проекта SS220 поддерживается сообществом! Заходите на наш дискорд сервер, участвуйте в жизни проекта!\nhttps://discord.gg/ss220"
