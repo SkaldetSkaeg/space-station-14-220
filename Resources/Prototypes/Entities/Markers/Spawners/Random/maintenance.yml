@@ -211,16 +211,26 @@
       weight: 75
       children:
       - id: FlashlightLantern
-      - id: ToolboxEmergencyFilled
+      - !type:NestedSelector # SS220-species-mail
+        tableId: PackageDeliveryEmergencyToolbox
       - !type:GroupSelector
         children:
-        - id: OxygenTankFilled
-        - id: DoubleEmergencyOxygenTankFilled
+        # SS220-species-mail begin
+        - !type:NestedSelector
+          tableId: PackageDeliveryOxygenTank
+        - !type:NestedSelector
+          tableId: PackageDeliveryEmergencyOxygenTank
+        # SS220-species-mail end
       - !type:GroupSelector
         children:
-        - id: NitrogenTankFilled
-        - id: DoubleEmergencyNitrogenTankFilled
-      - id: EmergencyFunnyOxygenTankFilled
+        # SS220-species-mail begin
+        - !type:NestedSelector
+          tableId: PackageDeliveryNitrogenTank
+        - !type:NestedSelector
+          tableId: PackageDeliveryEmergencyNitrogenTank
+        # SS220-species-mail end
+      - !type:NestedSelector # SS220-species-mail
+        tableId: PackageDeliveryFunnyOxygenTank
         weight: 0.5
       - !type:GroupSelector
         weight: 3
@@ -314,14 +324,18 @@
       #SS220 Maint-Drinks Begin
       - !type:GroupSelector
         children:
-        - id: DrinkMopwataBottleRandom
+        - !type:NestedSelector # SS220-species-mail
+          tableId: PackageDeliveryMopwata
           prob: 0.20
-        - id: DrinkVodkaKazakiBottleFull
+        - !type:NestedSelector # SS220-species-mail
+          tableId: PackageDeliveryVodkaKazaki
           prob: 0.05
-        - id: DrinkBankateJarFull
+        - !type:NestedSelector # SS220-species-mail
+          tableId: PackageDeliveryBankate
           prob: 0.20
       #SS220 Maint-Drinks End
-      - id: DrinkMopwataBottleRandom
+      - !type:NestedSelector # SS220-species-mail
+        tableId: PackageDeliveryMopwata
       - id: SpectralLocator
       - id: LidSalami
         weight: 0.05
@@ -374,9 +388,14 @@
       - !type:GroupSelector
         weight: 2
         children:
-        - id: Brutepack1
-        - id: Ointment1
-        - id: Gauze1
+        # SS220-species-mail begin
+        - !type:NestedSelector
+          tableId: PackageDeliveryBrutepack
+        - !type:NestedSelector
+          tableId: PackageDeliveryOintment
+        - !type:NestedSelector
+          tableId: PackageDeliveryGauze
+        # SS220-species-mail end
       - id: Bola
       - id: SurvivalKnife
       - id: ScalpelShiv

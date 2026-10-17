@@ -1,0 +1,335 @@
+# © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
+
+- type: entityTable
+  id: PackageDeliveryEngineering
+  table: !type:GroupSelector
+    children:
+    - id: SheetSteel10
+    - id: SheetGlass10
+    - id: CableApcStack10
+    - id: WelderIndustrial
+      weight: 0.3
+
+- type: entityTable
+  id: PackageDeliveryAtmospherics
+  table: !type:GroupSelector
+    children:
+    - id: FireExtinguisherMini
+    - id: GasAnalyzer
+    - id: GeigerCounter
+    - id: HolofanProjector
+      weight: 0.3
+
+- type: entityTable
+  id: PackageDeliveryScience
+  table: !type:GroupSelector
+    children:
+    - id: SheetPlastic10
+    - id: MicroManipulatorStockPart
+    - id: PowerCellMedium
+    - id: AnomalyScanner
+      weight: 0.3
+
+- type: entityTable
+  id: PackageDeliveryCargo
+  table: !type:GroupSelector
+    children:
+    - !type:AllSelector
+      children:
+      - id: PaperNtFormCargo
+        amount: !type:ConstantNumberSelector
+          value: 3
+      - id: Pen
+    - id: BoxFolderCargo
+    - id: SpaceCash100
+    - id: HandLabeler
+      weight: 0.3
+
+- type: entityTable
+  id: PackageDeliverySalvage
+  table: !type:GroupSelector
+    children:
+    - id: FireExtinguisherMini
+    - id: PowerCellMedium
+    - id: OreBag
+    - id: MineralScanner
+      weight: 0.3
+
+- type: entityTable
+  id: PackageDeliveryMedical
+  table: !type:GroupSelector
+    children:
+    - id: Gauze1
+      amount: !type:ConstantNumberSelector
+        value: 4
+    - !type:AllSelector
+      children:
+      - id: Brutepack1
+        amount: !type:ConstantNumberSelector
+          value: 2
+      - id: Ointment1
+        amount: !type:ConstantNumberSelector
+          value: 2
+    - id: Bloodpack1
+      amount: !type:ConstantNumberSelector
+        value: 4
+    - id: EmergencyMedipen
+      weight: 0.3
+
+- type: entityTable
+  id: PackageDeliveryParamedic
+  table: !type:GroupSelector
+    children:
+    - !type:AllSelector
+      children:
+      - id: Gauze1
+        amount: !type:ConstantNumberSelector
+          value: 2
+      - id: Brutepack1
+        amount: !type:ConstantNumberSelector
+          value: 2
+    - id: Bloodpack1
+      amount: !type:ConstantNumberSelector
+        value: 3
+    - id: BodyBagFolded
+    - id: EmergencyMedipen
+      weight: 0.3
+
+- type: entityTable
+  id: PackageDeliveryChemistry
+  table: !type:GroupSelector
+    children:
+    - id: Beaker
+      amount: !type:ConstantNumberSelector
+        value: 2
+    - id: Dropper
+    - id: PillCanister
+      amount: !type:ConstantNumberSelector
+        value: 2
+    - id: HandLabeler
+    - id: ChemistryBottleBicaridine
+      weight: 0.3
+
+- type: entityTable
+  id: PackageDeliveryPsychology
+  table: !type:GroupSelector
+    children:
+    - !type:NestedSelector
+      tableId: PackageDeliveryTea
+    - id: BookRandomStory
+    - id: CassetteTape
+    - id: PlushieLizard
+      weight: 0.3
+
+- type: entityTable
+  id: PackageDeliverySecurity
+  table: !type:GroupSelector
+    children:
+    - id: Zipties
+      amount: !type:ConstantNumberSelector
+        value: 2
+    - !type:NestedSelector
+      tableId: PackageDeliverySecuritySupplies
+    - id: FlashlightSeclite
+    - !type:NestedSelector
+      tableId: PackageDeliverySecurityMedipen
+      weight: 0.3
+
+- type: entityTable
+  id: PackageDeliveryDetective
+  table: !type:GroupSelector
+    children:
+    - id: ForensicPad
+      amount: !type:ConstantNumberSelector
+        value: 4
+    - id: CassetteTape
+      amount: !type:ConstantNumberSelector
+        value: 2
+    - id: BoxEvidenceMarkers
+    - !type:AllSelector
+      weight: 0.3
+      children:
+      - id: TapeRecorder
+      - id: CassetteTape
+
+- type: entityTable
+  id: PackageDeliverySecurityPilot
+  table: !type:GroupSelector
+    children:
+    - !type:NestedSelector
+      tableId: PackageDeliveryCoffee
+    - id: Flare
+      amount: !type:ConstantNumberSelector
+        value: 2
+    - !type:NestedSelector
+      tableId: PackageDeliveryPilotSupplies
+    - id: HandHeldMassScanner
+      weight: 0.3
+
+- type: entityTable
+  id: PackageDeliveryBartender
+  table: !type:GroupSelector
+    children:
+    - id: DrinkGrenadineBottleFull
+    - id: DrinkBlueCuracaoBottleFull
+    - id: BookBartendersManual
+    - id: DrinkChampagneBottleFull
+      weight: 0.3
+
+- type: entityTable
+  id: PackageDeliveryChef
+  table: !type:GroupSelector
+    children:
+    - id: ReagentContainerFlourSmall
+    - id: ReagentContainerRiceSmall
+    - id: ReagentContainerSugarSmall
+    - id: FoodButter
+    - id: FoodCheese
+      weight: 0.3
+
+- type: entityTable
+  id: PackageDeliveryBotany
+  table: !type:GroupSelector
+    children:
+    - id: ChemistryBottleEZNutrient
+    - id: AloeSeeds
+    - id: PoppySeeds
+    - id: ChemistryBottleRobustHarvest
+    - id: ChemistryBottleLeft4Zed
+      weight: 0.3
+
+- type: entityTable
+  id: PackageDeliveryJanitor
+  table: !type:GroupSelector
+    children:
+    - id: SprayBottleSpaceCleaner
+    - id: SoapNT
+    - id: SoapDeluxe
+    - id: MegaSprayBottleSpaceCleaner
+      weight: 0.3
+
+- type: entityTable
+  id: PackageDeliveryClown
+  table: !type:GroupSelector
+    children:
+    - id: CrayonBox
+    - id: SnapPopBox
+    - !type:NestedSelector
+      tableId: PackageDeliveryClownSnack
+    - !type:NestedSelector
+      tableId: PackageDeliveryClownSnackBox
+      weight: 0.3
+
+- type: entityTable
+  id: PackageDeliveryMime
+  table: !type:GroupSelector
+    children:
+    - id: CrayonWhite
+    - !type:NestedSelector
+      tableId: PackageDeliveryMimeBread
+    - !type:NestedSelector
+      tableId: PackageDeliveryMimeDrink
+    - !type:NestedSelector
+      tableId: PackageDeliveryMimeSnackBox
+      weight: 0.3
+
+- type: entityTable
+  id: PackageDeliveryChaplain
+  table: !type:GroupSelector
+    children:
+    - !type:AllSelector
+      children:
+      - id: CandleRed
+        amount: !type:ConstantNumberSelector
+          value: 2
+      - id: CandleBlue
+        amount: !type:ConstantNumberSelector
+          value: 2
+    - id: CandlePurple
+    - id: CandleBlack
+    - id: CandleInfinite
+      weight: 0.3
+
+- type: entityTable
+  id: PackageDeliveryLibrarian
+  table: !type:GroupSelector
+    children:
+    - id: BookRandomStory
+    - id: BookSpaceEncyclopedia
+    - id: DiceBag
+    - id: LuxuryPen
+      weight: 0.3
+
+- type: entityTable
+  id: PackageDeliveryMusician
+  table: !type:GroupSelector
+    children:
+    - id: HarmonicaInstrument
+    - id: FluteInstrument
+    - id: OcarinaInstrument
+    - id: MusicBoxInstrument
+      weight: 0.3
+
+- type: entityTable
+  id: PackageDeliveryService
+  table: !type:GroupSelector
+    children:
+    - id: ReagentContainerFlourSmall
+    - id: ChemistryBottleEZNutrient
+    - id: SoapNT
+    - !type:NestedSelector
+      tableId: PackageDeliverySnack
+
+- type: entityTable
+  id: PackageDeliveryPassenger
+  table: !type:GroupSelector
+    children:
+    - id: BookRandomStory
+    - !type:NestedSelector
+      tableId: PackageDeliverySnack
+    - id: d6Dice
+    - id: PlushieLizard
+      weight: 0.3
+
+- type: entityTable
+  id: PackageDeliveryReporter
+  table: !type:GroupSelector
+    children:
+    - id: CassetteTape
+      amount: !type:ConstantNumberSelector
+        value: 2
+    - id: BoxFolderBlueThreePapers
+    - !type:AllSelector
+      children:
+      - id: PaperNtForm
+        amount: !type:ConstantNumberSelector
+          value: 3
+      - id: Pen
+    - id: TravelCamera
+      weight: 0.3
+
+- type: entityTable
+  id: PackageDeliveryCommand
+  table: !type:GroupSelector
+    children:
+    - id: LuxuryPen
+    - id: BoxFolderBlueThreePapers
+    - id: BalloonNT
+    - !type:NestedSelector
+      tableId: PackageDeliveryCommandDrink
+      weight: 0.3
+
+- type: entityTable
+  id: PackageDeliveryLegal
+  table: !type:GroupSelector
+    children:
+    - !type:AllSelector
+      children:
+      - id: PaperNtFormLaw
+        amount: !type:ConstantNumberSelector
+          value: 3
+      - id: Pen
+    - id: BookSpaceLaws
+    - id: BoxFolderBlackThreePapers
+    - id: LuxuryPen
+      weight: 0.3

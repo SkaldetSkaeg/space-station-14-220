@@ -1,0 +1,89 @@
+# © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
+
+# These replacements only apply when a delivery supplies RecipientSpecies.
+# Without that context, maintenance spawners retain their original rewards.
+
+- type: entityTable
+  id: PackageDeliveryOxygenTank
+  table: !type:SpeciesSelector
+    species:
+      Vox:
+        id: NitrogenTankFilled
+      SlimePerson:
+        id: NitrogenTankFilled
+      Ipc:
+        id: PowerCellMedium
+    fallback:
+      id: OxygenTankFilled
+
+- type: entityTable
+  id: PackageDeliveryNitrogenTank
+  table: !type:SpeciesSelector
+    species:
+      Human:
+        id: OxygenTankFilled
+      Dwarf:
+        id: OxygenTankFilled
+      Diona:
+        id: OxygenTankFilled
+      Arachnid:
+        id: OxygenTankFilled
+      Moth:
+        id: OxygenTankFilled
+      Reptilian:
+        id: OxygenTankFilled
+      Tajaran:
+        id: OxygenTankFilled
+      Ipc:
+        id: PowerCellMedium
+    fallback:
+      id: NitrogenTankFilled
+
+- type: entityTable
+  id: PackageDeliveryEmergencyOxygenTank
+  table: !type:SpeciesSelector
+    species:
+      Vox:
+        id: DoubleEmergencyNitrogenTankFilled
+      SlimePerson:
+        id: DoubleEmergencyNitrogenTankFilled
+      Ipc:
+        id: PowerCellSmall
+    fallback:
+      id: DoubleEmergencyOxygenTankFilled
+
+- type: entityTable
+  id: PackageDeliveryEmergencyNitrogenTank
+  table: !type:SpeciesSelector
+    species:
+      Human:
+        id: DoubleEmergencyOxygenTankFilled
+      Dwarf:
+        id: DoubleEmergencyOxygenTankFilled
+      Diona:
+        id: DoubleEmergencyOxygenTankFilled
+      Arachnid:
+        id: DoubleEmergencyOxygenTankFilled
+      Moth:
+        id: DoubleEmergencyOxygenTankFilled
+      Reptilian:
+        id: DoubleEmergencyOxygenTankFilled
+      Tajaran:
+        id: DoubleEmergencyOxygenTankFilled
+      Ipc:
+        id: PowerCellSmall
+    fallback:
+      id: DoubleEmergencyNitrogenTankFilled
+
+- type: entityTable
+  id: PackageDeliveryFunnyOxygenTank
+  table: !type:SpeciesSelector
+    species:
+      Vox:
+        id: EmergencyNitrogenTankFilled
+      SlimePerson:
+        id: EmergencyNitrogenTankFilled
+      Ipc:
+        id: PowerCellSmall
+    fallback:
+      id: EmergencyFunnyOxygenTankFilled
