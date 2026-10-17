@@ -38,6 +38,12 @@ public partial class GameMapManager
         _configurationManager.OnValueChanged(CCVars220.GamePlayedMapMemoryCycle, value =>
         {
             _playedMapMemoryCycleEnabled = value;
+            if (_playedMapMemoryCycleEnabled)
+                return;
+
+            if (_playedMapQueue.Count == 0 && _lastPlayedMap != null)
+                _playedMapQueue.Enqueue(_lastPlayedMap.Value);
+
             TrimPlayedMapQueue();
         }, true);
         _configurationManager.OnValueChanged(CCVars220.GamePlayedMapMemoryDepth, value =>

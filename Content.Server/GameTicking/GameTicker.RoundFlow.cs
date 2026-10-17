@@ -73,7 +73,7 @@ namespace Content.Server.GameTicking
             }
         }
 
-        public event Action<GameMapPrototype>? OnMainStationMapLoaded; // SS220 map voting
+        public event Action<GameMapPrototype>? OnMainStationMapLoaded; // SS220 map vote fixes
 
         /// <summary>
         /// Returns true if the round's map is eligible to be updated.
@@ -150,10 +150,10 @@ namespace Content.Server.GameTicking
                 if (i == 0)
                     DefaultMap = mapId;
 
-                // SS220 map voting begin
+                // SS220 map vote fixes begin
                 if (maps[i] == mainStationMap)
                     OnMainStationMapLoaded?.Invoke(mainStationMap);
-                // SS220 map voting end
+                // SS220 map vote fixes end
             }
         }
 
@@ -715,7 +715,7 @@ namespace Content.Server.GameTicking
                 UpdateInfoText();
 
                 // Doesn't cancel previous vote because VoteManager is ultra giga cursed and I don't want to refucktor it.
-                if (AutoMapVote)
+                if (AutoMapVote) // SS220 Fix auto map vote (#242)
                     _voteManager.CreateStandardVote(null, StandardVoteType.Map);
 
                 ReqWindowAttentionAll();

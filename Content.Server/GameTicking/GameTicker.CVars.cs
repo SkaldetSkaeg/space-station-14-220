@@ -20,7 +20,7 @@ namespace Content.Server.GameTicking
         public bool DisallowLateJoin { get; private set; } = false;
 
         [ViewVariables]
-        public bool AutoMapVote { get; private set; } = false; // SS220 map voting
+        public bool AutoMapVote { get; private set; } = false; // SS220 Auto-Map-Vote
 
         [ViewVariables]
         public string? ServerName { get; private set; }
@@ -51,7 +51,7 @@ namespace Content.Server.GameTicking
                         LobbyEnabled ? PlayerGameStatus.NotReadyToPlay : PlayerGameStatus.ReadyToPlay;
                 }
             }, true);
-            Subs.CVar(_cfg, CCVars220.AutoMapVote, value => AutoMapVote = value, true); // SS220 map voting
+            Subs.CVar(_cfg, CCVars220.AutoMapVote, value => AutoMapVote = value, true); // SS220 Auto-Map-Vote
             Subs.CVar(_cfg, CCVars.GameDummyTicker, value => DummyTicker = value, true);
             Subs.CVar(_cfg, CCVars.GameLobbyDuration, value => LobbyDuration = TimeSpan.FromSeconds(value), true);
             Subs.CVar(_cfg, CCVars.GameDisallowLateJoins,

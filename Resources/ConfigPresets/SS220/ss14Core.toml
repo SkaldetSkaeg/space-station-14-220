@@ -13,6 +13,7 @@ map_pool = "SS220MapPool"
 map_rotation = false
 map_memory_depth = 1
 played_map_memory = true
+played_map_memory_cycle = true
 played_map_memory_depth = 1
 map = ""
 lobbyduration = 300

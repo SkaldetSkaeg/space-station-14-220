@@ -553,6 +553,7 @@ namespace Content.Server.Voting.Managers
                         _voteWebhooks.UpdateWebhookIfConfigured(webhookState, eventArgs);
 
                         uint minutes = (uint)_cfg.GetCVar(CCVars.VotekickBanDuration);
+                        // SS220 Upstream merge 63 (#1979)
                         var ticker = _entityManager.EntitySysManager.GetEntitySystem<GameTicker>();
 
                         var banInfo = new CreateServerBanInfo(Loc.GetString("votekick-ban-reason", ("reason", reason)));
