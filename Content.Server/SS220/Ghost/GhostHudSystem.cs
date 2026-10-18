@@ -57,13 +57,6 @@ public sealed partial class GhostHudSystem : EntitySystem
 
     private void ApplyHud(Entity<GhostHudSettingsComponent> ent, GhostHudSetting setting)
     {
-        if (setting.Enabled)
-            ent.Comp.HiddenHuds.Remove(setting.Id);
-        else
-            ent.Comp.HiddenHuds.Add(setting.Id);
-
-        Dirty(ent);
-
         var prototype = _prototype.Index(setting.Id);
         if (!setting.Enabled)
         {

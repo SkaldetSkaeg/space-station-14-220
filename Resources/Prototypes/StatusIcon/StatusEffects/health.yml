@@ -1,6 +1,5 @@
 - type: healthIcon
   id: HealthIcon
-  ghostHud: Medical # SS220 ghost-hud-settings
   abstract: true
   priority: 3
   locationPreference: Left

@@ -45,7 +45,7 @@ public sealed class StatusIconOverlay : Overlay
     protected override void Draw(in OverlayDrawArgs args)
     {
         var handle = args.WorldHandle;
-        var adminGhost = _statusIcon.IsAdminGhost; // SS220 ghost-hud-settings
+        var isAdminGhost = _statusIcon.IsAdminGhost; // SS220 ghost-hud-settings
 
         var eyeRot = args.Viewport.Eye?.Rotation ?? default;
 
@@ -60,7 +60,7 @@ public sealed class StatusIconOverlay : Overlay
             if (xform.MapID != args.MapId)
                 continue;
 
-            if (!sprite.Visible && !adminGhost)
+            if (!sprite.Visible && !isAdminGhost)
                 continue;
             // SS220 ghost-hud-settings end
 
@@ -102,7 +102,7 @@ public sealed class StatusIconOverlay : Overlay
                     proto.LocationPreference == StatusIconLocationPreference.None && countL <= countR)
                 {
                     // SS220 ghost-hud-settings begin
-                    if (!adminGhost &&
+                    if (!isAdminGhost &&
                         accOffsetL + texture.Height > _sprite.GetLocalBounds((uid, sprite)).Height * EyeManager.PixelsPerMeter)
                         break;
                     // SS220 ghost-hud-settings end
@@ -118,7 +118,7 @@ public sealed class StatusIconOverlay : Overlay
                 else
                 {
                     // SS220 ghost-hud-settings begin
-                    if (!adminGhost &&
+                    if (!isAdminGhost &&
                         accOffsetR + texture.Height > _sprite.GetLocalBounds((uid, sprite)).Height * EyeManager.PixelsPerMeter)
                         break;
                     // SS220 ghost-hud-settings end

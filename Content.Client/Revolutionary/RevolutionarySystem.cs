@@ -34,7 +34,6 @@ public sealed class RevolutionarySystem : SharedRevolutionarySystem
         if (HasComp<GhostComponent>(viewer) && !HasComp<ShowRevolutionaryIconsComponent>(viewer))
             return;
         // SS220 ghost-hud-settings end
-
         if (_prototype.Resolve(ent.Comp.StatusIcon, out var iconPrototype))
             args.StatusIcons.Add(iconPrototype);
     }
@@ -46,7 +45,6 @@ public sealed class RevolutionarySystem : SharedRevolutionarySystem
         if (HasComp<GhostComponent>(viewer) && !HasComp<ShowRevolutionaryIconsComponent>(viewer))
             return;
         // SS220 ghost-hud-settings end
-
         if (_prototype.Resolve(ent.Comp.StatusIcon, out var iconPrototype))
             args.StatusIcons.Add(iconPrototype);
     }

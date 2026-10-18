@@ -1,3 +1,4 @@
+using Content.Client.SS220.Ghost;
 using Content.Shared.Overlays;
 using Content.Shared.NukeOps;
 using Content.Shared.StatusIcon;
@@ -6,7 +7,7 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Client.Overlays;
 
-public sealed class ShowSyndicateIconsSystem : EquipmentHudSystem<ShowSyndicateIconsComponent>
+public sealed class ShowSyndicateIconsSystem : GhostHudEquipmentSystem<ShowSyndicateIconsComponent> // SS220 ghost-hud-settings
 {
     [Dependency] private readonly IPrototypeManager _prototype = default!;
 

@@ -18,11 +18,11 @@ namespace Content.Client.SS220.Ghost;
 /// Controls the free replay observer's HUDs locally and preserves selections when the observer is replaced.
 /// </summary>
 [UsedImplicitly]
-public sealed class ReplayGhostHudUIController : UIController, IOnStateChanged<ReplayGhostState>
+public sealed partial class ReplayGhostHudUIController : UIController, IOnStateChanged<ReplayGhostState>
 {
-    [Dependency] private readonly IPlayerManager _player = default!;
-    [Dependency] private readonly IPrototypeManager _prototype = default!;
-    [Dependency] private readonly IReplayPlaybackManager _replay = default!;
+    [Dependency] private IPlayerManager _player = default!;
+    [Dependency] private IPrototypeManager _prototype = default!;
+    [Dependency] private IReplayPlaybackManager _replay = default!;
 
     private readonly Dictionary<ProtoId<GhostHudPrototype>, bool> _selections = [];
     private Button? _button;
@@ -115,12 +115,10 @@ public sealed class ReplayGhostHudUIController : UIController, IOnStateChanged<R
         var prototype = _prototype.Index(setting.Id);
         if (!setting.Enabled)
         {
-            observer.Comp.HiddenHuds.Add(setting.Id);
             EntityManager.RemoveComponents(observer, prototype.Components);
             return;
         }
 
-        observer.Comp.HiddenHuds.Remove(setting.Id);
         EntityManager.AddComponents(observer, prototype.Components);
     }
 

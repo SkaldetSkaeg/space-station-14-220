@@ -14,7 +14,7 @@ public sealed partial class UnenslavableSystem : EntitySystem
 {
     [Dependency] private IPrototypeManager _prototype = default!;
     [Dependency] private IPlayerManager _playerManager = default!;
-    [Dependency] private readonly StatusIconSystem _statusIcons = default!;
+    [Dependency] private StatusIconSystem _statusIcons = default!;
 
     public override void Initialize()
     {
@@ -29,8 +29,7 @@ public sealed partial class UnenslavableSystem : EntitySystem
         if (!HasComp<ShowCultYoggIconsComponent>(viewer))
             return;
 
-        var adminGhost = _statusIcons.IsAdminGhost;
-        if (viewer == ent && !adminGhost)
+        if (viewer == ent && !_statusIcons.IsAdminGhost)
             return;
 
         var iconId = ent.Comp.StatusIcon;

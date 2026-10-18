@@ -25,11 +25,11 @@ public sealed partial class MindSlaveSystem : EntitySystem
     private void OnSlaveGetIcons(Entity<MindSlaveComponent> entity, ref GetStatusIconsEvent args)
     {
         var viewer = _player.LocalSession?.AttachedEntity;
-        var ghost = HasComp<GhostComponent>(viewer);
-        if (ghost && !HasComp<ShowMindSlaveIconsComponent>(viewer))
+        var isGhost = HasComp<GhostComponent>(viewer);
+        if (isGhost && !HasComp<ShowMindSlaveIconsComponent>(viewer))
             return;
 
-        if (!ghost && viewer != entity &&
+        if (!isGhost && viewer != entity &&
             (!TryComp<MindSlaveMasterComponent>(viewer, out var masterComp) ||
             !masterComp.EnslavedEntities.Contains(entity)))
             return;
@@ -41,11 +41,11 @@ public sealed partial class MindSlaveSystem : EntitySystem
     private void OnMasterGetIcons(Entity<MindSlaveMasterComponent> entity, ref GetStatusIconsEvent args)
     {
         var viewer = _player.LocalSession?.AttachedEntity;
-        var ghost = HasComp<GhostComponent>(viewer);
-        if (ghost && !HasComp<ShowMindSlaveIconsComponent>(viewer))
+        var isGhost = HasComp<GhostComponent>(viewer);
+        if (isGhost && !HasComp<ShowMindSlaveIconsComponent>(viewer))
             return;
 
-        if (!ghost && viewer != entity &&
+        if (!isGhost && viewer != entity &&
             (!HasComp<MindSlaveComponent>(viewer) ||
             !entity.Comp.EnslavedEntities.Contains(viewer.Value)))
             return;

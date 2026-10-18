@@ -1,3 +1,4 @@
+using Content.Client.SS220.Ghost;
 using Content.Shared.Inventory.Events;
 using Content.Shared.Overlays;
 using Robust.Client.Graphics;
@@ -8,7 +9,7 @@ namespace Content.Client.Overlays;
 /// <summary>
 /// Adds a health bar overlay.
 /// </summary>
-public sealed class ShowHealthBarsSystem : EquipmentHudSystem<ShowHealthBarsComponent>
+public sealed class ShowHealthBarsSystem : GhostHudEquipmentSystem<ShowHealthBarsComponent> // SS220 ghost-hud-settings
 {
     [Dependency] private readonly IOverlayManager _overlayMan = default!;
     [Dependency] private readonly IPrototypeManager _prototype = default!;

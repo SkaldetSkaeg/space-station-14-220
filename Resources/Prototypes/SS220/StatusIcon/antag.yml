@@ -2,7 +2,6 @@
 
 - type: factionIcon
   id: CultYoggFactionIcon
-  ghostHud: Cult
   priority: 11
   showTo:
     components:
@@ -15,7 +14,6 @@
 
 - type: factionIcon
   id: CultYoggSacrificialTargetIcon
-  ghostHud: Cult
   priority: 3
   showTo:
     components:
@@ -28,7 +26,6 @@
 
 - type: factionIcon
   id: CultYoggUnenslavableIcon
-  ghostHud: Cult
   priority: 4
   showTo:
     components:

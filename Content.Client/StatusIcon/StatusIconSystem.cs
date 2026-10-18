@@ -2,7 +2,6 @@ using Content.Shared.Antag;
 using Content.Shared.CCVar;
 using Content.Shared.Ghost;
 using Content.Shared.SS220.DarkReaper;
-using Content.Shared.SS220.Ghost;
 using Content.Shared.StatusIcon;
 using Content.Shared.StatusIcon.Components;
 using Content.Shared.Stealth.Components;
@@ -85,21 +84,12 @@ public sealed class StatusIconSystem : SharedStatusIconSystem
         var viewer = _playerManager.LocalSession?.AttachedEntity;
 
         // SS220 ghost-hud-settings begin
-        if (HasComp<GhostComponent>(viewer))
-        {
-            if (data.GhostHud != null &&
-                TryComp<GhostHudSettingsComponent>(viewer, out var settings) &&
-                settings.HiddenHuds.Contains(data.GhostHud.Value))
-                return false;
-
-            if (data.VisibleToGhosts || IsAdminGhost)
-                return true;
-        }
-
+        if (HasComp<GhostComponent>(viewer) && data.VisibleToGhosts)
+            return true;
+        // SS220 ghost-hud-settings end
         // Always show our icons to our entity
         if (viewer == ent.Owner)
             return true;
-        // SS220 ghost-hud-settings end
 
         if (data.HideInContainer && (ent.Comp.Flags & MetaDataFlags.InContainer) != 0)
             return false;

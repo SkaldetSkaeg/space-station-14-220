@@ -1,3 +1,4 @@
+using Content.Client.SS220.Ghost;
 using Content.Shared.Mindshield.Components;
 using Content.Shared.Overlays;
 using Content.Shared.StatusIcon;
@@ -6,7 +7,7 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Client.Overlays;
 
-public sealed class ShowMindShieldIconsSystem : EquipmentHudSystem<ShowMindShieldIconsComponent>
+public sealed class ShowMindShieldIconsSystem : GhostHudEquipmentSystem<ShowMindShieldIconsComponent> // SS220 ghost-hud-settings
 {
     [Dependency] private readonly IPrototypeManager _prototype = default!;
 

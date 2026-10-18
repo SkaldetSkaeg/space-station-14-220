@@ -1,7 +1,6 @@
 # © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 - type: factionIcon
   id: FractWarIcon
-  ghostHud: EventRoles
   abstract: true
   priority: 11
   locationPreference: Right
@@ -113,7 +112,6 @@
 
 - type: factionIcon
   id: MindSlaveIcon
-  ghostHud: MindSlaves
   priority: 11
   locationPreference: Right
   visibleToGhosts: true
@@ -123,7 +121,6 @@
 
 - type: factionIcon
   id: MindSlaveMasterIcon
-  ghostHud: MindSlaves
   priority: 11
   locationPreference: Right
   visibleToGhosts: true

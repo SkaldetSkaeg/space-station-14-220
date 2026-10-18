@@ -11,7 +11,7 @@ namespace Content.Client.SS220.CultYogg.CultYoggIcon;
 public sealed partial class ShowCultYoggIconsSystem : EntitySystem
 {
     [Dependency] private IPrototypeManager _prototype = default!;
-    [Dependency] private readonly IPlayerManager _playerManager = default!;
+    [Dependency] private IPlayerManager _playerManager = default!;
 
     public override void Initialize()
     {

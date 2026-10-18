@@ -1,6 +1,5 @@
 - type: factionIcon
   id: ZombieFaction
-  ghostHud: Zombies # SS220 ghost-hud-settings
   priority: 11
   showTo:
     components:
@@ -13,7 +12,6 @@
 
 - type: factionIcon
   id: InitialInfectedFaction
-  ghostHud: Zombies # SS220 ghost-hud-settings
   priority: 11
   showTo:
     components:
@@ -26,7 +24,6 @@
 
 - type: factionIcon
   id: RevolutionaryFaction
-  ghostHud: Revolutionaries # SS220 ghost-hud-settings
   isShaded: true
   priority: 11
   showTo:
@@ -39,7 +36,6 @@
 
 - type: factionIcon
   id: HeadRevolutionaryFaction
-  ghostHud: Revolutionaries # SS220 ghost-hud-settings
   isShaded: true
   priority: 11
   showTo:
@@ -52,7 +48,6 @@
 
 - type: factionIcon
   id: SyndicateFaction
-  ghostHud: Syndicate # SS220 ghost-hud-settings
   priority: 0
   locationPreference: Left
   icon:
