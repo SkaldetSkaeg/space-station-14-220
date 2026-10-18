@@ -33,7 +33,6 @@ public sealed class ZombieSystem : SharedZombieSystem
         if (HasComp<GhostComponent>(viewer) && !HasComp<ShowZombieIconsComponent>(viewer))
             return;
         // SS220 ghost-hud-settings end
-
         var iconPrototype = _prototype.Index(ent.Comp.StatusIcon);
         args.StatusIcons.Add(iconPrototype);
     }
@@ -48,7 +47,6 @@ public sealed class ZombieSystem : SharedZombieSystem
         if (HasComp<GhostComponent>(viewer) && !HasComp<ShowZombieIconsComponent>(viewer))
             return;
         // SS220 ghost-hud-settings end
-
         var iconPrototype = _prototype.Index(ent.Comp.StatusIcon);
         args.StatusIcons.Add(iconPrototype);
     }
