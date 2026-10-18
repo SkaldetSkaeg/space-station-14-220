@@ -1,4 +1,5 @@
 using Content.Shared.Stealth.Components;
+using Content.Shared.SS220.Ghost;
 using Content.Shared.Whitelist;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
@@ -31,6 +32,14 @@ public partial class StatusIconData : IComparable<StatusIconData>
     /// </summary>
     [DataField]
     public bool VisibleToGhosts = true;
+
+    // SS220 ghost-hud-settings begin
+    /// <summary>
+    /// Optional observer HUD category. Disabling it hides this icon even from admin observers.
+    /// </summary>
+    [DataField]
+    public ProtoId<GhostHudPrototype>? GhostHud;
+    // SS220 ghost-hud-settings end
 
     /// <summary>
     /// Whether or not to hide the icon when we are inside a container like a locker or a crate.

@@ -1,6 +1,8 @@
+using Content.Shared.Antag;
 using Content.Shared.CCVar;
 using Content.Shared.Ghost;
 using Content.Shared.SS220.DarkReaper;
+using Content.Shared.SS220.Ghost;
 using Content.Shared.StatusIcon;
 using Content.Shared.StatusIcon.Components;
 using Content.Shared.Stealth.Components;
@@ -24,6 +26,14 @@ public sealed class StatusIconSystem : SharedStatusIconSystem
 
     private bool _globalEnabled;
     private bool _localEnabled;
+
+    // SS220 ghost-hud-settings begin
+    /// <summary>
+    /// Whether the local observer is entitled to icons normally restricted to other roles.
+    /// </summary>
+    public bool IsAdminGhost => HasComp<GhostComponent>(_playerManager.LocalSession?.AttachedEntity) &&
+                                HasComp<ShowAntagIconsComponent>(_playerManager.LocalSession?.AttachedEntity);
+    // SS220 ghost-hud-settings end
 
     /// <inheritdoc/>
     public override void Initialize()
@@ -74,12 +84,22 @@ public sealed class StatusIconSystem : SharedStatusIconSystem
     {
         var viewer = _playerManager.LocalSession?.AttachedEntity;
 
+        // SS220 ghost-hud-settings begin
+        if (HasComp<GhostComponent>(viewer))
+        {
+            if (data.GhostHud != null &&
+                TryComp<GhostHudSettingsComponent>(viewer, out var settings) &&
+                settings.HiddenHuds.Contains(data.GhostHud.Value))
+                return false;
+
+            if (data.VisibleToGhosts || IsAdminGhost)
+                return true;
+        }
+
         // Always show our icons to our entity
         if (viewer == ent.Owner)
             return true;
-
-        if (data.VisibleToGhosts && HasComp<GhostComponent>(viewer))
-            return true;
+        // SS220 ghost-hud-settings end
 
         if (data.HideInContainer && (ent.Comp.Flags & MetaDataFlags.InContainer) != 0)
             return false;

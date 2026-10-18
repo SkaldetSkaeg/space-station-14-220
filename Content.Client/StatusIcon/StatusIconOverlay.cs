@@ -45,6 +45,7 @@ public sealed class StatusIconOverlay : Overlay
     protected override void Draw(in OverlayDrawArgs args)
     {
         var handle = args.WorldHandle;
+        var adminGhost = _statusIcon.IsAdminGhost; // SS220 ghost-hud-settings
 
         var eyeRot = args.Viewport.Eye?.Rotation ?? default;
 
@@ -55,8 +56,13 @@ public sealed class StatusIconOverlay : Overlay
         var query = _entity.AllEntityQueryEnumerator<StatusIconComponent, SpriteComponent, TransformComponent, MetaDataComponent>();
         while (query.MoveNext(out var uid, out var comp, out var sprite, out var xform, out var meta))
         {
-            if (xform.MapID != args.MapId || !sprite.Visible)
+            // SS220 ghost-hud-settings begin
+            if (xform.MapID != args.MapId)
                 continue;
+
+            if (!sprite.Visible && !adminGhost)
+                continue;
+            // SS220 ghost-hud-settings end
 
             var bounds = comp.Bounds ?? _sprite.GetLocalBounds((uid, sprite));
 
@@ -92,12 +98,14 @@ public sealed class StatusIconOverlay : Overlay
                 float xOffset;
 
                 // the icons are ordered left to right, top to bottom.
-                // extra icons that don't fit are just cut off.
                 if (proto.LocationPreference == StatusIconLocationPreference.Left ||
                     proto.LocationPreference == StatusIconLocationPreference.None && countL <= countR)
                 {
-                    if (accOffsetL + texture.Height > _sprite.GetLocalBounds((uid, sprite)).Height * EyeManager.PixelsPerMeter)
+                    // SS220 ghost-hud-settings begin
+                    if (!adminGhost &&
+                        accOffsetL + texture.Height > _sprite.GetLocalBounds((uid, sprite)).Height * EyeManager.PixelsPerMeter)
                         break;
+                    // SS220 ghost-hud-settings end
                     if (proto.Layer == StatusIconLayer.Base)
                     {
                         accOffsetL += texture.Height;
@@ -109,8 +117,11 @@ public sealed class StatusIconOverlay : Overlay
                 }
                 else
                 {
-                    if (accOffsetR + texture.Height > _sprite.GetLocalBounds((uid, sprite)).Height * EyeManager.PixelsPerMeter)
+                    // SS220 ghost-hud-settings begin
+                    if (!adminGhost &&
+                        accOffsetR + texture.Height > _sprite.GetLocalBounds((uid, sprite)).Height * EyeManager.PixelsPerMeter)
                         break;
+                    // SS220 ghost-hud-settings end
                     if (proto.Layer == StatusIconLayer.Base)
                     {
                         accOffsetR += texture.Height;

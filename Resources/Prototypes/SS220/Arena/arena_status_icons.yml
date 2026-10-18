@@ -1,5 +1,6 @@
 - type: factionIcon
   id: ArenaTeamAIcon
+  ghostHud: EventRoles
   priority: 11
   locationPreference: Right
   icon:
@@ -8,6 +9,7 @@
 
 - type: factionIcon
   id: ArenaTeamBIcon
+  ghostHud: EventRoles
   priority: 11
   locationPreference: Right
   icon:

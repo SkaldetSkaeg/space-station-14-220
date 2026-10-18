@@ -1,6 +1,7 @@
 - type: jobIcon
   abstract: true
   id: JobIcon
+  ghostHud: JobIcons # SS220 ghost-hud-settings
   priority: 1
   locationPreference: Right
   isShaded: true

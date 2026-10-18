@@ -1,5 +1,6 @@
 - type: securityIcon
   id: SecHudIcon
+  ghostHud: CriminalRecords
   abstract: true
   priority: 3
   locationPreference: Right

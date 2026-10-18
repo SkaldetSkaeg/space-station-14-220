@@ -1,5 +1,6 @@
 - type: securityIcon
   id: SecurityIcon
+  ghostHud: CriminalRecords # SS220 ghost-hud-settings
   abstract: true
   priority: 3
   offset: 1
@@ -57,6 +58,7 @@
 
 - type: securityIcon
   id: MindShieldIcon
+  ghostHud: CriminalRecords # SS220 ghost-hud-settings
   priority: 2
   locationPreference: Right
   layer: Mod
