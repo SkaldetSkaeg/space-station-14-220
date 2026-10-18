@@ -1,4 +1,3 @@
-using Content.Client.SS220.Ghost;
 using Content.Shared.Access.Components;
 using Content.Shared.Access.Systems;
 using Content.Shared.IdentityManagement.Components;
@@ -12,7 +11,7 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Client.Overlays;
 
-public sealed class ShowCriminalRecordIconsSystem : GhostHudEquipmentSystem<ShowCriminalRecordIconsComponent> // SS220 ghost-hud-settings
+public sealed class ShowCriminalRecordIconsSystem : EquipmentHudSystem<ShowCriminalRecordIconsComponent>
 {
     [Dependency] private readonly IPrototypeManager _prototype = default!;
     [Dependency] private readonly AccessReaderSystem _accessReader = default!;

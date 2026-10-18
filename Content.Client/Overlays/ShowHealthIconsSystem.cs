@@ -1,4 +1,3 @@
-using Content.Client.SS220.Ghost;
 using Content.Shared.Atmos.Rotting;
 using Content.Shared.Inventory.Events;
 using Content.Shared.Mobs.Components;
@@ -13,7 +12,7 @@ namespace Content.Client.Overlays;
 /// <summary>
 /// Shows a healthy icon on mobs.
 /// </summary>
-public sealed class ShowHealthIconsSystem : GhostHudEquipmentSystem<ShowHealthIconsComponent> // SS220 ghost-hud-settings
+public sealed class ShowHealthIconsSystem : EquipmentHudSystem<ShowHealthIconsComponent>
 {
     [Dependency] private readonly IPrototypeManager _prototypeMan = default!;
 

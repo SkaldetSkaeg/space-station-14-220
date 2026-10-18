@@ -15,7 +15,7 @@ public sealed class ZombieSystem : SharedZombieSystem
 {
     [Dependency] private readonly IPrototypeManager _prototype = default!;
     [Dependency] private readonly SpriteSystem _sprite = default!;
-    [Dependency] private readonly IPlayerManager _playerManager = default!; // SS220 ghost-hud-settings
+    [Dependency] private IPlayerManager _playerManager = default!; // SS220 ghost-hud-settings
 
     public override void Initialize()
     {

@@ -14,7 +14,7 @@ namespace Content.Client.Revolutionary;
 public sealed class RevolutionarySystem : SharedRevolutionarySystem
 {
     [Dependency] private readonly IPrototypeManager _prototype = default!;
-    [Dependency] private readonly IPlayerManager _player = default!; // SS220 ghost-hud-settings
+    [Dependency] private IPlayerManager _player = default!; // SS220 ghost-hud-settings
 
     public override void Initialize()
     {
