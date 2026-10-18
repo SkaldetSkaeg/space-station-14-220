@@ -30,7 +30,6 @@ public sealed partial class CultYoggSacrificialSystem : EntitySystem
         if (HasComp<GhostComponent>(viewer) && !HasComp<ShowCultYoggIconsComponent>(viewer))
             return;
 
-
         var iconId = ent.Comp.StatusIcon;
 
         if (_prototype.TryIndex<FactionIconPrototype>(iconId, out var iconPrototype))

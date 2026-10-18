@@ -1,4 +1,3 @@
-using Content.Shared.Antag;
 using Content.Shared.CCVar;
 using Content.Shared.Ghost;
 using Content.Shared.SS220.DarkReaper;
@@ -25,14 +24,6 @@ public sealed class StatusIconSystem : SharedStatusIconSystem
 
     private bool _globalEnabled;
     private bool _localEnabled;
-
-    // SS220 ghost-hud-settings begin
-    /// <summary>
-    /// Whether the local observer is entitled to icons normally restricted to other roles.
-    /// </summary>
-    public bool IsAdminGhost => HasComp<GhostComponent>(_playerManager.LocalSession?.AttachedEntity) &&
-                                HasComp<ShowAntagIconsComponent>(_playerManager.LocalSession?.AttachedEntity);
-    // SS220 ghost-hud-settings end
 
     /// <inheritdoc/>
     public override void Initialize()
