@@ -29,7 +29,7 @@
     - id: Medical
       enabled: true
     - id: CriminalRecords
-      enabled: true
+      enabled: false
     - id: JobIcons
       enabled: true
     - id: Zombies

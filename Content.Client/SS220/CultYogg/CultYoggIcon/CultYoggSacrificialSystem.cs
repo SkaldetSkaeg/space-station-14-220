@@ -24,11 +24,12 @@ public sealed partial class CultYoggSacrificialSystem : EntitySystem
     private void OnGetSacrificialIconsEvent(Entity<CultYoggSacrificialComponent> ent, ref GetStatusIconsEvent ev)
     {
         var viewer = _playerManager.LocalSession?.AttachedEntity;
+        if (viewer == ent)
+            return;
+
         if (HasComp<GhostComponent>(viewer) && !HasComp<ShowCultYoggIconsComponent>(viewer))
             return;
 
-        if (viewer == ent)
-            return;
 
         var iconId = ent.Comp.StatusIcon;
 

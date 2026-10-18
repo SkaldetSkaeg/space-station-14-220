@@ -1,7 +1,6 @@
 // © SS220, An EULA/CLA with a hosting restriction, full text: https://raw.githubusercontent.com/SerbiaStrong-220/space-station-14/master/CLA.txt
 
 using Content.Shared.SS220.CultYogg.CultYoggIcons;
-using Content.Client.StatusIcon;
 using Content.Shared.SS220.CultYogg.Unenslavable;
 using Content.Shared.StatusIcon;
 using Content.Shared.StatusIcon.Components;
@@ -14,7 +13,6 @@ public sealed partial class UnenslavableSystem : EntitySystem
 {
     [Dependency] private IPrototypeManager _prototype = default!;
     [Dependency] private IPlayerManager _playerManager = default!;
-    [Dependency] private StatusIconSystem _statusIcons = default!;
 
     public override void Initialize()
     {
@@ -26,10 +24,10 @@ public sealed partial class UnenslavableSystem : EntitySystem
     private void OnGetUnenslavableIconsEvent(Entity<UnenslavableComponent> ent, ref GetStatusIconsEvent ev)
     {
         var viewer = _playerManager.LocalSession?.AttachedEntity;
-        if (!HasComp<ShowCultYoggIconsComponent>(viewer))
+        if (viewer == ent)
             return;
 
-        if (viewer == ent && !_statusIcons.IsAdminGhost)
+        if (!HasComp<ShowCultYoggIconsComponent>(viewer))
             return;
 
         var iconId = ent.Comp.StatusIcon;
